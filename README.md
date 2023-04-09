@@ -1,4 +1,4 @@
-## Meet Iga 🦉. A minimalist AutoGPT capable of self-improvement.
+## Meet Iga 🦉 - A minimalist AutoGPT capable of self-improvement
 *⚠️ VERY EXPERIMENTAL & UNSTABLE*
 
 Chat with Iga via CLI, and she will perform one of the following actions:
