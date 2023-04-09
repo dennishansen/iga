@@ -8,7 +8,10 @@ This script starts a CLI chat with an Auto-GPT agent Iga who responds will respo
 
 This provides provides a minimal basis for guiding Iga to update it's own source code and system instructions. Go wild but not too wild.
 
-Run
-```
-python script.py
-```
+### Run
+
+Create `.env` file and add `OPENAI_API_KEY=<your-api-key>`
+
+Instal dependencies `pip install -r requirements.txt`
+
+Run `python script.py`
