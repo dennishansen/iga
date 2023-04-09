@@ -1,8 +1,8 @@
 ## Meet Iga 🦉. A minimalist AutoGPT capable of self-improvement.
 *⚠️ VERY EXPERIMENTAL & UNSTABLE*
 
-Chat with Iga via CLI, and she will performs one of the following actions:
-- Chat: This will allow you to respond back
+Chat with Iga via CLI, and she will perform one of the following actions:
+- Talk to you: This will allow you to respond back
 - Run a shell command: These run in the current directory. The output is returned to Iga.
 - Think: This simply triggers another action.
 
