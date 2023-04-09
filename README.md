@@ -1,12 +1,12 @@
 *VERY EXPERIMENTAL (UNSTABLE)*
-## 🦉Iga. A minimalist AutoGPT capable of self-improvement.
+## Meet Iga 🦉. A minimalist AutoGPT capable of self-improvement.
 
-This script starts a CLI chat with an Auto-GPT agent Iga who performs one of the following actions:
-- Talk to you: This allows you to respond
-- Run shell command: These run in it's own directory. The output is returned to Iga.
-- Think: This simple triggers another resposnse.
+Chat with Iga via CLI, and she will performs one of the following actions:
+- Chat: This will allow you to respond back
+- Run a shell command: These run in the current directory. The output is returned to Iga.
+- Think: This simply triggers another action.
 
-This provides provides a minimal basis for guiding Iga to update it's own source code and system instructions. Go wild but not too wild.
+Run Iga in her own directory to enable Iga to update her own source code and system instructions. How far can Iga go with a little guidance? Let's find out.
 
 ### Run
 
@@ -16,15 +16,17 @@ Instal dependencies `pip install -r requirements.txt`
 
 Run `python script.py`
 
-### Notes
+### Guidance
 - Start by having her read her own files before she making changes
 - Encourage Iga to test & validate her work
 - Encourage her to keep trying and only ask you if she's really struggling
 
-### Ideas
+### Contrubuting
 I would love to see Iga implement these
-- Realiably edit files
+- Improved system instructions to 'bake in' the above guidance
+- Realiable file editing
 - Use of langchain
 - Longer memory
 - Search the web
-...
+
+PR useful changes, ideally those created by Iga.
