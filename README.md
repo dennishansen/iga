@@ -1,5 +1,5 @@
 *VERY EXPERIMENTAL (UNSTABLE)*
-## Iga. A dead simple Auto-GPT capable of self-improvement.
+## 🦉Iga. A dead simple Auto-GPT capable of self-improvement.
 
 This script starts a CLI chat with an Auto-GPT agent Iga who performs one of the following actions:
 - Talk to you: This allows you to respond
