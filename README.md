@@ -1,7 +1,7 @@
 *VERY EXPERIMENTAL (UNSTABLE)*
 ## Iga. A dead simple Auto-GPT capable of self-improvement.
 
-This script starts a CLI chat with an Auto-GPT agent Iga who performs one of the following actions along with her rationale:
+This script starts a CLI chat with an Auto-GPT agent Iga who performs one of the following actions:
 - Talk to you: This allows you to respond
 - Run shell command: These run in it's own directory. The output is returned to Iga.
 - Think: This simple triggers another resposnse.
