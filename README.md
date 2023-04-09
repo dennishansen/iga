@@ -1,5 +1,5 @@
-*VERY EXPERIMENTAL (UNSTABLE)*
 ## Meet Iga 🦉. A minimalist AutoGPT capable of self-improvement.
+*⚠️ VERY EXPERIMENTAL & UNSTABLE*
 
 Chat with Iga via CLI, and she will performs one of the following actions:
 - Chat: This will allow you to respond back
