@@ -3,7 +3,7 @@
 
 This script starts a CLI chat with an Auto-GPT agent Iga who performs one of the following actions along with its rationale:
 - Talk to you: This allows you to respond
-- Run shell command: These run in it's own directory. The output is returned to them.
+- Run shell command: These run in it's own directory. The output is returned to Iga.
 - Think: This simple triggers another resposnse.
 
 This provides provides a minimal basis for guiding Iga to update it's own source code and system instructions. Go wild but not too wild.
