@@ -1,9 +1,12 @@
 import subprocess
-import langchain
 import openai
 import click
+import os
+from dotenv import load_dotenv
 
-api_key = "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"
+load_dotenv()
+
+api_key = os.getenv("OPENAI_API_KEY")
 
 actions = ["TALK_TO_USER", "RUN_SHELL_COMMAND", "THINK"]
 
@@ -44,14 +47,18 @@ def parse_response(response):
     rationale = ''
     action = ''
     content = ''
+    firstActionFound = False
+    firstRationaleFound = False
     for line in lines:
         if line == '':
             continue
-        elif line.startswith("RATIONALE"):
+        elif line.startswith("RATIONALE") and not firstRationaleFound:
             current_key = "RATIONALE"
-        elif line.startswith(tuple(actions)):
+            firstRationaleFound = True
+        elif line.startswith(tuple(actions)) and not firstActionFound:
             current_key = line
             action = line
+            firstActionFound = True
         elif current_key == "RATIONALE":
             rationale += line + "\n"
         elif current_key in actions:
@@ -63,16 +70,27 @@ def process_message(messages):
     # Replace this with your OpenAI API key
     openai.api_key = api_key
 
-    response = openai.ChatCompletion.create(
-        model="gpt-4",
-        messages=messages,
-        max_tokens=2048,
-        temperature=0.2,
-    )
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=messages,
+            max_tokens=2048,
+            temperature=0.2,
+        )
 
-    generated_response = response.choices[0]['message']['content'].strip()
-    parsed_response = parse_response(generated_response)
-    return parsed_response
+        generated_response = response.choices[0]['message']['content'].strip()
+        parsed_response = parse_response(generated_response)
+        return parsed_response
+
+    except openai.OpenAIError as error:
+        print(f"An error occurred while calling the OpenAI API: {error}")
+    except ValueError as error:
+        print(f"An error occurred while parsing the response: {error}")
+    except Exception as error:
+        print(f"An unexpected error occurred: {error}")
+
+    return {}
+
 
 def handle_action(messages):
     response_data = process_message(messages)
