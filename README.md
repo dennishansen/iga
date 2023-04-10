@@ -14,7 +14,7 @@ Create `.env` file and add `OPENAI_API_KEY=<your-api-key>`
 
 Instal dependencies `pip install -r requirements.txt`
 
-Run `python script.py`
+Run `python main.py`
 
 ### Guidance
 - Start by having her read her own files before she making changes
