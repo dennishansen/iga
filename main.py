@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
+GPT_MODEL = os.getenv("GPT_MODEL")
 
 actions = ["TALK_TO_USER", "RUN_SHELL_COMMAND", "THINK", "READ_FILES", "WRITE_FILE"]
 
@@ -87,7 +88,7 @@ def parse_response(response):
 def process_message(messages):
     try:
         response = openai.ChatCompletion.create(
-            model="gpt-4",
+            model=GPT_MODEL,
             messages=messages,
             max_tokens=2048,
             temperature=0.2,
