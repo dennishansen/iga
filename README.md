@@ -24,7 +24,7 @@ Run `python main.py`
 ### Contrubuting
 I would love to see Iga implement these
 - Improved system instructions to 'bake in' the above guidance
-- Realiable file editing
+- Reliable file editing
 - Use of langchain
 - Longer memory
 - Search the web
