@@ -15,7 +15,16 @@ Chat with Iga via CLI, and she will perform one of the following actions:
 
 Create `env.list` file and add `OPENAI_API_KEY=<your-api-key>` and `GPT_MODEL=gpt-3.5-turbo` or `GPT_MODEL=gpt-4` depending on which model you would like to / are able to use
 
-Build the Docker image and run interactively (VS Code's Docker extension is helpful)
+Build the Docker image and run interactively.
+
+##### VSCode Docker extension
+
+If using the VSCode Docker extension, you can simply right-click the Dockerfile and select Build Image.
+
+Then you can run `docker run --rm -it --env-file env.list iga:latest` to run Iga in its own Docker container so it doesn't have direct access to your hard drive.
+
+If you want to use the Docker VSCode extension to run as well, make sure to edit the settings for the run interactive command so it uses the env.list file:
+`"docker.commands.runInteractive": "${containerCommand} run --rm -it --env-file ${workspaceFolder}/env.list ${exposedPorts} ${tag}"`
 
 ### Guidance
 
@@ -23,7 +32,7 @@ Build the Docker image and run interactively (VS Code's Docker extension is help
 - Encourage Iga to test & validate her work
 - Encourage her to keep trying and only ask you if she's really struggling
 
-### Contrubuting
+### Contributing
 
 I would love to see Iga implement these
 
