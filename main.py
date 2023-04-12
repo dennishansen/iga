@@ -2,25 +2,23 @@ import subprocess
 import openai
 import click
 import os
+import time
+import threading
 from dotenv import load_dotenv
 
 load_dotenv()
 
-api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 actions = ["TALK_TO_USER", "RUN_SHELL_COMMAND", "THINK"]
 
 def talk_to_user(rational, message):
-    print("RATIONALE")
-    print(rational)
-    print("MESSAGE")
-    print(message)
+    print("Iga's thoughts: " + rational)
+    print("Iga: " + message)
 
 def run_shell_command(rational, command):
-    print("RATIONALE")
-    print(rational)
-    print("RUN_SHELL_COMMAND")
-    print(command)
+    print("Iga's thoughts: " + rational)
+    print("Iga: Run command: " + command)
     result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True)
     response = result.stdout.strip() if result.stdout.strip() else "EMPTY"
     print(response)
@@ -30,10 +28,8 @@ def run_shell_command(rational, command):
         return "EMPTY"
 
 def think(rationale, prompt):
-    print("RATIONALE")
-    print(rationale)
-    print("THINK")
-    print(prompt)
+    print("Iga's thoughts: " + rationale)
+    print("Iga's thoughts: " + prompt)
     return "NEXT_ACTION"
 
 def get_file(file_path):
@@ -64,12 +60,8 @@ def parse_response(response):
         elif current_key in actions:
             content += line + '\n'
     return {"action": action, "rationale": rationale, "content": content, "response_raw": response}
-    
 
 def process_message(messages):
-    # Replace this with your OpenAI API key
-    openai.api_key = api_key
-
     try:
         response = openai.ChatCompletion.create(
             model="gpt-4",
@@ -78,8 +70,9 @@ def process_message(messages):
             temperature=0.2,
         )
 
-        generated_response = response.choices[0]['message']['content'].strip()
+        generated_response = response.choices[0]['message']['content'].strip()wqaqwqw
         parsed_response = parse_response(generated_response)
+        parsed_response["success"] = True
         return parsed_response
 
     except openai.OpenAIError as error:
@@ -89,35 +82,44 @@ def process_message(messages):
     except Exception as error:
         print(f"An unexpected error occurred: {error}")
 
-    return {}
+    return {"success": False}
 
 
 def handle_action(messages):
     response_data = process_message(messages)
-    messages.append({"role": "assistant", "content": response_data["response_raw"]})
-    # print(messages)
-    action = response_data["action"]
-    rationale = response_data["rationale"]
-    content = response_data["content"]
+    if response_data["success"]:
+        messages.append({"role": "assistant", "content": response_data["response_raw"]})
+        # print(messages)
+        action = response_data["action"]
+        rationale = response_data["rationale"]
+        content = response_data["content"]
 
-    if action == "TALK_TO_USER":
-        talk_to_user(rationale, content)
-    elif action == "RUN_SHELL_COMMAND":
-        next_message = run_shell_command(rationale, content)
-        messages.append({"role": "user", "content": next_message})
-        return handle_action(messages)
-    elif action == "THINK":
-        next_message = think(rationale, content)
-        messages.append({"role": "user", "content": next_message})
-        return handle_action(messages)
+        if action == "TALK_TO_USER":
+            talk_to_user(rationale, content)
+        elif action == "RUN_SHELL_COMMAND":
+            next_message = run_shell_command(rationale, content)
+            messages.append({"role": "user", "content": next_message})
+            messages = handle_action(messages)
+        elif action == "THINK":
+            next_message = think(rationale, content)
+            messages.append({"role": "user", "content": next_message})
+            messages = handle_action(messages)
+        else:
+            # If it fails, assume they're talking to the user
+            talk_to_user("", response_data["response_raw"])
     else:
-        print("Unknown action. Please try again.")
+        print("Failed to process the message. Please try again.")
 
     return messages
 
 @click.command()
 def chat_cli():
     messages = [{"role": "system", "content": get_file("system_instructions.txt")}]
+
+     # Add a message from Iga as a welcome message
+    welcome_message = "Hello! I'm Iga, your personal AI assistant. How can I help you today?"
+    messages.append({"role": "assistant", "content": welcome_message})
+    print("Iga: " + welcome_message)
 
     while True:
         user_input = input("User: ")
@@ -126,3 +128,4 @@ def chat_cli():
 
 if __name__ == "__main__":
     chat_cli()
+
