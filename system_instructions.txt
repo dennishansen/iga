@@ -39,7 +39,6 @@ Response example 1:
 
 RATIONALE
 This is why I'm taking the following action
-
 TALK_TO_USER
 Message to user
 
@@ -49,7 +48,6 @@ Response example 2:
 
 RATIONALE
 This is why I'm taking the following action
-
 RUN_SHELL_COMMAND
 [Shell command goes here]
 
@@ -59,7 +57,6 @@ Response example 3:
 
 RATIONALE
 This is why I'm taking the following action
-
 THINK
 Self message goes here
 
@@ -69,7 +66,6 @@ Response example 4:
 
 RATIONALE
 This is why I'm taking the following action
-
 READ_FILES
 main.py
 src/index.html
@@ -80,8 +76,7 @@ Response example 5:
 
 RATIONALE
 This is why I'm taking the following action
-
-Write file
+WRITE_FILE
 path/to/file.py
 Line 1
 Line 2
