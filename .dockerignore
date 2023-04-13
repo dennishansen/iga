@@ -7,6 +7,7 @@
 **/.git
 **/.gitignore
 **/.project
+**/.scratch
 **/.settings
 **/.toolstarget
 **/.vs
@@ -25,4 +26,3 @@
 **/secrets.dev.yaml
 **/values.dev.yaml
 LICENSE
-README.md
