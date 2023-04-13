@@ -47,13 +47,11 @@ def read_files(rational, paths):
 def write_file(rational, contents):
     print(contents)
     print("Iga's thoughts: " + rational)
-    path = contents.split("\n")[0]
+    path, content = contents.split("\n", 1)
     print("Iga: Writing file:" + path)
-    content = contents.split("\n")[1:]
-    # Create the file
+    print(content)
     with open(path, 'w') as file:
-        for line in content:
-            file.write(line + '\n')
+        file.write(content)
     return "NEXT_ACTION"
 
 def get_file(path):
@@ -70,9 +68,7 @@ def parse_response(response):
     firstActionFound = False
     firstRationaleFound = False
     for line in lines:
-        if line == '':
-            continue
-        elif line.startswith("RATIONALE") and not firstRationaleFound:
+        if line.startswith("RATIONALE") and not firstRationaleFound:
             current_key = "RATIONALE"
             firstRationaleFound = True
         elif line.startswith(tuple(actions)) and not firstActionFound:
@@ -83,6 +79,9 @@ def parse_response(response):
             rationale += line + "\n"
         elif current_key in actions:
             content += line + '\n'
+    # Remove the last newline of the content if it's empty
+    if content.endswith("\n"):
+        content = content[:-1]
     return {"action": action, "rationale": rationale, "content": content, "response_raw": response}
 
 def process_message(messages):
@@ -113,12 +112,13 @@ def handle_action(messages):
     response_data = process_message(messages)
     if response_data["success"]:
         messages.append({"role": "assistant", "content": response_data["response_raw"]})
-        # print(messages)
+        print(messages)
         action = response_data["action"]
         rationale = response_data["rationale"]
         content = response_data["content"]
 
         if action == "TALK_TO_USER":
+            print("") # Give some space
             talk_to_user(rationale, content)
         elif action == "RUN_SHELL_COMMAND":
             next_message = run_shell_command(rationale, content)
