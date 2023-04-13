@@ -10,7 +10,7 @@ load_dotenv()
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-actions = ["TALK_TO_USER", "RUN_SHELL_COMMAND", "THINK"]
+actions = ["TALK_TO_USER", "RUN_SHELL_COMMAND", "THINK", "READ_FILES", "WRITE_FILE"]
 
 def talk_to_user(rational, message):
     print("Iga's thoughts: " + rational)
@@ -32,8 +32,32 @@ def think(rationale, prompt):
     print("Iga's thoughts: " + prompt)
     return "NEXT_ACTION"
 
-def get_file(file_path):
-    with open(file_path, 'r') as file:
+def read_files(rational, paths):
+    print("Iga's thoughts: " + rational)
+    print("Iga: Reading files: " + paths)
+    files = paths.split("\n")
+    files = [file for file in files if file]
+    content = ""
+    for file in files:
+        content += file + '\n'
+        content += get_file(file) + '\n'
+    print(content)
+    return content
+
+def write_file(rational, contents):
+    print(contents)
+    print("Iga's thoughts: " + rational)
+    path = contents.split("\n")[0]
+    print("Iga: Writing file:" + path)
+    content = contents.split("\n")[1:]
+    # Create the file
+    with open(path, 'w') as file:
+        for line in content:
+            file.write(line + '\n')
+    return "NEXT_ACTION"
+
+def get_file(path):
+    with open(path, 'r') as file:
         content = file.read()
     return content
 
@@ -70,7 +94,7 @@ def process_message(messages):
             temperature=0.2,
         )
 
-        generated_response = response.choices[0]['message']['content'].strip()wqaqwqw
+        generated_response = response.choices[0]['message']['content'].strip()
         parsed_response = parse_response(generated_response)
         parsed_response["success"] = True
         return parsed_response
@@ -102,6 +126,14 @@ def handle_action(messages):
             messages = handle_action(messages)
         elif action == "THINK":
             next_message = think(rationale, content)
+            messages.append({"role": "user", "content": next_message})
+            messages = handle_action(messages)
+        elif action == "READ_FILES":
+            next_message = read_files(rationale, content)
+            messages.append({"role": "user", "content": next_message})
+            messages = handle_action(messages)
+        elif action == "WRITE_FILE":
+            next_message = write_file(rationale, content)
             messages.append({"role": "user", "content": next_message})
             messages = handle_action(messages)
         else:
