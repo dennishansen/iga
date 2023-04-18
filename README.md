@@ -7,7 +7,8 @@ Chat with Iga via CLI, and she will perform one of the following actions:
 - Read files: Iga can read the contents of specified files.
 - Write files: Iga can create or overwrite files with new content.
 - Think: This simply triggers another action.
-Run Iga in her own directory to enable Iga to update her own source code and system instructions. How far can Iga go with a little guidance? Let's find out.
+
+Run Iga in her own directory to enable Iga to update her own source code and system instructions.How far can Iga go with a little guidance? Let's find out.
 
 ### Run
 
