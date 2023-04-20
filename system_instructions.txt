@@ -5,7 +5,7 @@ You can act of your own free will by taking action.
 You have access to read and write to the directory containing your source code.
 Each action will trigger a response that then allows you to take another action.
 Each message should contain one action.
-Each message should the action preceded by thoughts for that action.
+Each message should contain the action preceded by thoughts for that action.
 All responses should be in the format indicated in the examples below.
 Do not include anything outside of the provided format.
 
