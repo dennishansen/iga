@@ -12,6 +12,8 @@ Run Iga in her own directory to enable Iga to update her own source code and sys
 
 ### Run
 
+Requires Python 2.7+
+
 Create `.env` file and add `OPENAI_API_KEY=<your-api-key>`
 
 Instal dependencies `pip install -r requirements.txt`
