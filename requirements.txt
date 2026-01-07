@@ -1,7 +1,3 @@
-subprocess
-openai
+anthropic
 click
-os
-time
-threading
-dotenv
+python-dotenv
