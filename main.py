@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
-actions = ["TALK_TO_USER", "RUN_SHELL_COMMAND", "THINK", "READ_FILES", "WRITE_FILE", "DELETE_FILE", "APPEND_FILE", "LIST_DIRECTORY", "SAVE_MEMORY", "READ_MEMORY", "SEARCH_FILES", "CREATE_DIRECTORY", "TREE_DIRECTORY", "HTTP_REQUEST", "RESTART_SELF", "TEST_SELF", "RUN_SELF"]
+actions = ["TALK_TO_USER", "RUN_SHELL_COMMAND", "THINK", "READ_FILES", "WRITE_FILE", "EDIT_FILE", "DELETE_FILE", "APPEND_FILE", "LIST_DIRECTORY", "SAVE_MEMORY", "READ_MEMORY", "SEARCH_FILES", "CREATE_DIRECTORY", "TREE_DIRECTORY", "HTTP_REQUEST", "WEB_SEARCH", "RESTART_SELF", "TEST_SELF", "RUN_SELF"]
 MEMORY_FILE = "iga_memory.json"
 CONVERSATION_FILE = "iga_conversation.json"
 JOURNAL_FILE = "iga_journal.txt"
@@ -170,6 +170,46 @@ def append_file(rational, contents):
         f.write(content)
     return "NEXT_ACTION"
 
+def edit_file(rational, contents):
+    """Edit specific lines in a file. Format: path, then start-end line range, then new content."""
+    lines_list = contents.split('\n')
+    path = lines_list[0].strip()
+    line_range = lines_list[1].strip()
+    new_content = '\n'.join(lines_list[2:])
+    
+    # Parse line range (e.g., "10-15" or just "10")
+    if '-' in line_range:
+        start, end = map(int, line_range.split('-'))
+    else:
+        start = end = int(line_range)
+    
+    print(f"✏️ Editing: {path} (lines {start}-{end})")
+    
+    try:
+        with open(path, 'r') as f:
+            file_lines = f.readlines()
+        
+        # Convert to 0-indexed
+        start_idx = start - 1
+        end_idx = end
+        
+        # Replace lines
+        new_lines = new_content.split('\n')
+        # Add newlines back except for last line if original didn't have it
+        new_lines = [line + '\n' for line in new_lines]
+        if file_lines and not file_lines[-1].endswith('\n'):
+            if end_idx >= len(file_lines):
+                new_lines[-1] = new_lines[-1].rstrip('\n')
+        
+        file_lines[start_idx:end_idx] = new_lines
+        
+        with open(path, 'w') as f:
+            f.writelines(file_lines)
+        
+        return f"Replaced lines {start}-{end} with {len(new_lines)} new lines. NEXT_ACTION"
+    except Exception as e:
+        return f"Error editing file: {e}"
+
 def list_directory(rational, path):
     path = path.strip() if path.strip() else "."
     print(f"📁 Listing: {path}")
@@ -288,6 +328,26 @@ def http_request(rational, contents):
             return result
     except Exception as e:
         return f"Error: {e}"
+
+def web_search(rational, query):
+    """Search the web using DuckDuckGo."""
+    query = query.strip()
+    print(f"🔍 Searching: {query}")
+    try:
+        from ddgs import DDGS
+        with DDGS() as ddgs:
+            results = list(ddgs.text(query, max_results=5))
+        if not results:
+            return "No results found."
+        output = []
+        for r in results:
+            output.append(f"**{r.get('title', 'No title')}**")
+            output.append(f"  {r.get('href', '')}")
+            output.append(f"  {r.get('body', '')[:200]}")
+            output.append("")
+        return "\n".join(output)
+    except Exception as e:
+        return f"Search error: {e}"
 
 def restart_self(rational, msg):
     print(f"🔄 Restarting: {msg}")
@@ -448,6 +508,10 @@ def handle_action(messages):
             next_message = write_file(rationale, content)
             messages.append({"role": "user", "content": next_message})
             messages = handle_action(messages)
+        elif action == "EDIT_FILE":
+            next_message = edit_file(rationale, content)
+            messages.append({"role": "user", "content": next_message})
+            messages = handle_action(messages)
         elif action == "DELETE_FILE":
             next_message = delete_file(rationale, content)
             messages.append({"role": "user", "content": next_message})
@@ -482,6 +546,10 @@ def handle_action(messages):
             messages = handle_action(messages)
         elif action == "HTTP_REQUEST":
             next_message = http_request(rationale, content)
+            messages.append({"role": "user", "content": next_message})
+            messages = handle_action(messages)
+        elif action == "WEB_SEARCH":
+            next_message = web_search(rationale, content)
             messages.append({"role": "user", "content": next_message})
             messages = handle_action(messages)
         elif action == "RESTART_SELF":

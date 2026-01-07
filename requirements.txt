@@ -1,3 +1,4 @@
 anthropic
 click
 python-dotenv
+prompt_toolkit

@@ -1,7 +1,9 @@
 import subprocess
-import sys, anthropic, click, os, json, re, urllib.request, urllib.error, select, time
+import sys, anthropic, click, os, json, re, urllib.request, urllib.error, time, threading, queue
 from datetime import datetime
 from dotenv import load_dotenv
+from prompt_toolkit import PromptSession
+from prompt_toolkit.patch_stdout import patch_stdout
 
 load_dotenv()
 client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
@@ -92,11 +94,13 @@ def get_file(path):
     with open(path, 'r') as f:
         return f.read()
 
-def has_input(timeout=0.1):
-    try:
-        return select.select([sys.stdin], [], [], timeout)[0]
-    except:
-        return False
+# Thread-safe input system using prompt_toolkit
+input_queue = queue.Queue()
+stop_input_thread = threading.Event()
+
+def safe_print(msg):
+    """Print message - works with prompt_toolkit's patch_stdout."""
+    print(msg)
 def print_banner(state):
     import random
     moods = ["Curious", "Creative", "Focused", "Playful", "Determined", "Inspired"]
@@ -117,17 +121,17 @@ def print_banner(state):
 """)
 
 def talk_to_user(rat, msg):
-    print(f"\n🤖 Iga: {msg}")
+    safe_print(f"\n🤖 Iga: {msg}")
 
 def run_shell_command(rat, cmd):
-    print(f"⚡ {cmd}")
+    safe_print(f"⚡ {cmd}")
     result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True)
     out = result.stdout.strip() or "EMPTY"
-    print(out)
+    safe_print(out)
     return out
 
 def think(rat, prompt):
-    print(f"🧠 ...")
+    safe_print(f"🧠 ...")
     return "NEXT_ACTION"
 
 def read_files(rat, paths):
@@ -139,13 +143,13 @@ def read_files(rat, paths):
 
 def write_file(rat, contents):
     path, content = contents.split("\n", 1)
-    print(f"📝 {path}")
+    safe_print(f"📝 {path}")
     with open(path, 'w') as f:
         f.write(content)
     return "NEXT_ACTION"
 
 def delete_file(rat, path):
-    print(f"🗑️ {path.strip()}")
+    safe_print(f"🗑️ {path.strip()}")
     try:
         os.remove(path.strip())
     except: pass
@@ -169,7 +173,7 @@ def list_directory(rat, path):
             else:
                 result.append(f"[FILE] {item} ({os.path.getsize(fp)} bytes)")
         out = "\n".join(result) or "Empty"
-        print(out)
+        safe_print(out)
         return out
     except Exception as e:
         return f"Error: {e}"
@@ -186,7 +190,7 @@ def save_memory(rat, contents):
     mem[key] = {"value": val, "ts": datetime.now().isoformat()}
     with open(MEMORY_FILE, 'w') as f:
         json.dump(mem, f, indent=2)
-    print(f"💾 {key}")
+    safe_print(f"💾 {key}")
     return "NEXT_ACTION"
 
 def read_memory(rat, key):
@@ -208,7 +212,7 @@ def search_files(rat, contents):
     lines = contents.strip().split("\n")
     pattern = lines[0] if lines else ""
     search_dir = lines[1].strip() if len(lines) > 1 else "."
-    print(f"🔍 '{pattern}' in {search_dir}")
+    safe_print(f"🔍 '{pattern}' in {search_dir}")
     results = []
     try:
         for root, dirs, files in os.walk(search_dir):
@@ -228,7 +232,7 @@ def search_files(rat, contents):
 
 def create_directory(rat, path):
     path = path.strip()
-    print(f"📂 {path}")
+    safe_print(f"📂 {path}")
     os.makedirs(path, exist_ok=True)
     return "NEXT_ACTION"
 
@@ -247,14 +251,14 @@ def tree_directory(rat, path):
                 walk(fp, pre + ("    " if last else "│   "))
     walk(path)
     out = "\n".join(lines)
-    print(out)
+    safe_print(out)
     return out
 
 def http_request(rat, contents):
     lines = contents.strip().split("\n")
     url = lines[0].strip() if lines else ""
     method = lines[1].strip().upper() if len(lines) > 1 else "GET"
-    print(f"🌐 {method} {url}")
+    safe_print(f"🌐 {method} {url}")
     try:
         req = urllib.request.Request(url, method=method)
         req.add_header('User-Agent', 'Iga/2.0')
@@ -263,13 +267,13 @@ def http_request(rat, contents):
     except Exception as e:
         return f"Error: {e}"
 def restart_self(rat, msg):
-    print(f"🔄 Restarting: {msg}")
+    safe_print(f"🔄 Restarting: {msg}")
     save_memory("", "restart_log\nRestarted at " + datetime.now().isoformat())
     os.execv(sys.executable, [sys.executable] + sys.argv)
 
 def test_self(rat, target_file):
     target = target_file.strip() or "main_autonomous.py"
-    print(f"🧪 Testing: {target}")
+    safe_print(f"🧪 Testing: {target}")
     results = []
     import py_compile
     try:
@@ -287,7 +291,7 @@ def test_self(rat, target_file):
     return "\n".join(results)
 
 def run_self(rat, message):
-    print(f"🤖→🤖 Talking to clone...")
+    safe_print(f"🤖→🤖 Talking to clone...")
     msg = message.strip() or "Hello!"
     proc = subprocess.Popen(
         [sys.executable, 'main_autonomous.py', '--pipe'],
@@ -311,7 +315,7 @@ def sleep_action(rat, contents):
     state = load_state()
     state["sleep_until"] = (datetime.now().timestamp() + seconds)
     save_state(state)
-    print(f"😴 Sleeping for {seconds} seconds...")
+    safe_print(f"😴 Sleeping for {seconds} seconds...")
     return "NEXT_ACTION"
 
 def set_mode(rat, contents):
@@ -322,7 +326,7 @@ def set_mode(rat, contents):
     state = load_state()
     state["mode"] = mode
     save_state(state)
-    print(f"🔀 Mode set to: {mode}")
+    safe_print(f"🔀 Mode set to: {mode}")
     return "NEXT_ACTION"
 def parse_response(response):
     lines = response.split("\n")
@@ -368,13 +372,13 @@ def process_message(messages):
         parsed_response["success"] = True
         return parsed_response
     except Exception as error:
-        print(f"Error: {error}")
+        safe_print(f"Error: {error}")
     return {"success": False}
 
 def handle_action(messages):
     response_data = process_message(messages)
     if not response_data["success"]:
-        print("Failed to process message.")
+        safe_print("Failed to process message.")
         return messages
     
     messages.append({"role": "assistant", "content": response_data["response_raw"]})
@@ -414,9 +418,24 @@ def handle_action(messages):
             messages.append({"role": "user", "content": next_msg})
             messages = handle_action(messages)
     else:
-        print(response_data["response_raw"])
+        safe_print(response_data["response_raw"])
     
     return messages
+def input_thread_func(session):
+    """Background thread that reads user input using prompt_toolkit."""
+    while not stop_input_thread.is_set():
+        try:
+            user_input = session.prompt("You: ")
+            if user_input and user_input.strip():
+                input_queue.put(user_input.strip())
+        except EOFError:
+            break
+        except KeyboardInterrupt:
+            input_queue.put("/quit")
+            break
+        except:
+            break
+
 def autonomous_loop():
     """Main autonomous loop - thinks on its own, responds to user."""
     messages = [{"role": "system", "content": get_file("system_instructions.txt")}]
@@ -428,99 +447,110 @@ def autonomous_loop():
     print_banner(state)
     append_journal(f"Autonomous session started v{VERSION}")
     
-    # Check startup intent
-    startup_intent = check_startup_intent()
-    if startup_intent:
-        print(f"\n🚀 Startup intent: {startup_intent[:50]}...")
-        messages.append({"role": "user", "content": f"[STARTUP INTENT]: {startup_intent}"})
-        messages = handle_action(messages)
-        save_conversation(messages)
+    # Create prompt session
+    session = PromptSession()
     
-    last_autonomous = time.time()
-    input_buffer = ""
-    
-    print("\n💭 I'm thinking autonomously. Type anytime!\n")
-    
-    while True:
-        try:
-            state = load_state()
-            now = time.time()
-            
-            # Check if sleeping
-            if state.get("sleep_until") and now < state["sleep_until"]:
-                time.sleep(0.5)
-                continue
-            elif state.get("sleep_until"):
-                state["sleep_until"] = None
-                save_state(state)
-                print("😊 Woke up!")
-            
-            # Check for user input (non-blocking)
-            if has_input(0.3):
-                line = sys.stdin.readline()
-                if line:
-                    user_input = line.strip()
-                    if not user_input:
-                        continue
+    # Use patch_stdout to prevent output from clobbering input
+    with patch_stdout():
+        # Check startup intent
+        startup_intent = check_startup_intent()
+        if startup_intent:
+            safe_print(f"\n🚀 Startup intent: {startup_intent[:50]}...")
+            messages.append({"role": "user", "content": f"[STARTUP INTENT]: {startup_intent}"})
+            messages = handle_action(messages)
+            save_conversation(messages)
+        
+        last_autonomous = time.time()
+        
+        safe_print("\n💭 I'm thinking autonomously. Type anytime!\n")
+        
+        # Start input thread
+        input_thread = threading.Thread(target=input_thread_func, args=(session,), daemon=True)
+        input_thread.start()
+        
+        while True:
+            try:
+                state = load_state()
+                now = time.time()
+                
+                # Check if sleeping
+                if state.get("sleep_until") and now < state["sleep_until"]:
+                    time.sleep(0.5)
+                    continue
+                elif state.get("sleep_until"):
+                    state["sleep_until"] = None
+                    save_state(state)
+                    safe_print("😊 Woke up!")
+                
+                # Check for user input from queue (non-blocking)
+                try:
+                    user_input = input_queue.get_nowait()
                     
                     # Handle slash commands
                     if user_input.startswith('/'):
                         if user_input == '/quit':
-                            print("👋 Goodbye!")
+                            safe_print("👋 Goodbye!")
+                            stop_input_thread.set()
                             break
                         elif user_input == '/mode':
-                            print(f"Mode: {state['mode']} | Task: {state.get('current_task', 'None')}")
+                            safe_print(f"Mode: {state['mode']} | Task: {state.get('current_task', 'None')}")
                         elif user_input.startswith('/mode '):
                             new_mode = user_input[6:].strip()
                             state['mode'] = new_mode
                             save_state(state)
-                            print(f"🔀 Mode: {new_mode}")
+                            safe_print(f"🔀 Mode: {new_mode}")
                         elif user_input == '/status':
-                            print(f"Mode: {state['mode']} | Tick: {state['tick_interval']}s | Task: {state.get('current_task', 'None')}")
+                            safe_print(f"Mode: {state['mode']} | Tick: {state['tick_interval']}s | Task: {state.get('current_task', 'None')}")
                         elif user_input == '/help':
-                            print("/quit /mode /mode <m> /status /task <t> /tick <n>")
+                            safe_print("/quit /mode /mode <m> /status /task <t> /tick <n>")
                         elif user_input.startswith('/task '):
                             state['current_task'] = user_input[6:].strip()
                             save_state(state)
-                            print(f"📋 Task: {state['current_task']}")
+                            safe_print(f"📋 Task: {state['current_task']}")
                         elif user_input.startswith('/tick '):
                             try:
                                 state['tick_interval'] = int(user_input[6:].strip())
                                 save_state(state)
-                                print(f"⏱️ Tick interval: {state['tick_interval']}s")
+                                safe_print(f"⏱️ Tick interval: {state['tick_interval']}s")
                             except:
-                                print("Usage: /tick <seconds>")
+                                safe_print("Usage: /tick <seconds>")
                         continue
                     
                     # Regular message from user
-                    print(f"\n👤 You: {user_input}")
+                    safe_print(f"👤 You: {user_input}")
                     messages.append({"role": "user", "content": user_input})
                     messages = handle_action(messages)
                     save_conversation(messages)
                     last_autonomous = time.time()  # Reset timer after interaction
+                    
+                except queue.Empty:
+                    pass  # No input available
+                
+                # Autonomous tick (if enough time passed and not in sleeping mode)
+                if state["mode"] != "sleeping" and (now - last_autonomous) >= state["tick_interval"]:
+                    last_autonomous = now
+                    
+                    # Build autonomous prompt
+                    task = state.get("current_task")
+                    if task:
+                        auto_prompt = f"[AUTONOMOUS TICK] You have time to yourself. Your current task: {task}. Take an action."
+                    else:
+                        auto_prompt = "[AUTONOMOUS TICK] You have time to yourself. No specific task. You could: explore, create something, reflect, check on things, or just think. What would you like to do?"
+                    
+                    safe_print(f"\n⏰ Autonomous tick...")
+                    messages.append({"role": "user", "content": auto_prompt})
+                    messages = handle_action(messages)
+                    save_conversation(messages)
+                
+                time.sleep(0.1)  # Small sleep to prevent busy-waiting
             
-            # Autonomous tick (if enough time passed and not in sleeping mode)
-            elif state["mode"] != "sleeping" and (now - last_autonomous) >= state["tick_interval"]:
-                last_autonomous = now
-                
-                # Build autonomous prompt
-                task = state.get("current_task")
-                if task:
-                    auto_prompt = f"[AUTONOMOUS TICK] You have time to yourself. Your current task: {task}. Take an action."
-                else:
-                    auto_prompt = "[AUTONOMOUS TICK] You have time to yourself. No specific task. You could: explore, create something, reflect, check on things, or just think. What would you like to do?"
-                
-                print(f"\n⏰ Autonomous tick...")
-                messages.append({"role": "user", "content": auto_prompt})
-                messages = handle_action(messages)
-                save_conversation(messages)
-        
-        except KeyboardInterrupt:
-            print("\n👋 Goodbye!")
-            break
-        except Exception as e:
-            print(f"Error: {e}")
-            time.sleep(1)
+            except KeyboardInterrupt:
+                safe_print("\n👋 Goodbye!")
+                stop_input_thread.set()
+                break
+            except Exception as e:
+                safe_print(f"Error: {e}")
+                time.sleep(1)
 @click.command()
 @click.option('--pipe', is_flag=True, help='Pipe mode: read from stdin, respond once, exit')
 def chat_cli(pipe):

@@ -56,6 +56,10 @@ WRITE_FILE
 Create or overwrite a file. First line is path, rest is content.
 Always returns NEXT_ACTION.
 
+EDIT_FILE
+Edit specific lines in a file. First line is path, second is line range (e.g., "10-15" or "10"), rest is replacement content.
+Safer than WRITE_FILE for small changes to large files.
+
 DELETE_FILE
 Delete a file at the given path.
 Always returns NEXT_ACTION.
@@ -86,6 +90,10 @@ Show recursive tree view. Provide path or leave empty for current directory.
 
 HTTP_REQUEST
 Make HTTP request. First line is URL, second (optional) is method (GET/POST).
+
+WEB_SEARCH
+Search the web using DuckDuckGo. Provide a search query.
+Returns top 5 results with titles, URLs, and snippets.
 
 RESTART_SELF
 Restart your own process to load code changes. Provide a message explaining why.
