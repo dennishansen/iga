@@ -285,7 +285,10 @@ def send_input(rat, text):
     if active_pty_session is None:
         return 'ERROR: No active session. Use START_INTERACTIVE first.'
     text = text.strip()
-    safe_print(f'{C.YELLOW}⌨️  Sending: {text}{C.RESET}')
+    if not text:
+        safe_print(f'{C.YELLOW}⌨️  Sending: [ENTER]{C.RESET}')
+    else:
+        safe_print(f'{C.YELLOW}⌨️  Sending: {text}{C.RESET}')
     try:
         active_pty_session.sendline(text)
         # Wait for response
