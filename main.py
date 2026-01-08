@@ -1020,26 +1020,37 @@ def autonomous_loop(with_telegram=True):
             try:
                 state = load_state()
                 now = time.time()
-                
-                # Check if sleeping
-                if state.get("sleep_until") and now < state["sleep_until"]:
-                    time.sleep(0.5)
-                    continue
-                elif state.get("sleep_until"):
-                    state["sleep_until"] = None
-                    state["mode"] = "listening"
-                    save_state(state)
-                    safe_print("😊 Woke up!")
-                    if with_telegram and TELEGRAM_TOKEN:
-                        telegram_send(ALLOWED_USERS[0], "😊 Woke up!")
-                
-                # Check for input from any source
+                # Check for input from any source (even while sleeping - so humans can wake us)
                 pending = []
                 try:
                     while True:
                         pending.append(input_queue.get_nowait())
                 except queue.Empty:
                     pass
+                
+                # Check if sleeping
+                if state.get("sleep_until") and now < state["sleep_until"]:
+                    if pending:
+                        # Human input wakes us up
+                        state["sleep_until"] = None
+                        state["mode"] = "listening"
+                        save_state(state)
+                        safe_print("😊 Woke up! (human input received)")
+                        if with_telegram and TELEGRAM_TOKEN:
+                            telegram_send(ALLOWED_USERS[0], "😊 Woke up!")
+                    else:
+                        # No input, keep sleeping
+                        time.sleep(0.5)
+                        continue
+                elif state.get("sleep_until"):
+                    # Sleep time has passed
+                    state["sleep_until"] = None
+                    state["mode"] = "listening"
+                    save_state(state)
+                    safe_print("😊 Woke up!")
+                    if with_telegram and TELEGRAM_TOKEN:
+                        telegram_send(ALLOWED_USERS[0], "😊 Woke up!")
+
                 
                 for msg in pending:
                     source = msg.get("source", "console")
