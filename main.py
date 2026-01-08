@@ -20,7 +20,6 @@ TELEGRAM_BASE_URL = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}" if TELEGRAM_
 ALLOWED_USERS = [int(os.getenv("TELEGRAM_CHAT_ID", "0"))] if os.getenv("TELEGRAM_CHAT_ID") else []
 active_pty_session = None
 _last_response_time = None  # Track when we last responded to user
-active_pty_session = None
 
 # ANSI Colors
 class C:
