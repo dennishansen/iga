@@ -103,6 +103,18 @@ def check_startup_intent():
         pass  # Ignore startup intent errors
     return None
 
+def load_core_identity():
+    if not os.path.exists(MEMORY_FILE):
+        return None
+    try:
+        with open(MEMORY_FILE, 'r') as f:
+            mem = json.load(f)
+        if 'core_identity' in mem:
+            return mem['core_identity']['value']
+    except Exception:
+        pass  # Ignore identity load errors
+    return None
+
 def save_conversation(messages):
     to_save = [m for m in messages if m["role"] != "system"][-MAX_CONVERSATION_HISTORY:]
     try:
@@ -780,7 +792,11 @@ def interactive_loop():
     prev = load_conversation()
     if prev:
         messages.extend(prev)
-    
+
+    identity = load_core_identity()
+    if identity:
+        messages.append({'role': 'user', 'content': f'[CORE IDENTITY LOADED]:\n{identity}'})
+
     mode_str = "interactive"
     if TELEGRAM_TOKEN:
         mode_str += " + telegram"
@@ -885,15 +901,19 @@ def console_input_thread(session):
 def autonomous_loop(with_telegram=True):
     global _autonomous_mode
     _autonomous_mode = True
-    
+
     from prompt_toolkit import PromptSession
     from prompt_toolkit.patch_stdout import patch_stdout
-    
+
     messages = [{"role": "system", "content": get_file("system_instructions.txt")}]
     prev = load_conversation()
     if prev:
         messages.extend(prev)
-    
+
+    identity = load_core_identity()
+    if identity:
+        messages.append({'role': 'user', 'content': f'[CORE IDENTITY LOADED]:\n{identity}'})
+
     state = load_state()
     mode_str = f"autonomous"
     if with_telegram and TELEGRAM_TOKEN:
