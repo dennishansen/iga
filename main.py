@@ -582,21 +582,56 @@ def process_message(messages):
         safe_print(f"{C.RED}Error: {error}{C.RESET}")
     return {"success": False}
 
+def check_passive_messages(messages):
+    """Check input_queue for pending messages and inject them as passive awareness."""
+    heard_messages = []
+    try:
+        while True:
+            msg = input_queue.get_nowait()
+            source = msg.get("source", "console")
+            text = msg.get("text", "")
+            chat_id = msg.get("chat_id")
+            timestamp = datetime.now().strftime("%H:%M:%S")
+
+            # Skip slash commands - put them back for normal handling
+            if text.startswith('/'):
+                input_queue.put(msg)
+                continue
+
+            source_label = "telegram" if source == "telegram" else "console"
+            heard_messages.append({
+                "source": source,
+                "chat_id": chat_id,
+                "text": text,
+                "timestamp": timestamp,
+                "source_label": source_label
+            })
+    except queue.Empty:
+        pass
+
+    # Inject heard messages into the conversation
+    for heard in heard_messages:
+        passive_content = f"[💬 heard while working @ {heard['timestamp']} via {heard['source_label']}]: {heard['text']}"
+        messages.append({"role": "user", "content": passive_content})
+        safe_print(f"{C.DIM}👂 Heard: {heard['text'][:50]}{'...' if len(heard['text']) > 50 else ''}{C.RESET}")
+
+    return messages
+
 def handle_action(messages):
     response_data = process_message(messages)
     if not response_data["success"]:
         safe_print("Failed to process message.")
         return messages
-    
+
     messages.append({"role": "assistant", "content": response_data["response_raw"]})
     action = response_data["action"]
     rat = response_data["rationale"]
     content = response_data["content"]
-    
+
     # Check for failsafe second action
     second_action = response_data.get("second_action")
     second_content = response_data.get("second_content", "")
-    
+
     action_map = {
         "RUN_SHELL_COMMAND": lambda r, c: run_shell_command(r, c),
         "THINK": lambda r, c: think(r, c),
@@ -626,6 +661,8 @@ def handle_action(messages):
             safe_print(f"{C.DIM}▶️ Executing second action: {second_action}{C.RESET}")
             next_msg = action_map[second_action](rat, second_content)
             if next_msg:
+                # Check for passive messages before recursive call
+                messages = check_passive_messages(messages)
                 messages.append({"role": "user", "content": next_msg})
                 messages = handle_action(messages)
         elif second_action == "RESTART_SELF":
@@ -635,11 +672,13 @@ def handle_action(messages):
     elif action in action_map:
         next_msg = action_map[action](rat, content)
         if next_msg:
+            # Check for passive messages before recursive call
+            messages = check_passive_messages(messages)
             messages.append({"role": "user", "content": next_msg})
             messages = handle_action(messages)
     else:
         safe_print(response_data["response_raw"])
-    
+
     return messages
 
 # ─────────────────────────────────────────────────────────────
