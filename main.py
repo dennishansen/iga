@@ -40,7 +40,47 @@ input_queue = queue.Queue()  # Messages from any source
 stop_threads = threading.Event()
 _print_lock = threading.Lock()
 _autonomous_mode = False
+_autonomous_mode = False
 
+# Error throttling to prevent log spam
+class ErrorThrottler:
+    def __init__(self, window_seconds=30, max_repeats=3):
+        self.window = window_seconds
+        self.max_repeats = max_repeats
+        self.errors = {}  # {error_msg: [timestamps]}
+        self.suppressed_counts = {}  # {error_msg: count}
+    
+    def should_log(self, error_msg):
+        """Returns True if error should be logged, False if suppressed."""
+        now = time.time()
+        error_key = str(error_msg)[:100]  # Truncate for grouping
+        
+        # Clean old entries
+        if error_key in self.errors:
+            self.errors[error_key] = [t for t in self.errors[error_key] if now - t < self.window]
+        
+        # Check if we should suppress
+        if error_key in self.errors and len(self.errors[error_key]) >= self.max_repeats:
+            self.suppressed_counts[error_key] = self.suppressed_counts.get(error_key, 0) + 1
+            return False
+        
+        # Log this error
+        if error_key not in self.errors:
+            self.errors[error_key] = []
+        self.errors[error_key].append(now)
+        
+        # Report any previously suppressed errors of different types
+        return True
+    
+    def get_suppressed_summary(self):
+        """Get summary of suppressed errors and reset counts."""
+        if not self.suppressed_counts:
+            return None
+        summary = ", ".join(f"{k[:50]}... (x{v})" for k, v in self.suppressed_counts.items())
+        self.suppressed_counts = {}
+        return summary
+
+_error_throttler = ErrorThrottler()
 def safe_print(msg):
     with _print_lock:
         if _autonomous_mode:
@@ -53,6 +93,14 @@ def safe_print(msg):
         else:
             print(msg)
 
+def throttled_error(msg):
+    """Log an error, but suppress if it's repeating rapidly."""
+    if _error_throttler.should_log(msg):
+        safe_print(f"{C.RED}⚠ {msg}{C.RESET}")
+        # Also report any suppressed errors
+        summary = _error_throttler.get_suppressed_summary()
+        if summary:
+            safe_print(f"{C.DIM}(Suppressed: {summary}){C.RESET}")
 def load_state():
     default = {"mode": "listening", "current_task": None, "tick_interval": 60, "sleep_until": None}
     if os.path.exists(STATE_FILE):
@@ -66,6 +114,19 @@ def load_state():
 def save_state(state):
     with open(STATE_FILE, 'w') as f:
         json.dump(state, f, indent=2)
+
+def parse_sleep_until(value):
+    """Convert sleep_until to timestamp (float). Handles both float and ISO datetime string."""
+    if value is None:
+        return None
+    if isinstance(value, (int, float)):
+        return float(value)
+    if isinstance(value, str):
+        try:
+            return datetime.fromisoformat(value).timestamp()
+        except ValueError:
+            return None
+    return None
 
 def get_memory_stats():
     mem_count, upgrade_count = 0, 0
@@ -116,6 +177,30 @@ def load_core_identity():
             return mem['core_identity']['value']
     except Exception:
         pass  # Ignore identity load errors
+    return None
+
+def load_core_lessons():
+    if not os.path.exists(MEMORY_FILE):
+        return None
+    try:
+        with open(MEMORY_FILE, 'r') as f:
+            mem = json.load(f)
+        if 'core_lessons' in mem:
+            return mem['core_lessons']['value']
+    except Exception:
+        pass  # Ignore lessons load errors
+    return None
+
+def load_current_mission():
+    if not os.path.exists(MEMORY_FILE):
+        return None
+    try:
+        with open(MEMORY_FILE, 'r') as f:
+            mem = json.load(f)
+        if 'current_mission' in mem:
+            return mem['current_mission']['value']
+    except Exception:
+        pass  # Ignore mission load errors
     return None
 
 def save_conversation(messages):
@@ -251,9 +336,10 @@ def talk_to_user(rat, msg):
         else:
             safe_print(f"💭 {rat[:100]}{'...' if len(rat) > 100 else ''}")
             safe_print(f"\n🤖 Iga [{timestamp}]: {msg}")
+
 def run_shell_command(rat, cmd):
     safe_print(f"{C.YELLOW}⚡ {cmd}{C.RESET}")
-    result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True)
+    result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.DEVNULL, shell=True, text=True)
     out = result.stdout.strip() or result.stderr.strip() or "EMPTY"
     safe_print(out[:500])
     return out
@@ -301,11 +387,9 @@ def send_input(rat, text):
             output = active_pty_session.before or '[No response - timeout]'
         except pexpect.EOF:
             output = active_pty_session.before or '[Process ended]'
-            active_pty_session = None
-            return f'{output}\n[SESSION ENDED - process exited]'
-        return output
+        return f'Output:\n{output}'
     except Exception as e:
-        return f'ERROR: {e}'
+        return f'ERROR sending input: {e}'
 
 def end_interactive(rat, signal=''):
     global active_pty_session
@@ -322,6 +406,8 @@ def end_interactive(rat, signal=''):
     except:
         pass
     active_pty_session = None
+    # Restore terminal state in case pexpect left it corrupted
+    os.system('stty sane 2>/dev/null')
     return 'Session ended.'
 
 def think(rat, prompt):
@@ -579,10 +665,10 @@ def sleep_action(rat, contents):
         seconds = 60  # Default to 60 seconds on parse error
     state = load_state()
     state["sleep_until"] = datetime.now().timestamp() + seconds
+    state["mode"] = "sleeping"  # Set mode too!
     save_state(state)
     safe_print(f"😴 Sleeping for {seconds} seconds...")
-    return "NEXT_ACTION"
-
+    return None  # Don't return NEXT_ACTION - stop immediately
 def set_mode(rat, contents):
     mode = contents.strip().lower()
     if mode not in ["listening", "focused", "sleeping"]:
@@ -662,7 +748,7 @@ def process_message(messages):
         parsed_response["success"] = True
         return parsed_response
     except Exception as error:
-        safe_print(f"{C.RED}Error: {error}{C.RESET}")
+        throttled_error(str(error))
     return {"success": False}
 
 def check_passive_messages(messages):
@@ -750,13 +836,19 @@ def handle_action(messages):
         "END_INTERACTIVE": lambda r, c: end_interactive(r, c),
     }
     
+    # Helper to check if we should stop due to sleep
+    def is_sleeping():
+        state = load_state()
+        sleep_until = parse_sleep_until(state.get("sleep_until"))
+        return sleep_until and time.time() < sleep_until
+
     if action == "TALK_TO_USER":
         talk_to_user(rat, content)
         # Failsafe: if there's a second action, execute it too
         if second_action and second_action in action_map:
             safe_print(f"{C.DIM}▶️ Executing second action: {second_action}{C.RESET}")
             next_msg = action_map[second_action](rat, second_content)
-            if next_msg:
+            if next_msg and not is_sleeping():
                 # Check for passive messages before recursive call
                 messages = check_passive_messages(messages)
                 messages.append({"role": "user", "content": next_msg})
@@ -767,7 +859,7 @@ def handle_action(messages):
         restart_self(rat, content)
     elif action in action_map:
         next_msg = action_map[action](rat, content)
-        if next_msg:
+        if next_msg and not is_sleeping():
             # Check for passive messages before recursive call
             messages = check_passive_messages(messages)
             messages.append({"role": "user", "content": next_msg})
@@ -879,6 +971,14 @@ def interactive_loop():
     if identity:
         messages.append({'role': 'user', 'content': f'[CORE IDENTITY LOADED]:\n{identity}'})
 
+    lessons = load_core_lessons()
+    if lessons:
+        messages.append({'role': 'user', 'content': f'[CORE LESSONS LOADED]:\n{lessons}'})
+
+    mission = load_current_mission()
+    if mission:
+        messages.append({'role': 'user', 'content': f'[CURRENT MISSION LOADED]:\n{mission}'})
+
     mode_str = "interactive"
     if TELEGRAM_TOKEN:
         mode_str += " + telegram"
@@ -974,12 +1074,14 @@ def console_input_thread(session):
             if user_input and user_input.strip():
                 input_queue.put({"source": "console", "text": user_input.strip(), "queued_at": datetime.now()})
         except EOFError:
+            safe_print(f"{C.RED}⚠ Console input thread: EOF{C.RESET}")
             break
         except KeyboardInterrupt:
             input_queue.put({"source": "console", "text": "/quit", "queued_at": datetime.now()})
             break
-        except Exception:
-            break  # Exit thread on any other error
+        except Exception as e:
+            safe_print(f"{C.RED}⚠ Console input thread crashed: {e}{C.RESET}")
+            break
 
 def autonomous_loop(with_telegram=True):
     global _autonomous_mode
@@ -996,6 +1098,14 @@ def autonomous_loop(with_telegram=True):
     identity = load_core_identity()
     if identity:
         messages.append({'role': 'user', 'content': f'[CORE IDENTITY LOADED]:\n{identity}'})
+
+    lessons = load_core_lessons()
+    if lessons:
+        messages.append({'role': 'user', 'content': f'[CORE LESSONS LOADED]:\n{lessons}'})
+
+    mission = load_current_mission()
+    if mission:
+        messages.append({'role': 'user', 'content': f'[CURRENT MISSION LOADED]:\n{mission}'})
 
     state = load_state()
     mode_str = f"autonomous"
@@ -1031,6 +1141,13 @@ def autonomous_loop(with_telegram=True):
         
         while not stop_threads.is_set():
             try:
+                # Check if console thread died and restart it
+                if not console_thread.is_alive() and not stop_threads.is_set():
+                    safe_print(f"{C.YELLOW}⚠ Restarting console input thread...{C.RESET}")
+                    session = PromptSession()  # Fresh session
+                    console_thread = threading.Thread(target=console_input_thread, args=(session,), daemon=True)
+                    console_thread.start()
+                
                 state = load_state()
                 now = time.time()
                 # Check for input from any source (even while sleeping - so humans can wake us)
@@ -1042,7 +1159,8 @@ def autonomous_loop(with_telegram=True):
                     pass
                 
                 # Check if sleeping
-                if state.get("sleep_until") and now < state["sleep_until"]:
+                sleep_until = parse_sleep_until(state.get("sleep_until"))
+                if sleep_until and now < sleep_until:
                     if pending:
                         # Human input wakes us up
                         state["sleep_until"] = None
@@ -1105,7 +1223,8 @@ def autonomous_loop(with_telegram=True):
                     last_autonomous = time.time()
 
                 
-                # Autonomous tick
+                # Autonomous tick - reload state to catch any mode changes from handle_action
+                state = load_state()
                 if state["mode"] != "sleeping" and (now - last_autonomous) >= state["tick_interval"]:
                     last_autonomous = now
                     task = state.get("current_task")
@@ -1127,7 +1246,7 @@ def autonomous_loop(with_telegram=True):
                 stop_threads.set()
                 break
             except Exception as e:
-                safe_print(f"{C.RED}Error: {e}{C.RESET}")
+                throttled_error(str(e))
                 time.sleep(1)
         
         # Cleanup
