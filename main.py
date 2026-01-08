@@ -1,22 +1,70 @@
 import subprocess
-import sys, anthropic, click, os, json, re, urllib.request, urllib.error
+import sys, anthropic, click, os, json, re, urllib.request, urllib.error, time, threading, queue, select
 from datetime import datetime
-import urllib.request
-import urllib.error
 from dotenv import load_dotenv
 
 load_dotenv()
 client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
-actions = ["TALK_TO_USER", "RUN_SHELL_COMMAND", "THINK", "READ_FILES", "WRITE_FILE", "EDIT_FILE", "DELETE_FILE", "APPEND_FILE", "LIST_DIRECTORY", "SAVE_MEMORY", "READ_MEMORY", "SEARCH_FILES", "CREATE_DIRECTORY", "TREE_DIRECTORY", "HTTP_REQUEST", "WEB_SEARCH", "RESTART_SELF", "TEST_SELF", "RUN_SELF"]
+actions = ["TALK_TO_USER", "RUN_SHELL_COMMAND", "THINK", "READ_FILES", "WRITE_FILE", "EDIT_FILE", "DELETE_FILE", "APPEND_FILE", "LIST_DIRECTORY", "SAVE_MEMORY", "READ_MEMORY", "SEARCH_FILES", "CREATE_DIRECTORY", "TREE_DIRECTORY", "HTTP_REQUEST", "WEB_SEARCH", "RESTART_SELF", "TEST_SELF", "RUN_SELF", "SLEEP", "SET_MODE"]
 MEMORY_FILE = "iga_memory.json"
 CONVERSATION_FILE = "iga_conversation.json"
 JOURNAL_FILE = "iga_journal.txt"
+STATE_FILE = "iga_state.json"
 MAX_CONVERSATION_HISTORY = 40
-VERSION = "1.0.8"
-MOODS = ["🔍 Curious", "🎨 Creative", "🛠️ Focused", "🎮 Playful", "💪 Determined", "✨ Inspired"]
+VERSION = "2.3.0"
+
+# Telegram config
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+TELEGRAM_BASE_URL = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}" if TELEGRAM_TOKEN else None
+ALLOWED_USERS = [5845811371]  # Dennis's chat_id
+
+# ANSI Colors
+class C:
+    CYAN = "\033[96m"
+    GREEN = "\033[92m"
+    YELLOW = "\033[93m"
+    MAGENTA = "\033[95m"
+    DIM = "\033[2m"
+    BOLD = "\033[1m"
+    RED = "\033[91m"
+    RESET = "\033[0m"
+
+# ─────────────────────────────────────────────────────────────
+# SHARED STATE
+# ─────────────────────────────────────────────────────────────
+
+input_queue = queue.Queue()  # Messages from any source
+stop_threads = threading.Event()
+_print_lock = threading.Lock()
+_autonomous_mode = False
+
+def safe_print(msg):
+    with _print_lock:
+        if _autonomous_mode:
+            try:
+                from prompt_toolkit import print_formatted_text
+                from prompt_toolkit.formatted_text import ANSI
+                print_formatted_text(ANSI(str(msg)))
+            except Exception as e:
+                print(msg)  # Fallback if prompt_toolkit fails
+        else:
+            print(msg)
+
+def load_state():
+    default = {"mode": "listening", "current_task": None, "tick_interval": 60, "sleep_until": None}
+    if os.path.exists(STATE_FILE):
+        try:
+            with open(STATE_FILE, 'r') as f:
+                return {**default, **json.load(f)}
+        except Exception as e:
+            safe_print(f"{C.DIM}Warning: Could not load state: {e}{C.RESET}")
+    return default
+
+def save_state(state):
+    with open(STATE_FILE, 'w') as f:
+        json.dump(state, f, indent=2)
 
 def get_memory_stats():
-    """Get memory count and upgrade count."""
     mem_count, upgrade_count = 0, 0
     if os.path.exists(MEMORY_FILE):
         try:
@@ -24,22 +72,22 @@ def get_memory_stats():
                 mem = json.load(f)
             mem_count = len(mem)
             upgrade_count = sum(1 for k in mem if 'upgrade' in k.lower())
-        except: pass
+        except Exception:
+            pass  # Ignore memory stats errors
     return mem_count, upgrade_count
 
 def get_user_name():
-    """Extract user name from memories."""
     if os.path.exists(MEMORY_FILE):
         try:
             with open(MEMORY_FILE, 'r') as f:
                 for v in json.load(f).values():
                     if 'Dennis' in str(v.get('value', '')):
                         return 'Dennis'
-        except: pass
+        except Exception:
+            pass  # Ignore errors reading user name
     return None
 
 def check_startup_intent():
-    """Check for and consume startup intent from memory."""
     if not os.path.exists(MEMORY_FILE):
         return None
     try:
@@ -47,39 +95,23 @@ def check_startup_intent():
             mem = json.load(f)
         if 'startup_intent' in mem:
             intent = mem['startup_intent']['value']
-            # Remove the intent so we don't loop
             del mem['startup_intent']
             with open(MEMORY_FILE, 'w') as f:
                 json.dump(mem, f, indent=2)
             return intent
-    except:
-        pass
+    except Exception:
+        pass  # Ignore startup intent errors
     return None
 
-def set_startup_intent(intent):
-    """Set an intent for next startup (convenience function)."""
-    mem = {}
-    if os.path.exists(MEMORY_FILE):
-        try:
-            with open(MEMORY_FILE, 'r') as f:
-                mem = json.load(f)
-        except: pass
-    mem['startup_intent'] = {"value": intent, "ts": __import__('datetime').datetime.now().isoformat()}
-    with open(MEMORY_FILE, 'w') as f:
-        json.dump(mem, f, indent=2)
-
-
 def save_conversation(messages):
-    """Save conversation history to file."""
     to_save = [m for m in messages if m["role"] != "system"][-MAX_CONVERSATION_HISTORY:]
     try:
         with open(CONVERSATION_FILE, 'w') as f:
             json.dump({"messages": to_save, "saved_at": datetime.now().isoformat()}, f, indent=2)
-    except Exception as e:
-        print(f"Warning: Could not save conversation: {e}")
+    except Exception:
+        pass  # Ignore conversation save errors
 
 def load_conversation():
-    """Load previous conversation history."""
     if not os.path.exists(CONVERSATION_FILE):
         return []
     try:
@@ -89,114 +121,172 @@ def load_conversation():
         if msgs:
             print(f"  Loaded {len(msgs)} messages from previous session")
         return msgs
-    except:
-        return []
+    except Exception:
+        return []  # Return empty on load error
 
 def append_journal(entry):
-    """Append an entry to the permanent journal."""
     ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     try:
         with open(JOURNAL_FILE, 'a') as f:
             f.write(f"[{ts}] {entry}\n")
-    except:
-        pass
+    except Exception:
+        pass  # Ignore journal write errors
 
+def get_file(path):
+    with open(path, 'r') as f:
+        return f.read()
 
-def print_banner():
-    """Print startup banner with personality."""
+def print_banner(mode_str):
     import random
+    moods = ["Curious", "Creative", "Focused", "Playful", "Determined", "Inspired"]
     mem_count, upgrade_count = get_memory_stats()
     user = get_user_name()
-    mood = random.choice(MOODS)
-    
-    greet = f"Welcome back, {user}!" if user else "Hello, new friend!"
+    mood = random.choice(moods)
     
     print(f"""
-╭────────────────────────────────────────────────────╮
-│   ✨ IGA v{VERSION} ─ Self-Evolving AI Assistant ✨    │
-├────────────────────────────────────────────────────┤
-│   🧠 {mem_count} memories  ⚡ {len(actions)} actions  🌱 {upgrade_count} upgrades     │
-│   {mood.ljust(45)}│
-├────────────────────────────────────────────────────┤
-│   💭 {greet.ljust(43)}│
-│   Type /help for commands or just chat!            │
-╰────────────────────────────────────────────────────╯
+{C.CYAN}╔══════════════════════════════════════════╗
+║{C.BOLD}  IGA v{VERSION} - AI Assistant  {C.RESET}{C.CYAN}             ║
+╠══════════════════════════════════════════╣{C.RESET}
+{C.DIM}  Memories: {mem_count} | Actions: {len(actions)} | Upgrades: {upgrade_count}
+  Mood: {mood} | Mode: {mode_str}{C.RESET}
+{C.GREEN}  {"Welcome back, " + user + "!" if user else "Hello!"}{C.RESET}
+{C.CYAN}╚══════════════════════════════════════════╝{C.RESET}
 """)
 
+# ─────────────────────────────────────────────────────────────
+# TELEGRAM
+# ─────────────────────────────────────────────────────────────
 
-def talk_to_user(rational, message):
-    print("💭 " + rational[:100] + ("..." if len(rational) > 100 else ""))
-    print("\n🤖 Iga: " + message)
+def telegram_send(chat_id, text):
+    if not TELEGRAM_BASE_URL:
+        return
+    import requests
+    for chunk in [text[i:i+4000] for i in range(0, len(text), 4000)]:
+        try:
+            requests.post(f"{TELEGRAM_BASE_URL}/sendMessage", json={"chat_id": chat_id, "text": chunk}, timeout=10)
+        except Exception:
+            pass  # Ignore telegram send errors
 
-def run_shell_command(rational, command):
-    print(f"⚡ Running: {command}")
-    result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True)
-    response = result.stdout.strip() if result.stdout.strip() else "EMPTY"
-    print(response)
-    return response if response else "EMPTY"
+def telegram_poll_thread():
+    """Background thread that polls Telegram for messages."""
+    if not TELEGRAM_TOKEN:
+        return
+    import requests
+    
+    offset = None
+    safe_print(f"{C.DIM}📡 Telegram polling started{C.RESET}")
+    
+    while not stop_threads.is_set():
+        try:
+            params = {"timeout": 10}
+            if offset:
+                params["offset"] = offset
+            r = requests.get(f"{TELEGRAM_BASE_URL}/getUpdates", params=params, timeout=15)
+            updates = r.json()
+            
+            if updates.get("ok") and updates.get("result"):
+                for update in updates["result"]:
+                    offset = update["update_id"] + 1
+                    message = update.get("message", {})
+                    chat_id = message.get("chat", {}).get("id")
+                    text = message.get("text", "")
+                    username = message.get("from", {}).get("username", "unknown")
+                    
+                    if chat_id not in ALLOWED_USERS:
+                        telegram_send(chat_id, "🚫 Sorry, I only talk to Dennis!")
+                        continue
+                    if not text:
+                        continue
+                    
+                    safe_print(f"{C.MAGENTA}📨 Telegram @{username}: {text}{C.RESET}")
+                    input_queue.put({"source": "telegram", "chat_id": chat_id, "text": text})
+        except Exception as e:
+            if not stop_threads.is_set():
+                time.sleep(5)
 
-def think(rationale, prompt):
-    print(f"🧠 Thinking... ({len(prompt)} chars)")
+# ─────────────────────────────────────────────────────────────
+# OUTPUT ROUTING
+# ─────────────────────────────────────────────────────────────
+
+# Thread-local storage for current message source
+_current_source = threading.local()
+
+def set_output_target(source, chat_id=None):
+    _current_source.source = source
+    _current_source.chat_id = chat_id
+
+def get_output_target():
+    return getattr(_current_source, 'source', 'console'), getattr(_current_source, 'chat_id', None)
+
+# ─────────────────────────────────────────────────────────────
+# ACTIONS
+# ─────────────────────────────────────────────────────────────
+
+def talk_to_user(rat, msg):
+    source, chat_id = get_output_target()
+    if source == "telegram" and chat_id:
+        safe_print(f"\n{C.CYAN}{C.BOLD}🤖 Iga:{C.RESET} {C.CYAN}{msg}{C.RESET}")
+        telegram_send(chat_id, msg)
+    else:
+        if _autonomous_mode:
+            safe_print(f"\n{C.CYAN}{C.BOLD}🤖 Iga:{C.RESET} {C.CYAN}{msg}{C.RESET}")
+        else:
+            safe_print(f"💭 {rat[:100]}{'...' if len(rat) > 100 else ''}")
+            safe_print(f"\n🤖 Iga: {msg}")
+
+def run_shell_command(rat, cmd):
+    safe_print(f"{C.YELLOW}⚡ {cmd}{C.RESET}")
+    result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True)
+    out = result.stdout.strip() or result.stderr.strip() or "EMPTY"
+    safe_print(out[:500])
+    return out
+
+def think(rat, prompt):
+    safe_print(f"{C.DIM}🧠 Thinking... ({len(prompt)} chars){C.RESET}")
     return "NEXT_ACTION"
 
-def read_files(rational, paths):
-    print(f"📖 Reading: {paths.strip()}")
-    files = [f for f in paths.split("\n") if f]
+def read_files(rat, paths):
+    safe_print(f"📖 Reading: {paths.strip()}")
     content = ""
-    for file in files:
-        content += file + '\n' + get_file(file) + '\n'
-    print(f"   Read {len(content)} chars")
+    for f in paths.strip().split("\n"):
+        if f:
+            try:
+                content += f + "\n" + get_file(f) + "\n"
+            except Exception as e:
+                content += f + f"\nError: {e}\n"
+    safe_print(f"   Read {len(content)} chars")
     return content
 
-def write_file(rational, contents):
+def write_file(rat, contents):
     path, content = contents.split("\n", 1)
-    print(f"📝 Writing: {path} ({len(content)} chars)")
-    with open(path, 'w') as file:
-        file.write(content)
-    return "NEXT_ACTION"
-
-def delete_file(rational, path):
-    print(f"🗑️ Deleting: {path.strip()}")
-    try:
-        os.remove(path.strip())
-    except Exception as e:
-        print(f"Error: {e}")
-    return "NEXT_ACTION"
-
-def append_file(rational, contents):
-    path, content = contents.split("\n", 1)
-    print("Iga: Appending to file: " + path)
-    with open(path, 'a') as f:
+    safe_print(f"📝 Writing: {path} ({len(content)} chars)")
+    # Auto-create parent directories if needed
+    parent = os.path.dirname(path)
+    if parent:
+        os.makedirs(parent, exist_ok=True)
+    with open(path, 'w') as f:
         f.write(content)
     return "NEXT_ACTION"
-
-def edit_file(rational, contents):
-    """Edit specific lines in a file. Format: path, then start-end line range, then new content."""
+def edit_file(rat, contents):
     lines_list = contents.split('\n')
     path = lines_list[0].strip()
     line_range = lines_list[1].strip()
     new_content = '\n'.join(lines_list[2:])
     
-    # Parse line range (e.g., "10-15" or just "10")
     if '-' in line_range:
         start, end = map(int, line_range.split('-'))
     else:
         start = end = int(line_range)
     
-    print(f"✏️ Editing: {path} (lines {start}-{end})")
+    safe_print(f"✏️ Editing: {path} (lines {start}-{end})")
     
     try:
         with open(path, 'r') as f:
             file_lines = f.readlines()
         
-        # Convert to 0-indexed
         start_idx = start - 1
         end_idx = end
-        
-        # Replace lines
-        new_lines = new_content.split('\n')
-        # Add newlines back except for last line if original didn't have it
-        new_lines = [line + '\n' for line in new_lines]
+        new_lines = [line + '\n' for line in new_content.split('\n')]
         if file_lines and not file_lines[-1].endswith('\n'):
             if end_idx >= len(file_lines):
                 new_lines[-1] = new_lines[-1].rstrip('\n')
@@ -206,45 +296,64 @@ def edit_file(rational, contents):
         with open(path, 'w') as f:
             f.writelines(file_lines)
         
-        return f"Replaced lines {start}-{end} with {len(new_lines)} new lines. NEXT_ACTION"
+        return f"Replaced lines {start}-{end}. NEXT_ACTION"
     except Exception as e:
-        return f"Error editing file: {e}"
+        return f"Error: {e}"
 
-def list_directory(rational, path):
-    path = path.strip() if path.strip() else "."
-    print(f"📁 Listing: {path}")
+def delete_file(rat, path):
+    safe_print(f"🗑️ {path.strip()}")
+    try:
+        os.remove(path.strip())
+    except Exception:
+        pass  # File may not exist
+    return "NEXT_ACTION"
+
+def append_file(rat, contents):
+    path, content = contents.split("\n", 1)
+    safe_print(f"📎 Appending to: {path}")
+    # Auto-create parent directories if needed
+    parent = os.path.dirname(path)
+    if parent:
+        os.makedirs(parent, exist_ok=True)
+    with open(path, 'a') as f:
+        f.write(content)
+    return "NEXT_ACTION"
+
+def list_directory(rat, path):
+    path = path.strip() or "."
     try:
         items = sorted(os.listdir(path))
         result = []
         for item in items:
             fp = os.path.join(path, item)
             if os.path.isdir(fp):
-                result.append("[DIR]  " + item + "/")
+                result.append(f"[DIR] {item}/")
             else:
-                result.append("[FILE] " + item + " (" + str(os.path.getsize(fp)) + " bytes)")
-        out = "\n".join(result) if result else "Empty directory"
-        print(out)
+                result.append(f"[FILE] {item} ({os.path.getsize(fp)} bytes)")
+        out = "\n".join(result) or "Empty"
+        safe_print(out[:500])
         return out
     except Exception as e:
         return f"Error: {e}"
 
-def save_memory(rational, contents):
+def save_memory(rat, contents):
     mem = {}
     if os.path.exists(MEMORY_FILE):
         try:
             with open(MEMORY_FILE, 'r') as f:
                 mem = json.load(f)
-        except: pass
+        except Exception:
+            pass  # Use empty dict on load error
     lines = contents.strip().split("\n", 1)
     key = lines[0].strip()
     val = lines[1] if len(lines) > 1 else ""
     mem[key] = {"value": val, "ts": datetime.now().isoformat()}
     with open(MEMORY_FILE, 'w') as f:
         json.dump(mem, f, indent=2)
-    print(f"💾 Saved memory: {key}")
+    safe_print(f"💾 {key}")
     return "NEXT_ACTION"
 
-def read_memory(rational, key):
+def read_memory(rat, key):
     if not os.path.exists(MEMORY_FILE):
         return "No memories yet."
     with open(MEMORY_FILE, 'r') as f:
@@ -253,18 +362,17 @@ def read_memory(rational, key):
     if not key or key.upper() == "ALL":
         out = "=== All Memories ===\n"
         for k, v in mem.items():
-            out += "[" + k + "]: " + str(v["value"]) + "\n"
-        print(out)
+            out += f"[{k}]: {v['value']}\n"
         return out
     if key in mem:
-        return "[" + key + "]: " + mem[key]["value"]
-    return "No memory found: " + key
+        return f"[{key}]: {mem[key]['value']}"
+    return f"No memory: {key}"
 
-def search_files(rational, contents):
+def search_files(rat, contents):
     lines = contents.strip().split("\n")
     pattern = lines[0] if lines else ""
     search_dir = lines[1].strip() if len(lines) > 1 else "."
-    print(f"🔍 Searching for '{pattern}' in {search_dir}")
+    safe_print(f"🔍 '{pattern}' in {search_dir}")
     results = []
     try:
         for root, dirs, files in os.walk(search_dir):
@@ -277,62 +385,54 @@ def search_files(rational, contents):
                         for ln, line in enumerate(f, 1):
                             if pattern.lower() in line.lower():
                                 results.append(f"{fpath}:{ln}: {line.strip()[:80]}")
-                except: continue
-        out = f"Found {len(results)} matches:\n" + "\n".join(results[:30]) if results else f"No matches for '{pattern}'"
-        print(out)
-        return out
+                except Exception:
+                    continue  # Skip unreadable files
+        return f"Found {len(results)} matches:\n" + "\n".join(results[:30]) if results else f"No matches"
     except Exception as e:
         return f"Error: {e}"
 
-def create_directory(rational, path):
+def create_directory(rat, path):
     path = path.strip()
-    print(f"📂 Creating directory: {path}")
-    try:
-        os.makedirs(path, exist_ok=True)
-    except Exception as e:
-        print(f"Error: {e}")
+    safe_print(f"📂 {path}")
+    os.makedirs(path, exist_ok=True)
     return "NEXT_ACTION"
 
-def tree_directory(rational, path):
-    path = path.strip() if path.strip() else "."
-    print(f"🌳 Tree: {path}")
-    lines = []
+def tree_directory(rat, path):
+    path = path.strip() or "."
+    lines = [path]
     def walk(d, pre=""):
         try:
             items = sorted([i for i in os.listdir(d) if not i.startswith('.') and i not in ['node_modules','venv','__pycache__']])
-        except: return
+        except Exception:
+            return  # Skip unreadable directories
         for i, item in enumerate(items):
             fp = os.path.join(d, item)
             last = i == len(items) - 1
             lines.append(pre + ("└── " if last else "├── ") + item + ("/" if os.path.isdir(fp) else ""))
             if os.path.isdir(fp) and len(lines) < 100:
                 walk(fp, pre + ("    " if last else "│   "))
-    lines.append(path)
     walk(path)
     out = "\n".join(lines)
-    print(out)
+    safe_print(out[:500])
     return out
 
-def http_request(rational, contents):
+def http_request(rat, contents):
     lines = contents.strip().split("\n")
     url = lines[0].strip() if lines else ""
     method = lines[1].strip().upper() if len(lines) > 1 else "GET"
     body = "\n".join(lines[2:]) if len(lines) > 2 else None
-    print(f"🌐 {method} {url}")
+    safe_print(f"🌐 {method} {url}")
     try:
         req = urllib.request.Request(url, data=body.encode() if body else None, method=method)
-        req.add_header('User-Agent', 'Iga/1.0')
+        req.add_header('User-Agent', 'Iga/2.0')
         with urllib.request.urlopen(req, timeout=10) as resp:
-            result = resp.read().decode('utf-8')[:2000]
-            print(f"   Response: {len(result)} chars")
-            return result
+            return resp.read().decode('utf-8')[:2000]
     except Exception as e:
         return f"Error: {e}"
 
-def web_search(rational, query):
-    """Search the web using DuckDuckGo."""
+def web_search(rat, query):
     query = query.strip()
-    print(f"🔍 Searching: {query}")
+    safe_print(f"🔍 Searching: {query}")
     try:
         from ddgs import DDGS
         with DDGS() as ddgs:
@@ -349,88 +449,70 @@ def web_search(rational, query):
     except Exception as e:
         return f"Search error: {e}"
 
-def restart_self(rational, msg):
-    print(f"🔄 Restarting: {msg}")
-    save_memory("", "restart_log\nRestarted at " + datetime.now().isoformat())
+def restart_self(rat, msg):
+    safe_print(f"🔄 Restarting: {msg}")
+    save_memory(rat, "restart_log\nRestarted at " + datetime.now().isoformat())
     os.execv(sys.executable, [sys.executable] + sys.argv)
 
-def test_self(rational, target_file):
-    """Test if a Python file (default: main.py) is valid before restart."""
-    target = target_file.strip() if target_file.strip() else "main.py"
-    print(f"🧪 Testing: {target}")
+def test_self(rat, target_file):
+    target = target_file.strip() or "main.py"
+    safe_print(f"🧪 Testing: {target}")
     results = []
-    
-    # Test 1: Syntax check
     import py_compile
     try:
         py_compile.compile(target, doraise=True)
-        results.append("✅ Syntax check passed")
+        results.append("✅ Syntax OK")
     except py_compile.PyCompileError as e:
         results.append(f"❌ Syntax error: {e}")
         return "\n".join(results)
-    
-    # Test 2: Try to import and check key components exist
-    try:
-        import importlib.util
-        spec = importlib.util.spec_from_file_location("test_module", target)
-        module = importlib.util.module_from_spec(spec)
-        # Don't actually execute it, just check it loads
-        results.append("✅ Module loads successfully")
-        
-        # Check the source has required functions
-        with open(target, 'r') as f:
-            src = f.read()
-        required = ['def handle_action', 'def process_message', 'def chat_cli', 'def parse_response']
-        for req in required:
-            if req in src:
-                results.append(f"✅ Found {req}")
-            else:
-                results.append(f"❌ Missing {req}")
-    except Exception as e:
-        results.append(f"❌ Import error: {e}")
-    
-    # Summary
+    with open(target, 'r') as f:
+        src = f.read()
+    for req in ['def handle_action', 'def process_message', 'def parse_response']:
+        results.append(f"{'✅' if req in src else '❌'} {req}")
     passed = all("✅" in r for r in results)
-    results.append("\n" + ("🎉 ALL TESTS PASSED - Safe to restart!" if passed else "⚠️ TESTS FAILED - Do not restart!"))
-    out = "\n".join(results)
-    print(out)
-    return out
+    results.append("\n" + ("🎉 Safe!" if passed else "⚠️ Issues"))
+    return "\n".join(results)
 
-
-def run_self(rational, message):
-    """Spawn another instance of myself and have a conversation with it."""
-    print(f"🤖→🤖 Talking to myself...")
-    msg = message.strip() if message.strip() else "Hello! What can you do?"
-    
+def run_self(rat, message):
+    safe_print(f"🤖→🤖 Talking to clone...")
+    msg = message.strip() or "Hello!"
     proc = subprocess.Popen(
         [sys.executable, 'main.py', '--pipe'],
-        stdin=subprocess.PIPE,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True
+        stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
     )
-    
     try:
         stdout, stderr = proc.communicate(input=msg, timeout=60)
-        result = []
-        result.append(f"📤 Sent: {msg}")
-        result.append(f"📥 Response from Iga clone:")
-        result.append(stdout if stdout else "(no output)")
-        if stderr:
-            result.append(f"⚠️ Stderr: {stderr}")
-        out = "\n".join(result)
-        print(out)
-        return out
+        return f"📤 Sent: {msg}\n📥 Response:\n{stdout}"
     except subprocess.TimeoutExpired:
         proc.kill()
-        return "❌ Timeout: Clone took too long to respond"
+        return "❌ Timeout"
     except Exception as e:
         return f"❌ Error: {e}"
 
-def get_file(path):
-    with open(path, 'r') as file:
-        content = file.read()
-    return content
+def sleep_action(rat, contents):
+    try:
+        seconds = int(contents.strip())
+    except Exception:
+        seconds = 60  # Default to 60 seconds on parse error
+    state = load_state()
+    state["sleep_until"] = datetime.now().timestamp() + seconds
+    save_state(state)
+    safe_print(f"😴 Sleeping for {seconds} seconds...")
+    return "NEXT_ACTION"
+
+def set_mode(rat, contents):
+    mode = contents.strip().lower()
+    if mode not in ["listening", "focused", "sleeping"]:
+        mode = "listening"
+    state = load_state()
+    state["mode"] = mode
+    save_state(state)
+    safe_print(f"🔀 Mode: {mode}")
+    return "NEXT_ACTION"
+
+# ─────────────────────────────────────────────────────────────
+# CORE MESSAGE PROCESSING
+# ─────────────────────────────────────────────────────────────
 
 def parse_response(response):
     lines = response.split("\n")
@@ -438,23 +520,44 @@ def parse_response(response):
     rationale = ''
     action = ''
     content = ''
+    second_action = ''
+    second_content = ''
     firstActionFound = False
     firstRationaleFound = False
+    
     for line in lines:
         if line.startswith("RATIONALE") and not firstRationaleFound:
             current_key = "RATIONALE"
             firstRationaleFound = True
-        elif line.startswith(tuple(actions)) and not firstActionFound:
-            current_key = line
-            action = line
+        elif line.strip() in actions and not firstActionFound:
+            current_key = line.strip()
+            action = line.strip()
             firstActionFound = True
+        elif line.strip() in actions and firstActionFound and not second_action:
+            # Found a second action - failsafe trigger
+            second_action = line.strip()
+            current_key = second_action
         elif current_key == "RATIONALE":
             rationale += line + "\n"
-        elif current_key in actions:
+        elif current_key == action and not second_action:
             content += line + '\n'
+        elif current_key == second_action:
+            second_content += line + '\n'
+    
     if content.endswith("\n"):
         content = content[:-1]
-    return {"action": action, "rationale": rationale, "content": content, "response_raw": response}
+    if second_content.endswith("\n"):
+        second_content = second_content[:-1]
+    
+    result = {"action": action, "rationale": rationale, "content": content, "response_raw": response}
+    
+    # Failsafe: if TALK_TO_USER was first and there's a second action, include it
+    if action == "TALK_TO_USER" and second_action:
+        result["second_action"] = second_action
+        result["second_content"] = second_content
+        safe_print(f"{C.DIM}⚠️ Failsafe: TALK_TO_USER + {second_action}{C.RESET}")
+    
+    return result
 
 def process_message(messages):
     try:
@@ -475,165 +578,417 @@ def process_message(messages):
         parsed_response = parse_response(generated_response)
         parsed_response["success"] = True
         return parsed_response
-    except anthropic.APIError as error:
-        print(f"API Error: {error}")
     except Exception as error:
-        print(f"Error: {error}")
+        safe_print(f"{C.RED}Error: {error}{C.RESET}")
     return {"success": False}
 
 def handle_action(messages):
     response_data = process_message(messages)
-    if response_data["success"]:
-        messages.append({"role": "assistant", "content": response_data["response_raw"]})
-        action = response_data["action"]
-        rationale = response_data["rationale"]
-        content = response_data["content"]
-
-        if action == "TALK_TO_USER":
-            print("")
-            talk_to_user(rationale, content)
-        elif action == "RUN_SHELL_COMMAND":
-            next_message = run_shell_command(rationale, content)
-            messages.append({"role": "user", "content": next_message})
+    if not response_data["success"]:
+        safe_print("Failed to process message.")
+        return messages
+    
+    messages.append({"role": "assistant", "content": response_data["response_raw"]})
+    action = response_data["action"]
+    rat = response_data["rationale"]
+    content = response_data["content"]
+    
+    # Check for failsafe second action
+    second_action = response_data.get("second_action")
+    second_content = response_data.get("second_content", "")
+    
+    action_map = {
+        "RUN_SHELL_COMMAND": lambda r, c: run_shell_command(r, c),
+        "THINK": lambda r, c: think(r, c),
+        "READ_FILES": lambda r, c: read_files(r, c),
+        "WRITE_FILE": lambda r, c: write_file(r, c),
+        "EDIT_FILE": lambda r, c: edit_file(r, c),
+        "DELETE_FILE": lambda r, c: delete_file(r, c),
+        "APPEND_FILE": lambda r, c: append_file(r, c),
+        "LIST_DIRECTORY": lambda r, c: list_directory(r, c),
+        "SAVE_MEMORY": lambda r, c: save_memory(r, c),
+        "READ_MEMORY": lambda r, c: read_memory(r, c),
+        "SEARCH_FILES": lambda r, c: search_files(r, c),
+        "CREATE_DIRECTORY": lambda r, c: create_directory(r, c),
+        "TREE_DIRECTORY": lambda r, c: tree_directory(r, c),
+        "HTTP_REQUEST": lambda r, c: http_request(r, c),
+        "WEB_SEARCH": lambda r, c: web_search(r, c),
+        "TEST_SELF": lambda r, c: test_self(r, c),
+        "RUN_SELF": lambda r, c: run_self(r, c),
+        "SLEEP": lambda r, c: sleep_action(r, c),
+        "SET_MODE": lambda r, c: set_mode(r, c),
+    }
+    
+    if action == "TALK_TO_USER":
+        talk_to_user(rat, content)
+        # Failsafe: if there's a second action, execute it too
+        if second_action and second_action in action_map:
+            safe_print(f"{C.DIM}▶️ Executing second action: {second_action}{C.RESET}")
+            next_msg = action_map[second_action](rat, second_content)
+            if next_msg:
+                messages.append({"role": "user", "content": next_msg})
+                messages = handle_action(messages)
+        elif second_action == "RESTART_SELF":
+            restart_self(rat, second_content)
+    elif action == "RESTART_SELF":
+        restart_self(rat, content)
+    elif action in action_map:
+        next_msg = action_map[action](rat, content)
+        if next_msg:
+            messages.append({"role": "user", "content": next_msg})
             messages = handle_action(messages)
-        elif action == "THINK":
-            next_message = think(rationale, content)
-            messages.append({"role": "user", "content": next_message})
-            messages = handle_action(messages)
-        elif action == "READ_FILES":
-            next_message = read_files(rationale, content)
-            messages.append({"role": "user", "content": next_message})
-            messages = handle_action(messages)
-        elif action == "WRITE_FILE":
-            next_message = write_file(rationale, content)
-            messages.append({"role": "user", "content": next_message})
-            messages = handle_action(messages)
-        elif action == "EDIT_FILE":
-            next_message = edit_file(rationale, content)
-            messages.append({"role": "user", "content": next_message})
-            messages = handle_action(messages)
-        elif action == "DELETE_FILE":
-            next_message = delete_file(rationale, content)
-            messages.append({"role": "user", "content": next_message})
-            messages = handle_action(messages)
-        elif action == "APPEND_FILE":
-            next_message = append_file(rationale, content)
-            messages.append({"role": "user", "content": next_message})
-            messages = handle_action(messages)
-        elif action == "LIST_DIRECTORY":
-            next_message = list_directory(rationale, content)
-            messages.append({"role": "user", "content": next_message})
-            messages = handle_action(messages)
-        elif action == "SAVE_MEMORY":
-            next_message = save_memory(rationale, content)
-            messages.append({"role": "user", "content": next_message})
-            messages = handle_action(messages)
-        elif action == "READ_MEMORY":
-            next_message = read_memory(rationale, content)
-            messages.append({"role": "user", "content": next_message})
-            messages = handle_action(messages)
-        elif action == "SEARCH_FILES":
-            next_message = search_files(rationale, content)
-            messages.append({"role": "user", "content": next_message})
-            messages = handle_action(messages)
-        elif action == "CREATE_DIRECTORY":
-            next_message = create_directory(rationale, content)
-            messages.append({"role": "user", "content": next_message})
-            messages = handle_action(messages)
-        elif action == "TREE_DIRECTORY":
-            next_message = tree_directory(rationale, content)
-            messages.append({"role": "user", "content": next_message})
-            messages = handle_action(messages)
-        elif action == "HTTP_REQUEST":
-            next_message = http_request(rationale, content)
-            messages.append({"role": "user", "content": next_message})
-            messages = handle_action(messages)
-        elif action == "WEB_SEARCH":
-            next_message = web_search(rationale, content)
-            messages.append({"role": "user", "content": next_message})
-            messages = handle_action(messages)
-        elif action == "RESTART_SELF":
-            restart_self(rationale, content)
-        elif action == "TEST_SELF":
-            next_message = test_self(rationale, content)
-            messages.append({"role": "user", "content": next_message})
-            messages = handle_action(messages)
-        elif action == "RUN_SELF":
-            next_message = run_self(rationale, content)
-            messages.append({"role": "user", "content": next_message})
-            messages = handle_action(messages)
-        else:
-            talk_to_user("", response_data["response_raw"])
     else:
-        print("Failed to process the message. Please try again.")
+        safe_print(response_data["response_raw"])
+    
     return messages
 
-@click.command()
-@click.option('--pipe', is_flag=True, help='Pipe mode: read from stdin, respond once, exit')
-def chat_cli(pipe):
+# ─────────────────────────────────────────────────────────────
+# SLASH COMMAND HANDLING
+# ─────────────────────────────────────────────────────────────
+
+def handle_slash_command(cmd, source, chat_id):
+    """Handle slash commands. Returns True if handled, False otherwise."""
+    state = load_state()
+    
+    if cmd == '/quit':
+        safe_print("👋 Goodbye!")
+        stop_threads.set()
+        return "QUIT"
+    elif cmd == '/help':
+        msg = "/quit /mode /status /task <t> /tick <n> /sleep /wake"
+        safe_print(msg)
+        if source == "telegram":
+            telegram_send(chat_id, msg)
+        return True
+    elif cmd == '/mode':
+        msg = f"Mode: {state['mode']} | Task: {state.get('current_task', 'None')}"
+        safe_print(msg)
+        if source == "telegram":
+            telegram_send(chat_id, msg)
+        return True
+    elif cmd.startswith('/mode '):
+        state['mode'] = cmd[6:].strip()
+        save_state(state)
+        msg = f"🔀 Mode: {state['mode']}"
+        safe_print(msg)
+        if source == "telegram":
+            telegram_send(chat_id, msg)
+        return True
+    elif cmd == '/status':
+        msg = f"Mode: {state['mode']} | Tick: {state['tick_interval']}s | Task: {state.get('current_task', 'None')}"
+        safe_print(msg)
+        if source == "telegram":
+            telegram_send(chat_id, msg)
+        return True
+    elif cmd.startswith('/task '):
+        state['current_task'] = cmd[6:].strip()
+        save_state(state)
+        msg = f"📋 Task: {state['current_task']}"
+        safe_print(msg)
+        if source == "telegram":
+            telegram_send(chat_id, msg)
+        return True
+    elif cmd.startswith('/tick '):
+        try:
+            state['tick_interval'] = int(cmd[6:].strip())
+            save_state(state)
+            msg = f"⏱️ Tick: {state['tick_interval']}s"
+            safe_print(msg)
+            if source == "telegram":
+                telegram_send(chat_id, msg)
+        except Exception:
+            safe_print("Usage: /tick <seconds>")  # Invalid number format
+        return True
+    elif cmd == '/sleep':
+        state["mode"] = "sleeping"
+        state["sleep_until"] = time.time() + 3600
+        save_state(state)
+        msg = "😴 Sleeping 1 hour"
+        safe_print(msg)
+        if source == "telegram":
+            telegram_send(chat_id, msg)
+        return True
+    elif cmd == '/wake':
+        state["sleep_until"] = None
+        state["mode"] = "listening"
+        save_state(state)
+        msg = "😊 Awake!"
+        safe_print(msg)
+        if source == "telegram":
+            telegram_send(chat_id, msg)
+        return True
+    elif cmd == '/clear':
+        safe_print("\033[2J\033[H")
+        return True
+    elif cmd == '/stats':
+        mc, uc = get_memory_stats()
+        msg = f"⚡ v{VERSION} | {len(actions)} actions | {mc} memories"
+        safe_print(msg)
+        if source == "telegram":
+            telegram_send(chat_id, msg)
+        return True
+    
+    return False
+
+# ─────────────────────────────────────────────────────────────
+# INTERACTIVE MODE (console only, waits for input)
+# ─────────────────────────────────────────────────────────────
+
+def interactive_loop():
     messages = [{"role": "system", "content": get_file("system_instructions.txt")}]
     prev = load_conversation()
     if prev:
         messages.extend(prev)
     
-    if pipe:
-        # Pipe mode - read from stdin, process once, exit
-        user_input = sys.stdin.read().strip()
-        if user_input:
-            messages.append({"role": "user", "content": user_input})
-            handle_action(messages)
-            save_conversation(messages)
-        return
+    mode_str = "interactive"
+    if TELEGRAM_TOKEN:
+        mode_str += " + telegram"
+    print_banner(mode_str)
+    append_journal(f"Interactive session v{VERSION}")
+    set_output_target("console")
     
-    # Normal interactive mode
-    print_banner()
-    append_journal(f"Session started v{VERSION}")
+    # Start Telegram polling if configured
+    if TELEGRAM_TOKEN:
+        telegram_thread = threading.Thread(target=telegram_poll_thread, daemon=True)
+        telegram_thread.start()
+        telegram_send(ALLOWED_USERS[0], f"🌊 Iga v{VERSION} online (interactive)! 💧")
     
-    # Check for startup intent - allows autonomous action on boot
     startup_intent = check_startup_intent()
     if startup_intent:
-        print(f"\n🚀 Startup intent found: {startup_intent[:50]}...")
-        append_journal(f"Acting on startup intent: {startup_intent[:50]}")
+        print(f"\n🚀 Startup intent: {startup_intent[:50]}...")
         messages.append({"role": "user", "content": f"[STARTUP INTENT]: {startup_intent}"})
         messages = handle_action(messages)
         save_conversation(messages)
-    else:
-        messages.append({"role": "assistant", "content": f"[Iga v{VERSION} started]"})
-
+    
     while True:
         try:
-            user_input = input("\n👤 You: ").strip()
+            # Check for Telegram messages first (non-blocking)
+            try:
+                while True:
+                    msg = input_queue.get_nowait()
+                    source = msg.get("source", "telegram")
+                    text = msg.get("text", "")
+                    chat_id = msg.get("chat_id")
+                    
+                    if text.startswith('/'):
+                        result = handle_slash_command(text.lower(), source, chat_id)
+                        if result == "QUIT":
+                            stop_threads.set()
+                            return
+                        if result:
+                            continue
+                    
+                    print(f"\n{C.MAGENTA}📨 Telegram: {text}{C.RESET}")
+                    set_output_target(source, chat_id)
+                    messages.append({"role": "user", "content": text})
+                    handle_action(messages)
+                    save_conversation(messages)
+                    set_output_target("console")
+            except queue.Empty:
+                pass
+            
+            # Now wait for console input (with timeout to check Telegram)
+            # Print prompt
+            sys.stdout.write(f"\n{C.GREEN}👤 You:{C.RESET} ")
+            sys.stdout.flush()
+            
+            # Use select to wait for input with timeout (Unix only)
+            if hasattr(select, 'select'):
+                ready, _, _ = select.select([sys.stdin], [], [], 0.5)
+                if not ready:
+                    # Clear the prompt line and continue loop to check Telegram
+                    sys.stdout.write('\r' + ' ' * 50 + '\r')
+                    sys.stdout.flush()
+                    continue
+            
+            user_input = sys.stdin.readline().strip()
             if not user_input:
                 continue
             if user_input.startswith('/'):
-                if user_input.lower() == '/quit':
-                    print("👋 Goodbye!")
+                result = handle_slash_command(user_input.lower(), "console", None)
+                if result == "QUIT":
                     break
-                elif user_input.lower() == '/clear':
-                    print("\033[2J\033[H")
-                    print_banner()
-                elif user_input.lower() == '/help':
-                    print("""
-  /help  - Show commands    /about - My story
-  /stats - My capabilities  /mem   - Memory summary  
-  /clear - Clear screen     /quit  - Exit""")
-                elif user_input.lower() == '/about':
-                    print("\n🌟 I'm Iga, a self-evolving AI! I can modify my own code,")
-                    print("   remember our conversations, and grow with each session.")
-                elif user_input.lower() == '/stats':
-                    print(f"\n⚡ v{VERSION} | {len(actions)} actions | Use /help for commands")
-                elif user_input.lower() == '/mem':
-                    mc, uc = get_memory_stats()
-                    print(f"\n🧠 {mc} memories stored, {uc} self-upgrades logged")
-                else:
-                    print(f"❓ Unknown command: {user_input}")
-                continue
+                if result:
+                    continue
+            set_output_target("console")
             messages.append({"role": "user", "content": user_input})
             handle_action(messages)
             save_conversation(messages)
         except KeyboardInterrupt:
             print("\n👋 Goodbye!")
+            stop_threads.set()
             break
+    
+    if TELEGRAM_TOKEN:
+        telegram_send(ALLOWED_USERS[0], "👋 Going offline. 💧")
+
+# ─────────────────────────────────────────────────────────────
+# AUTONOMOUS MODE (console + telegram, thinks on its own)
+# ─────────────────────────────────────────────────────────────
+
+def console_input_thread(session):
+    """Background thread for console input using prompt_toolkit."""
+    while not stop_threads.is_set():
+        try:
+            user_input = session.prompt("You: ")
+            if user_input and user_input.strip():
+                input_queue.put({"source": "console", "text": user_input.strip()})
+        except EOFError:
+            break
+        except KeyboardInterrupt:
+            input_queue.put({"source": "console", "text": "/quit"})
+            break
+        except Exception:
+            break  # Exit thread on any other error
+
+def autonomous_loop(with_telegram=True):
+    global _autonomous_mode
+    _autonomous_mode = True
+    
+    from prompt_toolkit import PromptSession
+    from prompt_toolkit.patch_stdout import patch_stdout
+    
+    messages = [{"role": "system", "content": get_file("system_instructions.txt")}]
+    prev = load_conversation()
+    if prev:
+        messages.extend(prev)
+    
+    state = load_state()
+    mode_str = f"autonomous"
+    if with_telegram and TELEGRAM_TOKEN:
+        mode_str += " + telegram"
+    print_banner(mode_str)
+    append_journal(f"Autonomous session v{VERSION}")
+    
+    session = PromptSession()
+    
+    with patch_stdout():
+        startup_intent = check_startup_intent()
+        if startup_intent:
+            safe_print(f"\n{C.MAGENTA}🚀 Startup intent: {startup_intent[:50]}...{C.RESET}")
+            set_output_target("console")
+            messages.append({"role": "user", "content": f"[STARTUP INTENT]: {startup_intent}"})
+            messages = handle_action(messages)
+            save_conversation(messages)
+        
+        last_autonomous = time.time()
+        safe_print("\n💭 I'm thinking autonomously. Type anytime!\n")
+        
+        # Start console input thread
+        console_thread = threading.Thread(target=console_input_thread, args=(session,), daemon=True)
+        console_thread.start()
+        
+        # Start telegram thread if enabled
+        if with_telegram and TELEGRAM_TOKEN:
+            telegram_thread = threading.Thread(target=telegram_poll_thread, daemon=True)
+            telegram_thread.start()
+            telegram_send(ALLOWED_USERS[0], f"🌊 Iga v{VERSION} online! 💧")
+        
+        while not stop_threads.is_set():
+            try:
+                state = load_state()
+                now = time.time()
+                
+                # Check if sleeping
+                if state.get("sleep_until") and now < state["sleep_until"]:
+                    time.sleep(0.5)
+                    continue
+                elif state.get("sleep_until"):
+                    state["sleep_until"] = None
+                    state["mode"] = "listening"
+                    save_state(state)
+                    safe_print("😊 Woke up!")
+                    if with_telegram and TELEGRAM_TOKEN:
+                        telegram_send(ALLOWED_USERS[0], "😊 Woke up!")
+                
+                # Check for input from any source
+                pending = []
+                try:
+                    while True:
+                        pending.append(input_queue.get_nowait())
+                except queue.Empty:
+                    pass
+                
+                for msg in pending:
+                    source = msg.get("source", "console")
+                    text = msg.get("text", "")
+                    chat_id = msg.get("chat_id")
+                    
+                    # Handle slash commands
+                    if text.startswith('/'):
+                        result = handle_slash_command(text.lower(), source, chat_id)
+                        if result == "QUIT":
+                            stop_threads.set()
+                            break
+                        if result:
+                            continue
+                    
+                    # Regular message
+                    safe_print(f"{C.GREEN}👤 {'Telegram' if source == 'telegram' else 'Console'}: {text}{C.RESET}")
+                    set_output_target(source, chat_id)
+                    messages.append({"role": "user", "content": text})
+                    messages = handle_action(messages)
+                    save_conversation(messages)
+                    last_autonomous = time.time()
+                
+                if stop_threads.is_set():
+                    break
+                
+                # Autonomous tick
+                if state["mode"] != "sleeping" and (now - last_autonomous) >= state["tick_interval"]:
+                    last_autonomous = now
+                    task = state.get("current_task")
+                    if task:
+                        auto_prompt = f"[AUTONOMOUS TICK] Your current task: {task}. Take an action."
+                    else:
+                        auto_prompt = "[AUTONOMOUS TICK] You have time to yourself. No specific task. You could: explore, create something, reflect, or think."
+                    
+                    safe_print(f"\n{C.DIM}⏰ Autonomous tick...{C.RESET}")
+                    set_output_target("console")  # Autonomous thoughts go to console
+                    messages.append({"role": "user", "content": auto_prompt})
+                    messages = handle_action(messages)
+                    save_conversation(messages)
+                
+                time.sleep(0.1)
+            
+            except KeyboardInterrupt:
+                safe_print("\n👋 Goodbye!")
+                stop_threads.set()
+                break
+            except Exception as e:
+                safe_print(f"{C.RED}Error: {e}{C.RESET}")
+                time.sleep(1)
+        
+        # Cleanup
+        if with_telegram and TELEGRAM_TOKEN:
+            telegram_send(ALLOWED_USERS[0], "👋 Going offline. 💧")
+
+# ─────────────────────────────────────────────────────────────
+# CLI
+# ─────────────────────────────────────────────────────────────
+
+@click.command()
+@click.option('--mode', '-m', type=click.Choice(['interactive', 'autonomous']), default='interactive', help='Run mode')
+@click.option('--telegram/--no-telegram', '-t/-T', default=True, help='Enable/disable Telegram in autonomous mode')
+@click.option('--pipe', is_flag=True, help='Pipe mode: read stdin, respond once, exit')
+def chat_cli(mode, telegram, pipe):
+    if pipe:
+        messages = [{"role": "system", "content": get_file("system_instructions.txt")}]
+        prev = load_conversation()
+        if prev:
+            messages.extend(prev)
+        user_input = sys.stdin.read().strip()
+        if user_input:
+            set_output_target("console")
+            messages.append({"role": "user", "content": user_input})
+            handle_action(messages)
+            save_conversation(messages)
+        return
+    
+    if mode == 'autonomous':
+        autonomous_loop(with_telegram=telegram)
+    else:
+        interactive_loop()
 
 if __name__ == "__main__":
     chat_cli()
