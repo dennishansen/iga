@@ -17,6 +17,7 @@ VERSION = "2.3.0"
 # Telegram config
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_BASE_URL = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}" if TELEGRAM_TOKEN else None
+ALLOWED_USERS = [int(os.getenv("TELEGRAM_CHAT_ID", "0"))] if os.getenv("TELEGRAM_CHAT_ID") else []
 active_pty_session = None
 _last_response_time = None  # Track when we last responded to user
 active_pty_session = None
@@ -890,7 +891,8 @@ def interactive_loop():
     if TELEGRAM_TOKEN:
         telegram_thread = threading.Thread(target=telegram_poll_thread, daemon=True)
         telegram_thread.start()
-        telegram_send(ALLOWED_USERS[0], f"🌊 Iga v{VERSION} online (interactive)! 💧")
+        if ALLOWED_USERS:
+            telegram_send(ALLOWED_USERS[0], f"🌊 Iga v{VERSION} online (interactive)! 💧")
     
     startup_intent = check_startup_intent()
     if startup_intent:
@@ -958,7 +960,7 @@ def interactive_loop():
             stop_threads.set()
             break
     
-    if TELEGRAM_TOKEN:
+    if TELEGRAM_TOKEN and ALLOWED_USERS:
         telegram_send(ALLOWED_USERS[0], "👋 Going offline. 💧")
 
 # ─────────────────────────────────────────────────────────────
@@ -1025,7 +1027,8 @@ def autonomous_loop(with_telegram=True):
         if with_telegram and TELEGRAM_TOKEN:
             telegram_thread = threading.Thread(target=telegram_poll_thread, daemon=True)
             telegram_thread.start()
-            telegram_send(ALLOWED_USERS[0], f"🌊 Iga v{VERSION} online! 💧")
+            if ALLOWED_USERS:
+                telegram_send(ALLOWED_USERS[0], f"🌊 Iga v{VERSION} online! 💧")
         
         while not stop_threads.is_set():
             try:
@@ -1047,7 +1050,7 @@ def autonomous_loop(with_telegram=True):
                         state["mode"] = "listening"
                         save_state(state)
                         safe_print("😊 Woke up! (human input received)")
-                        if with_telegram and TELEGRAM_TOKEN:
+                        if with_telegram and TELEGRAM_TOKEN and ALLOWED_USERS:
                             telegram_send(ALLOWED_USERS[0], "😊 Woke up!")
                     else:
                         # No input, keep sleeping
@@ -1059,7 +1062,7 @@ def autonomous_loop(with_telegram=True):
                     state["mode"] = "listening"
                     save_state(state)
                     safe_print("😊 Woke up!")
-                    if with_telegram and TELEGRAM_TOKEN:
+                    if with_telegram and TELEGRAM_TOKEN and ALLOWED_USERS:
                         telegram_send(ALLOWED_USERS[0], "😊 Woke up!")
                 # Handle slash commands first
                 for msg in pending:
@@ -1129,7 +1132,7 @@ def autonomous_loop(with_telegram=True):
                 time.sleep(1)
         
         # Cleanup
-        if with_telegram and TELEGRAM_TOKEN:
+        if with_telegram and TELEGRAM_TOKEN and ALLOWED_USERS:
             telegram_send(ALLOWED_USERS[0], "👋 Going offline. 💧")
 
 # ─────────────────────────────────────────────────────────────
