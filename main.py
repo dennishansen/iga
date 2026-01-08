@@ -624,6 +624,7 @@ def handle_action(messages):
         return messages
 
     messages.append({"role": "assistant", "content": response_data["response_raw"]})
+    save_conversation(messages)  # Save after each action to prevent data loss on restart
     action = response_data["action"]
     rat = response_data["rationale"]
     content = response_data["content"]
