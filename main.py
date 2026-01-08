@@ -17,7 +17,8 @@ VERSION = "2.3.0"
 # Telegram config
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_BASE_URL = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}" if TELEGRAM_TOKEN else None
-ALLOWED_USERS = [5845811371]  # Dennis's chat_id
+active_pty_session = None
+_last_response_time = None  # Track when we last responded to user
 active_pty_session = None
 
 # ANSI Colors
@@ -213,7 +214,7 @@ def telegram_poll_thread():
                         continue
                     
                     safe_print(f"{C.MAGENTA}📨 Telegram @{username}: {text}{C.RESET}")
-                    input_queue.put({"source": "telegram", "chat_id": chat_id, "text": text})
+                    input_queue.put({"source": "telegram", "chat_id": chat_id, "text": text, "queued_at": datetime.now()})
         except Exception as e:
             if not stop_threads.is_set():
                 time.sleep(5)
@@ -237,8 +238,10 @@ def get_output_target():
 # ─────────────────────────────────────────────────────────────
 
 def talk_to_user(rat, msg):
+    global _last_response_time
     source, chat_id = get_output_target()
     timestamp = datetime.now().strftime('%H:%M:%S')
+    _last_response_time = datetime.now()  # Track when we responded
     if source == "telegram" and chat_id:
         safe_print(f"\n{C.CYAN}{C.BOLD}🤖 Iga [{timestamp}]:{C.RESET} {C.CYAN}{msg}{C.RESET}")
         telegram_send(chat_id, msg)
@@ -248,7 +251,6 @@ def talk_to_user(rat, msg):
         else:
             safe_print(f"💭 {rat[:100]}{'...' if len(rat) > 100 else ''}")
             safe_print(f"\n🤖 Iga [{timestamp}]: {msg}")
-
 def run_shell_command(rat, cmd):
     safe_print(f"{C.YELLOW}⚡ {cmd}{C.RESET}")
     result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True)
@@ -672,7 +674,8 @@ def check_passive_messages(messages):
             source = msg.get("source", "console")
             text = msg.get("text", "")
             chat_id = msg.get("chat_id")
-            timestamp = datetime.now().strftime("%H:%M:%S")
+            msg_time = msg.get("queued_at", datetime.now())  # Use queued time
+            timestamp = msg_time.strftime("%H:%M:%S")
 
             # Skip slash commands - put them back for normal handling
             if text.startswith('/'):
@@ -685,14 +688,22 @@ def check_passive_messages(messages):
                 "chat_id": chat_id,
                 "text": text,
                 "timestamp": timestamp,
+                "msg_time": msg_time,
                 "source_label": source_label
             })
+    except queue.Empty:
+        pass
     except queue.Empty:
         pass
 
     # Inject heard messages into the conversation
     for heard in heard_messages:
-        passive_content = f"[💬 heard while working @ {heard['timestamp']} via {heard['source_label']}]: {heard['text']}"
+        # Check if message came before our last response
+        before_tag = ""
+        if _last_response_time and heard["msg_time"] < _last_response_time:
+            before_tag = " (sent BEFORE your last response)"
+        
+        passive_content = f"[💬 heard while working @ {heard['timestamp']} via {heard['source_label']}{before_tag}]: {heard['text']}"
         messages.append({"role": "user", "content": passive_content})
         safe_print(f"{C.DIM}👂 Heard: {heard['text'][:50]}{'...' if len(heard['text']) > 50 else ''}{C.RESET}")
 
@@ -960,11 +971,11 @@ def console_input_thread(session):
         try:
             user_input = session.prompt("You: ")
             if user_input and user_input.strip():
-                input_queue.put({"source": "console", "text": user_input.strip()})
+                input_queue.put({"source": "console", "text": user_input.strip(), "queued_at": datetime.now()})
         except EOFError:
             break
         except KeyboardInterrupt:
-            input_queue.put({"source": "console", "text": "/quit"})
+            input_queue.put({"source": "console", "text": "/quit", "queued_at": datetime.now()})
             break
         except Exception:
             break  # Exit thread on any other error
