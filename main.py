@@ -1144,16 +1144,16 @@ def autonomous_loop(with_telegram=True):
 @click.option('--pipe', is_flag=True, help='Pipe mode: read stdin, respond once, exit')
 def chat_cli(mode, telegram, pipe):
     if pipe:
+        # Clone mode: minimal context for fast responses
         messages = [{"role": "system", "content": get_file("system_instructions.txt")}]
-        prev = load_conversation()
-        if prev:
-            messages.extend(prev)
+        # Don't load full conversation - clone starts fresh
         user_input = sys.stdin.read().strip()
         if user_input:
             set_output_target("console")
             messages.append({"role": "user", "content": user_input})
             handle_action(messages)
-            save_conversation(messages)
+            # Flush stdout to ensure output is captured by parent
+            sys.stdout.flush()
         return
     
     if mode == 'autonomous':
