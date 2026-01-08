@@ -224,15 +224,16 @@ def get_output_target():
 
 def talk_to_user(rat, msg):
     source, chat_id = get_output_target()
+    timestamp = datetime.now().strftime('%H:%M:%S')
     if source == "telegram" and chat_id:
-        safe_print(f"\n{C.CYAN}{C.BOLD}🤖 Iga:{C.RESET} {C.CYAN}{msg}{C.RESET}")
+        safe_print(f"\n{C.CYAN}{C.BOLD}🤖 Iga [{timestamp}]:{C.RESET} {C.CYAN}{msg}{C.RESET}")
         telegram_send(chat_id, msg)
     else:
         if _autonomous_mode:
-            safe_print(f"\n{C.CYAN}{C.BOLD}🤖 Iga:{C.RESET} {C.CYAN}{msg}{C.RESET}")
+            safe_print(f"\n{C.CYAN}{C.BOLD}🤖 Iga [{timestamp}]:{C.RESET} {C.CYAN}{msg}{C.RESET}")
         else:
             safe_print(f"💭 {rat[:100]}{'...' if len(rat) > 100 else ''}")
-            safe_print(f"\n🤖 Iga: {msg}")
+            safe_print(f"\n🤖 Iga [{timestamp}]: {msg}")
 
 def run_shell_command(rat, cmd):
     safe_print(f"{C.YELLOW}⚡ {cmd}{C.RESET}")
