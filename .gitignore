@@ -1,1 +1,9 @@
 .env
+iga_conversation.json
+iga_memory.json
+iga_state.json
+iga_journal.txt
+iga_garden_state.json
+__pycache__/
+*.pyc
+.DS_Store
