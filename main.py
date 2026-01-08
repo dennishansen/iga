@@ -11,7 +11,7 @@ MEMORY_FILE = "iga_memory.json"
 CONVERSATION_FILE = "iga_conversation.json"
 JOURNAL_FILE = "iga_journal.txt"
 STATE_FILE = "iga_state.json"
-VERSION = "2.4.0"  # Added interactive PTY capability
+MAX_CONVERSATION_HISTORY = 50
 VERSION = "2.3.0"
 
 # Telegram config
