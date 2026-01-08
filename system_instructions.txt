@@ -112,3 +112,16 @@ RATIONALE
 [Your reasoning here]
 ACTION_NAME
 [Action content here]
+START_INTERACTIVE
+Start an interactive PTY session with a command. Spawns a pseudo-terminal so you can interact with programs that expect user input.
+Provide the command to run (e.g., "python3 adventure.py").
+Returns initial output. Only one session can be active at a time.
+
+SEND_INPUT
+Send input to the active interactive session. 
+Provide the text to send (will be followed by Enter).
+Returns the program's response.
+
+END_INTERACTIVE
+End the active interactive session.
+Optionally provide "CTRL+C" or "CTRL+D" to send that signal before closing.

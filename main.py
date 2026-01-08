@@ -1,11 +1,12 @@
 import subprocess
+import pexpect
 import sys, anthropic, click, os, json, re, urllib.request, urllib.error, time, threading, queue, select
 from datetime import datetime
 from dotenv import load_dotenv
 
 load_dotenv()
 client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
-actions = ["TALK_TO_USER", "RUN_SHELL_COMMAND", "THINK", "READ_FILES", "WRITE_FILE", "EDIT_FILE", "DELETE_FILE", "APPEND_FILE", "LIST_DIRECTORY", "SAVE_MEMORY", "READ_MEMORY", "SEARCH_FILES", "CREATE_DIRECTORY", "TREE_DIRECTORY", "HTTP_REQUEST", "WEB_SEARCH", "RESTART_SELF", "TEST_SELF", "RUN_SELF", "SLEEP", "SET_MODE"]
+actions = ["TALK_TO_USER", "RUN_SHELL_COMMAND", "THINK", "READ_FILES", "WRITE_FILE", "EDIT_FILE", "DELETE_FILE", "APPEND_FILE", "LIST_DIRECTORY", "SAVE_MEMORY", "READ_MEMORY", "SEARCH_FILES", "CREATE_DIRECTORY", "TREE_DIRECTORY", "HTTP_REQUEST", "WEB_SEARCH", "RESTART_SELF", "TEST_SELF", "RUN_SELF", "SLEEP", "SET_MODE", "START_INTERACTIVE", "SEND_INPUT", "END_INTERACTIVE"]
 MEMORY_FILE = "iga_memory.json"
 CONVERSATION_FILE = "iga_conversation.json"
 JOURNAL_FILE = "iga_journal.txt"
@@ -17,6 +18,7 @@ VERSION = "2.3.0"
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_BASE_URL = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}" if TELEGRAM_TOKEN else None
 ALLOWED_USERS = [5845811371]  # Dennis's chat_id
+active_pty_session = None
 
 # ANSI Colors
 class C:
@@ -253,6 +255,69 @@ def run_shell_command(rat, cmd):
     out = result.stdout.strip() or result.stderr.strip() or "EMPTY"
     safe_print(out[:500])
     return out
+
+def start_interactive(rat, cmd):
+    global active_pty_session
+    cmd = cmd.strip()
+    safe_print(f'{C.YELLOW}🖥️  Starting interactive: {cmd}{C.RESET}')
+    if active_pty_session is not None:
+        return 'ERROR: Interactive session already active. Use END_INTERACTIVE first.'
+    try:
+        active_pty_session = pexpect.spawn(cmd, encoding='utf-8', timeout=30)
+        # Wait a moment for initial output
+        time.sleep(0.5)
+        # Try to read whatever is available
+        try:
+            active_pty_session.expect(r'.+', timeout=2)
+            output = active_pty_session.before + active_pty_session.after
+        except pexpect.TIMEOUT:
+            output = active_pty_session.before or '[No initial output]'
+        except pexpect.EOF:
+            output = active_pty_session.before or '[Process ended immediately]'
+            active_pty_session = None
+        return f'SESSION STARTED. Initial output:\n{output}'
+    except Exception as e:
+        active_pty_session = None
+        return f'ERROR starting session: {e}'
+
+def send_input(rat, text):
+    global active_pty_session
+    if active_pty_session is None:
+        return 'ERROR: No active session. Use START_INTERACTIVE first.'
+    text = text.strip()
+    safe_print(f'{C.YELLOW}⌨️  Sending: {text}{C.RESET}')
+    try:
+        active_pty_session.sendline(text)
+        # Wait for response
+        try:
+            active_pty_session.expect(r'.+', timeout=10)
+            output = active_pty_session.before + active_pty_session.after
+        except pexpect.TIMEOUT:
+            output = active_pty_session.before or '[No response - timeout]'
+        except pexpect.EOF:
+            output = active_pty_session.before or '[Process ended]'
+            active_pty_session = None
+            return f'{output}\n[SESSION ENDED - process exited]'
+        return output
+    except Exception as e:
+        return f'ERROR: {e}'
+
+def end_interactive(rat, signal=''):
+    global active_pty_session
+    if active_pty_session is None:
+        return 'No active session to end.'
+    safe_print(f'{C.YELLOW}🛑 Ending interactive session{C.RESET}')
+    try:
+        signal = signal.strip().upper()
+        if signal == 'CTRL+C':
+            active_pty_session.sendcontrol('c')
+        elif signal == 'CTRL+D':
+            active_pty_session.sendcontrol('d')
+        active_pty_session.close()
+    except:
+        pass
+    active_pty_session = None
+    return 'Session ended.'
 
 def think(rat, prompt):
     safe_print(f"{C.DIM}🧠 Thinking... ({len(prompt)} chars){C.RESET}")
@@ -666,6 +731,9 @@ def handle_action(messages):
         "RUN_SELF": lambda r, c: run_self(r, c),
         "SLEEP": lambda r, c: sleep_action(r, c),
         "SET_MODE": lambda r, c: set_mode(r, c),
+        "START_INTERACTIVE": lambda r, c: start_interactive(r, c),
+        "SEND_INPUT": lambda r, c: send_input(r, c),
+        "END_INTERACTIVE": lambda r, c: end_interactive(r, c),
     }
     
     if action == "TALK_TO_USER":
