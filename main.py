@@ -1050,32 +1050,47 @@ def autonomous_loop(with_telegram=True):
                     safe_print("😊 Woke up!")
                     if with_telegram and TELEGRAM_TOKEN:
                         telegram_send(ALLOWED_USERS[0], "😊 Woke up!")
-
-                
+                # Handle slash commands first
                 for msg in pending:
-                    source = msg.get("source", "console")
                     text = msg.get("text", "")
-                    chat_id = msg.get("chat_id")
-                    
-                    # Handle slash commands
                     if text.startswith('/'):
+                        source = msg.get("source", "console")
+                        chat_id = msg.get("chat_id")
                         result = handle_slash_command(text.lower(), source, chat_id)
                         if result == "QUIT":
                             stop_threads.set()
                             break
-                        if result:
-                            continue
-                    
-                    # Regular message
-                    safe_print(f"{C.GREEN}👤 {'Telegram' if source == 'telegram' else 'Console'}: {text}{C.RESET}")
-                    set_output_target(source, chat_id)
-                    messages.append({"role": "user", "content": text})
-                    messages = handle_action(messages)
-                    save_conversation(messages)
-                    last_autonomous = time.time()
+                        pending.remove(msg)  # Remove handled slash commands
                 
                 if stop_threads.is_set():
                     break
+                
+                # Batch regular messages together
+                regular_messages = [msg for msg in pending if not msg.get("text", "").startswith('/')]
+                if regular_messages:
+                    # Use the source/chat_id of the last message for output
+                    last_msg = regular_messages[-1]
+                    source = last_msg.get("source", "console")
+                    chat_id = last_msg.get("chat_id")
+                    set_output_target(source, chat_id)
+                    
+                    # Display and collect all messages
+                    combined_texts = []
+                    for msg in regular_messages:
+                        text = msg.get("text", "")
+                        msg_source = msg.get("source", "console")
+                        safe_print(f"{C.GREEN}👤 {'Telegram' if msg_source == 'telegram' else 'Console'}: {text}{C.RESET}")
+                        combined_texts.append(text)
+                    
+                    # Add as one combined message (or multiple user messages)
+                    for text in combined_texts:
+                        messages.append({"role": "user", "content": text})
+                    
+                    # ONE API call for all messages
+                    messages = handle_action(messages)
+                    save_conversation(messages)
+                    last_autonomous = time.time()
+
                 
                 # Autonomous tick
                 if state["mode"] != "sleeping" and (now - last_autonomous) >= state["tick_interval"]:
