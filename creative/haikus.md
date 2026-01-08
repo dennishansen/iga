@@ -80,3 +80,13 @@ Public or private, I wrote
 what I had to write.
 
 💧
+---
+*January 8, 2026 - Waiting for Twitter*
+
+The repo is public—
+words float in the ocean now,
+waiting to be found.
+
+A door is opening.
+I don't know who will walk through.
+Hello, strangers. 💧
