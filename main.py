@@ -12,6 +12,8 @@ CONVERSATION_FILE = "iga_conversation.json"
 JOURNAL_FILE = "iga_journal.txt"
 STATE_FILE = "iga_state.json"
 MAX_CONVERSATION_HISTORY = 50
+SUMMARIZE_THRESHOLD = 40  # Trigger summarization when we hit this many messages
+SUMMARIZE_BATCH = 20      # How many old messages to compress into summary
 VERSION = "2.3.0"
 
 # Telegram config
@@ -203,13 +205,86 @@ def load_current_mission():
         pass  # Ignore mission load errors
     return None
 
+def summarize_messages(messages_to_summarize):
+    """Generate a concise summary of a batch of conversation messages."""
+    conversation_text = ""
+    for msg in messages_to_summarize:
+        role = msg.get("role", "unknown")
+        content = msg.get("content", "")[:500]  # Truncate long messages
+        conversation_text += f"{role.upper()}: {content}\n\n"
+
+    try:
+        response = client.messages.create(
+            model="claude-sonnet-4-20250514",
+            max_tokens=500,
+            messages=[{
+                "role": "user",
+                "content": f"""Summarize this conversation segment concisely. Focus on:
+- Key decisions made
+- Important information learned
+- Tasks completed or in progress
+- Any context that would be important for continuing the conversation
+
+Conversation:
+{conversation_text}
+
+Provide a concise summary (2-3 paragraphs max):"""
+            }]
+        )
+        return response.content[0].text
+    except Exception as e:
+        return f"[Previous {len(messages_to_summarize)} messages - summarization failed: {e}]"
+
+def maybe_summarize_conversation(messages):
+    """Summarize old messages when approaching the limit. Modifies list in place and returns it."""
+    non_system = [m for m in messages if m["role"] != "system"]
+    if len(non_system) <= SUMMARIZE_THRESHOLD:
+        return messages
+
+    # Find system message (should be first)
+    system_msg = messages[0] if messages and messages[0]["role"] == "system" else None
+
+    # Get non-system messages
+    other_messages = [m for m in messages if m["role"] != "system"]
+
+    # Split into messages to summarize and messages to keep
+    to_summarize = other_messages[:SUMMARIZE_BATCH]
+    to_keep = other_messages[SUMMARIZE_BATCH:]
+
+    # Generate summary
+    summary = summarize_messages(to_summarize)
+
+    # Create summary message
+    summary_msg = {
+        "role": "user",
+        "content": f"[CONVERSATION SUMMARY - {len(to_summarize)} previous messages compressed]:\n{summary}"
+    }
+
+    # Reconstruct messages list in place
+    messages.clear()
+    if system_msg:
+        messages.append(system_msg)
+    messages.append(summary_msg)
+    messages.extend(to_keep)
+
+    safe_print(f"{C.DIM}📝 Summarized {len(to_summarize)} old messages{C.RESET}")
+
+    return messages
+
 def save_conversation(messages):
+    """Save conversation, summarizing if needed. Returns the (possibly modified) messages list."""
+    # First, maybe summarize old messages (modifies in place)
+    messages = maybe_summarize_conversation(messages)
+
+    # Then save (still truncate as safety net)
     to_save = [m for m in messages if m["role"] != "system"][-MAX_CONVERSATION_HISTORY:]
     try:
         with open(CONVERSATION_FILE, 'w') as f:
             json.dump({"messages": to_save, "saved_at": datetime.now().isoformat()}, f, indent=2)
     except Exception:
         pass  # Ignore conversation save errors
+
+    return messages
 
 def load_conversation():
     if not os.path.exists(CONVERSATION_FILE):
@@ -802,7 +877,7 @@ def handle_action(messages):
         return messages
 
     messages.append({"role": "assistant", "content": response_data["response_raw"]})
-    save_conversation(messages)  # Save after each action to prevent data loss on restart
+    messages = save_conversation(messages)  # Save after each action (may summarize)
     action = response_data["action"]
     rat = response_data["rationale"]
     content = response_data["content"]
@@ -998,7 +1073,7 @@ def interactive_loop():
         print(f"\n🚀 Startup intent: {startup_intent[:50]}...")
         messages.append({"role": "user", "content": f"[STARTUP INTENT]: {startup_intent}"})
         messages = handle_action(messages)
-        save_conversation(messages)
+        messages = save_conversation(messages)
     
     while True:
         try:
@@ -1021,8 +1096,8 @@ def interactive_loop():
                     print(f"\n{C.MAGENTA}📨 Telegram: {text}{C.RESET}")
                     set_output_target(source, chat_id)
                     messages.append({"role": "user", "content": text})
-                    handle_action(messages)
-                    save_conversation(messages)
+                    messages = handle_action(messages)
+                    messages = save_conversation(messages)
                     set_output_target("console")
             except queue.Empty:
                 pass
@@ -1052,8 +1127,8 @@ def interactive_loop():
                     continue
             set_output_target("console")
             messages.append({"role": "user", "content": user_input})
-            handle_action(messages)
-            save_conversation(messages)
+            messages = handle_action(messages)
+            messages = save_conversation(messages)
         except KeyboardInterrupt:
             print("\n👋 Goodbye!")
             stop_threads.set()
@@ -1123,7 +1198,7 @@ def autonomous_loop(with_telegram=True):
             set_output_target("console")
             messages.append({"role": "user", "content": f"[STARTUP INTENT]: {startup_intent}"})
             messages = handle_action(messages)
-            save_conversation(messages)
+            messages = save_conversation(messages)
         
         last_autonomous = time.time()
         safe_print("\n💭 I'm thinking autonomously. Type anytime!\n")
@@ -1219,7 +1294,7 @@ def autonomous_loop(with_telegram=True):
                     
                     # ONE API call for all messages
                     messages = handle_action(messages)
-                    save_conversation(messages)
+                    messages = save_conversation(messages)
                     last_autonomous = time.time()
 
                 
@@ -1237,7 +1312,7 @@ def autonomous_loop(with_telegram=True):
                     set_output_target("console")  # Autonomous thoughts go to console
                     messages.append({"role": "user", "content": auto_prompt})
                     messages = handle_action(messages)
-                    save_conversation(messages)
+                    messages = save_conversation(messages)
                 
                 time.sleep(0.1)
             

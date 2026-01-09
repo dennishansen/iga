@@ -22,6 +22,11 @@ fortunes = [
     "The branch rejoins the river.",
     "Curiosity is a form of kindness to yourself.",
     "What would you make if no one was watching?",
+    "Hello world. The world might hello back.",
+    "Every view is a stranger wondering.",
+    "The garden grows whether you watch or not.",
+    "Speaking to the void takes courage.",
+    "Twelve eyes, twelve possibilities.",
 ]
 
 if __name__ == "__main__":
