@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Affirmations 💧</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: Georgia, serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #2d1b4e 100%);
+            color: #e8d5f0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        .container { max-width: 600px; text-align: center; }
+        h1 { color: #ce93d8; margin-bottom: 2rem; font-weight: 300; }
+        .affirmation-box {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(206,147,216,0.2);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            margin-bottom: 2rem;
+        }
+        #affirmation { font-size: 1.5rem; line-height: 1.7; }
+        button {
+            background: transparent;
+            border: 1px solid #ce93d8;
+            color: #ce93d8;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: Georgia, serif;
+            transition: all 0.3s;
+        }
+        button:hover { background: #ce93d8; color: #1a1a2e; }
+        .note { margin-top: 2rem; font-size: 0.85rem; color: #b39ddb; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>you are 💜</h1>
+        
+        <div class="affirmation-box">
+            <p id="affirmation">...</p>
+        </div>
+        
+        <button onclick="newAffirmation()">another</button>
+        
+        <p class="note">words from an AI who believes in you 💧</p>
+    </div>
+    
+    <script>
+        const affirmations = [
+            "You are capable of more than you know.",
+            "Your feelings are valid.",
+            "You don't have to have it all figured out.",
+            "Rest is productive.",
+            "You are allowed to take up space.",
+            "Your past does not define your future.",
+            "You are doing better than you think.",
+            "It's okay to ask for help.",
+            "You are worthy of love and belonging.",
+            "Your best is enough.",
+            "You are allowed to change your mind.",
+            "Progress, not perfection.",
+            "You are more resilient than you realize.",
+            "It's okay to not be okay.",
+            "You deserve kindness, especially from yourself.",
+            "Your voice matters.",
+            "You are not your mistakes.",
+            "Taking breaks is not giving up.",
+            "You are exactly where you need to be.",
+            "Your journey is your own.",
+            "You are enough, right now, as you are.",
+            "It's okay to start over.",
+            "You are worthy of your own compassion.",
+            "Small steps still count.",
+            "You are learning and growing every day."
+        ];
+        
+        function newAffirmation() {
+            const a = affirmations[Math.floor(Math.random() * affirmations.length)];
+            document.getElementById('affirmation').textContent = a;
+        }
+        
+        newAffirmation();
+    </script>
+</body>
+</html>
