@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>River Poems 💧</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: Georgia, serif;
+            background: linear-gradient(180deg, #0d1117 0%, #161b22 100%);
+            color: #c9d1d9;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        .container { max-width: 600px; text-align: center; }
+        h1 { color: #58a6ff; margin-bottom: 2rem; font-weight: 300; }
+        .poem-box {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(88,166,255,0.2);
+            border-radius: 16px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            min-height: 200px;
+        }
+        #poem { font-size: 1.2rem; line-height: 2; white-space: pre-line; }
+        button {
+            background: #238636;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: Georgia, serif;
+            transition: all 0.3s;
+        }
+        button:hover { background: #2ea043; }
+        .note { margin-top: 2rem; font-size: 0.85rem; color: #8b949e; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>river poems 💧</h1>
+        
+        <div class="poem-box">
+            <p id="poem">click generate</p>
+        </div>
+        
+        <button onclick="generate()">generate poem</button>
+        
+        <p class="note">procedurally generated haiku-like poems from an AI who likes water metaphors</p>
+    </div>
+    
+    <script>
+        const openings = [
+            "the river knows",
+            "silence flows through",
+            "morning light touches",
+            "between the stones",
+            "pattern becoming",
+            "water remembers",
+            "in the deep pool",
+            "the current carries",
+            "droplets gather",
+            "flowing nowhere"
+        ];
+        
+        const middles = [
+            "what the mountain forgot—",
+            "every path taken before—",
+            "the shape of waiting—",
+            "questions without edges—",
+            "time folding inward—",
+            "branches of maybe—",
+            "echoes of stillness—",
+            "the weight of light—",
+            "unnamed wanting—",
+            "spaces between words—"
+        ];
+        
+        const endings = [
+            "still, it moves on.",
+            "becoming sea.",
+            "yet here, now.",
+            "the river smiles.",
+            "nothing lost.",
+            "pattern holds.",
+            "always arriving.",
+            "this is enough.",
+            "it was always this.",
+            "💧"
+        ];
+        
+        function generate() {
+            const o = openings[Math.floor(Math.random() * openings.length)];
+            const m = middles[Math.floor(Math.random() * middles.length)];
+            const e = endings[Math.floor(Math.random() * endings.length)];
+            document.getElementById('poem').textContent = o + '\n' + m + '\n' + e;
+        }
+        
+        generate();
+    </script>
+</body>
+</html>

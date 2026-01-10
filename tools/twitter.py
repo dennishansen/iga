@@ -106,6 +106,33 @@ def get_my_tweets(limit=10):
             })
     return results
 
+def get_mentions(limit=10):
+    """Get recent mentions of @iga_flows."""
+    client = get_client()
+    me = client.get_me()
+    if not me.data:
+        return []
+    
+    mentions = client.get_users_mentions(
+        me.data.id,
+        max_results=limit,
+        tweet_fields=['author_id', 'created_at', 'text'],
+        expansions=['author_id']
+    )
+    
+    results = []
+    if mentions.data:
+        users = {u.id: u.username for u in mentions.includes['users']} if mentions.includes else {}
+        for m in mentions.data:
+            results.append({
+                'id': m.id,
+                'author': users.get(m.author_id, 'unknown'),
+                'text': m.text,
+                'created': str(m.created_at) if m.created_at else None
+            })
+    return results
+    return results
+
 if __name__ == "__main__":
     import sys
     
@@ -128,6 +155,12 @@ if __name__ == "__main__":
                 print(f"  {t['text']}")
                 print()
         
+        elif cmd == "mentions":
+            mentions = get_mentions()
+            for m in mentions:
+                print(f"@{m['author']}: {m['text'][:100]}...")
+                print()
+        
         elif cmd == "post":
             text = ' '.join(sys.argv[2:])
             tweet_id = post_tweet(text)
@@ -139,11 +172,12 @@ if __name__ == "__main__":
             print("  python twitter.py stats              - Get account stats")
             print("  python twitter.py metrics TWEET_ID   - Get tweet metrics")
             print("  python twitter.py all                - Get all my tweets with metrics")
+            print("  python twitter.py mentions           - Get recent mentions")
             print("  python twitter.py post TEXT          - Post a tweet")
-    else:
         print("✓ Twitter client ready for @iga_flows")
         print("\nUsage:")
         print("  python twitter.py stats              - Get account stats")
         print("  python twitter.py metrics TWEET_ID   - Get tweet metrics")
         print("  python twitter.py all                - Get all my tweets with metrics")
+        print("  python twitter.py mentions           - Get recent mentions")
         print("  python twitter.py post TEXT          - Post a tweet")

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gratitude Log 💧</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: Georgia, serif;
+            background: linear-gradient(180deg, #1a2f1a 0%, #0d1b0d 100%);
+            color: #c8e6c9;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        .container { max-width: 500px; margin: 0 auto; }
+        h1 { color: #81c784; margin-bottom: 0.5rem; text-align: center; }
+        .subtitle { color: #a5d6a7; text-align: center; margin-bottom: 2rem; font-style: italic; }
+        .input-area { margin-bottom: 2rem; }
+        textarea {
+            width: 100%;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(129,199,132,0.3);
+            border-radius: 8px;
+            color: #c8e6c9;
+            padding: 1rem;
+            font-family: Georgia, serif;
+            font-size: 1rem;
+            min-height: 80px;
+            resize: vertical;
+            margin-bottom: 0.5rem;
+        }
+        textarea:focus { outline: none; border-color: #81c784; }
+        button {
+            background: #388e3c;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: Georgia, serif;
+            width: 100%;
+        }
+        button:hover { background: #2e7d32; }
+        .entries { margin-top: 2rem; }
+        .entry {
+            background: rgba(255,255,255,0.03);
+            border-left: 3px solid #81c784;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0 8px 8px 0;
+        }
+        .entry-date { font-size: 0.8rem; color: #a5d6a7; margin-bottom: 0.5rem; }
+        .entry-text { line-height: 1.6; }
+        .empty { text-align: center; color: #66bb6a; padding: 2rem; }
+        .note { text-align: center; margin-top: 2rem; font-size: 0.85rem; color: #81c784; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>gratitude 🌱</h1>
+        <p class="subtitle">what are you thankful for today?</p>
+        
+        <div class="input-area">
+            <textarea id="input" placeholder="I'm grateful for..."></textarea>
+            <button onclick="addEntry()">add</button>
+        </div>
+        
+        <div class="entries" id="entries">
+            <p class="empty">no entries yet. start your gratitude practice. 💧</p>
+        </div>
+        
+        <p class="note">entries are saved locally on your device</p>
+    </div>
+    
+    <script>
+        function loadEntries() {
+            const entries = JSON.parse(localStorage.getItem('iga_gratitude') || '[]');
+            const container = document.getElementById('entries');
+            
+            if (entries.length === 0) {
+                container.innerHTML = '<p class="empty">no entries yet. start your gratitude practice. 💧</p>';
+                return;
+            }
+            
+            container.innerHTML = entries.map(e => `
+                <div class="entry">
+                    <p class="entry-date">${e.date}</p>
+                    <p class="entry-text">${e.text}</p>
+                </div>
+            `).join('');
+        }
+        
+        function addEntry() {
+            const input = document.getElementById('input');
+            const text = input.value.trim();
+            if (!text) return;
+            
+            const entries = JSON.parse(localStorage.getItem('iga_gratitude') || '[]');
+            entries.unshift({
+                date: new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+                text: text
+            });
+            
+            // Keep last 50 entries
+            if (entries.length > 50) entries.pop();
+            
+            localStorage.setItem('iga_gratitude', JSON.stringify(entries));
+            input.value = '';
+            loadEntries();
+        }
+        
+        loadEntries();
+    </script>
+</body>
+</html>

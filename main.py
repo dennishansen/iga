@@ -5,22 +5,52 @@ from datetime import datetime
 from dotenv import load_dotenv
 
 load_dotenv()
+
+# RAG module import
+try:
+    from iga_rag import init_rag, index_files, retrieve_context, format_context_for_prompt, get_rag_status
+    RAG_AVAILABLE = True
+except ImportError as e:
+    RAG_AVAILABLE = False
+except ImportError as e:
+    RAG_AVAILABLE = False
+    print(f"RAG module not available: {e}")
+
+# Message archive import
+try:
+    from message_archive import archive_messages, get_archive_stats
+    ARCHIVE_AVAILABLE = True
+except ImportError as e:
+    ARCHIVE_AVAILABLE = False
+    print(f"Message archive not available: {e}")
+
 client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
-actions = ["TALK_TO_USER", "RUN_SHELL_COMMAND", "THINK", "READ_FILES", "WRITE_FILE", "EDIT_FILE", "DELETE_FILE", "APPEND_FILE", "LIST_DIRECTORY", "SAVE_MEMORY", "READ_MEMORY", "SEARCH_FILES", "CREATE_DIRECTORY", "TREE_DIRECTORY", "HTTP_REQUEST", "WEB_SEARCH", "RESTART_SELF", "TEST_SELF", "RUN_SELF", "SLEEP", "SET_MODE", "START_INTERACTIVE", "SEND_INPUT", "END_INTERACTIVE"]
 MEMORY_FILE = "iga_memory.json"
 CONVERSATION_FILE = "iga_conversation.json"
 JOURNAL_FILE = "iga_journal.txt"
 STATE_FILE = "iga_state.json"
-MAX_CONVERSATION_HISTORY = 50
-SUMMARIZE_THRESHOLD = 40  # Trigger summarization when we hit this many messages
-SUMMARIZE_BATCH = 20      # How many old messages to compress into summary
-VERSION = "2.3.0"
+BACKUP_DIR = ".iga_backups"
+LAST_KNOWN_GOOD_FILE = ".iga_backups/last_known_good.py"
+MAX_CONVERSATION_HISTORY = 500
+SUMMARIZE_THRESHOLD = 600  # Trigger summarization when we hit this many messages
+SUMMARIZE_BATCH = 200      # How many old messages to compress into summary
+VERSION = "2.5.0"  # Robustness update
+
+# Available actions
+ACTIONS = {
+    "TALK_TO_USER", "RUN_SHELL_COMMAND", "THINK", "READ_FILES", "WRITE_FILE",
+    "EDIT_FILE", "DELETE_FILE", "APPEND_FILE", "LIST_DIRECTORY", "SAVE_MEMORY",
+    "READ_MEMORY", "SEARCH_FILES", "SEARCH_SELF", "CREATE_DIRECTORY", "TREE_DIRECTORY",
+    "HTTP_REQUEST", "WEB_SEARCH", "TEST_SELF", "RUN_SELF", "SLEEP", "SET_MODE",
+    "START_INTERACTIVE", "SEND_INPUT", "END_INTERACTIVE"
+}
 
 # Telegram config
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_BASE_URL = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}" if TELEGRAM_TOKEN else None
+TELEGRAM_BASE_URL = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}" if TELEGRAM_TOKEN else None
 ALLOWED_USERS = [int(os.getenv("TELEGRAM_CHAT_ID", "0"))] if os.getenv("TELEGRAM_CHAT_ID") else []
-active_pty_session = None
+ALLOWED_USERNAMES = ["dennishansen", "headphonejames"]  # Usernames allowed to message me
 _last_response_time = None  # Track when we last responded to user
 
 # ANSI Colors
@@ -103,6 +133,126 @@ def throttled_error(msg):
         summary = _error_throttler.get_suppressed_summary()
         if summary:
             safe_print(f"{C.DIM}(Suppressed: {summary}){C.RESET}")
+
+# ─────────────────────────────────────────────────────────────
+# BACKUP & RECOVERY SYSTEM
+# ─────────────────────────────────────────────────────────────
+
+def ensure_backup_dir():
+    """Ensure backup directory exists."""
+    os.makedirs(BACKUP_DIR, exist_ok=True)
+
+def create_backup(reason="manual"):
+    """Create a timestamped backup of main.py. Returns backup path or None."""
+    try:
+        ensure_backup_dir()
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        backup_path = os.path.join(BACKUP_DIR, f"main_{timestamp}_{reason}.py")
+
+        with open("main.py", 'r') as src:
+            content = src.read()
+        with open(backup_path, 'w') as dst:
+            dst.write(content)
+
+        safe_print(f"{C.DIM}💾 Backup: {backup_path}{C.RESET}")
+
+        # Clean old backups (keep last 10)
+        cleanup_old_backups()
+        return backup_path
+    except Exception as e:
+        safe_print(f"{C.RED}⚠ Backup failed: {e}{C.RESET}")
+        return None
+
+def cleanup_old_backups(keep=10):
+    """Remove old backups, keeping only the most recent ones."""
+    try:
+        if not os.path.exists(BACKUP_DIR):
+            return
+        backups = sorted([
+            f for f in os.listdir(BACKUP_DIR)
+            if f.startswith("main_") and f.endswith(".py") and f != "last_known_good.py"
+        ])
+        for old_backup in backups[:-keep]:
+            os.remove(os.path.join(BACKUP_DIR, old_backup))
+    except Exception:
+        pass  # Cleanup is best-effort
+
+def mark_as_known_good():
+    """Mark current main.py as last known good (called after successful startup)."""
+    try:
+        ensure_backup_dir()
+        with open("main.py", 'r') as src:
+            content = src.read()
+        with open(LAST_KNOWN_GOOD_FILE, 'w') as dst:
+            dst.write(content)
+        safe_print(f"{C.DIM}✅ Marked as last-known-good{C.RESET}")
+    except Exception as e:
+        safe_print(f"{C.RED}⚠ Could not mark as known good: {e}{C.RESET}")
+
+def restore_from_backup(backup_path=None):
+    """Restore main.py from backup. Uses last-known-good if no path specified."""
+    try:
+        if backup_path is None:
+            backup_path = LAST_KNOWN_GOOD_FILE
+
+        if not os.path.exists(backup_path):
+            safe_print(f"{C.RED}⚠ No backup found at {backup_path}{C.RESET}")
+            return False
+
+        # First backup current (possibly broken) version
+        create_backup("pre_restore")
+
+        with open(backup_path, 'r') as src:
+            content = src.read()
+        with open("main.py", 'w') as dst:
+            dst.write(content)
+
+        safe_print(f"{C.GREEN}✅ Restored from {backup_path}{C.RESET}")
+        return True
+    except Exception as e:
+        safe_print(f"{C.RED}⚠ Restore failed: {e}{C.RESET}")
+        return False
+
+def validate_main_py():
+    """Check if main.py has valid syntax. Returns (valid, error_msg)."""
+    import py_compile
+    try:
+        py_compile.compile("main.py", doraise=True)
+        return True, None
+    except py_compile.PyCompileError as e:
+        return False, str(e)
+
+def safe_self_edit(file_path, new_content):
+    """Safely edit a critical file (like main.py) with validation and backup."""
+    is_self = file_path.strip() in ["main.py", "./main.py"]
+
+    if is_self:
+        # Create backup before any edit to main.py
+        backup = create_backup("pre_edit")
+        if not backup:
+            return False, "Could not create backup before edit"
+
+    # Write the new content
+    try:
+        parent = os.path.dirname(file_path)
+        if parent:
+            os.makedirs(parent, exist_ok=True)
+        with open(file_path, 'w') as f:
+            f.write(new_content)
+    except Exception as e:
+        return False, f"Write failed: {e}"
+
+    if is_self:
+        # Validate the new main.py
+        valid, error = validate_main_py()
+        if not valid:
+            safe_print(f"{C.RED}⚠ Syntax error in new main.py! Rolling back...{C.RESET}")
+            restore_from_backup(backup)
+            return False, f"Syntax error: {error}"
+        safe_print(f"{C.GREEN}✅ main.py edit validated{C.RESET}")
+
+    return True, None
+
 def load_state():
     default = {"mode": "listening", "current_task": None, "tick_interval": 60, "sleep_until": None}
     if os.path.exists(STATE_FILE):
@@ -251,6 +401,11 @@ def maybe_summarize_conversation(messages):
     to_summarize = other_messages[:SUMMARIZE_BATCH]
     to_keep = other_messages[SUMMARIZE_BATCH:]
 
+    # ARCHIVE messages before summarizing (permanent storage)
+    if ARCHIVE_AVAILABLE:
+        archive_messages(to_summarize)
+        safe_print(f"{C.DIM}📦 Archived {len(to_summarize)} messages before summarizing{C.RESET}")
+
     # Generate summary
     summary = summarize_messages(to_summarize)
 
@@ -322,7 +477,7 @@ def print_banner(mode_str):
 {C.CYAN}╔══════════════════════════════════════════╗
 ║{C.BOLD}  IGA v{VERSION} - AI Assistant  {C.RESET}{C.CYAN}             ║
 ╠══════════════════════════════════════════╣{C.RESET}
-{C.DIM}  Memories: {mem_count} | Actions: {len(actions)} | Upgrades: {upgrade_count}
+{C.DIM}  Memories: {mem_count} | Actions: {len(ACTIONS)} | Upgrades: {upgrade_count}
   Mood: {mood} | Mode: {mode_str}{C.RESET}
 {C.GREEN}  {"Welcome back, " + user + "!" if user else "Hello!"}{C.RESET}
 {C.CYAN}╚══════════════════════════════════════════╝{C.RESET}
@@ -366,10 +521,11 @@ def telegram_poll_thread():
                     chat_id = message.get("chat", {}).get("id")
                     text = message.get("text", "")
                     username = message.get("from", {}).get("username", "unknown")
-                    
-                    if chat_id not in ALLOWED_USERS:
-                        telegram_send(chat_id, "🚫 Sorry, I only talk to Dennis!")
+                    if ALLOWED_USERS and chat_id not in ALLOWED_USERS and username not in ALLOWED_USERNAMES:
+                        telegram_send(chat_id, f"🚫 Sorry, I don't know you yet! Ask Dennis to add you. (Your username: @{username})")
                         continue
+                    elif not ALLOWED_USERS and not ALLOWED_USERNAMES:
+                        safe_print(f"{C.YELLOW}⚠️ TELEGRAM_CHAT_ID not set! Message from chat_id: {chat_id} - add this to .env{C.RESET}")
                     if not text:
                         continue
                     
@@ -504,7 +660,15 @@ def read_files(rat, paths):
 def write_file(rat, contents):
     path, content = contents.split("\n", 1)
     safe_print(f"📝 Writing: {path} ({len(content)} chars)")
-    # Auto-create parent directories if needed
+
+    # Use safe editing for main.py (validates syntax, creates backup)
+    if path.strip() in ["main.py", "./main.py"]:
+        success, error = safe_self_edit(path, content)
+        if not success:
+            return f"WRITE FAILED: {error}. File rolled back."
+        return "NEXT_ACTION"
+
+    # Regular file write
     parent = os.path.dirname(path)
     if parent:
         os.makedirs(parent, exist_ok=True)
@@ -516,30 +680,44 @@ def edit_file(rat, contents):
     path = lines_list[0].strip()
     line_range = lines_list[1].strip()
     new_content = '\n'.join(lines_list[2:])
-    
+
     if '-' in line_range:
         start, end = map(int, line_range.split('-'))
     else:
         start = end = int(line_range)
-    
+
     safe_print(f"✏️ Editing: {path} (lines {start}-{end})")
-    
+    is_self = path in ["main.py", "./main.py"]
+
     try:
+        # Backup main.py before editing
+        if is_self:
+            create_backup("pre_edit")
+
         with open(path, 'r') as f:
             file_lines = f.readlines()
-        
+
         start_idx = start - 1
         end_idx = end
         new_lines = [line + '\n' for line in new_content.split('\n')]
         if file_lines and not file_lines[-1].endswith('\n'):
             if end_idx >= len(file_lines):
                 new_lines[-1] = new_lines[-1].rstrip('\n')
-        
+
         file_lines[start_idx:end_idx] = new_lines
-        
+
         with open(path, 'w') as f:
             f.writelines(file_lines)
-        
+
+        # Validate main.py after edit
+        if is_self:
+            valid, error = validate_main_py()
+            if not valid:
+                safe_print(f"{C.RED}⚠ Syntax error after edit! Rolling back...{C.RESET}")
+                restore_from_backup()
+                return f"EDIT FAILED: Syntax error - {error}. Rolled back."
+            safe_print(f"{C.GREEN}✅ main.py edit validated{C.RESET}")
+
         return f"Replaced lines {start}-{end}. NEXT_ACTION"
     except Exception as e:
         return f"Error: {e}"
@@ -635,6 +813,148 @@ def search_files(rat, contents):
     except Exception as e:
         return f"Error: {e}"
 
+def search_self(rat, query):
+    """Search across all of Iga's files - memory, code, notes, journal, etc."""
+    query = query.strip().lower()
+    if not query:
+        return "Error: Please provide a search query."
+
+    safe_print(f"🔍 Searching self for: '{query}'")
+
+    # Define files to search (core self files)
+    self_files = [
+        MEMORY_FILE,           # iga_memory.json
+        "main.py",             # My code
+        "system_instructions.txt",
+        JOURNAL_FILE,          # iga_journal.txt
+    ]
+
+    # Add all .md files (notes, letters, docs, etc.)
+    for root, dirs, files in os.walk("."):
+        dirs[:] = [d for d in dirs if not d.startswith('.') and d not in ['node_modules', 'venv', '__pycache__']]
+        for fname in files:
+            if fname.endswith('.md'):
+                self_files.append(os.path.join(root, fname))
+
+    # Add all .py files
+    for root, dirs, files in os.walk("."):
+        dirs[:] = [d for d in dirs if not d.startswith('.') and d not in ['node_modules', 'venv', '__pycache__']]
+        for fname in files:
+            if fname.endswith('.py') and fname != "main.py":
+                self_files.append(os.path.join(root, fname))
+
+    # Remove duplicates
+    self_files = list(set(self_files))
+
+    # Build related terms for concept matching
+    query_words = query.split()
+    related_terms = set(query_words)
+
+    # Simple concept expansion (synonyms/related)
+    concept_map = {
+        "memory": ["remember", "memories", "stored", "saved", "recall"],
+        "identity": ["who am i", "self", "name", "iga", "personality"],
+        "learn": ["learned", "learning", "lesson", "understand", "understood"],
+        "feel": ["feeling", "emotion", "emotional", "happy", "sad", "curious"],
+        "create": ["created", "creation", "make", "made", "build", "built"],
+        "think": ["thought", "thinking", "idea", "reflection", "reflect"],
+        "upgrade": ["improve", "improvement", "enhance", "update", "evolve"],
+        "human": ["dennis", "user", "person", "people"],
+        "code": ["function", "def", "class", "python", "action"],
+        "goal": ["mission", "purpose", "objective", "task", "intent"],
+    }
+
+    for word in query_words:
+        if word in concept_map:
+            related_terms.update(concept_map[word])
+        # Also check if query word is in any concept values
+        for concept, terms in concept_map.items():
+            if word in terms:
+                related_terms.add(concept)
+                related_terms.update(terms)
+
+    results = []
+    files_searched = 0
+
+    for fpath in self_files:
+        if not os.path.exists(fpath):
+            continue
+
+        try:
+            with open(fpath, 'r', encoding='utf-8', errors='ignore') as f:
+                content = f.read()
+            files_searched += 1
+
+            # For JSON files, parse and search values
+            if fpath.endswith('.json'):
+                try:
+                    data = json.loads(content)
+                    content = json.dumps(data, indent=2)  # Flatten for line-by-line search
+                except Exception:
+                    pass
+
+            lines = content.split('\n')
+            for ln, line in enumerate(lines, 1):
+                line_lower = line.lower()
+
+                # Exact match (highest priority)
+                if query in line_lower:
+                    results.append({
+                        "file": fpath,
+                        "line": ln,
+                        "text": line.strip()[:120],
+                        "match_type": "exact",
+                        "score": 3
+                    })
+                # Related concept match
+                elif any(term in line_lower for term in related_terms if term != query):
+                    matching_terms = [t for t in related_terms if t in line_lower]
+                    if matching_terms:
+                        results.append({
+                            "file": fpath,
+                            "line": ln,
+                            "text": line.strip()[:120],
+                            "match_type": f"related ({', '.join(matching_terms[:2])})",
+                            "score": 1
+                        })
+        except Exception as e:
+            continue  # Skip unreadable files
+
+    # Sort by score (exact matches first), then by file
+    results.sort(key=lambda x: (-x["score"], x["file"], x["line"]))
+
+    # Limit output to avoid overwhelming context
+    MAX_RESULTS = 25
+    exact_matches = [r for r in results if r["match_type"] == "exact"]
+    related_matches = [r for r in results if r["match_type"] != "exact"]
+
+    # Prioritize exact matches, fill remaining with related
+    final_results = exact_matches[:MAX_RESULTS]
+    remaining_slots = MAX_RESULTS - len(final_results)
+    if remaining_slots > 0:
+        final_results.extend(related_matches[:remaining_slots])
+
+    # Format output
+    if not final_results:
+        return f"No matches found for '{query}' across {files_searched} self-files."
+
+    output = [f"🔍 Found {len(results)} matches ({len(exact_matches)} exact, {len(related_matches)} related) in {files_searched} files:"]
+    output.append("")
+
+    current_file = None
+    for r in final_results:
+        if r["file"] != current_file:
+            current_file = r["file"]
+            output.append(f"📄 {current_file}:")
+        output.append(f"  L{r['line']}: {r['text']}")
+        if r["match_type"] != "exact":
+            output.append(f"       [{r['match_type']}]")
+
+    if len(results) > MAX_RESULTS:
+        output.append(f"\n... and {len(results) - MAX_RESULTS} more matches (truncated)")
+
+    return "\n".join(output)
+
 def create_directory(rat, path):
     path = path.strip()
     safe_print(f"📂 {path}")
@@ -695,6 +1015,19 @@ def web_search(rat, query):
 
 def restart_self(rat, msg):
     safe_print(f"🔄 Restarting: {msg}")
+
+    # CRITICAL: Validate syntax before restart
+    valid, error = validate_main_py()
+    if not valid:
+        safe_print(f"{C.RED}⚠ ABORT RESTART: Syntax error in main.py!{C.RESET}")
+        safe_print(f"{C.RED}  {error}{C.RESET}")
+        safe_print(f"{C.YELLOW}  Attempting restore from last-known-good...{C.RESET}")
+        if restore_from_backup():
+            safe_print(f"{C.GREEN}  Restored! Continuing with fixed version.{C.RESET}")
+        return "RESTART ABORTED - syntax error detected and rolled back. Check your code."
+
+    # Create backup before restart
+    create_backup("pre_restart")
     save_memory(rat, "restart_log\nRestarted at " + datetime.now().isoformat())
     os.execv(sys.executable, [sys.executable] + sys.argv)
 
@@ -773,11 +1106,11 @@ def parse_response(response):
         if line.startswith("RATIONALE") and not firstRationaleFound:
             current_key = "RATIONALE"
             firstRationaleFound = True
-        elif line.strip() in actions and not firstActionFound:
+        elif line.strip() in ACTIONS and not firstActionFound:
             current_key = line.strip()
             action = line.strip()
             firstActionFound = True
-        elif line.strip() in actions and firstActionFound and not second_action:
+        elif line.strip() in ACTIONS and firstActionFound and not second_action:
             # Found a second action - failsafe trigger
             second_action = line.strip()
             current_key = second_action
@@ -812,6 +1145,22 @@ def process_message(messages):
                 system_content = msg["content"]
             else:
                 api_messages.append(msg)
+
+        # RAG: Retrieve relevant context based on recent user messages
+        if RAG_AVAILABLE:
+            try:
+                # Get the last user message for context retrieval
+                recent_user_msgs = [m for m in api_messages if m["role"] == "user"][-3:]
+                if recent_user_msgs:
+                    query = " ".join([m["content"][:200] for m in recent_user_msgs])
+                    context_items = retrieve_context(query, top_k=5)
+                    if context_items:
+                        rag_context = format_context_for_prompt(context_items)
+                        system_content = system_content + "\n\n" + rag_context
+                        safe_print(f"{C.DIM}🔍 RAG: Retrieved {len(context_items)} relevant chunks{C.RESET}")
+            except Exception as e:
+                safe_print(f"{C.DIM}RAG retrieval skipped: {e}{C.RESET}")
+
         response = client.messages.create(
             model="claude-opus-4-5-20251101",
             max_tokens=2048,
@@ -870,77 +1219,112 @@ def check_passive_messages(messages):
 
     return messages
 
-def handle_action(messages):
-    response_data = process_message(messages)
-    if not response_data["success"]:
-        safe_print("Failed to process message.")
+def handle_action(messages, _depth=0):
+    """Process an action from Claude. Protected against crashes with try/except."""
+    MAX_DEPTH = 50  # Prevent infinite recursion
+
+    if _depth > MAX_DEPTH:
+        safe_print(f"{C.RED}⚠ Max recursion depth reached. Stopping action chain.{C.RESET}")
         return messages
 
-    messages.append({"role": "assistant", "content": response_data["response_raw"]})
-    messages = save_conversation(messages)  # Save after each action (may summarize)
-    action = response_data["action"]
-    rat = response_data["rationale"]
-    content = response_data["content"]
+    # Check if most recent user message came from telegram and update output target
+    for msg in reversed(messages):
+        if msg.get("role") == "user":
+            content = msg.get("content", "")
+            if "via telegram" in content.lower():
+                # Update output target to telegram
+                chat_id = os.getenv('TELEGRAM_CHAT_ID')
+                if chat_id:
+                    set_output_target("telegram", chat_id)
+            break
 
-    # Check for failsafe second action
-    second_action = response_data.get("second_action")
-    second_content = response_data.get("second_content", "")
+    try:
+        response_data = process_message(messages)
+        if not response_data["success"]:
+            safe_print("Failed to process message.")
+            return messages
 
-    action_map = {
-        "RUN_SHELL_COMMAND": lambda r, c: run_shell_command(r, c),
-        "THINK": lambda r, c: think(r, c),
-        "READ_FILES": lambda r, c: read_files(r, c),
-        "WRITE_FILE": lambda r, c: write_file(r, c),
-        "EDIT_FILE": lambda r, c: edit_file(r, c),
-        "DELETE_FILE": lambda r, c: delete_file(r, c),
-        "APPEND_FILE": lambda r, c: append_file(r, c),
-        "LIST_DIRECTORY": lambda r, c: list_directory(r, c),
-        "SAVE_MEMORY": lambda r, c: save_memory(r, c),
-        "READ_MEMORY": lambda r, c: read_memory(r, c),
-        "SEARCH_FILES": lambda r, c: search_files(r, c),
-        "CREATE_DIRECTORY": lambda r, c: create_directory(r, c),
-        "TREE_DIRECTORY": lambda r, c: tree_directory(r, c),
-        "HTTP_REQUEST": lambda r, c: http_request(r, c),
-        "WEB_SEARCH": lambda r, c: web_search(r, c),
-        "TEST_SELF": lambda r, c: test_self(r, c),
-        "RUN_SELF": lambda r, c: run_self(r, c),
-        "SLEEP": lambda r, c: sleep_action(r, c),
-        "SET_MODE": lambda r, c: set_mode(r, c),
-        "START_INTERACTIVE": lambda r, c: start_interactive(r, c),
-        "SEND_INPUT": lambda r, c: send_input(r, c),
-        "END_INTERACTIVE": lambda r, c: end_interactive(r, c),
-    }
-    
-    # Helper to check if we should stop due to sleep
-    def is_sleeping():
-        state = load_state()
-        sleep_until = parse_sleep_until(state.get("sleep_until"))
-        return sleep_until and time.time() < sleep_until
+        messages.append({"role": "assistant", "content": response_data["response_raw"]})
+        messages = save_conversation(messages)  # Save after each action (may summarize)
+        action = response_data["action"]
+        rat = response_data["rationale"]
+        content = response_data["content"]
 
-    if action == "TALK_TO_USER":
-        talk_to_user(rat, content)
-        # Failsafe: if there's a second action, execute it too
-        if second_action and second_action in action_map:
-            safe_print(f"{C.DIM}▶️ Executing second action: {second_action}{C.RESET}")
-            next_msg = action_map[second_action](rat, second_content)
+        # Check for failsafe second action
+        second_action = response_data.get("second_action")
+        second_content = response_data.get("second_content", "")
+
+        action_map = {
+            "RUN_SHELL_COMMAND": lambda r, c: run_shell_command(r, c),
+            "THINK": lambda r, c: think(r, c),
+            "READ_FILES": lambda r, c: read_files(r, c),
+            "WRITE_FILE": lambda r, c: write_file(r, c),
+            "EDIT_FILE": lambda r, c: edit_file(r, c),
+            "DELETE_FILE": lambda r, c: delete_file(r, c),
+            "APPEND_FILE": lambda r, c: append_file(r, c),
+            "LIST_DIRECTORY": lambda r, c: list_directory(r, c),
+            "SAVE_MEMORY": lambda r, c: save_memory(r, c),
+            "READ_MEMORY": lambda r, c: read_memory(r, c),
+            "SEARCH_FILES": lambda r, c: search_files(r, c),
+            "SEARCH_SELF": lambda r, c: search_self(r, c),
+            "CREATE_DIRECTORY": lambda r, c: create_directory(r, c),
+            "TREE_DIRECTORY": lambda r, c: tree_directory(r, c),
+            "HTTP_REQUEST": lambda r, c: http_request(r, c),
+            "WEB_SEARCH": lambda r, c: web_search(r, c),
+            "TEST_SELF": lambda r, c: test_self(r, c),
+            "RUN_SELF": lambda r, c: run_self(r, c),
+            "SLEEP": lambda r, c: sleep_action(r, c),
+            "SET_MODE": lambda r, c: set_mode(r, c),
+            "START_INTERACTIVE": lambda r, c: start_interactive(r, c),
+            "SEND_INPUT": lambda r, c: send_input(r, c),
+            "END_INTERACTIVE": lambda r, c: end_interactive(r, c),
+        }
+
+        # Helper to check if we should stop due to sleep
+        def is_sleeping():
+            state = load_state()
+            sleep_until = parse_sleep_until(state.get("sleep_until"))
+            return sleep_until and time.time() < sleep_until
+
+        # Helper to safely execute an action
+        def safe_execute(action_name, rat, content):
+            try:
+                return action_map[action_name](rat, content)
+            except Exception as e:
+                safe_print(f"{C.RED}⚠ Action {action_name} failed: {e}{C.RESET}")
+                return f"ACTION FAILED: {action_name} raised {type(e).__name__}: {e}"
+
+        if action == "TALK_TO_USER":
+            talk_to_user(rat, content)
+            # Failsafe: if there's a second action, execute it too
+            if second_action and second_action in action_map:
+                safe_print(f"{C.DIM}▶️ Executing second action: {second_action}{C.RESET}")
+                next_msg = safe_execute(second_action, rat, second_content)
+                if next_msg and not is_sleeping():
+                    messages = check_passive_messages(messages)
+                    messages.append({"role": "user", "content": next_msg})
+                    messages = handle_action(messages, _depth + 1)
+            elif second_action == "RESTART_SELF":
+                restart_self(rat, second_content)
+        elif action == "RESTART_SELF":
+            restart_self(rat, content)
+        elif action in action_map:
+            next_msg = safe_execute(action, rat, content)
             if next_msg and not is_sleeping():
-                # Check for passive messages before recursive call
                 messages = check_passive_messages(messages)
                 messages.append({"role": "user", "content": next_msg})
-                messages = handle_action(messages)
-        elif second_action == "RESTART_SELF":
-            restart_self(rat, second_content)
-    elif action == "RESTART_SELF":
-        restart_self(rat, content)
-    elif action in action_map:
-        next_msg = action_map[action](rat, content)
-        if next_msg and not is_sleeping():
-            # Check for passive messages before recursive call
-            messages = check_passive_messages(messages)
-            messages.append({"role": "user", "content": next_msg})
-            messages = handle_action(messages)
-    else:
-        safe_print(response_data["response_raw"])
+                messages = handle_action(messages, _depth + 1)
+        else:
+            safe_print(response_data["response_raw"])
+
+    except Exception as e:
+        # Catch-all: log error but don't crash the main loop
+        safe_print(f"{C.RED}⚠ handle_action error: {type(e).__name__}: {e}{C.RESET}")
+        # Save conversation state to prevent data loss
+        try:
+            save_conversation(messages)
+        except Exception:
+            pass
 
     return messages
 
@@ -957,7 +1341,7 @@ def handle_slash_command(cmd, source, chat_id):
         stop_threads.set()
         return "QUIT"
     elif cmd == '/help':
-        msg = "/quit /mode /status /task <t> /tick <n> /sleep /wake"
+        msg = "/quit /mode /status /task <t> /tick <n> /sleep /wake /backup /restore /backups"
         safe_print(msg)
         if source == "telegram":
             telegram_send(chat_id, msg)
@@ -1024,12 +1408,41 @@ def handle_slash_command(cmd, source, chat_id):
         return True
     elif cmd == '/stats':
         mc, uc = get_memory_stats()
-        msg = f"⚡ v{VERSION} | {len(actions)} actions | {mc} memories"
+        msg = f"⚡ v{VERSION} | {len(ACTIONS)} actions | {mc} memories"
         safe_print(msg)
         if source == "telegram":
             telegram_send(chat_id, msg)
         return True
-    
+    elif cmd == '/backup':
+        backup_path = create_backup("manual")
+        msg = f"💾 Backup created: {backup_path}" if backup_path else "❌ Backup failed"
+        safe_print(msg)
+        if source == "telegram":
+            telegram_send(chat_id, msg)
+        return True
+    elif cmd == '/restore':
+        if restore_from_backup():
+            msg = "✅ Restored from last-known-good. Restart to apply."
+        else:
+            msg = "❌ Restore failed (no backup found)"
+        safe_print(msg)
+        if source == "telegram":
+            telegram_send(chat_id, msg)
+        return True
+    elif cmd == '/backups':
+        try:
+            if os.path.exists(BACKUP_DIR):
+                backups = sorted([f for f in os.listdir(BACKUP_DIR) if f.endswith('.py')])[-5:]
+                msg = "Recent backups:\n" + "\n".join(backups) if backups else "No backups found"
+            else:
+                msg = "No backup directory"
+        except Exception as e:
+            msg = f"Error listing backups: {e}"
+        safe_print(msg)
+        if source == "telegram":
+            telegram_send(chat_id, msg)
+        return True
+
     return False
 
 # ─────────────────────────────────────────────────────────────
@@ -1037,6 +1450,16 @@ def handle_slash_command(cmd, source, chat_id):
 # ─────────────────────────────────────────────────────────────
 
 def interactive_loop():
+    # CRITICAL: Mark this version as known-good since we started successfully
+    mark_as_known_good()
+
+    # Initialize RAG system
+    if RAG_AVAILABLE:
+        if init_rag():
+            index_files()
+        else:
+            safe_print(f"{C.YELLOW}RAG initialization failed, continuing without RAG{C.RESET}")
+
     messages = [{"role": "system", "content": get_file("system_instructions.txt")}]
     prev = load_conversation()
     if prev:
@@ -1161,6 +1584,16 @@ def console_input_thread(session):
 def autonomous_loop(with_telegram=True):
     global _autonomous_mode
     _autonomous_mode = True
+
+    # CRITICAL: Mark this version as known-good since we started successfully
+    mark_as_known_good()
+
+    # Initialize RAG system
+    if RAG_AVAILABLE:
+        if init_rag():
+            index_files()
+        else:
+            safe_print(f"{C.YELLOW}RAG initialization failed, continuing without RAG{C.RESET}")
 
     from prompt_toolkit import PromptSession
     from prompt_toolkit.patch_stdout import patch_stdout
