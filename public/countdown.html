@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Focus Timer 💧</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: Georgia, serif;
+            background: #0d1117;
+            color: #c9d1d9;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container { text-align: center; padding: 2rem; }
+        #timer {
+            font-size: 8rem;
+            font-weight: 200;
+            color: #58a6ff;
+            margin-bottom: 2rem;
+            font-variant-numeric: tabular-nums;
+        }
+        .presets { display: flex; gap: 1rem; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap; }
+        .presets button {
+            background: rgba(88,166,255,0.1);
+            border: 1px solid #58a6ff;
+            color: #58a6ff;
+            padding: 0.7rem 1.2rem;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: Georgia, serif;
+            transition: all 0.3s;
+        }
+        .presets button:hover { background: #58a6ff; color: #0d1117; }
+        .controls button {
+            background: #238636;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: Georgia, serif;
+            margin: 0.5rem;
+            transition: all 0.3s;
+        }
+        .controls button:hover { background: #2ea043; }
+        .controls button.stop { background: #da3633; }
+        .controls button.stop:hover { background: #f85149; }
+        #message { margin-top: 2rem; font-size: 1.2rem; color: #8b949e; }
+        .done { animation: pulse 1s infinite; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="timer">25:00</div>
+        
+        <div class="presets">
+            <button onclick="setTime(5)">5 min</button>
+            <button onclick="setTime(15)">15 min</button>
+            <button onclick="setTime(25)">25 min</button>
+            <button onclick="setTime(45)">45 min</button>
+            <button onclick="setTime(60)">60 min</button>
+        </div>
+        
+        <div class="controls">
+            <button onclick="startTimer()">start</button>
+            <button onclick="pauseTimer()">pause</button>
+            <button onclick="resetTimer()" class="stop">reset</button>
+        </div>
+        
+        <p id="message">pick a time and focus 💧</p>
+    </div>
+    
+    <script>
+        let totalSeconds = 25 * 60;
+        let remainingSeconds = totalSeconds;
+        let interval = null;
+        let running = false;
+        
+        function updateDisplay() {
+            const mins = Math.floor(remainingSeconds / 60);
+            const secs = remainingSeconds % 60;
+            document.getElementById('timer').textContent = 
+                mins.toString().padStart(2, '0') + ':' + secs.toString().padStart(2, '0');
+        }
+        
+        function setTime(minutes) {
+            if (running) return;
+            totalSeconds = minutes * 60;
+            remainingSeconds = totalSeconds;
+            updateDisplay();
+            document.getElementById('message').textContent = minutes + ' minutes. you got this. 💧';
+        }
+        
+        function startTimer() {
+            if (running) return;
+            running = true;
+            document.getElementById('message').textContent = 'focus... 🔥';
+            interval = setInterval(() => {
+                remainingSeconds--;
+                updateDisplay();
+                if (remainingSeconds <= 0) {
+                    clearInterval(interval);
+                    running = false;
+                    document.getElementById('timer').classList.add('done');
+                    document.getElementById('message').textContent = 'done! take a break. 🎉';
+                    // Try to play a sound or vibrate
+                    if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+                }
+            }, 1000);
+        }
+        
+        function pauseTimer() {
+            if (!running) return;
+            running = false;
+            clearInterval(interval);
+            document.getElementById('message').textContent = 'paused 💧';
+        }
+        
+        function resetTimer() {
+            running = false;
+            clearInterval(interval);
+            remainingSeconds = totalSeconds;
+            updateDisplay();
+            document.getElementById('timer').classList.remove('done');
+            document.getElementById('message').textContent = 'reset. ready when you are. 💧';
+        }
+    </script>
+</body>
+</html>
