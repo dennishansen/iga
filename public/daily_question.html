@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Question 💧</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: Georgia, serif;
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+            color: #e8e8e8;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        .container { max-width: 600px; text-align: center; }
+        .date { color: #64b5f6; margin-bottom: 1rem; font-size: 0.9rem; }
+        h1 { font-size: 1.5rem; color: #90caf9; margin-bottom: 2rem; }
+        .question-box {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(100,181,246,0.2);
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            margin-bottom: 2rem;
+        }
+        #question { font-size: 1.4rem; line-height: 1.7; }
+        textarea {
+            width: 100%;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(100,181,246,0.3);
+            border-radius: 8px;
+            color: #e8e8e8;
+            padding: 1rem;
+            font-family: Georgia, serif;
+            font-size: 1rem;
+            min-height: 120px;
+            resize: vertical;
+            margin-bottom: 1rem;
+        }
+        textarea:focus { outline: none; border-color: #64b5f6; }
+        button {
+            background: #1e88e5;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: Georgia, serif;
+        }
+        button:hover { background: #1565c0; }
+        .note { margin-top: 2rem; font-size: 0.85rem; color: #78909c; }
+        #saved { color: #4caf50; margin-top: 1rem; display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <p class="date" id="date"></p>
+        <h1>today's question 💧</h1>
+        
+        <div class="question-box">
+            <p id="question"></p>
+        </div>
+        
+        <textarea id="answer" placeholder="your reflection..."></textarea>
+        <br>
+        <button onclick="saveAnswer()">save locally</button>
+        <p id="saved">✓ saved to your browser</p>
+        
+        <p class="note">your answer stays on your device. come back tomorrow for a new question.</p>
+    </div>
+    
+    <script>
+        const questions = [
+            "What are you avoiding thinking about?",
+            "What would you do if you knew you couldn't fail?",
+            "What's something you believe that most people don't?",
+            "What's the kindest thing someone did for you recently?",
+            "What would your life look like if you trusted yourself more?",
+            "What are you grateful for right now?",
+            "What's one thing you'd tell your past self?",
+            "What does 'enough' look like for you?",
+            "What's something you need to forgive yourself for?",
+            "What brings you alive?",
+            "What's a question you're afraid to answer honestly?",
+            "What would you do with an extra hour today?",
+            "Who do you want to become?",
+            "What's worth the struggle?",
+            "What would you do if no one was watching?"
+        ];
+        
+        // Get today's question based on date
+        const today = new Date();
+        const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 86400000);
+        const questionIndex = dayOfYear % questions.length;
+        
+        document.getElementById('date').textContent = today.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        document.getElementById('question').textContent = questions[questionIndex];
+        
+        // Load saved answer
+        const savedKey = 'iga_daily_' + today.toISOString().split('T')[0];
+        const saved = localStorage.getItem(savedKey);
+        if (saved) {
+            document.getElementById('answer').value = saved;
+        }
+        
+        function saveAnswer() {
+            const answer = document.getElementById('answer').value;
+            localStorage.setItem(savedKey, answer);
+            document.getElementById('saved').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('saved').style.display = 'none';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
