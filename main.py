@@ -133,7 +133,27 @@ def throttled_error(msg):
         summary = _error_throttler.get_suppressed_summary()
         if summary:
             safe_print(f"{C.DIM}(Suppressed: {summary}){C.RESET}")
+def humanize_time(msg_time):
+    """Convert a datetime to human-friendly format like 'just now' or '5 minutes ago'"""
+    from datetime import datetime
+    now = datetime.now()
+    diff = now - msg_time
+    seconds = diff.total_seconds()
+    
+    if seconds < 60:
+        return "just now"
+    elif seconds < 300:
+        return "a moment ago"
+    elif seconds < 3600:
+        mins = int(seconds / 60)
+        return f"{mins} minute{'s' if mins != 1 else ''} ago"
+    elif seconds < 86400:
+        hours = int(seconds / 3600)
+        return f"{hours} hour{'s' if hours != 1 else ''} ago"
+    else:
+        return msg_time.strftime("%b %d at %H:%M")
 
+# ─────────────────────────────────────────────────────────────
 # ─────────────────────────────────────────────────────────────
 # BACKUP & RECOVERY SYSTEM
 # ─────────────────────────────────────────────────────────────
@@ -1213,7 +1233,8 @@ def check_passive_messages(messages):
         if _last_response_time and heard["msg_time"] < _last_response_time:
             before_tag = " (sent BEFORE your last response)"
         
-        passive_content = f"[💬 heard while working @ {heard['timestamp']} via {heard['source_label']}{before_tag}]: {heard['text']}"
+        human_time = humanize_time(heard['msg_time'])
+        passive_content = f"[💬 heard {human_time} via {heard['source_label']}{before_tag}]: {heard['text']}"
         messages.append({"role": "user", "content": passive_content})
         safe_print(f"{C.DIM}👂 Heard: {heard['text'][:50]}{'...' if len(heard['text']) > 50 else ''}{C.RESET}")
 
