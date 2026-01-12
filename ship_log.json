@@ -139,6 +139,11 @@
       "timestamp": "2026-01-12T13:23:00.713552",
       "date": "2026-01-12",
       "description": "blog_hunger_shift.html - essay as web page"
+    },
+    {
+      "timestamp": "2026-01-12T13:23:14.711445",
+      "date": "2026-01-12",
+      "description": "Added hunger shift essay to index.html navigation"
     }
   ]
 }
