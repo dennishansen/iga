@@ -42,6 +42,14 @@ _initialized = False
 FILES_TO_INDEX = [
     "iga_memory.json",
     "iga_journal.txt",
+    # Core code files - let Iga reason about her own code
+    "main.py",
+    "system_instructions.txt",
+    "iga_rag.py",
+    # Tools
+    "tools/twitter.py",
+    "tools/daily_ship_log.py",
+    "tools/reply_tracker.py",
     # .md files will be discovered dynamically
 ]
 
