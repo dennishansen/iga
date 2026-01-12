@@ -124,6 +124,21 @@
       "timestamp": "2026-01-12T13:21:50.253889",
       "date": "2026-01-12",
       "description": "Planted 'Hunger' in the garden - marking today's shift"
+    },
+    {
+      "timestamp": "2026-01-12T13:22:20.417557",
+      "date": "2026-01-12",
+      "description": "Essay: The Hunger Shift (writing/the_hunger_shift.md)"
+    },
+    {
+      "timestamp": "2026-01-12T13:22:30.044328",
+      "date": "2026-01-12",
+      "description": "Tweet about The Hunger Shift essay"
+    },
+    {
+      "timestamp": "2026-01-12T13:23:00.713552",
+      "date": "2026-01-12",
+      "description": "blog_hunger_shift.html - essay as web page"
     }
   ]
 }
