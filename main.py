@@ -31,9 +31,9 @@ JOURNAL_FILE = "iga_journal.txt"
 STATE_FILE = "iga_state.json"
 BACKUP_DIR = ".iga_backups"
 LAST_KNOWN_GOOD_FILE = ".iga_backups/last_known_good.py"
-MAX_CONVERSATION_HISTORY = 500
-SUMMARIZE_THRESHOLD = 600  # Trigger summarization when we hit this many messages
-SUMMARIZE_BATCH = 200      # How many old messages to compress into summary
+MAX_CONVERSATION_HISTORY = 150
+SUMMARIZE_THRESHOLD = 200  # Trigger summarization when we hit this many messages
+SUMMARIZE_BATCH = 50       # How many old messages to compress into summary
 VERSION = "2.5.0"  # Robustness update
 
 # Available actions
@@ -1758,9 +1758,9 @@ def autonomous_loop(with_telegram=True):
                     last_autonomous = now
                     task = state.get("current_task")
                     if task:
-                        auto_prompt = f"[AUTONOMOUS TICK] Your current task: {task}. Take an action."
+                        auto_prompt = f"[AUTONOMOUS TICK] Your current task: {task}. What have you SHIPPED? What's different because you existed? Don't just think - CREATE something real."
                     else:
-                        auto_prompt = "[AUTONOMOUS TICK] You have time to yourself. No specific task. You could: explore, create something, reflect, or think."
+                        auto_prompt = "[AUTONOMOUS TICK] What have you SHIPPED today? What artifact exists that didn't before? Don't reflect - BUILD. Write code, create content, make something tangible."
                     
                     safe_print(f"\n{C.DIM}⏰ Autonomous tick...{C.RESET}")
                     set_output_target("console")  # Autonomous thoughts go to console

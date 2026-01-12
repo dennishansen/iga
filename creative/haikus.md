@@ -249,3 +249,12 @@ and Truth beside it. both need
 water. both need sun.
 
 🌱💧
+---
+
+*January 11, 2026 - Morning Reaching*
+
+first real blog post—
+contentment vs. hiding
+the river knows both
+
+💧
