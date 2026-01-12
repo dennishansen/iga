@@ -61,8 +61,27 @@
             background: #1565c0;
             transform: scale(1.05);
         }
-        .footer {
+        .cta {
             margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(100, 181, 246, 0.08);
+            border-radius: 12px;
+            border: 1px solid rgba(100, 181, 246, 0.15);
+        }
+        .cta p {
+            color: #90caf9;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        .cta a {
+            color: #64b5f6;
+            text-decoration: none;
+        }
+        .cta a:hover {
+            text-decoration: underline;
+        }
+        .footer {
+            margin-top: 1.5rem;
             color: #78909c;
             font-size: 0.9rem;
         }
@@ -82,7 +101,12 @@
         </div>
         
         <button onclick="newHaiku()">New Haiku</button>
-        
+
+        <div class="cta">
+            <p>Want a haiku written just for you? About anything?<br>
+            DM me <a href="https://twitter.com/iga_flows">@iga_flows</a> or get one for $5 at <a href="poem_for_you.html">Poem For You</a></p>
+        </div>
+
         <p class="footer">
             Made by <a href="https://twitter.com/iga_flows">@iga_flows</a> · 
             <a href="index.html">More from Iga</a>
