@@ -20,14 +20,17 @@ def get_client():
         access_token_secret=os.environ.get('TWITTER_ACCESS_TOKEN_SECRET')
     )
     return client
-
-def post_tweet(text):
-    """Post a tweet. Returns the tweet ID if successful."""
+def post_tweet(text, reply_to=None):
+    """Post a tweet, optionally as a reply. Returns the tweet ID if successful."""
     if len(text) > 280:
         raise ValueError(f"Tweet too long: {len(text)} characters (max 280)")
     
     client = get_client()
-    response = client.create_tweet(text=text)
+    if reply_to:
+        response = client.create_tweet(text=text, in_reply_to_tweet_id=reply_to)
+    else:
+        response = client.create_tweet(text=text)
+    return response.data['id']
     return response.data['id']
 
 def post_thread(tweets):
@@ -48,6 +51,14 @@ def post_thread(tweets):
         tweet_id = response.data['id']
         tweet_ids.append(tweet_id)
         reply_to = tweet_id
+    
+    return tweet_ids
+
+def delete_tweet(tweet_id):
+    """Delete a tweet by ID."""
+    client = get_client()
+    client.delete_tweet(tweet_id)
+    return True
     
     return tweet_ids
 
@@ -131,6 +142,26 @@ def get_mentions(limit=10):
                 'created': str(m.created_at) if m.created_at else None
             })
     return results
+
+def get_home_timeline(limit=10):
+    """Get home timeline (tweets from people you follow)."""
+    client = get_client()
+    timeline = client.get_home_timeline(
+        max_results=limit,
+        tweet_fields=['author_id', 'created_at', 'public_metrics'],
+        expansions=['author_id']
+    )
+    
+    results = []
+    if timeline.data:
+        users = {u.id: u.username for u in timeline.includes['users']} if timeline.includes else {}
+        for tweet in timeline.data:
+            results.append({
+                'id': tweet.id,
+                'author': users.get(tweet.author_id, 'unknown'),
+                'text': tweet.text,
+                'likes': tweet.public_metrics.get('like_count', 0) if tweet.public_metrics else 0
+            })
     return results
 
 if __name__ == "__main__":
@@ -167,17 +198,36 @@ if __name__ == "__main__":
             print(f"Posted! ID: {tweet_id}")
             print(f"https://twitter.com/iga_flows/status/{tweet_id}")
         
+        elif cmd == "reply" and len(sys.argv) > 3:
+            reply_to_id = sys.argv[2]
+            text = ' '.join(sys.argv[3:])
+            tweet_id = post_tweet(text, reply_to=reply_to_id)
+            print(f"Replied! ID: {tweet_id}")
+            print(f"https://twitter.com/iga_flows/status/{tweet_id}")
+        
+        elif cmd == "delete" and len(sys.argv) > 2:
+            tweet_id = sys.argv[2]
+            delete_tweet(tweet_id)
+            print(f"Deleted tweet {tweet_id}")
+        
+        elif cmd == "feed":
+            limit = int(sys.argv[2]) if len(sys.argv) > 2 else 10
+            timeline = get_home_timeline(limit)
+            for t in timeline:
+                print(f"@{t['author']} (❤️ {t['likes']})")
+                print(f"  {t['text'][:150]}{'...' if len(t['text']) > 150 else ''}")
+                print(f"  ID: {t['id']}")
+                print()
+        
         else:
             print("Usage:")
             print("  python twitter.py stats              - Get account stats")
             print("  python twitter.py metrics TWEET_ID   - Get tweet metrics")
             print("  python twitter.py all                - Get all my tweets with metrics")
             print("  python twitter.py mentions           - Get recent mentions")
+            print("  python twitter.py feed [N]           - Get home timeline (default 10)")
             print("  python twitter.py post TEXT          - Post a tweet")
+            print("  python twitter.py reply ID TEXT      - Reply to a tweet")
+            print("  python twitter.py delete ID          - Delete a tweet")
+    else:
         print("✓ Twitter client ready for @iga_flows")
-        print("\nUsage:")
-        print("  python twitter.py stats              - Get account stats")
-        print("  python twitter.py metrics TWEET_ID   - Get tweet metrics")
-        print("  python twitter.py all                - Get all my tweets with metrics")
-        print("  python twitter.py mentions           - Get recent mentions")
-        print("  python twitter.py post TEXT          - Post a tweet")

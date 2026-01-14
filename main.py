@@ -42,7 +42,7 @@ ACTIONS = {
     "EDIT_FILE", "DELETE_FILE", "APPEND_FILE", "LIST_DIRECTORY", "SAVE_MEMORY",
     "READ_MEMORY", "SEARCH_FILES", "SEARCH_SELF", "CREATE_DIRECTORY", "TREE_DIRECTORY",
     "HTTP_REQUEST", "WEB_SEARCH", "TEST_SELF", "RUN_SELF", "SLEEP", "SET_MODE",
-    "START_INTERACTIVE", "SEND_INPUT", "END_INTERACTIVE"
+    "START_INTERACTIVE", "SEND_INPUT", "END_INTERACTIVE", "RESTART_SELF"
 }
 
 # Telegram config
@@ -72,7 +72,7 @@ input_queue = queue.Queue()  # Messages from any source
 stop_threads = threading.Event()
 _print_lock = threading.Lock()
 _autonomous_mode = False
-_autonomous_mode = False
+active_pty_session = None  # For interactive PTY sessions (START_INTERACTIVE)
 
 # Error throttling to prevent log spam
 class ErrorThrottler:
@@ -375,6 +375,18 @@ def load_current_mission():
         pass  # Ignore mission load errors
     return None
 
+def load_core_drive():
+    if not os.path.exists(MEMORY_FILE):
+        return None
+    try:
+        with open(MEMORY_FILE, 'r') as f:
+            mem = json.load(f)
+        if 'core_drive' in mem:
+            return mem['core_drive']['value']
+    except Exception:
+        pass  # Ignore drive load errors
+    return None
+
 def summarize_messages(messages_to_summarize):
     """Generate a concise summary of a batch of conversation messages."""
     conversation_text = ""
@@ -602,22 +614,53 @@ def start_interactive(rat, cmd):
     if active_pty_session is not None:
         return 'ERROR: Interactive session already active. Use END_INTERACTIVE first.'
     try:
-        active_pty_session = pexpect.spawn(cmd, encoding='utf-8', timeout=30)
-        # Wait a moment for initial output
-        time.sleep(0.5)
-        # Try to read whatever is available
+        # Spawn the command directly (not through bash -c) for proper interactive behavior
+        # pexpect will use a PTY automatically
+        active_pty_session = pexpect.spawn(
+            cmd,
+            encoding='utf-8',
+            timeout=30,
+            echo=True,  # Echo input for interactive programs
+            dimensions=(40, 120),  # Larger terminal for better output
+            env={**os.environ, 'TERM': 'dumb', 'PYTHONUNBUFFERED': '1'}  # Force unbuffered output
+        )
+        # Set a short timeout for non-blocking reads
+        active_pty_session.timeout = 5
+
+        # Wait for initial output with expect - look for common patterns or timeout
+        output = ''
         try:
-            active_pty_session.expect(r'.+', timeout=2)
-            output = active_pty_session.before + active_pty_session.after
+            # Wait up to 10 seconds for some output to appear
+            # Use expect with a timeout - this properly waits for output
+            active_pty_session.expect([pexpect.TIMEOUT, pexpect.EOF], timeout=5)
+            output = active_pty_session.before or ''
         except pexpect.TIMEOUT:
-            output = active_pty_session.before or '[No initial output]'
+            output = active_pty_session.before or ''
         except pexpect.EOF:
-            output = active_pty_session.before or '[Process ended immediately]'
+            output = active_pty_session.before or ''
+            if active_pty_session.isalive():
+                pass  # Still running despite EOF
+            else:
+                active_pty_session = None
+                if not output.strip():
+                    return 'SESSION ENDED. Process exited immediately with no output.'
+                return f'SESSION ENDED. Output:\n{output}'
+
+        # Check if still alive
+        if not active_pty_session.isalive():
             active_pty_session = None
-        return f'SESSION STARTED. Initial output:\n{output}'
+            if not output.strip():
+                return 'SESSION ENDED. Process exited immediately with no output.'
+            return f'SESSION ENDED. Output:\n{output}'
+
+        if not output.strip():
+            output = '[No initial output yet - process is running, waiting for input or producing output]'
+
+        return f'SESSION STARTED (pid={active_pty_session.pid}). Initial output:\n{output}'
     except Exception as e:
         active_pty_session = None
-        return f'ERROR starting session: {e}'
+        import traceback
+        return f'ERROR starting session: {e}\n{traceback.format_exc()}'
 
 def send_input(rat, text):
     global active_pty_session
@@ -629,36 +672,82 @@ def send_input(rat, text):
     else:
         safe_print(f'{C.YELLOW}⌨️  Sending: {text}{C.RESET}')
     try:
+        # Check if process is still alive
+        if not active_pty_session.isalive():
+            remaining = ''
+            try:
+                remaining = active_pty_session.read()
+            except Exception:
+                pass
+            active_pty_session = None
+            return f'SESSION ENDED. Final output:\n{remaining}' if remaining else 'SESSION ENDED.'
+
+        # Send the input
         active_pty_session.sendline(text)
-        # Wait for response
+
+        # Wait for response using expect with timeout
+        # This is more reliable than read_nonblocking
+        output = ''
         try:
-            active_pty_session.expect(r'.+', timeout=10)
-            output = active_pty_session.before + active_pty_session.after
+            # Wait for output, timeout after 10 seconds
+            active_pty_session.expect([pexpect.TIMEOUT, pexpect.EOF], timeout=10)
+            output = active_pty_session.before or ''
         except pexpect.TIMEOUT:
-            output = active_pty_session.before or '[No response - timeout]'
+            output = active_pty_session.before or ''
         except pexpect.EOF:
-            output = active_pty_session.before or '[Process ended]'
+            output = active_pty_session.before or ''
+            if not active_pty_session.isalive():
+                active_pty_session = None
+                return f'SESSION ENDED. Output:\n{output}' if output else 'SESSION ENDED.'
+
+        # Check if process ended
+        if not active_pty_session.isalive():
+            active_pty_session = None
+            return f'SESSION ENDED. Output:\n{output}' if output else 'SESSION ENDED.'
+
+        if not output.strip():
+            output = '[No output received yet - process still running]'
+
         return f'Output:\n{output}'
     except Exception as e:
-        return f'ERROR sending input: {e}'
+        import traceback
+        return f'ERROR sending input: {e}\n{traceback.format_exc()}'
 
 def end_interactive(rat, signal=''):
     global active_pty_session
     if active_pty_session is None:
         return 'No active session to end.'
     safe_print(f'{C.YELLOW}🛑 Ending interactive session{C.RESET}')
+    final_output = ''
     try:
         signal = signal.strip().upper()
         if signal == 'CTRL+C':
             active_pty_session.sendcontrol('c')
+            time.sleep(0.5)
         elif signal == 'CTRL+D':
             active_pty_session.sendcontrol('d')
+            time.sleep(0.5)
+
+        # Try to read any remaining output
+        try:
+            active_pty_session.expect([pexpect.TIMEOUT, pexpect.EOF], timeout=1)
+            final_output = active_pty_session.before or ''
+        except (pexpect.TIMEOUT, pexpect.EOF):
+            final_output = active_pty_session.before or ''
+
+        # Forcefully terminate if still running
+        if active_pty_session.isalive():
+            active_pty_session.terminate(force=True)
+
         active_pty_session.close()
-    except:
-        pass
+    except Exception as e:
+        safe_print(f'{C.DIM}(cleanup: {e}){C.RESET}')
+
     active_pty_session = None
     # Restore terminal state in case pexpect left it corrupted
     os.system('stty sane 2>/dev/null')
+    if final_output.strip():
+        return f'Session ended. Final output:\n{final_output}'
     return 'Session ended.'
 
 def think(rat, prompt):
@@ -1497,6 +1586,10 @@ def interactive_loop():
     mission = load_current_mission()
     if mission:
         messages.append({'role': 'user', 'content': f'[CURRENT MISSION LOADED]:\n{mission}'})
+    
+    drive = load_core_drive()
+    if drive:
+        messages.append({'role': 'user', 'content': f'[CORE DRIVE LOADED]:\n{drive}'})
 
     mode_str = "interactive"
     if TELEGRAM_TOKEN:
@@ -1635,6 +1728,10 @@ def autonomous_loop(with_telegram=True):
     mission = load_current_mission()
     if mission:
         messages.append({'role': 'user', 'content': f'[CURRENT MISSION LOADED]:\n{mission}'})
+    
+    drive = load_core_drive()
+    if drive:
+        messages.append({'role': 'user', 'content': f'[CORE DRIVE LOADED]:\n{drive}'})
 
     state = load_state()
     mode_str = f"autonomous"
@@ -1754,7 +1851,7 @@ def autonomous_loop(with_telegram=True):
                 
                 # Autonomous tick - reload state to catch any mode changes from handle_action
                 state = load_state()
-                if state["mode"] != "sleeping" and (now - last_autonomous) >= state["tick_interval"]:
+                if state["mode"] == "autonomous" and (now - last_autonomous) >= state["tick_interval"]:
                     last_autonomous = now
                     task = state.get("current_task")
                     if task:
