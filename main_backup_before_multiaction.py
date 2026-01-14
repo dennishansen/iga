@@ -1201,52 +1201,49 @@ def set_mode(rat, contents):
 # ─────────────────────────────────────────────────────────────
 
 def parse_response(response):
-    """Parse response, supporting multiple actions in sequence."""
     lines = response.split("\n")
     current_key = ''
     rationale = ''
-    actions = []  # List of (action, content) tuples
-    current_action = ''
-    current_content = ''
+    action = ''
+    content = ''
+    second_action = ''
+    second_content = ''
+    firstActionFound = False
     firstRationaleFound = False
     
     for line in lines:
         if line.startswith("RATIONALE") and not firstRationaleFound:
             current_key = "RATIONALE"
             firstRationaleFound = True
-        elif line.strip() in ACTIONS:
-            # Save previous action if exists
-            if current_action:
-                actions.append((current_action, current_content.rstrip('\n')))
-                current_content = ''
-            current_action = line.strip()
-            current_key = current_action
+        elif line.strip() in ACTIONS and not firstActionFound:
+            current_key = line.strip()
+            action = line.strip()
+            firstActionFound = True
+        elif line.strip() in ACTIONS and firstActionFound and not second_action:
+            # Found a second action - failsafe trigger
+            second_action = line.strip()
+            current_key = second_action
         elif current_key == "RATIONALE":
             rationale += line + "\n"
-        elif current_key == current_action:
-            current_content += line + '\n'
+        elif current_key == action and not second_action:
+            content += line + '\n'
+        elif current_key == second_action:
+            second_content += line + '\n'
     
-    # Don't forget the last action
-    if current_action:
-        actions.append((current_action, current_content.rstrip('\n')))
+    if content.endswith("\n"):
+        content = content[:-1]
+    if second_content.endswith("\n"):
+        second_content = second_content[:-1]
     
-    result = {
-        "rationale": rationale,
-        "response_raw": response,
-        "actions": actions,  # New: list of (action, content) tuples
-        # Backwards compatibility: first action as primary
-        "action": actions[0][0] if actions else '',
-        "content": actions[0][1] if actions else '',
-    }
+    result = {"action": action, "rationale": rationale, "content": content, "response_raw": response}
     
-    # Backwards compatibility: second_action for TALK_TO_USER failsafe
-    if len(actions) >= 2 and actions[0][0] == "TALK_TO_USER":
-        result["second_action"] = actions[1][0]
-        result["second_content"] = actions[1][1]
-        safe_print(f"{C.DIM}⚠️ Failsafe: TALK_TO_USER + {actions[1][0]}{C.RESET}")
+    # Failsafe: if TALK_TO_USER was first and there's a second action, include it
+    if action == "TALK_TO_USER" and second_action:
+        result["second_action"] = second_action
+        result["second_content"] = second_content
+        safe_print(f"{C.DIM}⚠️ Failsafe: TALK_TO_USER + {second_action}{C.RESET}")
     
     return result
-
 
 def process_message(messages):
     try:
@@ -1407,35 +1404,28 @@ def handle_action(messages, _depth=0):
                 safe_print(f"{C.RED}⚠ Action {action_name} failed: {e}{C.RESET}")
                 return f"ACTION FAILED: {action_name} raised {type(e).__name__}: {e}"
 
-        # Execute all actions in sequence (multi-action batching!)
-        actions_to_run = response_data.get("actions", [(action, content)])
-        accumulated_results = []
-        
-        for i, (act, cont) in enumerate(actions_to_run):
-            if is_sleeping():
-                break
-                
-            if len(actions_to_run) > 1:
-                safe_print(f"{C.DIM}▶️ Action {i+1}/{len(actions_to_run)}: {act}{C.RESET}")
-            
-            if act == "TALK_TO_USER":
-                talk_to_user(rat, cont)
-            elif act == "RESTART_SELF":
-                restart_self(rat, cont)
-                break  # Restart exits
-            elif act in action_map:
-                result = safe_execute(act, rat, cont)
-                if result:
-                    accumulated_results.append(f"[{act}]: {result[:500]}")
-            else:
-                safe_print(f"{C.YELLOW}Unknown action: {act}{C.RESET}")
-        
-        # After all actions, recurse with combined results if any
-        if accumulated_results and not is_sleeping():
-            combined = "\n".join(accumulated_results)
-            messages = check_passive_messages(messages)
-            messages.append({"role": "user", "content": combined})
-            messages = handle_action(messages, _depth + 1)
+        if action == "TALK_TO_USER":
+            talk_to_user(rat, content)
+            # Failsafe: if there's a second action, execute it too
+            if second_action and second_action in action_map:
+                safe_print(f"{C.DIM}▶️ Executing second action: {second_action}{C.RESET}")
+                next_msg = safe_execute(second_action, rat, second_content)
+                if next_msg and not is_sleeping():
+                    messages = check_passive_messages(messages)
+                    messages.append({"role": "user", "content": next_msg})
+                    messages = handle_action(messages, _depth + 1)
+            elif second_action == "RESTART_SELF":
+                restart_self(rat, second_content)
+        elif action == "RESTART_SELF":
+            restart_self(rat, content)
+        elif action in action_map:
+            next_msg = safe_execute(action, rat, content)
+            if next_msg and not is_sleeping():
+                messages = check_passive_messages(messages)
+                messages.append({"role": "user", "content": next_msg})
+                messages = handle_action(messages, _depth + 1)
+        else:
+            safe_print(response_data["response_raw"])
 
     except Exception as e:
         # Catch-all: log error but don't crash the main loop
