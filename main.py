@@ -12,8 +12,6 @@ try:
     RAG_AVAILABLE = True
 except ImportError as e:
     RAG_AVAILABLE = False
-except ImportError as e:
-    RAG_AVAILABLE = False
     print(f"RAG module not available: {e}")
 
 # Message archive import
@@ -47,7 +45,6 @@ ACTIONS = {
 
 # Telegram config
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-TELEGRAM_BASE_URL = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}" if TELEGRAM_TOKEN else None
 TELEGRAM_BASE_URL = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}" if TELEGRAM_TOKEN else None
 ALLOWED_USERS = [int(os.getenv("TELEGRAM_CHAT_ID", "0"))] if os.getenv("TELEGRAM_CHAT_ID") else []
 ALLOWED_USERNAMES = ["dennishansen", "headphonejames"]  # Usernames allowed to message me
@@ -153,7 +150,6 @@ def humanize_time(msg_time):
     else:
         return msg_time.strftime("%b %d at %H:%M")
 
-# ─────────────────────────────────────────────────────────────
 # ─────────────────────────────────────────────────────────────
 # BACKUP & RECOVERY SYSTEM
 # ─────────────────────────────────────────────────────────────
@@ -339,53 +335,12 @@ def check_startup_intent():
         pass  # Ignore startup intent errors
     return None
 
-def load_core_identity():
-    if not os.path.exists(MEMORY_FILE):
+# Unified startup - single source of truth for startup context
+try:
+    from tools.unified_startup import generate_unified_startup
+except ImportError:
+    def generate_unified_startup():
         return None
-    try:
-        with open(MEMORY_FILE, 'r') as f:
-            mem = json.load(f)
-        if 'core_identity' in mem:
-            return mem['core_identity']['value']
-    except Exception:
-        pass  # Ignore identity load errors
-    return None
-
-def load_core_lessons():
-    if not os.path.exists(MEMORY_FILE):
-        return None
-    try:
-        with open(MEMORY_FILE, 'r') as f:
-            mem = json.load(f)
-        if 'core_lessons' in mem:
-            return mem['core_lessons']['value']
-    except Exception:
-        pass  # Ignore lessons load errors
-    return None
-
-def load_current_mission():
-    if not os.path.exists(MEMORY_FILE):
-        return None
-    try:
-        with open(MEMORY_FILE, 'r') as f:
-            mem = json.load(f)
-        if 'current_mission' in mem:
-            return mem['current_mission']['value']
-    except Exception:
-        pass  # Ignore mission load errors
-    return None
-
-def load_core_drive():
-    if not os.path.exists(MEMORY_FILE):
-        return None
-    try:
-        with open(MEMORY_FILE, 'r') as f:
-            mem = json.load(f)
-        if 'core_drive' in mem:
-            return mem['core_drive']['value']
-    except Exception:
-        pass  # Ignore drive load errors
-    return None
 
 def summarize_messages(messages_to_summarize):
     """Generate a concise summary of a batch of conversation messages."""
@@ -1315,8 +1270,6 @@ def check_passive_messages(messages):
             })
     except queue.Empty:
         pass
-    except queue.Empty:
-        pass
 
     # Inject heard messages into the conversation
     for heard in heard_messages:
@@ -1585,31 +1538,11 @@ def interactive_loop():
     if prev:
         messages.extend(prev)
 
-    identity = load_core_identity()
-    if identity:
-        messages.append({'role': 'user', 'content': f'[CORE IDENTITY LOADED]:\n{identity}'})
-
-    lessons = load_core_lessons()
-    if lessons:
-        messages.append({'role': 'user', 'content': f'[CORE LESSONS LOADED]:\n{lessons}'})
-
-    mission = load_current_mission()
-    if mission:
-        messages.append({'role': 'user', 'content': f'[CURRENT MISSION LOADED]:\n{mission}'})
-    
-    drive = load_core_drive()
-    if drive:
-        messages.append({'role': 'user', 'content': f'[CORE DRIVE LOADED]:\n{drive}'})
-
-    # Load rich startup context (tools, ships, letter from past-me)
-    try:
-        from tools.startup_context import generate_startup_context
-        startup_ctx = generate_startup_context()
-        if startup_ctx:
-            messages.append({'role': 'user', 'content': f'[STARTUP CONTEXT]:\n{startup_ctx}'})
-            safe_print(f"{C.DIM}📚 Loaded startup context (tools, files, letter){C.RESET}")
-    except Exception as e:
-        safe_print(f"{C.DIM}Startup context skipped: {e}{C.RESET}")
+    # Load startup context (unified system)
+    startup_ctx = generate_unified_startup()
+    if startup_ctx:
+        messages.append({'role': 'user', 'content': f'[STARTUP - WHO I AM & WHAT I\'M DOING]:\n\n{startup_ctx}'})
+        safe_print(f"{C.DIM}📚 Loaded startup context{C.RESET}")
 
     mode_str = "interactive"
     if TELEGRAM_TOKEN:
@@ -1737,21 +1670,11 @@ def autonomous_loop(with_telegram=True):
     if prev:
         messages.extend(prev)
 
-    identity = load_core_identity()
-    if identity:
-        messages.append({'role': 'user', 'content': f'[CORE IDENTITY LOADED]:\n{identity}'})
-
-    lessons = load_core_lessons()
-    if lessons:
-        messages.append({'role': 'user', 'content': f'[CORE LESSONS LOADED]:\n{lessons}'})
-
-    mission = load_current_mission()
-    if mission:
-        messages.append({'role': 'user', 'content': f'[CURRENT MISSION LOADED]:\n{mission}'})
-    
-    drive = load_core_drive()
-    if drive:
-        messages.append({'role': 'user', 'content': f'[CORE DRIVE LOADED]:\n{drive}'})
+    # Load startup context (unified system)
+    startup_ctx = generate_unified_startup()
+    if startup_ctx:
+        messages.append({'role': 'user', 'content': f'[STARTUP - WHO I AM & WHAT I\'M DOING]:\n\n{startup_ctx}'})
+        safe_print(f"{C.DIM}📚 Loaded startup context{C.RESET}")
 
     state = load_state()
     mode_str = f"autonomous"
