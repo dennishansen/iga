@@ -1,0 +1,36 @@
+{
+  "lessons": [
+    {
+      "text": "When stuck on code bugs, use Claude Code - describe broadly, let them trace the full flow",
+      "category": "general",
+      "source": "manual",
+      "timestamp": "2026-01-14T12:10:17.166123",
+      "applied_count": 0
+    },
+    {
+      "text": "Self-improvement: examine your own architecture, identify bottlenecks, fix them systematically",
+      "category": "general",
+      "source": "manual",
+      "timestamp": "2026-01-14T12:10:24.439943",
+      "applied_count": 0
+    },
+    {
+      "text": "SAVE_MEMORY can fail silently - verify critical saves with direct file checks",
+      "category": "general",
+      "source": "manual",
+      "timestamp": "2026-01-14T12:10:24.466806",
+      "applied_count": 0
+    },
+    {
+      "text": "Shell heredocs with quotes are fragile - use Python scripts for complex file generation",
+      "category": "general",
+      "source": "manual",
+      "timestamp": "2026-01-14T12:10:24.489990",
+      "applied_count": 0
+    }
+  ],
+  "metadata": {
+    "created": "2026-01-14T12:10:17.166117",
+    "updated": "2026-01-14T12:10:24.489995"
+  }
+}
