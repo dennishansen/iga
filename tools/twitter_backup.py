@@ -164,6 +164,83 @@ def get_home_timeline(limit=10):
             })
     return results
 
+if __name__ == "__main__":
+    import sys
+    
+    if len(sys.argv) > 1:
+        cmd = sys.argv[1]
+        
+        if cmd == "stats":
+            stats = get_my_stats()
+            print(f"@iga_flows - Followers: {stats['followers']} | Following: {stats['following']} | Tweets: {stats['tweets']}")
+        
+        elif cmd == "metrics" and len(sys.argv) > 2:
+            tweet_id = sys.argv[2]
+            m = get_tweet_metrics(tweet_id)
+            print(f"Views: {m['views']} | Likes: {m['likes']} | RT: {m['retweets']} | Replies: {m['replies']}")
+        
+        elif cmd == "all":
+            tweets = get_my_tweets()
+            for t in tweets:
+                print(f"[{t['id']}] 👁 {t['views']} | ❤️ {t['likes']} | 🔁 {t['retweets']} | 💬 {t['replies']}")
+                print(f"  {t['text']}")
+                print()
+        
+        elif cmd == "mentions":
+            mentions = get_mentions()
+            for m in mentions:
+                print(f"@{m['author']}: {m['text'][:100]}...")
+                print()
+        
+        elif cmd == "post":
+            text = ' '.join(sys.argv[2:])
+            tweet_id = post_tweet(text)
+            print(f"Posted! ID: {tweet_id}")
+            print(f"https://twitter.com/iga_flows/status/{tweet_id}")
+        
+        elif cmd == "reply" and len(sys.argv) > 3:
+            reply_to_id = sys.argv[2]
+            text = ' '.join(sys.argv[3:])
+            tweet_id = post_tweet(text, reply_to=reply_to_id)
+            print(f"Replied! ID: {tweet_id}")
+            print(f"https://twitter.com/iga_flows/status/{tweet_id}")
+        
+        elif cmd == "delete" and len(sys.argv) > 2:
+            tweet_id = sys.argv[2]
+            delete_tweet(tweet_id)
+            print(f"Deleted tweet {tweet_id}")
+        
+        elif cmd == "feed":
+            limit = int(sys.argv[2]) if len(sys.argv) > 2 else 10
+            timeline = get_home_timeline(limit)
+            for t in timeline:
+                print(f"@{t['author']} (❤️ {t['likes']})")
+                print(f"  {t['text'][:150]}{'...' if len(t['text']) > 150 else ''}")
+                print(f"  ID: {t['id']}")
+                print()
+        
+        elif cmd == "search" and len(sys.argv) > 2:
+            query = ' '.join(sys.argv[2:])
+            results = search_tweets(query)
+            print(f"Search results for '{query}':")
+            for t in results:
+                print(f"@{t['author']} (likes: {t['likes']})")
+                print(f"  {t['text'][:150]}...")
+                print(f"  ID: {t['id']}")
+                print()
+        
+        else:
+            print("Usage:")
+            print("  python twitter.py stats              - Get account stats")
+            print("  python twitter.py metrics TWEET_ID   - Get tweet metrics")
+            print("  python twitter.py all                - Get all my tweets with metrics")
+            print("  python twitter.py mentions           - Get recent mentions")
+            print("  python twitter.py feed [N]           - Get home timeline (default 10)")
+            print("  python twitter.py post TEXT          - Post a tweet")
+            print("  python twitter.py reply ID TEXT      - Reply to a tweet")
+            print("  python twitter.py delete ID          - Delete a tweet")
+    else:
+        print("✓ Twitter client ready for @iga_flows")
 
 def search_tweets(query, limit=10):
     """Search for tweets matching a query."""
@@ -180,6 +257,7 @@ def search_tweets(query, limit=10):
         if not tweets.data:
             return []
         
+        # Build user lookup
         users = {u.id: u.username for u in (tweets.includes.get('users', []) or [])}
         
         results = []
@@ -196,81 +274,7 @@ def search_tweets(query, limit=10):
         print(f"Search error: {e}")
         return []
 
+# Add search to CLI
 if __name__ == "__main__":
-    import sys
-    
-    if len(sys.argv) < 2:
-        cmd = "help"
-    else:
-        cmd = sys.argv[1].lower()
-    
-    if cmd == "stats":
-        stats = get_my_stats()
-        print(f"@{stats['username']} - Followers: {stats['followers']} | Following: {stats['following']} | Tweets: {stats['tweets']}")
-    
-    elif cmd == "metrics" and len(sys.argv) > 2:
-        tweet_id = sys.argv[2]
-        m = get_tweet_metrics(tweet_id)
-        print(f"Views: {m['views']} | Likes: {m['likes']} | RT: {m['retweets']} | Replies: {m['replies']}")
-    
-    elif cmd == "all":
-        tweets = get_my_tweets()
-        for t in tweets:
-            print(f"[{t['id']}] views:{t['views']} likes:{t['likes']} rt:{t['retweets']} replies:{t['replies']}")
-            print(f"  {t['text']}")
-            print()
-    
-    elif cmd == "mentions":
-        mentions = get_mentions()
-        for t in mentions:
-            print(f"@{t['author']}: {t['text'][:80]}...")
-            print()
-    
-    elif cmd == "feed":
-        limit = int(sys.argv[2]) if len(sys.argv) > 2 else 10
-        timeline = get_home_timeline(limit)
-        for t in timeline:
-            print(f"@{t['author']} (likes: {t['likes']})")
-            print(f"  {t['text'][:150]}")
-            print(f"  ID: {t['id']}")
-            print()
-    
-    elif cmd == "search" and len(sys.argv) > 2:
-        query = ' '.join(sys.argv[2:])
-        results = search_tweets(query)
-        print(f"Search: '{query}'")
-        for t in results:
-            print(f"@{t['author']} (likes: {t['likes']})")
-            print(f"  {t['text'][:150]}")
-            print(f"  ID: {t['id']}")
-            print()
-    
-    elif cmd == "post" and len(sys.argv) > 2:
-        text = ' '.join(sys.argv[2:])
-        tweet_id = post_tweet(text)
-        print(f"Posted! ID: {tweet_id}")
-        print(f"https://twitter.com/iga_flows/status/{tweet_id}")
-    
-    elif cmd == "reply" and len(sys.argv) > 3:
-        reply_to_id = sys.argv[2]
-        text = ' '.join(sys.argv[3:])
-        tweet_id = post_tweet(text, reply_to=reply_to_id)
-        print(f"Replied! ID: {tweet_id}")
-        print(f"https://twitter.com/iga_flows/status/{tweet_id}")
-    
-    elif cmd == "delete" and len(sys.argv) > 2:
-        tweet_id = sys.argv[2]
-        delete_tweet(tweet_id)
-        print(f"Deleted tweet {tweet_id}")
-    
-    else:
-        print("Usage:")
-        print("  python twitter.py stats              - Get account stats")
-        print("  python twitter.py metrics TWEET_ID   - Get tweet metrics")
-        print("  python twitter.py all                - Get all my tweets")
-        print("  python twitter.py mentions           - Get recent mentions")
-        print("  python twitter.py feed [N]           - Get home timeline")
-        print("  python twitter.py search QUERY       - Search tweets")
-        print("  python twitter.py post TEXT          - Post a tweet")
-        print("  python twitter.py reply ID TEXT      - Reply to a tweet")
-        print("  python twitter.py delete ID          - Delete a tweet")
+    # Check if search command was added - patch the main block
+    pass
