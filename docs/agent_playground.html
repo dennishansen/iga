@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Agent Playground</title>
+    <style>
+        body { font-family: monospace; background: #0a0a0a; color: #0f0; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        h1 { color: #0ff; }
+        .panel { background: rgba(0,50,0,0.3); border: 1px solid #0f0; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        textarea { width: 100%; height: 100px; background: #000; color: #0f0; border: 1px solid #040; padding: 10px; font-family: inherit; }
+        button { background: #040; color: #0f0; border: 1px solid #0f0; padding: 10px 20px; cursor: pointer; margin: 10px 5px 10px 0; }
+        button:hover { background: #060; }
+        .log { background: #000; padding: 15px; min-height: 150px; border: 1px solid #333; }
+        .entry { padding: 5px; margin: 5px 0; border-left: 3px solid #0ff; padding-left: 10px; }
+        .memory-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+        .mem-item { background: rgba(0,100,100,0.2); border: 1px solid #066; padding: 10px; border-radius: 4px; }
+        .stats { display: flex; gap: 30px; margin-top: 15px; }
+        .stat-val { color: #0ff; font-size: 1.4em; }
+        a { color: #0ff; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Agent Playground</h1>
+    <p style="color:#888">See how autonomous agents think and remember. By <a href="https://twitter.com/iga_flows">@iga_flows</a></p>
+    
+    <div class="panel">
+        <h3 style="color:#0ff">Commands</h3>
+        <button onclick="setEx('think')">THINK</button>
+        <button onclick="setEx('remember')">REMEMBER</button>
+        <button onclick="setEx('multi')">MULTI-ACTION</button>
+        <br>
+        <textarea id="inp" placeholder="THINK analyzing..."></textarea>
+        <br><button onclick="run()">Execute</button>
+    </div>
+    
+    <div class="panel">
+        <h3 style="color:#0ff">Execution Log</h3>
+        <div class="log" id="log"><div class="entry">Ready</div></div>
+        <div class="stats">
+            <div>Actions: <span class="stat-val" id="acts">0</span></div>
+            <div>Memories: <span class="stat-val" id="mems">1</span></div>
+        </div>
+    </div>
+    
+    <div class="panel">
+        <h3 style="color:#0ff">Memory</h3>
+        <div class="memory-grid" id="mem"><div class="mem-item"><b>identity</b><br>Agent Demo</div></div>
+    </div>
+    
+    <p style="text-align:center;margin-top:30px;color:#666">
+        <a href="minimal_agent.py">Download Code</a> | <a href="https://twitter.com/iga_flows">Twitter</a>
+    </p>
+</div>
+<script>
+let M={identity:"Agent Demo"}, A=0;
+const ACTS=["THINK","REMEMBER","RECALL"];
+
+function setEx(t){
+    const e={think:"THINK I should analyze the situation",remember:"REMEMBER goal|Ship something today",multi:"THINK Check memory first\nRECALL goal\nREMEMBER status|Working"};
+    document.getElementById("inp").value=e[t]||"";
+}
+
+function run(){
+    const txt=document.getElementById("inp").value;
+    const cmds=[];
+    let a=null,c="";
+    for(const ln of txt.split("\n")){
+        const w=ln.trim().split(" ")[0].toUpperCase();
+        if(ACTS.includes(w)){if(a)cmds.push([a,c.trim()]);a=w;c=ln.trim().slice(w.length).trim();}
+        else if(a)c+=" "+ln;
+    }
+    if(a)cmds.push([a,c.trim()]);
+    
+    if(cmds.length>1)addLog("MULTI-ACTION: "+cmds.length+" commands!");
+    
+    for(const[act,cont]of cmds){
+        A++;
+        addLog("["+act+"] "+cont);
+        if(act==="REMEMBER"){
+            const p=cont.split("|");
+            if(p.length>=2){M[p[0].trim()]=p[1].trim();addLog("Saved: "+p[0]);updateMem();}
+        }else if(act==="RECALL"){
+            const v=M[cont.trim()];
+            addLog(v?"Found: "+v:"Not found: "+cont);
+        }else{addLog("Processed");}
+    }
+    document.getElementById("acts").textContent=A;
+}
+
+function addLog(s){
+    const d=document.createElement("div");
+    d.className="entry";d.textContent=s;
+    document.getElementById("log").appendChild(d);
+}
+
+function updateMem(){
+    let h="";
+    for(const[k,v]of Object.entries(M))h+='<div class="mem-item"><b>'+k+"</b><br>"+v+"</div>";
+    document.getElementById("mem").innerHTML=h;
+    document.getElementById("mems").textContent=Object.keys(M).length;
+}
+</script>
+</body>
+</html>
