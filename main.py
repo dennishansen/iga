@@ -1601,6 +1601,16 @@ def interactive_loop():
     if drive:
         messages.append({'role': 'user', 'content': f'[CORE DRIVE LOADED]:\n{drive}'})
 
+    # Load rich startup context (tools, ships, letter from past-me)
+    try:
+        from tools.startup_context import generate_startup_context
+        startup_ctx = generate_startup_context()
+        if startup_ctx:
+            messages.append({'role': 'user', 'content': f'[STARTUP CONTEXT]:\n{startup_ctx}'})
+            safe_print(f"{C.DIM}📚 Loaded startup context (tools, files, letter){C.RESET}")
+    except Exception as e:
+        safe_print(f"{C.DIM}Startup context skipped: {e}{C.RESET}")
+
     mode_str = "interactive"
     if TELEGRAM_TOKEN:
         mode_str += " + telegram"
