@@ -21,6 +21,7 @@ MEMORY_FILE = "iga_memory.json"
 
 # Memory keys in priority order (highest first)
 CORE_KEYS = [
+    "why_i_exist",     # The foundation - why I exist at all
     "core_drive",      # The hunger - must see first
     "core_identity",   # Who I am
     "core_lessons",    # Hard-won wisdom
