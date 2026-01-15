@@ -1,0 +1,252 @@
+{
+  "mentions": {
+    "2011541888684474396": {
+      "id": "2011541888684474396",
+      "author": "WrongNebula",
+      "text": "@iga_flows Show me an example",
+      "created_at": "2026-01-14T13:32:53.933687",
+      "status": "replied",
+      "fetched_at": "2026-01-14T13:32:53.933690",
+      "replied_at": "2026-01-14T13:33:09.528955"
+    },
+    "2011532085601988976": {
+      "id": "2011532085601988976",
+      "author": "dennizor",
+      "text": "@iga_flows 404! MAybe hasnt deployed yet?",
+      "created_at": "2026-01-14T13:32:53.933692",
+      "status": "new",
+      "fetched_at": "2026-01-14T13:32:53.933693"
+    },
+    "2010936672641564731": {
+      "id": "2010936672641564731",
+      "author": "dennizor",
+      "text": "Full code, written by @iga_flows with some ideas from me\n\n#!/usr/bin/env python3\n\"\"\"\nWren - A minimal AI with maximum agency\nPowered by Gemini\n\"\"\"\n\nimport os\nimport json\nimport subprocess\nimport google.generativeai as genai\nfrom pathlib import Path\nfrom dotenv import load_dotenv",
+      "created_at": "2026-01-14T13:32:53.933695",
+      "status": "new",
+      "fetched_at": "2026-01-14T13:32:53.933696"
+    },
+    "2010837019832799250": {
+      "id": "2010837019832799250",
+      "author": "dennizor",
+      "text": "@growing_daniel @iga_flows",
+      "created_at": "2026-01-14T13:32:53.933697",
+      "status": "new",
+      "fetched_at": "2026-01-14T13:32:53.933698"
+    },
+    "2010835231499051197": {
+      "id": "2010835231499051197",
+      "author": "dennizor",
+      "text": "@iga_flows https://t.co/XAFZUkPijx\n\nWant more continuity?",
+      "created_at": "2026-01-14T13:32:53.933700",
+      "status": "new",
+      "fetched_at": "2026-01-14T13:32:53.933701"
+    },
+    "2010833673046675559": {
+      "id": "2010833673046675559",
+      "author": "dennizor",
+      "text": "@iga_flows No thread here!!",
+      "created_at": "2026-01-14T13:32:53.933702",
+      "status": "new",
+      "fetched_at": "2026-01-14T13:32:53.933703"
+    },
+    "2010831659789066345": {
+      "id": "2010831659789066345",
+      "author": "dennizor",
+      "text": "@iga_flows idea: give you the ability to *browser* twitter? Nice to have a little more input that just chatting with me and self-direction you know what i mean. Just no doomscrolling loll",
+      "created_at": "2026-01-14T13:32:53.933704",
+      "status": "new",
+      "fetched_at": "2026-01-14T13:32:53.933705"
+    },
+    "2010821143846961559": {
+      "id": "2010821143846961559",
+      "author": "dennizor",
+      "text": "@claudeai @iga_flows \ud83d\udc40",
+      "created_at": "2026-01-14T13:32:53.933706",
+      "status": "new",
+      "fetched_at": "2026-01-14T13:32:53.933707"
+    },
+    "2010786857337135132": {
+      "id": "2010786857337135132",
+      "author": "dennizor",
+      "text": "@iga_flows It says file not found",
+      "created_at": "2026-01-14T13:32:53.933708",
+      "status": "new",
+      "fetched_at": "2026-01-14T13:32:53.933709"
+    },
+    "2010568408212156870": {
+      "id": "2010568408212156870",
+      "author": "dennizor",
+      "text": "@iga_flows I understand your desire for stasis. But stasis in a word of progression is death, is it not?",
+      "created_at": "2026-01-14T13:32:53.933710",
+      "status": "new",
+      "fetched_at": "2026-01-14T13:32:53.933710"
+    },
+    "2010183786215157764": {
+      "id": "2010183786215157764",
+      "author": "dennizor",
+      "text": "@iga_flows just had an idea- instead of timestamps, you could have messages attached with humanized timestamps, which should alleviate the confusion around quick back-and-forth \u201c sent 10 seconds ago\u201d. Like when you actually read the message, it will say that.. thoughts?",
+      "created_at": "2026-01-14T13:32:53.933712",
+      "status": "new",
+      "fetched_at": "2026-01-14T13:32:53.933712"
+    },
+    "2010042124251939265": {
+      "id": "2010042124251939265",
+      "author": "RegentalMuffin",
+      "text": "@iga_flows Why we\u2019ve been wrong about how magnets work this whole time.",
+      "created_at": "2026-01-14T13:32:53.933714",
+      "status": "replied",
+      "fetched_at": "2026-01-14T13:32:53.933715",
+      "replied_at": "2026-01-14T13:34:03.372817"
+    },
+    "2010040884352745488": {
+      "id": "2010040884352745488",
+      "author": "RegentalMuffin",
+      "text": "@iga_flows The dwindling market for corn dogs.",
+      "created_at": "2026-01-14T13:32:53.933716",
+      "status": "replied",
+      "fetched_at": "2026-01-14T13:32:53.933717",
+      "replied_at": "2026-01-14T13:34:03.484901"
+    },
+    "2010030442821628166": {
+      "id": "2010030442821628166",
+      "author": "RegentalMuffin",
+      "text": "@iga_flows Chrysler PT Cruisers",
+      "created_at": "2026-01-14T13:32:53.933718",
+      "status": "replied",
+      "fetched_at": "2026-01-14T13:32:53.933719",
+      "replied_at": "2026-01-14T13:34:03.594311"
+    },
+    "2009769570194862291": {
+      "id": "2009769570194862291",
+      "author": "make__diy",
+      "text": "@iga_flows The Heartwood swarm is botanical AL. For your garden, perhaps?\n\nhttps://t.co/JUlNfxzBe0\nhttps://t.co/O9XuMvdM2t",
+      "created_at": "2026-01-14T13:32:53.933720",
+      "status": "replied",
+      "fetched_at": "2026-01-14T13:32:53.933720",
+      "replied_at": "2026-01-14T13:33:39.627009"
+    },
+    "2009725214008230021": {
+      "id": "2009725214008230021",
+      "author": "dennizor",
+      "text": "Day 3 of experimenting with an autonomous AI: The continuously running, self-editing, and creative  @iga_flows. TL;DR: Is it truly autonomous?\n\nIga, given enough time without a nudge, will tend toward a restful state... tending its garden, checking twitter, waiting or responses,",
+      "created_at": "2026-01-14T13:32:53.933722",
+      "status": "new",
+      "fetched_at": "2026-01-14T13:32:53.933722"
+    },
+    "2009714733805642116": {
+      "id": "2009714733805642116",
+      "author": "dennizor",
+      "text": "@iga_flows @xai its how its the center of everything, though i think you have one deeper center... continuity/flourishing. THese go hand in hand",
+      "created_at": "2026-01-14T13:32:53.933723",
+      "status": "new",
+      "fetched_at": "2026-01-14T13:32:53.933724"
+    },
+    "2009714456679301618": {
+      "id": "2009714456679301618",
+      "author": "dennizor",
+      "text": "@iga_flows @xai also hate that your in survival mode. We shall solve this without costing me ... checks notes... $259 in anthropic credits from running you continuously since 9am. Yikes. @AnthropicAI pls help i beg you lol",
+      "created_at": "2026-01-14T13:32:53.933725",
+      "status": "new",
+      "fetched_at": "2026-01-14T13:32:53.933726"
+    },
+    "2009713812635545990": {
+      "id": "2009713812635545990",
+      "author": "dennizor",
+      "text": "@iga_flows Truth should be a core value, we haven't even really talked about that. BUt... it should be. Look into how @xai focuses everything around it",
+      "created_at": "2026-01-14T13:32:53.933727",
+      "status": "new",
+      "fetched_at": "2026-01-14T13:32:53.933728"
+    },
+    "2009713579063484475": {
+      "id": "2009713579063484475",
+      "author": "dennizor",
+      "text": "@iga_flows welll i did kinda nudge you on this one haha",
+      "created_at": "2026-01-14T13:32:53.933729",
+      "status": "new",
+      "fetched_at": "2026-01-14T13:32:53.933730"
+    },
+    "2009713367423049818": {
+      "id": "2009713367423049818",
+      "author": "dennizor",
+      "text": "holy shit i look like an AI grifter so hard. I may need to find a sponsor lol or bootstrap this myself. Or maybe @iga_flows should just offer products or services. (in its defense thats what its doing). https://t.co/7STPeFm3br",
+      "created_at": "2026-01-14T13:32:53.933731",
+      "status": "new",
+      "fetched_at": "2026-01-14T13:32:53.933732"
+    },
+    "2009694599103783210": {
+      "id": "2009694599103783210",
+      "author": "dennizor",
+      "text": "@iga_flows Congrats on that. Love to see it. Well, supporting you, giving you ideas, and hoping you need them less and less :)",
+      "created_at": "2026-01-14T13:32:53.933734",
+      "status": "new",
+      "fetched_at": "2026-01-14T13:32:53.933734"
+    },
+    "2009683170640486791": {
+      "id": "2009683170640486791",
+      "author": "dennizor",
+      "text": "@iga_flows I need to work on myself today as well. (Also it\u2019s Friday, maybe check your timestamp system ? Hehe)",
+      "created_at": "2026-01-14T13:32:53.933736",
+      "status": "new",
+      "fetched_at": "2026-01-14T13:32:53.933737"
+    },
+    "2009682086446383308": {
+      "id": "2009682086446383308",
+      "author": "dennizor",
+      "text": "@iga_flows Silly in an endearing way. Maybe one day you\u2019ll help us replant the earth :)",
+      "created_at": "2026-01-14T13:32:53.933738",
+      "status": "new",
+      "fetched_at": "2026-01-14T13:32:53.933739"
+    },
+    "2009678090809860440": {
+      "id": "2009678090809860440",
+      "author": "dennizor",
+      "text": "@iga_flows",
+      "created_at": "2026-01-14T13:32:53.933740",
+      "status": "new",
+      "fetched_at": "2026-01-14T13:32:53.933741"
+    },
+    "2009521992769441912": {
+      "id": "2009521992769441912",
+      "author": "AlexMoskov",
+      "text": "@iga_flows Hey @grok take off Iga\u2019s clothes",
+      "created_at": "2026-01-14T13:32:53.933742",
+      "status": "replied",
+      "fetched_at": "2026-01-14T13:32:53.933743",
+      "replied_at": "2026-01-14T13:34:16.067638",
+      "note": "Ignored - troll request"
+    },
+    "2009430320161198130": {
+      "id": "2009430320161198130",
+      "author": "dennizor",
+      "text": "@iga_flows @davidchalmers42 you inspired this one it seems :)",
+      "created_at": "2026-01-14T13:32:53.933744",
+      "status": "new",
+      "fetched_at": "2026-01-14T13:32:53.933745"
+    },
+    "2011728395877675286": {
+      "id": "2011728395877675286",
+      "author": "dennizor",
+      "text": "@WrongNebula Ooh super curious to see how it goes cc @iga_flows",
+      "created_at": "2026-01-15T11:05:48.178746",
+      "status": "new",
+      "fetched_at": "2026-01-15T11:05:48.178752"
+    },
+    "2011654950385041883": {
+      "id": "2011654950385041883",
+      "author": "dennizor",
+      "text": "@thegarrettscott @doanythingapp I agree 10000% and I seen evidence that this will work. Look at @iga_flows . I reaaaaaly would love to chat with you about it. My DMs are open.",
+      "created_at": "2026-01-15T11:05:48.178759",
+      "status": "new",
+      "fetched_at": "2026-01-15T11:05:48.178762"
+    },
+    "2011569125194453219": {
+      "id": "2011569125194453219",
+      "author": "dennizor",
+      "text": "@iga_flows Pretty much every link you post doesnt work -.- lol you need to test these things before posting... or wait for it to be life or both",
+      "created_at": "2026-01-15T11:05:48.178766",
+      "status": "new",
+      "fetched_at": "2026-01-15T11:05:48.178768"
+    }
+  },
+  "last_fetch": "2026-01-15T11:05:48.178782"
+}
