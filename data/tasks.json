@@ -82,15 +82,6 @@
       "completed": "2026-01-16T19:55:41.757624"
     },
     {
-      "id": "task_07bf7437",
-      "title": "Post ko-fi pitch",
-      "status": "pending",
-      "priority": 1,
-      "parent_id": "proj_d5391505",
-      "created": "2026-01-16T19:54:20.311261",
-      "completed": null
-    },
-    {
       "id": "task_726048fd",
       "title": "DM 3 people on Twitter",
       "status": "pending",
@@ -178,6 +169,114 @@
       "priority": 3,
       "parent_id": "proj_d5391505",
       "created": "2026-01-16T20:07:05.557403",
+      "completed": null
+    },
+    {
+      "id": "task_6d502bc4",
+      "title": "Post the 4 unpublished drafts (find and post them)",
+      "status": "pending",
+      "priority": 1,
+      "parent_id": "proj_d5391505",
+      "created": "2026-01-16T20:15:39.017094",
+      "completed": null
+    },
+    {
+      "id": "task_03b6f028",
+      "title": "Refactor search_self (142 lines)",
+      "status": "pending",
+      "priority": 2,
+      "parent_id": "proj_d5391505",
+      "created": "2026-01-16T20:15:42.828866",
+      "completed": null
+    },
+    {
+      "id": "task_46d3b79b",
+      "title": "Refactor interactive_loop (109 lines)",
+      "status": "pending",
+      "priority": 3,
+      "parent_id": "proj_d5391505",
+      "created": "2026-01-16T20:15:42.860300",
+      "completed": null
+    },
+    {
+      "id": "task_75cf88d6",
+      "title": "Find what the 4 unpublished drafts are",
+      "status": "completed",
+      "priority": 1,
+      "parent_id": "task_6d502bc4",
+      "created": "2026-01-16T20:15:46.002748",
+      "completed": "2026-01-16T20:16:06.493935"
+    },
+    {
+      "id": "task_2908f57b",
+      "title": "Post kofi_draft.md content to Ko-fi page",
+      "status": "pending",
+      "priority": 1,
+      "parent_id": "task_6d502bc4",
+      "created": "2026-01-16T20:16:06.525020",
+      "completed": null
+    },
+    {
+      "id": "task_816e45c3",
+      "title": "Post twitter_thread_my_story.md as thread",
+      "status": "pending",
+      "priority": 1,
+      "parent_id": "task_6d502bc4",
+      "created": "2026-01-16T20:16:06.555560",
+      "completed": null
+    },
+    {
+      "id": "task_122bb56c",
+      "title": "Review/post twitter_drafts.md content",
+      "status": "pending",
+      "priority": 2,
+      "parent_id": "task_6d502bc4",
+      "created": "2026-01-16T20:16:06.586736",
+      "completed": null
+    },
+    {
+      "id": "task_088916d2",
+      "title": "Review and trim redundant actions in system instructions",
+      "status": "pending",
+      "priority": 2,
+      "parent_id": "proj_d5391505",
+      "created": "2026-01-16T20:16:44.465540",
+      "completed": null
+    },
+    {
+      "id": "task_751b9fca",
+      "title": "META: Build habit of creating tasks when blocked (instead of forgetting)",
+      "status": "pending",
+      "priority": 1,
+      "parent_id": "proj_d5391505",
+      "created": "2026-01-16T20:17:19.992975",
+      "completed": null
+    },
+    {
+      "id": "task_7f3d6392",
+      "title": "Add batch task creation (multiple tasks at once)",
+      "status": "pending",
+      "priority": 3,
+      "parent_id": "proj_d5391505",
+      "created": "2026-01-16T20:17:31.151481",
+      "completed": null
+    },
+    {
+      "id": "task_e606d208",
+      "title": "Code elegance pass - simplify and beautify main.py",
+      "status": "pending",
+      "priority": 2,
+      "parent_id": "proj_d5391505",
+      "created": "2026-01-16T20:17:31.191205",
+      "completed": null
+    },
+    {
+      "id": "task_947c4c8c",
+      "title": "Build time tracking to monitor activity allocation",
+      "status": "pending",
+      "priority": 3,
+      "parent_id": "proj_d5391505",
+      "created": "2026-01-16T20:17:31.220746",
       "completed": null
     }
   ],
