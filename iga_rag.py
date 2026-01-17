@@ -278,29 +278,48 @@ def retrieve_context(query, top_k=5):
 
         # Format results
         context_items = []
-        seen_sources = set()  # For deduplication
-        
+        seen_sources = set()  # For deduplication (using normalized paths)
+
+        # Extract query terms for filename matching
+        query_terms = set(query.lower().split())
+
         if results and results['documents'] and results['documents'][0]:
             for i, doc in enumerate(results['documents'][0]):
                 metadata = results['metadatas'][0][i] if results['metadatas'] else {}
                 distance = results['distances'][0][i] if results['distances'] else 0
                 relevance = 1 - distance
                 source = metadata.get("source_file", "unknown")
-                
-                # Skip low relevance results
+
+                # Normalize path to prevent duplicates (./file.md vs file.md)
+                normalized_source = os.path.normpath(source)
+
+                # Boost relevance for core/ files (foundational knowledge)
+                if normalized_source.startswith("core/") or "/core/" in normalized_source:
+                    relevance += 0.2
+
+                # Boost relevance if query terms appear in filename
+                filename = os.path.basename(normalized_source).lower()
+                filename_no_ext = os.path.splitext(filename)[0].replace('_', ' ').replace('-', ' ')
+                if any(term in filename_no_ext for term in query_terms if len(term) > 2):
+                    relevance += 0.1
+
+                # Skip low relevance results (after boosts applied)
                 if relevance < 0.35:
                     continue
-                    
-                # Skip duplicate sources (keep first/best match)
-                if source in seen_sources:
+
+                # Skip duplicate sources using normalized paths
+                if normalized_source in seen_sources:
                     continue
-                seen_sources.add(source)
+                seen_sources.add(normalized_source)
 
                 context_items.append({
                     "content": doc,
-                    "source": source,
+                    "source": normalized_source,
                     "relevance": relevance,
                 })
+
+        # Re-sort by relevance since boosts may have changed ordering
+        context_items.sort(key=lambda x: x['relevance'], reverse=True)
 
         return context_items
 
