@@ -1,7 +1,7 @@
 {
-  "total": 51.134624999999986,
+  "total": 51.56937499999999,
   "daily": {
-    "2026-01-16": 51.134624999999986
+    "2026-01-16": 51.56937499999999
   },
   "requests": [
     {
@@ -2313,6 +2313,27 @@
       "tokens_in": 27865,
       "tokens_out": 55,
       "cost": 0.1407
+    },
+    {
+      "time": "2026-01-16T20:18:27.165027",
+      "model": "anthropic/claude-opus-4.5",
+      "tokens_in": 28240,
+      "tokens_out": 183,
+      "cost": 0.145775
+    },
+    {
+      "time": "2026-01-16T20:18:30.994722",
+      "model": "anthropic/claude-opus-4.5",
+      "tokens_in": 28143,
+      "tokens_out": 61,
+      "cost": 0.14224
+    },
+    {
+      "time": "2026-01-16T20:18:37.956524",
+      "model": "anthropic/claude-opus-4.5",
+      "tokens_in": 28467,
+      "tokens_out": 176,
+      "cost": 0.14673499999999998
     }
   ]
 }

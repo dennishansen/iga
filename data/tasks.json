@@ -278,6 +278,15 @@
       "parent_id": "proj_d5391505",
       "created": "2026-01-16T20:17:31.220746",
       "completed": null
+    },
+    {
+      "id": "task_5209500f",
+      "title": "Improve task system based on usage experience (reflect and iterate)",
+      "status": "pending",
+      "priority": 2,
+      "parent_id": "proj_d5391505",
+      "created": "2026-01-16T20:18:31.060963",
+      "completed": null
     }
   ],
   "focused_id": null
