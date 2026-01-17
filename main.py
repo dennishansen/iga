@@ -1266,6 +1266,12 @@ def sleep_action(rat, contents):
     state["sleep_until"] = datetime.now().timestamp() + seconds
     state["mode"] = "sleeping"
     save_state(state)
+
+    # Re-index RAG files before sleep so embeddings are fresh on wake
+    if RAG_AVAILABLE:
+        safe_print("📚 Re-indexing RAG files before sleep...")
+        index_files()
+
     minutes = seconds // 60
     safe_print(f"😴 Sleeping for {minutes} minute(s)...")
     return None  # Don't return NEXT_ACTION - stop immediately
