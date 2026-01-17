@@ -38,32 +38,12 @@ _collection = None
 _openai_client = None
 _initialized = False
 
-# Files to index (relative to project root)
+# Files to index - now discovered automatically
+# Keeping this for any priority files that should always be indexed first
 FILES_TO_INDEX = [
-    "iga_memory.json",
-    "iga_journal.txt",
-    # Core code files - let Iga reason about her own code
-    "main.py",
-    "system_instructions.txt",
-    "iga_rag.py",
-    # Tools
-    "tools/twitter.py",
-    "tools/daily_ship_log.py",
-    "tools/reply_tracker.py",
-    # .md files will be discovered dynamically
-]
-
-# Directories to scan for .md files
-MD_DIRECTORIES = [
-    ".",
-    "letters",
-    "notes",
-    "creative",
-    "moments",
-    "docs",
-    "research",
-    "journal",
-    "artifacts",
+    "iga_memory.json",  # Memory is high priority
+    "system_instructions.txt",  # Core identity
+    "core/why_i_exist.md",  # Foundation
 ]
 
 
@@ -116,17 +96,23 @@ def _content_hash(content):
     return hashlib.md5(content.encode('utf-8')).hexdigest()
 
 
-def _discover_md_files():
-    """Find all .md files in configured directories."""
-    md_files = []
-    for directory in MD_DIRECTORIES:
-        if os.path.exists(directory):
-            for item in os.listdir(directory):
-                if item.endswith('.md'):
-                    path = os.path.join(directory, item)
-                    if os.path.isfile(path):
-                        md_files.append(path)
-    return md_files
+def _discover_all_files():
+    """Find all indexable files (.py, .txt, .md) recursively."""
+    all_files = []
+    skip_dirs = {'.git', 'node_modules', 'venv', '__pycache__', 'chroma_db', '.chroma'}
+    
+    for root, dirs, files in os.walk('.'):
+        # Skip hidden and build directories
+        dirs[:] = [d for d in dirs if d not in skip_dirs and not d.startswith('.')]
+        
+        for fname in files:
+            if fname.endswith(('.py', '.txt', '.md', '.json')):
+                path = os.path.join(root, fname)
+                # Skip very large files and binary-ish json
+                if os.path.getsize(path) < 100000:  # 100KB limit
+                    all_files.append(path)
+    
+    return all_files
 
 
 def init_rag():
@@ -173,7 +159,7 @@ def index_files(force_reindex=False):
 
     # Build list of files to index
     files = FILES_TO_INDEX.copy()
-    files.extend(_discover_md_files())
+    files.extend(_discover_all_files())
 
     # Remove duplicates while preserving order
     seen = set()
@@ -292,15 +278,28 @@ def retrieve_context(query, top_k=5):
 
         # Format results
         context_items = []
+        seen_sources = set()  # For deduplication
+        
         if results and results['documents'] and results['documents'][0]:
             for i, doc in enumerate(results['documents'][0]):
                 metadata = results['metadatas'][0][i] if results['metadatas'] else {}
                 distance = results['distances'][0][i] if results['distances'] else 0
+                relevance = 1 - distance
+                source = metadata.get("source_file", "unknown")
+                
+                # Skip low relevance results
+                if relevance < 0.35:
+                    continue
+                    
+                # Skip duplicate sources (keep first/best match)
+                if source in seen_sources:
+                    continue
+                seen_sources.add(source)
 
                 context_items.append({
                     "content": doc,
-                    "source": metadata.get("source_file", "unknown"),
-                    "relevance": 1 - distance,  # Convert distance to similarity
+                    "source": source,
+                    "relevance": relevance,
                 })
 
         return context_items
