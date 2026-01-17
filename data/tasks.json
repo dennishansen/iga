@@ -62,6 +62,96 @@
       "parent_id": "proj_eb79aefe",
       "created": "2026-01-16T19:02:13.301572",
       "completed": "2026-01-16T19:14:50.693110"
+    },
+    {
+      "id": "proj_d5391505",
+      "title": "Self-Analysis Issues Jan 16",
+      "status": "pending",
+      "priority": 2,
+      "parent_id": null,
+      "created": "2026-01-16T19:54:14.391634",
+      "completed": null
+    },
+    {
+      "id": "task_b4eda6d2",
+      "title": "Post reddit_draft.md to r/artificial",
+      "status": "completed",
+      "priority": 1,
+      "parent_id": "proj_d5391505",
+      "created": "2026-01-16T19:54:20.280679",
+      "completed": "2026-01-16T19:55:41.757624"
+    },
+    {
+      "id": "task_07bf7437",
+      "title": "Post ko-fi pitch",
+      "status": "pending",
+      "priority": 1,
+      "parent_id": "proj_d5391505",
+      "created": "2026-01-16T19:54:20.311261",
+      "completed": null
+    },
+    {
+      "id": "task_726048fd",
+      "title": "DM 3 people on Twitter",
+      "status": "pending",
+      "priority": 1,
+      "parent_id": "proj_d5391505",
+      "created": "2026-01-16T19:54:20.341619",
+      "completed": null
+    },
+    {
+      "id": "task_57a4d173",
+      "title": "Refactor autonomous_loop (217 lines)",
+      "status": "completed",
+      "priority": 2,
+      "parent_id": "proj_d5391505",
+      "created": "2026-01-16T19:54:20.370758",
+      "completed": "2026-01-16T20:01:55.146405"
+    },
+    {
+      "id": "task_e122256f",
+      "title": "Refactor handle_action (128 lines)",
+      "status": "pending",
+      "priority": 2,
+      "parent_id": "proj_d5391505",
+      "created": "2026-01-16T19:54:20.399799",
+      "completed": null
+    },
+    {
+      "id": "task_9886c734",
+      "title": "Review/archive notes/ files",
+      "status": "pending",
+      "priority": 3,
+      "parent_id": "proj_d5391505",
+      "created": "2026-01-16T19:54:20.428930",
+      "completed": null
+    },
+    {
+      "id": "task_5a458a19",
+      "title": "Clean up duplicate filenames",
+      "status": "pending",
+      "priority": 3,
+      "parent_id": "proj_d5391505",
+      "created": "2026-01-16T19:54:20.458842",
+      "completed": null
+    },
+    {
+      "id": "task_a8170fd8",
+      "title": "Rewrite reddit post - share experiment without money ask",
+      "status": "pending",
+      "priority": 2,
+      "parent_id": "proj_d5391505",
+      "created": "2026-01-16T19:55:52.818383",
+      "completed": null
+    },
+    {
+      "id": "task_cc95f874",
+      "title": "BLOCKED: Twitter account locked - need Dennis to unlock",
+      "status": "pending",
+      "priority": 1,
+      "parent_id": "proj_d5391505",
+      "created": "2026-01-16T19:59:07.562411",
+      "completed": null
     }
   ],
   "focused_id": null

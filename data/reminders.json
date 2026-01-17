@@ -12,7 +12,7 @@
       "id": "rem_cb5ad8b9",
       "message": "Time to sleep - re-index RAG and rest",
       "due_at": "2026-01-16T20:05:33.943863",
-      "status": "pending",
+      "status": "triggered",
       "created_at": "2026-01-16T19:35:33.943888",
       "completed_at": null
     }
