@@ -17,7 +17,8 @@ import os
 import sys
 from datetime import datetime
 
-LESSONS_FILE = "extracted_lessons.json"
+from pathlib import Path
+LESSONS_FILE = Path(__file__).parent.parent / "data" / "extracted_lessons.json"
 CORE_LESSONS_FILE = "core/core_lessons.md"
 
 def load_lessons():

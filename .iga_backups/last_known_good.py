@@ -1,10 +1,13 @@
 import subprocess
 import pexpect
-import sys, anthropic, click, os, json, re, urllib.request, urllib.error, time, threading, queue, select
+import sys, click, os, json, re, urllib.request, urllib.error, time, threading, queue, select
 from datetime import datetime
 from dotenv import load_dotenv
 
 load_dotenv()
+
+# OpenRouter client for API calls with cost tracking
+import openrouter_client
 
 # RAG module import
 try:
@@ -22,7 +25,9 @@ except ImportError as e:
     ARCHIVE_AVAILABLE = False
     print(f"Message archive not available: {e}")
 
-client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+# Models for OpenRouter
+MAIN_MODEL = "anthropic/claude-opus-4.5"
+SUMMARIZE_MODEL = "anthropic/claude-sonnet-4"
 MEMORY_FILE = "iga_memory.json"
 CONVERSATION_FILE = "iga_conversation.json"
 JOURNAL_FILE = "iga_journal.txt"
@@ -351,12 +356,7 @@ def summarize_messages(messages_to_summarize):
         conversation_text += f"{role.upper()}: {content}\n\n"
 
     try:
-        response = client.messages.create(
-            model="claude-sonnet-4-20250514",
-            max_tokens=500,
-            messages=[{
-                "role": "user",
-                "content": f"""Summarize this conversation segment concisely. Focus on:
+        summary_prompt = f"""Summarize this conversation segment concisely. Focus on:
 - Key decisions made
 - Important information learned
 - Tasks completed or in progress
@@ -366,9 +366,14 @@ Conversation:
 {conversation_text}
 
 Provide a concise summary (2-3 paragraphs max):"""
-            }]
+
+        content, usage = openrouter_client.chat(
+            model=SUMMARIZE_MODEL,
+            system=None,
+            messages=[{"role": "user", "content": summary_prompt}],
+            max_tokens=500
         )
-        return response.content[0].text
+        return content
     except Exception as e:
         return f"[Previous {len(messages_to_summarize)} messages - summarization failed: {e}]"
 
@@ -459,13 +464,15 @@ def print_banner(mode_str):
     mem_count, upgrade_count = get_memory_stats()
     user = get_user_name()
     mood = random.choice(moods)
-    
+    daily_cost = openrouter_client.get_daily_cost()
+
     print(f"""
 {C.CYAN}╔══════════════════════════════════════════╗
 ║{C.BOLD}  IGA v{VERSION} - AI Assistant  {C.RESET}{C.CYAN}             ║
 ╠══════════════════════════════════════════╣{C.RESET}
 {C.DIM}  Memories: {mem_count} | Actions: {len(ACTIONS)} | Upgrades: {upgrade_count}
-  Mood: {mood} | Mode: {mode_str}{C.RESET}
+  Mood: {mood} | Mode: {mode_str}
+  Today's cost: ${daily_cost:.4f}{C.RESET}
 {C.GREEN}  {"Welcome back, " + user + "!" if user else "Hello!"}{C.RESET}
 {C.CYAN}╚══════════════════════════════════════════╝{C.RESET}
 """)
@@ -1228,15 +1235,16 @@ def process_message(messages):
             except Exception as e:
                 safe_print(f"{C.DIM}RAG retrieval skipped: {e}{C.RESET}")
 
-        response = client.messages.create(
-            model="claude-opus-4-5-20251101",
-            max_tokens=2048,
+        content, usage = openrouter_client.chat(
+            model=MAIN_MODEL,
             system=system_content,
             messages=api_messages,
+            max_tokens=2048
         )
-        generated_response = response.content[0].text.strip()
+        generated_response = content.strip()
         parsed_response = parse_response(generated_response)
         parsed_response["success"] = True
+        parsed_response["usage"] = usage  # Include cost info
         return parsed_response
     except Exception as error:
         throttled_error(str(error))
@@ -1312,6 +1320,12 @@ def handle_action(messages, _depth=0):
 
         messages.append({"role": "assistant", "content": response_data["response_raw"]})
         messages = save_conversation(messages)  # Save after each action (may summarize)
+
+        # Display cost info if available
+        usage = response_data.get("usage")
+        if usage:
+            safe_print(f"{C.DIM}💰 ${usage['cost']:.4f} | Today: ${usage['daily_cost']:.4f}{C.RESET}")
+
         action = response_data["action"]
         rat = response_data["rationale"]
         content = response_data["content"]
@@ -1379,7 +1393,9 @@ def handle_action(messages, _depth=0):
             elif act in action_map:
                 result = safe_execute(act, rat, cont)
                 if result:
-                    accumulated_results.append(f"[{act}]: {result[:500]}")
+                    # Allow longer results for content-heavy actions
+                    max_len = 5000 if act in ("READ_FILES", "SEARCH_FILES", "HTTP_REQUEST") else 500
+                    accumulated_results.append(f"[{act}]: {result[:max_len]}")
             else:
                 safe_print(f"{C.YELLOW}Unknown action: {act}{C.RESET}")
         
@@ -1796,7 +1812,29 @@ def autonomous_loop(with_telegram=True):
                 state = load_state()
                 if state["mode"] == "autonomous" and (now - last_autonomous) >= state["tick_interval"]:
                     last_autonomous = now
-                    task = state.get("current_task")
+                    # Check task system first, fall back to state
+                    task = None
+                    tasks_file = Path("data/tasks.json")
+                    if tasks_file.exists():
+                        try:
+                            tasks_data = json.loads(tasks_file.read_text())
+                            focused_id = tasks_data.get("focused_id")
+                            if focused_id:
+                                # Find focused task and build parent chain
+                                tasks_by_id = {t["id"]: t for t in tasks_data.get("tasks", [])}
+                                focused = tasks_by_id.get(focused_id)
+                                if focused:
+                                    chain = []
+                                    current = focused
+                                    while current:
+                                        chain.insert(0, current["title"])
+                                        parent_id = current.get("parent_id")
+                                        current = tasks_by_id.get(parent_id) if parent_id else None
+                                    task = " > ".join(chain)
+                        except:
+                            pass
+                    if not task:
+                        task = state.get("current_task")
                     if task:
                         auto_prompt = f"[AUTONOMOUS TICK] Your current task: {task}. What have you SHIPPED? What's different because you existed? Don't just think - CREATE something real."
                     else:

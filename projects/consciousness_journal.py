@@ -11,7 +11,8 @@ import json
 import os
 from datetime import datetime
 
-JOURNAL_FILE = "consciousness_entries.json"
+from pathlib import Path
+JOURNAL_FILE = Path(__file__).parent.parent / "data" / "consciousness_entries.json"
 
 # Questions to prompt reflection
 PROMPTS = [

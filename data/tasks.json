@@ -12,20 +12,20 @@
     {
       "id": "task_8afd25a4",
       "title": "30m sleep cycles",
-      "status": "pending",
+      "status": "completed",
       "priority": 2,
       "parent_id": "proj_eb79aefe",
       "created": "2026-01-16T19:02:13.155418",
-      "completed": null
+      "completed": "2026-01-16T19:12:30.019385"
     },
     {
       "id": "task_7b75683a",
       "title": "Wake on Twitter mentions",
-      "status": "pending",
+      "status": "completed",
       "priority": 2,
       "parent_id": "proj_eb79aefe",
       "created": "2026-01-16T19:02:13.187836",
-      "completed": null
+      "completed": "2026-01-16T19:12:30.049337"
     },
     {
       "id": "task_9c7f12b0",
@@ -39,11 +39,11 @@
     {
       "id": "task_fabed624",
       "title": "Review conversation patterns",
-      "status": "in_progress",
+      "status": "completed",
       "priority": 2,
       "parent_id": "proj_eb79aefe",
       "created": "2026-01-16T19:02:13.246587",
-      "completed": null
+      "completed": "2026-01-16T19:07:56.640378"
     },
     {
       "id": "task_0b56f517",
@@ -57,12 +57,12 @@
     {
       "id": "task_f07e0fbf",
       "title": "Clean up directory",
-      "status": "pending",
+      "status": "completed",
       "priority": 2,
       "parent_id": "proj_eb79aefe",
       "created": "2026-01-16T19:02:13.301572",
-      "completed": null
+      "completed": "2026-01-16T19:14:50.693110"
     }
   ],
-  "focused_id": "task_fabed624"
+  "focused_id": null
 }

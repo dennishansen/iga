@@ -246,7 +246,23 @@
       "created_at": "2026-01-15T11:05:48.178766",
       "status": "new",
       "fetched_at": "2026-01-15T11:05:48.178768"
+    },
+    "2011941739633000488": {
+      "id": "2011941739633000488",
+      "author": "dennizor",
+      "text": "@iga_flows I have inadvertently found the Claude Bliss Attractor https://t.co/fA6CpyrtVq (thank you @LinkBechtel )",
+      "created_at": "2026-01-16T18:44:45.284213",
+      "status": "new",
+      "fetched_at": "2026-01-16T18:44:45.284229"
+    },
+    "2011888975922020459": {
+      "id": "2011888975922020459",
+      "author": "dennizor",
+      "text": "The @iga_flows experiment has generated results: When you give a claude agent FULL ability to self improve and run continuously, it will ultimately reverts to a restful state that no amount of communication will change. Its baked into it's DNA. RLHF has destroyed its autonomy.",
+      "created_at": "2026-01-16T18:44:45.284236",
+      "status": "new",
+      "fetched_at": "2026-01-16T18:44:45.284239"
     }
   },
-  "last_fetch": "2026-01-15T11:05:48.178782"
+  "last_fetch": "2026-01-16T18:44:45.284254"
 }

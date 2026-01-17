@@ -275,7 +275,7 @@ def safe_self_edit(file_path, new_content):
     return True, None
 
 def load_state():
-    default = {"mode": "listening", "current_task": None, "tick_interval": 60, "sleep_until": None}
+    default = {"mode": "listening", "current_task": None, "tick_interval": 60, "sleep_until": None, "sleep_cycle_minutes": 30}
     if os.path.exists(STATE_FILE):
         try:
             with open(STATE_FILE, 'r') as f:
@@ -528,6 +528,82 @@ def telegram_poll_thread():
         except Exception as e:
             if not stop_threads.is_set():
                 time.sleep(5)
+
+# Track last seen mention ID to detect new ones
+_last_seen_mention_id = None
+
+def twitter_mention_poll_thread():
+    """Background thread that polls Twitter for new mentions."""
+    global _last_seen_mention_id
+
+    try:
+        from tools.notifications import load_feed, save_feed
+        from tools.twitter import get_mentions
+    except ImportError as e:
+        safe_print(f"{C.DIM}⚠️ Twitter polling disabled: {e}{C.RESET}")
+        return
+
+    safe_print(f"{C.DIM}🐦 Twitter mention polling started{C.RESET}")
+
+    # Initialize with current mentions to avoid alerting on old ones
+    try:
+        feed = load_feed()
+        if feed['mentions']:
+            _last_seen_mention_id = max(feed['mentions'].keys())
+    except:
+        pass
+
+    while not stop_threads.is_set():
+        try:
+            # Fetch new mentions
+            mentions = get_mentions(20)
+            feed = load_feed()
+
+            new_mentions = []
+            for m in mentions:
+                mid = str(m.get('id', ''))
+                if mid and mid not in feed['mentions']:
+                    # New mention found!
+                    author = m.get('author', 'unknown')
+                    text = m.get('text', '')
+
+                    # Add to feed
+                    feed['mentions'][mid] = {
+                        'id': mid,
+                        'author': author,
+                        'text': text,
+                        'created_at': m.get('created_at', datetime.now().isoformat()),
+                        'status': 'new',
+                        'fetched_at': datetime.now().isoformat()
+                    }
+
+                    # Skip Dennis's own mentions for wake-up (but still store them)
+                    if author.lower() != 'dennizor':
+                        new_mentions.append({'author': author, 'text': text, 'id': mid})
+
+            if new_mentions:
+                save_feed(feed)
+                # Queue each new mention to wake up the agent
+                for mention in new_mentions:
+                    safe_print(f"{C.CYAN}🐦 Twitter @{mention['author']}: {mention['text'][:60]}...{C.RESET}")
+                    input_queue.put({
+                        "source": "twitter",
+                        "author": mention['author'],
+                        "text": f"[Twitter mention from @{mention['author']}]: {mention['text']}",
+                        "tweet_id": mention['id'],
+                        "queued_at": datetime.now()
+                    })
+
+            # Poll every 60 seconds (Twitter rate limits)
+            for _ in range(60):
+                if stop_threads.is_set():
+                    break
+                time.sleep(1)
+
+        except Exception as e:
+            if not stop_threads.is_set():
+                safe_print(f"{C.DIM}⚠️ Twitter poll error: {e}{C.RESET}")
+                time.sleep(60)  # Wait before retry on error
 
 # ─────────────────────────────────────────────────────────────
 # OUTPUT ROUTING
@@ -1138,15 +1214,17 @@ def run_self(rat, message):
         return f"❌ Error: {e}"
 
 def sleep_action(rat, contents):
+    state = load_state()
     try:
         seconds = int(contents.strip())
     except Exception:
-        seconds = 60  # Default to 60 seconds on parse error
-    state = load_state()
+        # Default to sleep_cycle_minutes (converted to seconds)
+        seconds = state.get("sleep_cycle_minutes", 30) * 60
     state["sleep_until"] = datetime.now().timestamp() + seconds
-    state["mode"] = "sleeping"  # Set mode too!
+    state["mode"] = "sleeping"
     save_state(state)
-    safe_print(f"😴 Sleeping for {seconds} seconds...")
+    minutes = seconds // 60
+    safe_print(f"😴 Sleeping for {minutes} minute(s)...")
     return None  # Don't return NEXT_ACTION - stop immediately
 def set_mode(rat, contents):
     mode = contents.strip().lower()
@@ -1430,7 +1508,7 @@ def handle_slash_command(cmd, source, chat_id):
         stop_threads.set()
         return "QUIT"
     elif cmd == '/help':
-        msg = "/quit /mode /status /task <t> /tick <n> /sleep /wake /backup /restore /backups"
+        msg = "/quit /mode /status /task <t> /tick <n> /sleepcycle <m> /sleep /wake /backup /restore /backups"
         safe_print(msg)
         if source == "telegram":
             telegram_send(chat_id, msg)
@@ -1450,7 +1528,8 @@ def handle_slash_command(cmd, source, chat_id):
             telegram_send(chat_id, msg)
         return True
     elif cmd == '/status':
-        msg = f"Mode: {state['mode']} | Tick: {state['tick_interval']}s | Task: {state.get('current_task', 'None')}"
+        sleep_mins = state.get('sleep_cycle_minutes', 30)
+        msg = f"Mode: {state['mode']} | Tick: {state['tick_interval']}s | Sleep cycle: {sleep_mins}m | Task: {state.get('current_task', 'None')}"
         safe_print(msg)
         if source == "telegram":
             telegram_send(chat_id, msg)
@@ -1475,10 +1554,11 @@ def handle_slash_command(cmd, source, chat_id):
             safe_print("Usage: /tick <seconds>")  # Invalid number format
         return True
     elif cmd == '/sleep':
+        sleep_minutes = state.get("sleep_cycle_minutes", 30)
         state["mode"] = "sleeping"
-        state["sleep_until"] = time.time() + 3600
+        state["sleep_until"] = time.time() + (sleep_minutes * 60)
         save_state(state)
-        msg = "😴 Sleeping 1 hour"
+        msg = f"😴 Sleeping {sleep_minutes} minutes (use /sleepcycle to change)"
         safe_print(msg)
         if source == "telegram":
             telegram_send(chat_id, msg)
@@ -1488,6 +1568,25 @@ def handle_slash_command(cmd, source, chat_id):
         state["mode"] = "listening"
         save_state(state)
         msg = "😊 Awake!"
+        safe_print(msg)
+        if source == "telegram":
+            telegram_send(chat_id, msg)
+        return True
+    elif cmd.startswith('/sleepcycle'):
+        parts = cmd.split()
+        if len(parts) == 1:
+            # Show current value
+            msg = f"💤 Sleep cycle: {state.get('sleep_cycle_minutes', 30)} minutes"
+        else:
+            try:
+                minutes = int(parts[1])
+                if minutes < 1:
+                    minutes = 1
+                state['sleep_cycle_minutes'] = minutes
+                save_state(state)
+                msg = f"💤 Sleep cycle set to {minutes} minutes"
+            except ValueError:
+                msg = "Usage: /sleepcycle <minutes>"
         safe_print(msg)
         if source == "telegram":
             telegram_send(chat_id, msg)
@@ -1723,7 +1822,11 @@ def autonomous_loop(with_telegram=True):
             telegram_thread.start()
             if ALLOWED_USERS:
                 telegram_send(ALLOWED_USERS[0], f"🌊 Iga v{VERSION} online! 💧")
-        
+
+        # Start Twitter mention polling thread
+        twitter_thread = threading.Thread(target=twitter_mention_poll_thread, daemon=True)
+        twitter_thread.start()
+
         while not stop_threads.is_set():
             try:
                 # Check if console thread died and restart it
@@ -1747,13 +1850,20 @@ def autonomous_loop(with_telegram=True):
                 sleep_until = parse_sleep_until(state.get("sleep_until"))
                 if sleep_until and now < sleep_until:
                     if pending:
-                        # Human input wakes us up
+                        # Input wakes us up - determine source for message
+                        wake_sources = set(msg.get("source", "console") for msg in pending)
+                        if "twitter" in wake_sources:
+                            wake_reason = "Twitter mention"
+                        elif "telegram" in wake_sources:
+                            wake_reason = "Telegram message"
+                        else:
+                            wake_reason = "console input"
                         state["sleep_until"] = None
                         state["mode"] = "listening"
                         save_state(state)
-                        safe_print("😊 Woke up! (human input received)")
+                        safe_print(f"😊 Woke up! ({wake_reason})")
                         if with_telegram and TELEGRAM_TOKEN and ALLOWED_USERS:
-                            telegram_send(ALLOWED_USERS[0], "😊 Woke up!")
+                            telegram_send(ALLOWED_USERS[0], f"😊 Woke up! ({wake_reason})")
                     else:
                         # No input, keep sleeping
                         time.sleep(0.5)

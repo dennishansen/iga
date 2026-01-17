@@ -95,8 +95,9 @@ def full_inventory():
         output.append(f"MEMORIES: {len(mem)} keys")
     
     # Lessons
-    if os.path.exists("extracted_lessons.json"):
-        with open("extracted_lessons.json", 'r') as f:
+    lessons_path = os.path.join(os.path.dirname(__file__), "..", "data", "extracted_lessons.json")
+    if os.path.exists(lessons_path):
+        with open(lessons_path, 'r') as f:
             lessons = json.load(f)
         output.append(f"LESSONS: {len(lessons.get('lessons', []))} extracted")
     
