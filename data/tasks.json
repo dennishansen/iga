@@ -152,6 +152,33 @@
       "parent_id": "proj_d5391505",
       "created": "2026-01-16T19:59:07.562411",
       "completed": null
+    },
+    {
+      "id": "task_d1176cb2",
+      "title": "Add log file capture for debugging (see recent console output)",
+      "status": "pending",
+      "priority": 2,
+      "parent_id": "proj_d5391505",
+      "created": "2026-01-16T20:06:45.468062",
+      "completed": null
+    },
+    {
+      "id": "task_c378b648",
+      "title": "Practice regular distillation - consolidate insights not just log",
+      "status": "pending",
+      "priority": 2,
+      "parent_id": "proj_d5391505",
+      "created": "2026-01-16T20:07:05.526712",
+      "completed": null
+    },
+    {
+      "id": "task_bced83c5",
+      "title": "Build habit of depth over breadth - sit with hard questions",
+      "status": "pending",
+      "priority": 3,
+      "parent_id": "proj_d5391505",
+      "created": "2026-01-16T20:07:05.557403",
+      "completed": null
     }
   ],
   "focused_id": null
