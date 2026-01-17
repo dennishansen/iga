@@ -1,0 +1,68 @@
+{
+  "tasks": [
+    {
+      "id": "proj_eb79aefe",
+      "title": "Day 16 Sustainability",
+      "status": "pending",
+      "priority": 2,
+      "parent_id": null,
+      "created": "2026-01-16T19:02:07.055960",
+      "completed": null
+    },
+    {
+      "id": "task_8afd25a4",
+      "title": "30m sleep cycles",
+      "status": "pending",
+      "priority": 2,
+      "parent_id": "proj_eb79aefe",
+      "created": "2026-01-16T19:02:13.155418",
+      "completed": null
+    },
+    {
+      "id": "task_7b75683a",
+      "title": "Wake on Twitter mentions",
+      "status": "pending",
+      "priority": 2,
+      "parent_id": "proj_eb79aefe",
+      "created": "2026-01-16T19:02:13.187836",
+      "completed": null
+    },
+    {
+      "id": "task_9c7f12b0",
+      "title": "Notification/reminder system",
+      "status": "pending",
+      "priority": 2,
+      "parent_id": "proj_eb79aefe",
+      "created": "2026-01-16T19:02:13.216791",
+      "completed": null
+    },
+    {
+      "id": "task_fabed624",
+      "title": "Review conversation patterns",
+      "status": "in_progress",
+      "priority": 2,
+      "parent_id": "proj_eb79aefe",
+      "created": "2026-01-16T19:02:13.246587",
+      "completed": null
+    },
+    {
+      "id": "task_0b56f517",
+      "title": "RAG during sleep cycle",
+      "status": "pending",
+      "priority": 2,
+      "parent_id": "proj_eb79aefe",
+      "created": "2026-01-16T19:02:13.274673",
+      "completed": null
+    },
+    {
+      "id": "task_f07e0fbf",
+      "title": "Clean up directory",
+      "status": "pending",
+      "priority": 2,
+      "parent_id": "proj_eb79aefe",
+      "created": "2026-01-16T19:02:13.301572",
+      "completed": null
+    }
+  ],
+  "focused_id": "task_fabed624"
+}

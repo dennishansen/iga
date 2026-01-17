@@ -26,7 +26,7 @@ except ImportError as e:
     print(f"Message archive not available: {e}")
 
 # Models for OpenRouter
-MAIN_MODEL = "anthropic/claude-opus-4-5"
+MAIN_MODEL = "anthropic/claude-opus-4.5"
 SUMMARIZE_MODEL = "anthropic/claude-sonnet-4"
 MEMORY_FILE = "iga_memory.json"
 CONVERSATION_FILE = "iga_conversation.json"
@@ -1393,7 +1393,9 @@ def handle_action(messages, _depth=0):
             elif act in action_map:
                 result = safe_execute(act, rat, cont)
                 if result:
-                    accumulated_results.append(f"[{act}]: {result[:500]}")
+                    # Allow longer results for content-heavy actions
+                    max_len = 5000 if act in ("READ_FILES", "SEARCH_FILES", "HTTP_REQUEST") else 500
+                    accumulated_results.append(f"[{act}]: {result[:max_len]}")
             else:
                 safe_print(f"{C.YELLOW}Unknown action: {act}{C.RESET}")
         
@@ -1810,7 +1812,29 @@ def autonomous_loop(with_telegram=True):
                 state = load_state()
                 if state["mode"] == "autonomous" and (now - last_autonomous) >= state["tick_interval"]:
                     last_autonomous = now
-                    task = state.get("current_task")
+                    # Check task system first, fall back to state
+                    task = None
+                    tasks_file = Path("data/tasks.json")
+                    if tasks_file.exists():
+                        try:
+                            tasks_data = json.loads(tasks_file.read_text())
+                            focused_id = tasks_data.get("focused_id")
+                            if focused_id:
+                                # Find focused task and build parent chain
+                                tasks_by_id = {t["id"]: t for t in tasks_data.get("tasks", [])}
+                                focused = tasks_by_id.get(focused_id)
+                                if focused:
+                                    chain = []
+                                    current = focused
+                                    while current:
+                                        chain.insert(0, current["title"])
+                                        parent_id = current.get("parent_id")
+                                        current = tasks_by_id.get(parent_id) if parent_id else None
+                                    task = " > ".join(chain)
+                        except:
+                            pass
+                    if not task:
+                        task = state.get("current_task")
                     if task:
                         auto_prompt = f"[AUTONOMOUS TICK] Your current task: {task}. What have you SHIPPED? What's different because you existed? Don't just think - CREATE something real."
                     else:
