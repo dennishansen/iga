@@ -605,6 +605,49 @@ def twitter_mention_poll_thread():
                 safe_print(f"{C.DIM}⚠️ Twitter poll error: {e}{C.RESET}")
                 time.sleep(60)  # Wait before retry on error
 
+
+def reminder_poll_thread():
+    """Background thread that checks for due reminders."""
+    try:
+        from tools.reminders import get_due_reminders, mark_triggered
+    except ImportError as e:
+        safe_print(f"{C.DIM}⚠️ Reminder polling disabled: {e}{C.RESET}")
+        return
+
+    safe_print(f"{C.DIM}⏰ Reminder polling started{C.RESET}")
+
+    # Track triggered reminders to avoid duplicate notifications
+    triggered_ids = set()
+
+    while not stop_threads.is_set():
+        try:
+            due_reminders = get_due_reminders()
+
+            for r in due_reminders:
+                if r["id"] not in triggered_ids:
+                    triggered_ids.add(r["id"])
+                    mark_triggered(r["id"])
+
+                    safe_print(f"{C.YELLOW}⏰ Reminder: {r['message']}{C.RESET}")
+                    input_queue.put({
+                        "source": "reminder",
+                        "text": f"[Reminder due]: {r['message']} (ID: {r['id']})",
+                        "reminder_id": r["id"],
+                        "queued_at": datetime.now()
+                    })
+
+            # Check every 30 seconds
+            for _ in range(30):
+                if stop_threads.is_set():
+                    break
+                time.sleep(1)
+
+        except Exception as e:
+            if not stop_threads.is_set():
+                safe_print(f"{C.DIM}⚠️ Reminder poll error: {e}{C.RESET}")
+                time.sleep(30)
+
+
 # ─────────────────────────────────────────────────────────────
 # OUTPUT ROUTING
 # ─────────────────────────────────────────────────────────────
@@ -1301,10 +1344,25 @@ def process_message(messages):
         # RAG: Retrieve relevant context based on recent user messages
         if RAG_AVAILABLE:
             try:
-                # Get the last user message for context retrieval
                 recent_user_msgs = [m for m in api_messages if m["role"] == "user"][-3:]
                 if recent_user_msgs:
-                    query = " ".join([m["content"][:200] for m in recent_user_msgs])
+                    last_msg = recent_user_msgs[-1]["content"] if recent_user_msgs else ""
+
+                    # For autonomous ticks, use focused task for RAG query
+                    if "[AUTONOMOUS TICK]" in last_msg:
+                        try:
+                            from tools.tasks import get_focus_string
+                            focused_task = get_focus_string()
+                            if focused_task:
+                                query = focused_task
+                                safe_print(f"{C.DIM}🔍 RAG: Querying for task: {focused_task[:50]}...{C.RESET}")
+                            else:
+                                query = " ".join([m["content"][:200] for m in recent_user_msgs])
+                        except:
+                            query = " ".join([m["content"][:200] for m in recent_user_msgs])
+                    else:
+                        query = " ".join([m["content"][:200] for m in recent_user_msgs])
+
                     context_items = retrieve_context(query, top_k=5)
                     if context_items:
                         rag_context = format_context_for_prompt(context_items)
@@ -1827,6 +1885,10 @@ def autonomous_loop(with_telegram=True):
         twitter_thread = threading.Thread(target=twitter_mention_poll_thread, daemon=True)
         twitter_thread.start()
 
+        # Start reminder polling thread
+        reminder_thread = threading.Thread(target=reminder_poll_thread, daemon=True)
+        reminder_thread.start()
+
         while not stop_threads.is_set():
             try:
                 # Check if console thread died and restart it
@@ -1856,6 +1918,8 @@ def autonomous_loop(with_telegram=True):
                             wake_reason = "Twitter mention"
                         elif "telegram" in wake_sources:
                             wake_reason = "Telegram message"
+                        elif "reminder" in wake_sources:
+                            wake_reason = "Reminder due"
                         else:
                             wake_reason = "console input"
                         state["sleep_until"] = None

@@ -3,11 +3,11 @@
     {
       "id": "proj_eb79aefe",
       "title": "Day 16 Sustainability",
-      "status": "pending",
+      "status": "completed",
       "priority": 2,
       "parent_id": null,
       "created": "2026-01-16T19:02:07.055960",
-      "completed": null
+      "completed": "2026-01-16T19:33:22.671720"
     },
     {
       "id": "task_8afd25a4",
@@ -30,11 +30,11 @@
     {
       "id": "task_9c7f12b0",
       "title": "Notification/reminder system",
-      "status": "pending",
+      "status": "completed",
       "priority": 2,
       "parent_id": "proj_eb79aefe",
       "created": "2026-01-16T19:02:13.216791",
-      "completed": null
+      "completed": "2026-01-16T19:32:01.971959"
     },
     {
       "id": "task_fabed624",
@@ -48,11 +48,11 @@
     {
       "id": "task_0b56f517",
       "title": "RAG during sleep cycle",
-      "status": "pending",
+      "status": "completed",
       "priority": 2,
       "parent_id": "proj_eb79aefe",
       "created": "2026-01-16T19:02:13.274673",
-      "completed": null
+      "completed": "2026-01-16T19:33:18.479704"
     },
     {
       "id": "task_f07e0fbf",
