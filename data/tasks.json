@@ -156,11 +156,11 @@
     {
       "id": "task_d1176cb2",
       "title": "Add log file capture for debugging (see recent console output)",
-      "status": "pending",
+      "status": "completed",
       "priority": 2,
       "parent_id": "proj_d5391505",
       "created": "2026-01-16T20:06:45.468062",
-      "completed": null
+      "completed": "2026-01-16T20:11:53.791598"
     },
     {
       "id": "task_c378b648",

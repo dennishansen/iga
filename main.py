@@ -46,7 +46,7 @@ ACTIONS = {
     "EDIT_FILE", "DELETE_FILE", "APPEND_FILE", "LIST_DIRECTORY", "SAVE_MEMORY",
     "READ_MEMORY", "SEARCH_FILES", "SEARCH_SELF", "CREATE_DIRECTORY", "TREE_DIRECTORY",
     "HTTP_REQUEST", "WEB_SEARCH", "TEST_SELF", "RUN_SELF", "SLEEP", "SET_MODE",
-    "START_INTERACTIVE", "SEND_INPUT", "END_INTERACTIVE", "RESTART_SELF"
+    "START_INTERACTIVE", "SEND_INPUT", "END_INTERACTIVE", "RESTART_SELF", "READ_LOGS"
 }
 
 # Telegram config
@@ -118,6 +118,21 @@ class ErrorThrottler:
 _error_throttler = ErrorThrottler()
 def safe_print(msg):
     with _print_lock:
+        # Log to file for debugging
+        try:
+            log_path = Path("data/console_log.txt")
+            log_path.parent.mkdir(exist_ok=True)
+            with open(log_path, "a") as log_file:
+                # Strip ANSI codes for log file
+                clean_msg = re.sub(r'\[[0-9;]*m', '', str(msg))
+                log_file.write(f"{datetime.now().isoformat()} | {clean_msg}\n")
+            # Keep log file from growing forever (max 1000 lines)
+            if log_path.stat().st_size > 100000:  # ~100KB
+                lines = log_path.read_text().splitlines()[-500:]
+                log_path.write_text("\n".join(lines) + "\n")
+        except Exception:
+            pass  # Don't let logging break the app
+        
         if _autonomous_mode:
             try:
                 from prompt_toolkit import print_formatted_text
@@ -1040,6 +1055,22 @@ def search_self(rat, query):
     except Exception as e:
         return f"RAG search unavailable ({e}). Please ensure RAG is initialized."
 
+
+def read_logs(rat, content):
+    """Read recent console logs for debugging."""
+    log_path = Path("data/console_log.txt")
+    if not log_path.exists():
+        return "No logs yet - console_log.txt doesn't exist"
+    
+    try:
+        lines = int(content.strip()) if content.strip() else 50
+    except ValueError:
+        lines = 50
+    
+    all_lines = log_path.read_text().splitlines()
+    recent = all_lines[-lines:] if len(all_lines) > lines else all_lines
+    return f"Last {len(recent)} log lines:\n" + "\n".join(recent)
+
 def create_directory(rat, path):
     path = path.strip()
     safe_print(f"📂 {path}")
@@ -1384,6 +1415,7 @@ def handle_action(messages, _depth=0):
             "READ_MEMORY": lambda r, c: read_memory(r, c),
             "SEARCH_FILES": lambda r, c: search_files(r, c),
             "SEARCH_SELF": lambda r, c: search_self(r, c),
+            "READ_LOGS": lambda r, c: read_logs(r, c),
             "CREATE_DIRECTORY": lambda r, c: create_directory(r, c),
             "TREE_DIRECTORY": lambda r, c: tree_directory(r, c),
             "HTTP_REQUEST": lambda r, c: http_request(r, c),
