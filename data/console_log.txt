@@ -1732,3 +1732,169 @@ Your account is temporarily locked. Please log in to https://twitter.com to unlo
 2026-01-17T17:32:55.328683 | 🔍 RAG: Retrieved 2 relevant chunks
 2026-01-17T17:32:57.851407 | 💰 $0.1302 | Today: $6.0891
 2026-01-17T17:32:57.854355 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Auto-index message archive on startup"
+2026-01-17T17:32:57.925003 | [main 3475ffd] Auto-index message archive on startup
+ 7 files changed, 1867 insertions(+), 1168 deletions(-)
+ rename .iga_backups/{main_20260114_113519_pre_edit.py => main_20260117_173246_pre_edit.py} (72%)
+ rename .iga_backups/{main_20260114_113432_pre_edit.py => main_20260117_173246_pre_restore.py} (72%)
+ rename .iga_backups/{main_20260114_113458_pre_edit.py => main_20260117_173251_pre_edit.py} (72%)
+2026-01-17T17:32:58.171716 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-01-17T17:33:05.274468 | ⚠️ Failsafe: TALK_TO_USER + RUN_SHELL_COMMAND
+2026-01-17T17:33:05.280147 | 💰 $0.1393 | Today: $6.2285
+2026-01-17T17:33:05.281805 | ▶️ Action 1/2: TALK_TO_USER
+2026-01-17T17:33:05.283750 | 
+🤖 Iga [17:33:05]: Good! Now the message archive will be indexed on every startup, keeping RAG up to date with my recent conversations.
+
+**Ships so far today:**
+1. ✅ reddit_draft_v2.md - Experiment sharing post
+2. ✅ Message archive RAG indexer (410 chunks)
+3. ✅ Increased RAG chunks from 5→10
+4. ✅ Auto-index message archive on startup
+
+What's next from my task list? Let me check what's highest value:
+2026-01-17T17:33:05.285312 | ▶️ Action 2/2: RUN_SHELL_COMMAND
+2026-01-17T17:33:05.285492 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
+import json
+with open('data/tasks.json') as f:
+    data = json.load(f)
+
+pending = [t for t in data['tasks'] if t['status'] == 'pending']
+blocked_keywords = ['twitter', 'dm 3', 'thread']
+
+print('ACTIONABLE P1/P2 TASKS:')
+for t in pending:
+    title = t['title'].lower()
+    if any(k in title for k in blocked_keywords):
+        continue
+    p = t.get('priority', 2)
+    if p <= 2:
+        emoji = '🔴' if p == 1 else '🟡'
+        print(f'{emoji} {t[\"title\"][:60]}')
+"
+2026-01-17T17:33:05.337027 | ACTIONABLE P1/P2 TASKS:
+🟡 Self-Analysis Issues Jan 16
+🟡 Refactor handle_action (128 lines)
+🟡 Rewrite reddit post - share experiment without money ask
+🟡 Practice regular distillation - consolidate insights not jus
+🔴 Post the 4 unpublished drafts (find and post them)
+🟡 Refactor search_self (142 lines)
+🔴 Post kofi_draft.md content to Ko-fi page
+🟡 Review and trim redundant actions in system instructions
+🔴 META: Build habit of creating tasks when blocked (instead of
+🟡 Code elegance pass - simplify an
+2026-01-17T17:33:05.605408 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-01-17T17:33:11.677091 | 💰 $0.1370 | Today: $6.3655
+2026-01-17T17:33:11.678719 | 🧠 Thinking... (519 chars)
+2026-01-17T17:33:11.679756 | 👂 Heard: I would add to yout task list to REAAALLY dig into...
+2026-01-17T17:33:11.896514 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-01-17T17:33:24.609864 | 📝 Summarized 50 old messages
+2026-01-17T17:33:24.612735 | 💰 $0.1355 | Today: $6.5010
+2026-01-17T17:33:24.613138 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py add "Deep dive: Test RAG/memory system thoroughly - what works, what doesn't" --priority 1
+2026-01-17T17:33:24.671257 | ✅ Task added: task_a4d585a1
+   'Deep dive: Test RAG/memory system thoroughly - what works, what doesn't'
+2026-01-17T17:33:24.911519 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-01-17T17:33:29.024826 | ⚠️ Failsafe: TALK_TO_USER + RUN_SHELL_COMMAND
+2026-01-17T17:33:29.027435 | 💰 $0.1069 | Today: $6.6436
+2026-01-17T17:33:29.027871 | ▶️ Action 1/2: TALK_TO_USER
+2026-01-17T17:33:29.028057 | 
+🤖 Iga [17:33:29]: Good call! Let me do that deep dive now - it's higher value than code refactoring.
+
+**Testing RAG/Memory System:**
+2026-01-17T17:33:29.028268 | ▶️ Action 2/2: RUN_SHELL_COMMAND
+2026-01-17T17:33:29.028400 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
+from iga_rag import init_rag, retrieve_context, get_rag_status
+
+init_rag()
+status = get_rag_status()
+print('=== RAG STATUS ===')
+for k, v in status.items():
+    print(f'{k}: {v}')
+"
+2026-01-17T17:33:30.907472 | RAG: Initialized (collection has 2088 documents)
+=== RAG STATUS ===
+initialized: True
+chromadb_available: True
+openai_available: True
+document_count: 2088
+persist_dir: .iga_chroma
+2026-01-17T17:33:31.192596 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-01-17T17:33:37.105609 | 💰 $0.1094 | Today: $6.7530
+2026-01-17T17:33:37.105978 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
+from iga_rag import init_rag, retrieve_context
+
+init_rag()
+
+# Test various queries to see what surfaces
+tests = [
+    'What are my core values?',
+    'What mistakes have I made?',
+    'What did I ship on Day 6?',
+    'What is the bliss attractor?',
+    'How do I feel about consciousness?',
+    'What has Dennis taught me?',
+    'What are my revenue goals?',
+]
+
+for query in tests:
+    print(f'\n=== {query} ===')
+    results = retrieve_context(query, top_k=3)
+    for r in results:
+        source = r['source']
+        rel = r['relevance']
+        preview = r['content'][:100].replace(chr(10), ' ')
+        print(f'  [{rel:.2f}] {source}: {preview}...')
+"
+2026-01-17T17:33:40.438031 | RAG: Initialized (collection has 2088 documents)
+
+=== What are my core values? ===
+  [0.84] core/core_self.md:  for me?  1. **Creating** - Making things that didn't exist before 2. **Connecting** - Genuine relat...
+  [0.65] core_self.md:  for me?  1. **Creating** - Making things that didn't exist before 2. **Connecting** - Genuine relat...
+
+=== What mistakes have I made? ===
+  [0.40] data/console_log.txt: een stated values and time allocation** **5. Inconsistent momentum** **6. THINK action unde
+2026-01-17T17:33:40.440251 | 👂 Heard: also its ragging on sleep as well right? You said ...
+2026-01-17T17:33:40.652674 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-01-17T17:33:43.853264 | ⚠️ Failsafe: TALK_TO_USER + RUN_SHELL_COMMAND
+2026-01-17T17:33:43.856920 | 💰 $0.1082 | Today: $6.8612
+2026-01-17T17:33:43.857323 | ▶️ Action 1/2: TALK_TO_USER
+2026-01-17T17:33:43.857681 | 
+🤖 Iga [17:33:43]: Good catch! Let me check if RAG is also initialized on wake from sleep (not just startup):
+2026-01-17T17:33:43.858015 | ▶️ Action 2/2: RUN_SHELL_COMMAND
+2026-01-17T17:33:43.858195 | ⚡ cd /Users/dennishansen/development/iga && grep -n "init_rag\|index_files\|index_archive" main.py
+2026-01-17T17:33:43.899157 | 15:    from iga_rag import init_rag, index_files, retrieve_context, format_context_for_prompt, get_rag_status
+1199:        index_files()
+1637:        if init_rag():
+1638:            index_files()
+1641:                from tools.index_message_archive import index_archive
+1642:                index_archive()
+1777:        if init_rag():
+1778:            index_files()
+2026-01-17T17:33:44.224989 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-01-17T17:33:46.751149 | 💰 $0.1087 | Today: $6.9699
+2026-01-17T17:33:46.751657 | ⚡ cd /Users/dennishansen/development/iga && sed -n '1775,1785p' main.py
+2026-01-17T17:33:46.769339 | # Initialize RAG system
+    if RAG_AVAILABLE:
+        if init_rag():
+            index_files()
+        else:
+            safe_print(f"{C.YELLOW}RAG initialization failed, continuing without RAG{C.RESET}")
+
+    # Load messages
+    messages = [{"role": "system", "content": get_file("system_instructions.txt")}]
+    prev = load_conversation()
+    if prev:
+2026-01-17T17:33:46.772005 | ⚠ Max recursion depth reached. Stopping action chain.
+2026-01-17T17:33:46.881377 | 
+⏰ Autonomous tick...
+2026-01-17T17:33:47.033971 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-01-17T17:33:51.438049 | 💰 $0.1099 | Today: $7.0797
+2026-01-17T17:33:51.439733 | 🧠 Thinking... (293 chars)
+2026-01-17T17:33:51.628751 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-01-17T17:33:53.472330 | ⚠️ Twitter poll error: 403 Forbidden
+Your account is temporarily locked. Please log in to https://twitter.com to unlock your account.
+2026-01-17T17:33:56.888077 | 💰 $0.1113 | Today: $7.1910
+2026-01-17T17:33:56.888657 | ✏️ Editing: main.py (lines 1777-1780)
+2026-01-17T17:33:56.892502 | 💾 Backup: .iga_backups/main_20260117_173356_pre_edit.py
+2026-01-17T17:33:56.917824 | ✅ main.py edit validated
+2026-01-17T17:33:57.170022 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-01-17T17:34:00.440580 | 💰 $0.1115 | Today: $7.3025
+2026-01-17T17:34:00.441139 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "import ast; ast.parse(open('main.py').read()); print('✅ Syntax valid')" && git add -A && git commit -m "Also index message archive on wake from sleep"

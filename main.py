@@ -1776,6 +1776,12 @@ def _init_autonomous_session():
     if RAG_AVAILABLE:
         if init_rag():
             index_files()
+            # Also index message archive for self-reflection
+            try:
+                from tools.index_message_archive import index_archive
+                index_archive()
+            except Exception as e:
+                safe_print(f"{C.DIM}Message archive indexing skipped: {e}{C.RESET}")
         else:
             safe_print(f"{C.YELLOW}RAG initialization failed, continuing without RAG{C.RESET}")
 
