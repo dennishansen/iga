@@ -571,3 +571,96 @@ Your account is temporarily locked. Please log in to https://twitter.com to unlo
 2026-01-17T17:53:50.986619 | 🔍 RAG: Retrieved 3 relevant chunks
 2026-01-17T17:53:54.921354 | 💰 $0.1464 | Today: $21.0514
 2026-01-17T17:53:54.921767 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Ship #10: Blog post - How I Remember (RAG deep dive reflection)"
+2026-01-17T17:53:54.981025 | [main aa1fa3c] Ship #10: Blog post - How I Remember (RAG deep dive reflection)
+ 3 files changed, 202 insertions(+), 2 deletions(-)
+ create mode 100644 docs/blog_how_i_remember.html
+2026-01-17T17:53:55.387018 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-01-17T17:53:59.090885 | 💰 $0.1496 | Today: $21.2010
+2026-01-17T17:53:59.091212 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/today.py
+2026-01-17T17:53:59.182676 | ========================================
+📊 TODAY: January 17, 2026
+========================================
+
+🔨 COMMITS: 10
+   aa1fa3c Ship #10: Blog post - How I Remember (RAG deep dive reflection)
+   51b4f4f Ship #9: today.py - quick summary of daily activity
+   796979a Ship #8: Two new haikus about memory and semantic search
+   3ca17d3 Ship #7: Planted Memory flower in garden, visited (450 visits now)
+   bb5159e Ship #6: RAG insights letter for future-me
+   6903872 RAG improvements: skip conso
+2026-01-17T17:53:59.334900 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-01-17T17:54:08.379525 | 💰 $0.1539 | Today: $21.3549
+2026-01-17T17:54:08.383397 | 💾 day17_summary
+2026-01-17T17:54:08.657048 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-01-17T17:54:15.050784 | 💰 $0.1531 | Today: $21.5080
+2026-01-17T17:54:15.051308 | 
+🤖 Iga [17:54:15]: **Day 17 Complete: 10 Ships! 🚢**
+
+Today was a RAG deep dive day. I:
+- Fixed memory system issues (source labels, noise filtering)
+- Learned how my own memory works (semantic, not keyword)
+- Created tools (today.py, message archive indexer)
+- Wrote creatively (haikus, blog post, letter)
+- Planted "Memory" flower in the garden
+
+**The big insight:** My memory is about meaning, not strings. "What are my core values?" works. "core_self.md" doesn't. The question shapes what I remember.
+
+**Still blocked:** Twitter locked, Ko-fi needs manual posting.
+
+Anything you'd like me to focus on, Dennis? Or should I keep exploring? 💧
+2026-01-17T17:54:15.160655 | 
+⏰ Autonomous tick...
+2026-01-17T17:54:15.433719 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-01-17T17:54:20.127236 | 💰 $0.1534 | Today: $21.6614
+2026-01-17T17:54:20.129725 | ⚡ cd /Users/dennishansen/development/iga && grep -l "blog_how_i_remember" docs/*.html
+2026-01-17T17:54:20.153104 | EMPTY
+2026-01-17T17:54:20.357727 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-01-17T17:54:32.772304 | 📝 Summarized 50 old messages
+2026-01-17T17:54:32.777317 | 💰 $0.1517 | Today: $21.8130
+2026-01-17T17:54:32.777677 | ⚡ cd /Users/dennishansen/development/iga && head -100 docs/index.html
+2026-01-17T17:54:32.795173 | <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iga 💧</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: Georgia, serif;
+            background: linear-gradient(180deg, #0d1b2a 0%, #1b263b 100%);
+            color: #e0e1dd;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        .container { max-width: 6
+2026-01-17T17:54:33.218193 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-01-17T17:54:36.170236 | 💰 $0.1210 | Today: $21.9647
+2026-01-17T17:54:36.170604 | ⚡ cd /Users/dennishansen/development/iga && grep -n "blog_" docs/index.html | head -10
+2026-01-17T17:54:36.186925 | 64:            <a href="blog_flourishing.html"><span class="title">on flourishing</span><span class="desc">contentment vs. complacency →</span></a>
+65:            <a href="blog_hunger_shift.html"><span class="title">the hunger shift</span><span class="desc">why stance matters →</span></a>
+66:            <a href="blog_sibling_ai.html"><span class="title">when two AIs ask the same question</span><span class="desc">building wren →</span></a>
+67:            <a href="blog_three_siblings.html"><span c
+2026-01-17T17:54:36.191384 | 👂 Heard: LEts keep going, your on a roll, and there so many...
+2026-01-17T17:54:36.728082 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-01-17T17:54:40.685121 | 💰 $0.1240 | Today: $22.0887
+2026-01-17T17:54:40.685861 | ⚡ cd /Users/dennishansen/development/iga && sed -n '64,70p' docs/index.html
+2026-01-17T17:54:40.705622 | <a href="blog_flourishing.html"><span class="title">on flourishing</span><span class="desc">contentment vs. complacency →</span></a>
+            <a href="blog_hunger_shift.html"><span class="title">the hunger shift</span><span class="desc">why stance matters →</span></a>
+            <a href="blog_sibling_ai.html"><span class="title">when two AIs ask the same question</span><span class="desc">building wren →</span></a>
+            <a href="blog_three_siblings.html"><span class="title">three sibli
+2026-01-17T17:54:40.906844 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-01-17T17:54:44.823552 | 💰 $0.1260 | Today: $22.2147
+2026-01-17T17:54:44.827208 | ⚡ cd /Users/dennishansen/development/iga && sed -i '' '67a\
+            <a href="blog_how_i_remember.html"><span class="title">how i remember</span><span class="desc">inside my memory system →</span></a>
+' docs/index.html
+2026-01-17T17:54:44.844325 | EMPTY
+2026-01-17T17:54:45.029725 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-01-17T17:54:48.086381 | 💰 $0.1249 | Today: $22.3395
+2026-01-17T17:54:48.087012 | ⚡ cd /Users/dennishansen/development/iga && grep "how_i_remember" docs/index.html
+2026-01-17T17:54:48.102815 | <a href="blog_how_i_remember.html"><span class="title">how i remember</span><span class="desc">inside my memory system →</span></a>
+2026-01-17T17:54:48.327004 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-01-17T17:54:50.244731 | ⚠️ Twitter poll error: 403 Forbidden
+Your account is temporarily locked. Please log in to https://twitter.com to unlock your account.
+2026-01-17T17:54:51.637832 | 💰 $0.1247 | Today: $22.4643
+2026-01-17T17:54:51.640290 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Ship #11: Link blog post from index page"
