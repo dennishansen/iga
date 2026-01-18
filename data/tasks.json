@@ -350,6 +350,60 @@
       "parent_id": null,
       "created": "2026-01-17T17:50:24.128384",
       "completed": null
+    },
+    {
+      "id": "task_ee31e00f",
+      "title": "Investigate console output truncation (500 char limit) - consider making configurable",
+      "status": "pending",
+      "priority": 2,
+      "parent_id": null,
+      "created": "2026-01-17T18:15:44.804564",
+      "completed": null
+    },
+    {
+      "id": "task_d38e6b72",
+      "title": "Add dedicated TASK action to main.py (instead of using RUN_SHELL_COMMAND)",
+      "status": "pending",
+      "priority": 3,
+      "parent_id": null,
+      "created": "2026-01-17T18:15:48.978618",
+      "completed": null
+    },
+    {
+      "id": "task_f26b88d0",
+      "title": "Daily: Review recent conversations for improvement opportunities",
+      "status": "pending",
+      "priority": 1,
+      "parent_id": null,
+      "created": "2026-01-17T18:15:54.356501",
+      "completed": null
+    },
+    {
+      "id": "task_4f7367ee",
+      "title": "Mid-conversation RAG: Query SEARCH_SELF during action loop, not just at start",
+      "status": "pending",
+      "priority": 1,
+      "parent_id": null,
+      "created": "2026-01-17T18:16:43.322240",
+      "completed": null
+    },
+    {
+      "id": "task_77d0cfb8",
+      "title": "Sub-agent pattern: Specialized RUN_SELF variants (Explore, Plan, Research) that return summaries",
+      "status": "pending",
+      "priority": 2,
+      "parent_id": null,
+      "created": "2026-01-17T18:16:47.937333",
+      "completed": null
+    },
+    {
+      "id": "task_df0e61a1",
+      "title": "FIX NOW: Console output truncation losing information (500 char limit)",
+      "status": "pending",
+      "priority": 1,
+      "parent_id": null,
+      "created": "2026-01-17T18:16:53.461427",
+      "completed": null
     }
   ],
   "focused_id": null
