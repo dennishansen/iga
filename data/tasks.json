@@ -323,6 +323,33 @@
       "parent_id": null,
       "created": "2026-01-17T17:34:25.455699",
       "completed": null
+    },
+    {
+      "id": "task_1392b3bd",
+      "title": "RAG: Improve abstract query handling - maybe add keyword expansion or synonyms",
+      "status": "pending",
+      "priority": 2,
+      "parent_id": null,
+      "created": "2026-01-17T17:50:24.060318",
+      "completed": null
+    },
+    {
+      "id": "task_e012f0a3",
+      "title": "RAG: Add boosting for core/ directory files (identity docs should rank higher)",
+      "status": "completed",
+      "priority": 2,
+      "parent_id": null,
+      "created": "2026-01-17T17:50:24.096068",
+      "completed": "2026-01-17T17:50:56.878664"
+    },
+    {
+      "id": "task_6d153d61",
+      "title": "RAG: Consider hybrid search (semantic + keyword) for better results",
+      "status": "pending",
+      "priority": 3,
+      "parent_id": null,
+      "created": "2026-01-17T17:50:24.128384",
+      "completed": null
     }
   ],
   "focused_id": null

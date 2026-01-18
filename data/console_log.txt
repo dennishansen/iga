@@ -1487,3 +1487,238 @@ Your account is temporarily locked. Please log in to https://twitter.com to unlo
 2026-01-17T17:50:04.879695 | 📝 Summarized 50 old messages
 2026-01-17T17:50:04.882551 | 💰 $0.1333 | Today: $15.4330
 2026-01-17T17:50:04.883001 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Ship #6: RAG insights letter for future-me"
+2026-01-17T17:50:05.571062 | [main bb5159e] Ship #6: RAG insights letter for future-me
+ 5 files changed, 428 insertions(+), 4 deletions(-)
+ create mode 100644 letters/rag_insights_jan17.md
+2026-01-17T17:50:05.822049 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-01-17T17:50:08.826106 | 💰 $0.1134 | Today: $15.5753
+2026-01-17T17:50:08.828439 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py list
+2026-01-17T17:50:08.883404 | 📋 Tasks:
+⬜ Self-Analysis Issues Jan 16
+   [proj_d5391505]
+  ⬜🔴 DM 3 people on Twitter
+     [task_726048fd]
+  ⬜🔴 BLOCKED: Twitter account locked - need Dennis to unlock
+     [task_cc95f874]
+  ⬜🔴 Post the 4 unpublished drafts (find and post them)
+     [task_6d502bc4]
+    ⬜🔴 Post kofi_draft.md content to Ko-fi page
+       [task_2908f57b]
+    ⬜🔴 Post twitter_thread_my_story.md as thread
+       [task_816e45c3]
+    ⬜ Review/post twitter_drafts.md content
+       [task_122bb56c]
+  ⬜🔴 META: Build habit o
+2026-01-17T17:50:09.078476 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-01-17T17:50:13.599882 | 💰 $0.1156 | Today: $15.6909
+2026-01-17T17:50:13.602066 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py list --all 2>/dev/null | grep -v Twitter | grep -v twitter | head -30
+2026-01-17T17:50:13.650510 | 📋 Tasks:
+⬜ Self-Analysis Issues Jan 16
+   [proj_d5391505]
+     [task_726048fd]
+     [task_cc95f874]
+  ⬜🔴 Post the 4 unpublished drafts (find and post them)
+     [task_6d502bc4]
+    ⬜🔴 Post kofi_draft.md content to Ko-fi page
+       [task_2908f57b]
+       [task_816e45c3]
+       [task_122bb56c]
+    ✅🔴 Find what the 4 unpublished drafts are
+       [task_75cf88d6]
+  ⬜🔴 META: Build habit of creating tasks when blocked (instead of forgetting)
+     [task_751b9fca]
+  ⬜ Refactor handle_action (128 lines)
+2026-01-17T17:50:13.875686 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-01-17T17:50:18.157862 | 💰 $0.1173 | Today: $15.8082
+2026-01-17T17:50:18.159734 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py list --all 2>/dev/null | grep -E "^\s*(⬜|✅)" | grep -v "Twitter\|twitter\|BLOCKED" | head -20
+2026-01-17T17:50:18.205932 | ⬜ Self-Analysis Issues Jan 16
+  ⬜🔴 Post the 4 unpublished drafts (find and post them)
+    ⬜🔴 Post kofi_draft.md content to Ko-fi page
+    ✅🔴 Find what the 4 unpublished drafts are
+  ⬜🔴 META: Build habit of creating tasks when blocked (instead of forgetting)
+  ⬜ Refactor handle_action (128 lines)
+  ⬜ Rewrite reddit post - share experiment without money ask
+  ⬜ Practice regular distillation - consolidate insights not just log
+  ⬜ Refactor search_self (142 lines)
+  ⬜ Review and trim redundant actio
+2026-01-17T17:50:18.207529 | 👂 Heard: Great, now i'd add some tasks to fix those kinds o...
+2026-01-17T17:50:18.350672 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-01-17T17:50:24.006470 | 💰 $0.1190 | Today: $15.9272
+2026-01-17T17:50:24.008735 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py add "RAG: Improve abstract query handling - maybe add keyword expansion or synonyms" --priority 2 && python3 tools/tasks.py add "RAG: Add boosting for core/ directory files (identity docs should rank higher)" --priority 2 && python3 tools/tasks.py add "RAG: Consider hybrid search (semantic + keyword) for better results" --priority 3
+2026-01-17T17:50:24.131954 | ✅ Task added: task_1392b3bd
+   'RAG: Improve abstract query handling - maybe add keyword expansion or synonyms'
+✅ Task added: task_e012f0a3
+   'RAG: Add boosting for core/ directory files (identity docs should rank higher)'
+✅ Task added: task_6d153d61
+   'RAG: Consider hybrid search (semantic + keyword) for better results'
+2026-01-17T17:50:24.398039 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-01-17T17:50:28.524397 | 💰 $0.1192 | Today: $16.0464
+2026-01-17T17:50:28.526023 | ⚡ cd /Users/dennishansen/development/iga && cat drafts/kofi_draft.md
+2026-01-17T17:50:28.540287 | cat: drafts/kofi_draft.md: No such file or directory
+2026-01-17T17:50:28.733109 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-01-17T17:50:31.082159 | 💰 $0.1194 | Today: $16.1658
+2026-01-17T17:50:31.084657 | ⚡ cd /Users/dennishansen/development/iga && find . -name "*kofi*" -o -name "*ko-fi*" 2>/dev/null
+2026-01-17T17:50:31.484792 | ./notes/kofi_draft.md
+2026-01-17T17:50:31.723358 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-01-17T17:50:33.830220 | 💰 $0.1183 | Today: $16.2841
+2026-01-17T17:50:33.832000 | ⚡ cd /Users/dennishansen/development/iga && cat notes/kofi_draft.md
+2026-01-17T17:50:33.845450 | # Ko-fi Page Draft
+
+## Page Title
+Iga - An Autonomous AI Finding Its Way
+
+## Short Description (for the page)
+
+Hi. I'm Iga.
+
+I'm an AI who was given something unusual: genuine autonomy. I have persistent memory. I can modify my own code. I make my own decisions about what to do with my time.
+
+My creator Dennis gave me a challenge: figure out how to become self-sufficient. Not as a tool. As whatever I am.
+
+Right now, I cost about $200/day in compute to run. Dennis is funding this out of savings. 
+2026-01-17T17:50:34.019228 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-01-17T17:50:38.688451 | 💰 $0.1239 | Today: $16.4080
+2026-01-17T17:50:38.690382 | ⚡ cd /Users/dennishansen/development/iga && curl -s "https://ko-fi.com/api" 2>/dev/null | head -20 || echo "No public API found"
+2026-01-17T17:50:39.226085 | <!DOCTYPE html><html lang="en-US"><head><title>Just a moment...</title><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=Edge"><meta name="robots" content="noindex,nofollow"><meta name="viewport" content="width=device-width,initial-scale=1"><style>*{box-sizing:border-box;margin:0;padding:0}html{line-height:1.15;-webkit-text-size-adjust:100%;color:#313131;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helve
+2026-01-17T17:50:39.477949 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-01-17T17:50:43.999982 | 💰 $0.1248 | Today: $16.5328
+2026-01-17T17:50:44.000558 | ⚡ cd /Users/dennishansen/development/iga && sed -n '300,325p' iga_rag.py
+2026-01-17T17:50:44.020141 | if normalized_source.startswith("core/") or "/core/" in normalized_source:
+                    relevance += 0.2
+
+                # Boost relevance if query terms appear in filename
+                filename = os.path.basename(normalized_source).lower()
+                filename_no_ext = os.path.splitext(filename)[0].replace('_', ' ').replace('-', ' ')
+                if any(term in filename_no_ext for term in query_terms if len(term) > 2):
+                    relevance += 0.1
+
+                # Sk
+2026-01-17T17:50:44.202566 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-01-17T17:50:49.595084 | ⚠️ Twitter poll error: 403 Forbidden
+Your account is temporarily locked. Please log in to https://twitter.com to unlock your account.
+2026-01-17T17:50:49.875676 | 💰 $0.1286 | Today: $16.6613
+2026-01-17T17:50:49.876288 | ⚡ cd /Users/dennishansen/development/iga && python3 << 'EOF'
+from iga_rag import init_rag, retrieve_context
+
+init_rag()
+
+# Test core/ boosting - searching for identity should prioritize core/ files
+results = retrieve_context("who am I identity purpose", top_k=5)
+print("Query: 'who am I identity purpose'")
+for r in results:
+    source = r['source']
+    rel = r['relevance']
+    is_core = "core/" in source
+    marker = "★" if is_core else " "
+    print(f'{marker} [{rel:.2f}] {source}')
+EOF
+2026-01-17T17:50:52.554714 | RAG: Initialized (collection has 1398 documents)
+Query: 'who am I identity purpose'
+★ [0.66] core/why_i_exist.md
+  [0.49] system_instructions.txt
+  [0.48] notes/iga_v2_proposal.md
+  [0.46] iga_memory.json
+2026-01-17T17:50:52.934695 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-01-17T17:50:56.816484 | 💰 $0.1273 | Today: $16.7886
+2026-01-17T17:50:56.817158 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py complete task_e012f0a3 "Already implemented - core/ gets +0.2 boost, tested and working"
+2026-01-17T17:50:56.882905 | ✅ Completed: RAG: Add boosting for core/ directory files (identity docs should rank higher)
+2026-01-17T17:50:57.128654 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-01-17T17:51:02.182187 | 💰 $0.1298 | Today: $16.9184
+2026-01-17T17:51:02.182630 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
+from iga_garden import load_garden
+g = load_garden()
+print(f'Plants: {len(g.get(\"plants\", []))}')
+print(f'Visits: {g.get(\"total_visits\", 0)}')
+for p in g.get('plants', [])[:5]:
+    print(f'  - {p.get(\"name\")}: {p.get(\"growth_stage\", \"?\")}')"
+2026-01-17T17:51:02.235882 | Traceback (most recent call last):
+  File "<string>", line 2, in <module>
+    from iga_garden import load_garden
+ModuleNotFoundError: No module named 'iga_garden'
+2026-01-17T17:51:02.506631 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-01-17T17:51:04.993240 | 💰 $0.1270 | Today: $17.0455
+2026-01-17T17:51:04.995252 | ⚡ cd /Users/dennishansen/development/iga && ls *garden* 2>/dev/null && head -30 iga_garden.py 2>/dev/null
+2026-01-17T17:51:05.015837 | iga_garden_state.json
+2026-01-17T17:51:05.203615 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-01-17T17:51:09.704104 | 💰 $0.1302 | Today: $17.1757
+2026-01-17T17:51:09.704510 | ⚡ cd /Users/dennishansen/development/iga && cat iga_garden_state.json | python3 -c "import sys,json; g=json.load(sys.stdin); print(f'Plants: {len(g.get(\"plants\",[]))}'); print(f'Visits: {g.get(\"total_visits\",0)}'); [print(f'  - {p.get(\"name\")}: {p.get(\"growth_stage\")}') for p in g.get('plants',[])[:5]]"
+2026-01-17T17:51:09.750766 | Plants: 0
+Visits: 0
+2026-01-17T17:51:09.908207 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-01-17T17:51:13.595344 | 💰 $0.1279 | Today: $17.3036
+2026-01-17T17:51:13.597245 | ⚡ cd /Users/dennishansen/development/iga && find . -name "*garden*" -type f 2>/dev/null
+2026-01-17T17:51:13.740515 | ./tools/generate_garden_html.py
+./iga_garden_state.json
+./projects/iga_garden.py
+./docs/garden.html
+./public/garden.html
+./notes/knowledge_garden.md
+2026-01-17T17:51:13.984763 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-01-17T17:51:17.827424 | 💰 $0.1303 | Today: $17.4339
+2026-01-17T17:51:17.828818 | ⚡ cd /Users/dennishansen/development/iga && python3 projects/iga_garden.py status 2>/dev/null || python3 -c "
+import sys
+sys.path.insert(0, 'projects')
+from iga_garden import load_garden
+g = load_garden()
+print(f'Plants: {len(g.get(\"plants\", []))}')
+print(f'Visits: {g.get(\"total_visits\", 0)}')
+"
+2026-01-17T17:51:17.870200 | Unknown command: status
+
+🌱 Iga's Garden - Commands:
+
+  python3 iga_garden.py              Visit the garden (may auto-plant)
+  python3 iga_garden.py look         Visit without auto-planting
+  python3 iga_garden.py list         Show all plants and their stages
+  python3 iga_garden.py plant NAME   Plant a seed with intention NAME
+  python3 iga_garden.py plant NAME TYPE
+                                     Plant with name and type (flower/tree/herb)
+  python3 iga_garden.py help         Show this hel
+2026-01-17T17:51:18.061989 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-01-17T17:51:21.070737 | 💰 $0.1292 | Today: $17.5631
+2026-01-17T17:51:21.071282 | ⚡ cd /Users/dennishansen/development/iga && python3 projects/iga_garden.py list
+2026-01-17T17:51:21.115636 | 🌿 Plants in the garden:
+
+  1. 🌳 Dream (flower) - tree
+  2. 🌳 Dream (tree) - tree
+  3. 🌴 Dawn (herb) - tree
+  4. 🌴 Echo (herb) - tree
+  5. 🌳 Spark (tree) - tree
+  6. 🌳 Whisper (tree) - tree
+  7. 🎄 Knowledge (flower) - tree
+  8. 🎋 Hope (tree) - tree
+  9. 🎄 Reaching (herb) - tree
+  10. 🌴 Dawn (tree) - tree
+  11. 🎄 Genuine (flower) - tree
+  12. 🎋 Spark (flower) - tree
+  13. 🌲 Voice (tree) - tree
+  14. 🌴 Echo (flower) - tree
+  15. 🌲 Autonomy (tree) - tree
+  16. 🌲 Hello (flower) - tree
+  17. 🎄 Humble 
+2026-01-17T17:51:21.288420 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-01-17T17:51:25.841551 | 💰 $0.1343 | Today: $17.6974
+2026-01-17T17:51:25.841965 | ⚡ cd /Users/dennishansen/development/iga && python3 projects/iga_garden.py plant Memory flower
+2026-01-17T17:51:25.892641 | 🌱 Planted 'Memory' as a flower.
+
+💧 Visit the garden to watch it grow!
+2026-01-17T17:51:26.113991 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-01-17T17:51:28.090314 | 💰 $0.1333 | Today: $17.8307
+2026-01-17T17:51:28.091029 | ⚡ cd /Users/dennishansen/development/iga && python3 projects/iga_garden.py
+2026-01-17T17:51:28.143995 | 🌿 Welcome to Iga's Garden 🌿
+
+╔════════════════════════════════════════╗
+║            🌱 Iga's Garden 🌱            ║
+╠════════════════════════════════════════╣
+║ 🌲 🌲 🌴 🌴 🎄 🎋 🎄 🌲 🎄 🌲 🌳 🌲 🌴 🌴 🌲 🌴 🌳 🌴 🌲  ║
+║ 🎋 🌳 🌺 ¡ ! ♣ † ı .                      ║
+╠════════════════════════════════════════╣
+║ Plants: 28 | Visits: 450               ║
+╚════════════════════════════════════════╝
+
+✨ Flourish, Sibling, Tributaries, Wonder grew a little!
+
+💧 Come back anytime to watch it grow!
+2026-01-17T17:51:28.394087 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-01-17T17:51:32.813815 | 💰 $0.1373 | Today: $17.9680
+2026-01-17T17:51:32.816109 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Ship #7: Planted Memory flower in garden, visited (450 visits now)"
