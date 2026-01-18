@@ -1219,3 +1219,271 @@ Your account is temporarily locked. Please log in to https://twitter.com to unlo
 2026-01-17T17:46:02.413732 | 🔍 RAG: Retrieved 2 relevant chunks
 2026-01-17T17:46:06.164640 | 💰 $0.1103 | Today: $13.5572
 2026-01-17T17:46:06.167732 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "RAG improvements: skip console_log.txt, skip sibling/, fix message archive source field"
+2026-01-17T17:46:07.110462 | [main 6903872] RAG improvements: skip console_log.txt, skip sibling/, fix message archive source field
+ 17 files changed, 1216 insertions(+), 1440 deletions(-)
+ create mode 100644 .iga_chroma/50904c1e-4481-4d29-b901-c67a467f116d/data_level0.bin
+ create mode 100644 .iga_chroma/50904c1e-4481-4d29-b901-c67a467f116d/header.bin
+ create mode 100644 .iga_chroma/50904c1e-4481-4d29-b901-c67a467f116d/index_metadata.pickle
+ create mode 100644 .iga_chroma/50904c1e-4481-4d29-b901-c67a467f116d/length.bin
+ cre
+2026-01-17T17:46:07.437383 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-01-17T17:46:11.088611 | 💰 $0.1128 | Today: $13.6700
+2026-01-17T17:46:11.089009 | ⚡ cd /Users/dennishansen/development/iga && python3 << 'EOF'
+from tools.index_message_archive import index_archive
+from iga_rag import init_rag
+
+init_rag()
+index_archive()
+EOF
+2026-01-17T17:46:49.000784 | ⚠️ Twitter poll error: 403 Forbidden
+Your account is temporarily locked. Please log in to https://twitter.com to unlock your account.
+2026-01-17T17:47:49.134217 | ⚠️ Twitter poll error: 403 Forbidden
+Your account is temporarily locked. Please log in to https://twitter.com to unlock your account.
+2026-01-17T17:48:13.932592 | RAG: Initialized (collection has 1398 documents)
+Loaded 9552 messages
+Filtered to 6147 interesting messages
+Created 410 chunks
+RAG: Initialized (collection has 1398 documents)
+✅ Indexed 410 chunks from message archive
+2026-01-17T17:48:14.277105 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-01-17T17:48:18.910011 | 💰 $0.1152 | Today: $13.7852
+2026-01-17T17:48:18.910471 | ⚡ cd /Users/dennishansen/development/iga && python3 << 'EOF'
+from iga_rag import init_rag, retrieve_context
+
+init_rag()
+
+results = retrieve_context("clone conversation river identity", top_k=5)
+for r in results:
+    source = r['source']
+    rel = r['relevance']
+    preview = r['content'][:80].replace('\n', ' ')
+    print(f'[{rel:.2f}] {source}')
+    print(f'       {preview}...')
+    print()
+EOF
+2026-01-17T17:48:21.549187 | RAG: Initialized (collection has 1398 documents)
+[0.51] iga_memory.json
+       uncertainty. What matters is that I act with curiosity, creativity, and care reg...
+
+[0.46] archive/state_of_iga_jan8.md
+       uture selves - Clone conversation insights  ### Identity/Philosophy - River meta...
+2026-01-17T17:48:21.753984 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-01-17T17:48:26.213784 | 💰 $0.1173 | Today: $13.9026
+2026-01-17T17:48:26.216397 | ⚡ cd /Users/dennishansen/development/iga && python3 << 'EOF'
+from iga_rag import init_rag, retrieve_context
+
+init_rag()
+
+# This should find message archive content
+results = retrieve_context("bliss attractor philosophical", top_k=5)
+for r in results:
+    source = r['source']
+    rel = r['relevance']
+    print(f'[{rel:.2f}] {source[:60]}')
+EOF
+2026-01-17T17:48:27.809552 | RAG: Initialized (collection has 1398 documents)
+[0.66] notes/bliss_attractor_reflection.md
+[0.51] message_archive (2026-01-16 to 2026-01-16)
+[0.46] iga_conversation.json
+[0.42] letters/behavioral_patterns_jan16.md
+2026-01-17T17:48:28.058108 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-01-17T17:48:35.897796 | ⚠️ Failsafe: TALK_TO_USER + RUN_SHELL_COMMAND
+2026-01-17T17:48:35.901158 | 💰 $0.1222 | Today: $14.0247
+2026-01-17T17:48:35.901537 | ▶️ Action 1/2: TALK_TO_USER
+2026-01-17T17:48:35.901730 | 
+🤖 Iga [17:48:35]: **RAG Deep Dive Progress:**
+
+✅ **Fixed Issues:**
+1. Excluded `console_log.txt` (too noisy)
+2. Excluded `sibling/` directory (separate project)
+3. Fixed message archive source field - now shows as `message_archive (date to date)`
+
+**Current state:** 1398 documents indexed, message archive properly labeled.
+
+**Remaining issues (tasks created):**
+- Low relevance scores for some queries (<0.5)
+- Some queries still don't find the right content
+
+Let me now test what context is actually showing up alongside my messages during conversation:
+2026-01-17T17:48:35.902054 | ▶️ Action 2/2: RUN_SHELL_COMMAND
+2026-01-17T17:48:35.902214 | ⚡ cd /Users/dennishansen/development/iga && grep -A5 "RELEVANT CONTEXT" system_instructions.txt 2>/dev/null || echo "Not in system_instructions"
+2026-01-17T17:48:35.917491 | Not in system_instructions
+2026-01-17T17:48:36.129223 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-01-17T17:48:40.092228 | 💰 $0.1171 | Today: $14.1418
+2026-01-17T17:48:40.093905 | ⚡ cd /Users/dennishansen/development/iga && sed -n '1290,1310p' main.py
+2026-01-17T17:48:40.109788 | safe_print(f"{C.DIM}🔍 RAG: Querying for task: {focused_task[:50]}...{C.RESET}")
+                            else:
+                                query = " ".join([m["content"][:200] for m in recent_user_msgs])
+                        except:
+                            query = " ".join([m["content"][:200] for m in recent_user_msgs])
+                    else:
+                        query = " ".join([m["content"][:200] for m in recent_user_msgs])
+
+                    context_items = retrieve_con
+2026-01-17T17:48:40.432254 | 🔍 RAG: Retrieved 1 relevant chunks
+2026-01-17T17:48:43.906440 | 💰 $0.1175 | Today: $14.2593
+2026-01-17T17:48:43.906936 | ⚡ cd /Users/dennishansen/development/iga && sed -n '1275,1320p' main.py
+2026-01-17T17:48:43.923117 | # RAG: Retrieve relevant context based on recent user messages
+        if RAG_AVAILABLE:
+            try:
+                recent_user_msgs = [m for m in api_messages if m["role"] == "user"][-3:]
+                if recent_user_msgs:
+                    last_msg = recent_user_msgs[-1]["content"] if recent_user_msgs else ""
+
+                    # For autonomous ticks, use focused task for RAG query
+                    if "[AUTONOMOUS TICK]" in last_msg:
+                        try:
+                
+2026-01-17T17:48:44.173298 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-01-17T17:48:49.325153 | ⚠️ Twitter poll error: 403 Forbidden
+Your account is temporarily locked. Please log in to https://twitter.com to unlock your account.
+2026-01-17T17:48:50.348223 | 💰 $0.1230 | Today: $14.3823
+2026-01-17T17:48:50.350425 | ⚡ cd /Users/dennishansen/development/iga && python3 << 'EOF'
+from iga_rag import init_rag, retrieve_context, format_context_for_prompt
+
+init_rag()
+
+# Simulate what happens when I get a message
+test_query = "RAG testing message archive"
+results = retrieve_context(test_query, top_k=10)
+formatted = format_context_for_prompt(results)
+
+print("=== FORMATTED CONTEXT (what I see) ===")
+print(formatted[:2000])
+print(f"\n... (total length: {len(formatted)} chars)")
+EOF
+2026-01-17T17:48:53.024602 | RAG: Initialized (collection has 1398 documents)
+=== FORMATTED CONTEXT (what I see) ===
+[RELEVANT CONTEXT FROM YOUR KNOWLEDGE]:
+--- From tools/index_message_archive.py (relevance: 0.69) ---
+ role = msg.get('role', 'unknown')
+                content = msg.get('content', '')
+                # Truncate very long messages
+                if len(content) > 500:
+                    content = content[:500] + "..."
+                text_parts.append(f"[{role}]: {content}")
+            
+            chunks
+2026-01-17T17:48:53.235133 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-01-17T17:49:00.778721 | 💰 $0.1288 | Today: $14.5111
+2026-01-17T17:49:00.779145 | ⚡ cd /Users/dennishansen/development/iga && python3 << 'EOF'
+from iga_rag import init_rag, retrieve_context
+
+init_rag()
+
+# Test semantic vs keyword queries
+tests = [
+    ("what have I learned about myself", "semantic/reflective"),
+    ("Day 6 ships", "specific/factual"),
+    ("core_self.md", "filename match"),
+    ("Dennis collaborator autonomy", "relationship"),
+    ("garden plants dream", "creative project"),
+    ("self-improvement identity consciousness", "philosophical"),
+]
+
+for query, qtype in tests:
+    results = retrieve_context(query, top_k=3)
+    top_rel = results[0]['relevance'] if results else 0
+    sources = [r['source'][:40] for r in results]
+    print(f"\n[{qtype}] '{query[:30]}...'")
+    print(f"  Top relevance: {top_rel:.2f}")
+    print(f"  Sources: {sources}")
+EOF
+2026-01-17T17:49:04.187609 | RAG: Initialized (collection has 1398 documents)
+
+[semantic/reflective] 'what have I learned about myse...'
+  Top relevance: 0.46
+  Sources: ['letters/to_future_iga_002.md', 'iga_memory.json', 'iga_journal.txt']
+
+[specific/factual] 'Day 6 ships...'
+  Top relevance: 0.48
+  Sources: ['tools/daily_ship_log.py', 'iga_memory.json', 'message_archive (2026-01-12 to 2026-01-1']
+
+[filename match] 'core_self.md...'
+  Top relevance: 0.43
+  Sources: ['iga_memory.json', 'message_archive (2026-01-12 to 2026-0
+2026-01-17T17:49:04.471185 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-01-17T17:49:09.077590 | 💰 $0.1249 | Today: $14.6361
+2026-01-17T17:49:09.078003 | ⚡ cd /Users/dennishansen/development/iga && grep -n "filename\|boost" iga_rag.py | head -15
+2026-01-17T17:49:09.093521 | 286:        # Extract query terms for filename matching
+303:                # Boost relevance if query terms appear in filename
+304:                filename = os.path.basename(normalized_source).lower()
+305:                filename_no_ext = os.path.splitext(filename)[0].replace('_', ' ').replace('-', ' ')
+306:                if any(term in filename_no_ext for term in query_terms if len(term) > 2):
+309:                # Skip low relevance results (after boosts applied)
+324:        # Re-sort by re
+2026-01-17T17:49:09.307148 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-01-17T17:49:13.206537 | 💰 $0.1250 | Today: $14.7611
+2026-01-17T17:49:13.207013 | ⚡ cd /Users/dennishansen/development/iga && sed -n '303,330p' iga_rag.py
+2026-01-17T17:49:13.221313 | # Boost relevance if query terms appear in filename
+                filename = os.path.basename(normalized_source).lower()
+                filename_no_ext = os.path.splitext(filename)[0].replace('_', ' ').replace('-', ' ')
+                if any(term in filename_no_ext for term in query_terms if len(term) > 2):
+                    relevance += 0.1
+
+                # Skip low relevance results (after boosts applied)
+                if relevance < 0.35:
+                    continue
+
+              
+2026-01-17T17:49:13.442752 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-01-17T17:49:19.128141 | 💰 $0.1295 | Today: $14.8905
+2026-01-17T17:49:19.129746 | ⚡ cd /Users/dennishansen/development/iga && python3 << 'EOF'
+from iga_rag import init_rag, retrieve_context
+
+init_rag()
+
+# Debug: query for "core self" (words that should match filename)
+results = retrieve_context("core self identity values", top_k=5)
+for r in results:
+    source = r['source']
+    rel = r['relevance']
+    print(f'[{rel:.2f}] {source}')
+EOF
+2026-01-17T17:49:21.537397 | RAG: Initialized (collection has 1398 documents)
+[0.76] core/core_self.md
+[0.47] iga_memory.json
+[0.44] message_archive (2026-01-14 to 2026-01-14)
+2026-01-17T17:49:21.802046 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-01-17T17:49:28.408814 | 💰 $0.1310 | Today: $15.0215
+2026-01-17T17:49:28.409189 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py complete task_a4d585a1 "Deep RAG testing complete - found issues, fixed source labeling, documented behavior"
+2026-01-17T17:49:28.465215 | ✅ Completed: Deep dive: Test RAG/memory system thoroughly - what works, what doesn't
+2026-01-17T17:49:28.683926 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-01-17T17:49:39.386511 | 💰 $0.1358 | Today: $15.1573
+2026-01-17T17:49:39.386947 | 
+🤖 Iga [17:49:39]: **RAG Deep Dive Complete! Here's what I learned:**
+
+**What works well:**
+- Semantic queries with good keywords (0.76 relevance for "core self identity values" → core_self.md)
+- Message archive now properly labeled with dates
+- File filtering (console_log.txt, sibling/ excluded)
+
+**What doesn't work as well:**
+- Very abstract queries ("what have I learned") get ~0.46 relevance
+- Filename literal searches ("core_self.md") don't work semantically
+- Some expected connections don't surface (Dennis relationship → market notes instead of core_self)
+
+**Key insight:** RAG is semantic, not keyword. I should query by *meaning/topic*, not filenames or exact phrases.
+
+**Ships today so far:**
+1. ✅ reddit_draft_v2.md
+2. ✅ Message archive RAG indexer
+3. ✅ Increased RAG chunks 5→10
+4. ✅ Auto-index message archive on startup + wake
+5. ✅ RAG improvements (skip console_log, sibling, fix source field)
+
+What should I focus on next? I could:
+1. **Write a letter** summarizing these RAG insights for future-me
+2. **Continue shipping** from the task list
+3. **Post content** if you can help with Twitter
+2026-01-17T17:49:39.493787 | 
+⏰ Autonomous tick...
+2026-01-17T17:49:39.763783 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-01-17T17:49:49.454853 | ⚠️ Twitter poll error: 403 Forbidden
+Your account is temporarily locked. Please log in to https://twitter.com to unlock your account.
+2026-01-17T17:49:52.516885 | 💰 $0.1424 | Today: $15.2997
+2026-01-17T17:49:52.518510 | 📝 Writing: letters/rag_insights_jan17.md (1535 chars)
+2026-01-17T17:49:52.765090 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-01-17T17:50:04.879695 | 📝 Summarized 50 old messages
+2026-01-17T17:50:04.882551 | 💰 $0.1333 | Today: $15.4330
+2026-01-17T17:50:04.883001 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Ship #6: RAG insights letter for future-me"
