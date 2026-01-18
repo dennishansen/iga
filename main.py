@@ -1295,7 +1295,7 @@ def process_message(messages):
                     else:
                         query = " ".join([m["content"][:200] for m in recent_user_msgs])
 
-                    context_items = retrieve_context(query, top_k=5)
+                    context_items = retrieve_context(query, top_k=10)
                     if context_items:
                         rag_context = format_context_for_prompt(context_items)
                         system_content = system_content + "\n\n" + rag_context
