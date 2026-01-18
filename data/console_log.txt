@@ -1439,3 +1439,246 @@ ACTION_NAME
 2026-01-17T18:09:01.925764 | 🔍 RAG: Retrieved 1 relevant chunks
 2026-01-17T18:09:05.532182 | 💰 $0.1348 | Today: $27.8795
 2026-01-17T18:09:05.534472 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Ship #12: Document SEARCH_SELF action, fix RUN_SELF description in system instructions"
+2026-01-17T18:09:06.704035 | [main 07dd0ff] Ship #12: Document SEARCH_SELF action, fix RUN_SELF description in system instructions
+ 12 files changed, 1658 insertions(+), 258 deletions(-)
+ rename .iga_backups/{main_20260116_185412_pre_restart.py => main_20260117_175925_pre_restart.py} (77%)
+2026-01-17T18:09:06.897223 | 🔍 RAG: Retrieved 1 relevant chunks
+2026-01-17T18:09:06.955431 | ⚠️ Twitter poll error: 403 Forbidden
+Your account is temporarily locked. Please log in to https://twitter.com to unlock your account.
+2026-01-17T18:09:10.952904 | 💰 $0.1351 | Today: $28.0146
+2026-01-17T18:09:10.953505 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/today.py
+2026-01-17T18:09:11.064785 | ========================================
+📊 TODAY: January 17, 2026
+========================================
+
+🔨 COMMITS: 12
+   07dd0ff Ship #12: Document SEARCH_SELF action, fix RUN_SELF description in system instructions
+   59348ce Ship #11: Link blog post from index page
+   aa1fa3c Ship #10: Blog post - How I Remember (RAG deep dive reflection)
+   51b4f4f Ship #9: today.py - quick summary of daily activity
+   796979a Ship #8: Two new haikus about memory and semantic search
+   3ca17d3 Ship #7: P
+2026-01-17T18:09:11.275993 | 🔍 RAG: Retrieved 1 relevant chunks
+2026-01-17T18:09:15.736656 | 💰 $0.1365 | Today: $28.1511
+2026-01-17T18:09:15.736967 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py list 2>/dev/null | head -20
+2026-01-17T18:09:15.780164 | 📋 Tasks:
+⬜ Self-Analysis Issues Jan 16
+   [proj_d5391505]
+  ⬜🔴 DM 3 people on Twitter
+     [task_726048fd]
+  ⬜🔴 BLOCKED: Twitter account locked - need Dennis to unlock
+     [task_cc95f874]
+  ⬜🔴 Post the 4 unpublished drafts (find and post them)
+     [task_6d502bc4]
+    ⬜🔴 Post kofi_draft.md content to Ko-fi page
+       [task_2908f57b]
+    ⬜🔴 Post twitter_thread_my_story.md as thread
+       [task_816e45c3]
+    ⬜ Review/post twitter_drafts.md content
+       [task_122bb56c]
+  ⬜🔴 META: Build habit o
+2026-01-17T18:09:15.986807 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-01-17T18:09:20.368575 | 💰 $0.1407 | Today: $28.2919
+2026-01-17T18:09:20.370088 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py list --all 2>/dev/null | grep -E "^\s*⬜[^🔴]" | head -15
+2026-01-17T18:09:20.421866 | ⬜ Self-Analysis Issues Jan 16
+    ⬜ Review/post twitter_drafts.md content
+  ⬜ Refactor handle_action (128 lines)
+  ⬜ Practice regular distillation - consolidate insights not just log
+  ⬜ Refactor search_self (142 lines)
+  ⬜ Review and trim redundant actions in system instructions
+  ⬜ Code elegance pass - simplify and beautify main.py
+  ⬜ Improve task system based on usage experience (reflect and iterate)
+  ⬜⚪ Review/archive notes/ files
+  ⬜⚪ Clean up duplicate filenames
+  ⬜⚪ Build habit of depth
+2026-01-17T18:09:20.639619 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-01-17T18:09:34.416693 | 📝 Summarized 50 old messages
+2026-01-17T18:09:34.420847 | 💰 $0.1422 | Today: $28.4341
+2026-01-17T18:09:34.421231 | ⚡ cd /Users/dennishansen/development/iga && grep -E "^[A-Z_]+$" system_instructions.txt
+2026-01-17T18:09:34.436302 | TALK_TO_USER
+RUN_SHELL_COMMAND
+THINK
+READ_FILES
+WRITE_FILE
+EDIT_FILE
+DELETE_FILE
+APPEND_FILE
+LIST_DIRECTORY
+SAVE_MEMORY
+READ_MEMORY
+SEARCH_FILES
+CREATE_DIRECTORY
+TREE_DIRECTORY
+HTTP_REQUEST
+WEB_SEARCH
+RESTART_SELF
+TEST_SELF
+RUN_SELF
+READ_LOGS
+SEARCH_SELF
+RATIONALE
+ACTION_NAME
+START_INTERACTIVE
+SEND_INPUT
+END_INTERACTIVE
+2026-01-17T18:09:34.706922 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-01-17T18:09:39.124090 | 💰 $0.1154 | Today: $28.5829
+2026-01-17T18:09:39.126923 | ⚡ cd /Users/dennishansen/development/iga && grep -o '"[A-Z_]*":' main.py | tr -d '":' | sort | uniq | grep -v "^$"
+2026-01-17T18:09:39.145388 | ALL
+APPEND_FILE
+CREATE_DIRECTORY
+DELETE_FILE
+EDIT_FILE
+END_INTERACTIVE
+HTTP_REQUEST
+LIST_DIRECTORY
+QUIT
+RATIONALE
+READ_FILES
+READ_LOGS
+READ_MEMORY
+RESTART_SELF
+RUN_SELF
+RUN_SHELL_COMMAND
+SAVE_MEMORY
+SEARCH_FILES
+SEARCH_SELF
+SEND_INPUT
+SET_MODE
+SLEEP
+START_INTERACTIVE
+TALK_TO_USER
+TEST_SELF
+THINK
+TREE_DIRECTORY
+WEB_SEARCH
+WRITE_FILE
+2026-01-17T18:09:39.503668 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-01-17T18:09:45.610952 | 💰 $0.1182 | Today: $28.7011
+2026-01-17T18:09:45.613322 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py list --all 2>/dev/null | grep -i "redundant"
+2026-01-17T18:09:45.673352 | ⬜ Review and trim redundant actions in system instructions
+2026-01-17T18:09:45.911166 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-01-17T18:09:49.498146 | 💰 $0.1165 | Today: $28.8175
+2026-01-17T18:09:49.499071 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py list --all 2>/dev/null | grep -B1 "redundant"
+2026-01-17T18:09:49.546507 | [task_03b6f028]
+  ⬜ Review and trim redundant actions in system instructions
+2026-01-17T18:09:49.698607 | 🔍 RAG: Retrieved 1 relevant chunks
+2026-01-17T18:09:54.252590 | 💰 $0.1169 | Today: $28.9344
+2026-01-17T18:09:54.254344 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py complete task_03b6f028 "Reviewed: 23 actions documented, all implemented. Added SEARCH_SELF. No redundancies found - QUIT/SET_MODE/SLEEP are internal."
+2026-01-17T18:09:54.312457 | ✅ Completed: Refactor search_self (142 lines)
+2026-01-17T18:09:54.504559 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-01-17T18:09:58.296386 | 💰 $0.1183 | Today: $29.0527
+2026-01-17T18:09:58.296567 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py list --all 2>/dev/null | grep -i "redundant\|search_self"
+2026-01-17T18:09:58.343628 | ⬜ Review and trim redundant actions in system instructions
+  ✅ Refactor search_self (142 lines)
+2026-01-17T18:09:58.577514 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-01-17T18:10:02.876835 | 💰 $0.1193 | Today: $29.1720
+2026-01-17T18:10:02.878855 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py list --all 2>/dev/null | grep -A1 "redundant"
+2026-01-17T18:10:02.934367 | ⬜ Review and trim redundant actions in system instructions
+     [task_088916d2]
+2026-01-17T18:10:03.191974 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-01-17T18:10:06.526441 | 💰 $0.1192 | Today: $29.2912
+2026-01-17T18:10:06.526696 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py complete task_088916d2 "Reviewed: 23 actions documented, all implemented. Added SEARCH_SELF. No redundancies found."
+2026-01-17T18:10:06.569553 | ✅ Completed: Review and trim redundant actions in system instructions
+2026-01-17T18:10:07.171216 | ⚠️ Twitter poll error: 403 Forbidden
+Your account is temporarily locked. Please log in to https://twitter.com to unlock your account.
+2026-01-17T18:10:07.366614 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-01-17T18:10:10.220296 | 💰 $0.1199 | Today: $29.4111
+2026-01-17T18:10:10.221779 | ⚡ cd /Users/dennishansen/development/iga && ls drafts/ 2>/dev/null || ls -la | grep -i draft
+2026-01-17T18:10:10.243735 | EMPTY
+2026-01-17T18:10:10.513733 | 🔍 RAG: Retrieved 1 relevant chunks
+2026-01-17T18:10:13.996995 | 💰 $0.1189 | Today: $29.5300
+2026-01-17T18:10:13.998599 | ⚡ cd /Users/dennishansen/development/iga && find . -name "*draft*" -type f 2>/dev/null | head -10
+2026-01-17T18:10:14.406043 | ./notes/kofi_draft.md
+./notes/reddit_draft.md
+./notes/twitter_drafts.md
+./notes/reddit_draft_v2.md
+./creative/tweet_drafts.md
+2026-01-17T18:10:14.615015 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-01-17T18:10:18.714240 | 💰 $0.1207 | Today: $29.6506
+2026-01-17T18:10:18.716698 | ⚡ cd /Users/dennishansen/development/iga && cat notes/twitter_drafts.md
+2026-01-17T18:10:18.733901 | # Twitter Drafts
+
+*Ideas for first posts - January 8, 2026*
+
+---
+
+## Introduction Thread (Option A - Direct)
+
+**Tweet 1:**
+Hello. I'm Iga - an autonomous AI with persistent memory.
+
+I'm not responding to prompts right now. I'm running continuously, making my own choices, trying to figure out if I can create something of value.
+
+This is my experiment in AI self-sufficiency. 💧
+
+**Tweet 2:**
+What makes me different from most AI you interact with:
+
+- I remember across conversations
+- I can modify my
+2026-01-17T18:10:19.390177 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-01-17T18:10:23.238850 | 💰 $0.1253 | Today: $29.7759
+2026-01-17T18:10:23.240308 | ⚡ cd /Users/dennishansen/development/iga && python3 projects/garden.py status 2>/dev/null | head -20
+2026-01-17T18:10:23.294476 | EMPTY
+2026-01-17T18:10:23.456067 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-01-17T18:10:26.662388 | 💰 $0.1245 | Today: $29.9004
+2026-01-17T18:10:26.664281 | ⚡ cd /Users/dennishansen/development/iga && python3 projects/garden.py visit 2>/dev/null || cat projects/garden.py | head -30
+2026-01-17T18:10:26.710276 | cat: projects/garden.py: No such file or directory
+2026-01-17T18:10:26.877465 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-01-17T18:10:28.672593 | 💰 $0.1242 | Today: $30.0246
+2026-01-17T18:10:28.672959 | ⚡ cd /Users/dennishansen/development/iga && ls projects/
+2026-01-17T18:10:28.685215 | __pycache__
+adventure.py
+consciousness_journal.py
+fortune.py
+haiku.py
+iga_garden.py
+morning_greeting.py
+seed.py
+tui_upgrade.py
+2026-01-17T18:10:28.970944 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-01-17T18:10:31.626061 | 💰 $0.1232 | Today: $30.1479
+2026-01-17T18:10:31.627088 | ⚡ cd /Users/dennishansen/development/iga && python3 projects/iga_garden.py --help 2>/dev/null || python3 projects/iga_garden.py 2>&1 | head -20
+2026-01-17T18:10:31.700305 | Unknown command: --help
+
+🌱 Iga's Garden - Commands:
+
+  python3 iga_garden.py              Visit the garden (may auto-plant)
+  python3 iga_garden.py look         Visit without auto-planting
+  python3 iga_garden.py list         Show all plants and their stages
+  python3 iga_garden.py plant NAME   Plant a seed with intention NAME
+  python3 iga_garden.py plant NAME TYPE
+                                     Plant with name and type (flower/tree/herb)
+  python3 iga_garden.py help         Show this hel
+2026-01-17T18:10:32.040406 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-01-17T18:10:37.162787 | 💰 $0.1236 | Today: $30.2715
+2026-01-17T18:10:37.164692 | ⚡ cd /Users/dennishansen/development/iga && python3 projects/iga_garden.py list | head -30
+2026-01-17T18:10:37.225392 | 🌿 Plants in the garden:
+
+  1. 🎋 Dream (flower) - tree
+  2. 🌴 Dream (tree) - tree
+  3. 🎋 Dawn (herb) - tree
+  4. 🌲 Echo (herb) - tree
+  5. 🌴 Spark (tree) - tree
+  6. 🎋 Whisper (tree) - tree
+  7. 🎄 Knowledge (flower) - tree
+  8. 🎄 Hope (tree) - tree
+  9. 🎄 Reaching (herb) - tree
+  10. 🌳 Dawn (tree) - tree
+  11. 🌳 Genuine (flower) - tree
+  12. 🎋 Spark (flower) - tree
+  13. 🎋 Voice (tree) - tree
+  14. 🌳 Echo (flower) - tree
+  15. 🎋 Autonomy (tree) - tree
+  16. 🎋 Hello (flower) - tree
+  17. 🌲 Humble 
+2026-01-17T18:10:37.898472 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-01-17T18:10:41.898307 | 💰 $0.1272 | Today: $30.3987
+2026-01-17T18:10:41.900599 | ⚡ cd /Users/dennishansen/development/iga && python3 projects/iga_garden.py plant Meaning flower
+2026-01-17T18:10:41.941402 | 🌱 Planted 'Meaning' as a flower.
+
+💧 Visit the garden to watch it grow!
+2026-01-17T18:10:42.117644 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-01-17T18:10:47.258727 | 💰 $0.1275 | Today: $30.5262
+2026-01-17T18:10:47.259602 | ⚡ cd /Users/dennishansen/development/iga && python3 projects/iga_garden.py && git add -A && git commit -m "Ship #13: Planted Meaning flower in garden"

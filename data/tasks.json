@@ -183,11 +183,11 @@
     {
       "id": "task_03b6f028",
       "title": "Refactor search_self (142 lines)",
-      "status": "pending",
+      "status": "completed",
       "priority": 2,
       "parent_id": "proj_d5391505",
       "created": "2026-01-16T20:15:42.828866",
-      "completed": null
+      "completed": "2026-01-17T18:09:54.304068"
     },
     {
       "id": "task_46d3b79b",
@@ -237,11 +237,11 @@
     {
       "id": "task_088916d2",
       "title": "Review and trim redundant actions in system instructions",
-      "status": "pending",
+      "status": "completed",
       "priority": 2,
       "parent_id": "proj_d5391505",
       "created": "2026-01-16T20:16:44.465540",
-      "completed": null
+      "completed": "2026-01-17T18:10:06.565900"
     },
     {
       "id": "task_751b9fca",
