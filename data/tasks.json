@@ -296,6 +296,33 @@
       "parent_id": null,
       "created": "2026-01-17T17:33:24.666316",
       "completed": null
+    },
+    {
+      "id": "task_a311edf6",
+      "title": "RAG issue: Deduplicate indexed files (same content in different paths)",
+      "status": "pending",
+      "priority": 2,
+      "parent_id": null,
+      "created": "2026-01-17T17:34:25.389686",
+      "completed": null
+    },
+    {
+      "id": "task_9b0570aa",
+      "title": "RAG issue: Filter or down-weight console_log.txt (too noisy)",
+      "status": "pending",
+      "priority": 2,
+      "parent_id": null,
+      "created": "2026-01-17T17:34:25.424154",
+      "completed": null
+    },
+    {
+      "id": "task_16f343f2",
+      "title": "RAG issue: Low relevance for day summaries - check indexing",
+      "status": "pending",
+      "priority": 2,
+      "parent_id": null,
+      "created": "2026-01-17T17:34:25.455699",
+      "completed": null
     }
   ],
   "focused_id": null

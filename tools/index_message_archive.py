@@ -97,7 +97,7 @@ def index_archive():
                 embeddings=[embedding],
                 documents=[chunk['text'][:10000]],
                 metadatas=[{
-                    'source': 'message_archive',
+                    'source_file': f"message_archive ({chunk['start_date']} to {chunk['end_date']})",
                     'start_date': chunk['start_date'],
                     'end_date': chunk['end_date'],
                     'message_count': chunk['message_count']

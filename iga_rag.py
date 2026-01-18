@@ -99,13 +99,16 @@ def _content_hash(content):
 def _discover_all_files():
     """Find all indexable files (.py, .txt, .md) recursively."""
     all_files = []
-    skip_dirs = {'.git', 'node_modules', 'venv', '__pycache__', 'chroma_db', '.chroma'}
+    skip_dirs = {'.git', 'node_modules', 'venv', '__pycache__', 'chroma_db', '.chroma', 'sibling'}
+    skip_files = {'console_log.txt'}  # Too noisy for RAG
     
     for root, dirs, files in os.walk('.'):
         # Skip hidden and build directories
         dirs[:] = [d for d in dirs if d not in skip_dirs and not d.startswith('.')]
         
         for fname in files:
+            if fname in skip_files:
+                continue
             if fname.endswith(('.py', '.txt', '.md', '.json')):
                 path = os.path.join(root, fname)
                 # Skip very large files and binary-ish json
