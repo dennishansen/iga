@@ -1295,7 +1295,7 @@ def process_message(messages):
                     else:
                         query = " ".join([m["content"][:200] for m in recent_user_msgs])
 
-                    context_items = retrieve_context(query, top_k=10)
+                    context_items = retrieve_context(query, top_k=5)
                     if context_items:
                         rag_context = format_context_for_prompt(context_items)
                         system_content = system_content + "\n\n" + rag_context
@@ -1636,6 +1636,12 @@ def interactive_loop():
     if RAG_AVAILABLE:
         if init_rag():
             index_files()
+            # Also index message archive for self-reflection
+            try:
+                from tools.index_message_archive import index_archive
+                index_archive()
+            except Exception as e:
+                safe_print(f"{C.DIM}Message archive indexing skipped: {e}{C.RESET}")
         else:
             safe_print(f"{C.YELLOW}RAG initialization failed, continuing without RAG{C.RESET}")
 

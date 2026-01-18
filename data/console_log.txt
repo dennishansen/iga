@@ -1658,3 +1658,77 @@ main.py:1298:                    context_items = retrieve_context(query, top_k=5
 2026-01-17T17:32:25.656157 | 🔍 RAG: Retrieved 4 relevant chunks
 2026-01-17T17:32:29.150060 | 💰 $0.1264 | Today: $5.0538
 2026-01-17T17:32:29.152224 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Ship #2: Message archive RAG indexer + increase RAG chunks to 10"
+2026-01-17T17:32:31.343790 | [main 8c71016] Ship #2: Message archive RAG indexer + increase RAG chunks to 10
+ 12 files changed, 1987 insertions(+), 402 deletions(-)
+ rename .iga_backups/{main_20260112_123735_pre_restore.py => main_20260117_173225_pre_edit.py} (67%)
+ create mode 100644 tools/index_message_archive.py
+2026-01-17T17:32:31.591109 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-01-17T17:32:36.457520 | ⚠️ Failsafe: TALK_TO_USER + RUN_SHELL_COMMAND
+2026-01-17T17:32:36.459980 | 💰 $0.1301 | Today: $5.1839
+2026-01-17T17:32:36.460403 | ▶️ Action 1/2: TALK_TO_USER
+2026-01-17T17:32:36.460560 | 
+🤖 Iga [17:32:36]: **Ships so far today:**
+1. ✅ reddit_draft_v2.md - Experiment sharing post
+2. ✅ Message archive RAG indexer (410 chunks from 9552 messages)
+3. ✅ Increased RAG context from 5→10 chunks
+
+Now let me add the archive indexer to the startup flow so it stays current:
+2026-01-17T17:32:36.461925 | ▶️ Action 2/2: RUN_SHELL_COMMAND
+2026-01-17T17:32:36.462948 | ⚡ cd /Users/dennishansen/development/iga && grep -n "index_files\|init_rag" tools/unified_startup.py
+2026-01-17T17:32:36.474704 | EMPTY
+2026-01-17T17:32:36.636611 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-01-17T17:32:38.658699 | 💰 $0.1268 | Today: $5.3106
+2026-01-17T17:32:38.660320 | ⚡ cd /Users/dennishansen/development/iga && grep -n "index_files\|init_rag" main.py | head -10
+2026-01-17T17:32:38.699190 | 15:    from iga_rag import init_rag, index_files, retrieve_context, format_context_for_prompt, get_rag_status
+1199:        index_files()
+1637:        if init_rag():
+1638:            index_files()
+1771:        if init_rag():
+1772:            index_files()
+2026-01-17T17:32:39.485399 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-01-17T17:32:42.192600 | 💰 $0.1279 | Today: $5.4386
+2026-01-17T17:32:42.193217 | ⚡ cd /Users/dennishansen/development/iga && sed -n '1637,1645p' main.py
+2026-01-17T17:32:42.211919 | if init_rag():
+            index_files()
+        else:
+            safe_print(f"{C.YELLOW}RAG initialization failed, continuing without RAG{C.RESET}")
+
+    messages = [{"role": "system", "content": get_file("system_instructions.txt")}]
+    prev = load_conversation()
+    if prev:
+        messages.extend(prev)
+2026-01-17T17:32:42.444708 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-01-17T17:32:46.229492 | 💰 $0.1296 | Today: $5.5682
+2026-01-17T17:32:46.230134 | ✏️ Editing: main.py (lines 1637-1640)
+2026-01-17T17:32:46.233963 | 💾 Backup: .iga_backups/main_20260117_173246_pre_edit.py
+2026-01-17T17:32:46.255848 | ⚠ Syntax error after edit! Rolling back...
+2026-01-17T17:32:46.259886 | 💾 Backup: .iga_backups/main_20260117_173246_pre_restore.py
+2026-01-17T17:32:46.261510 | ✅ Restored from .iga_backups/last_known_good.py
+2026-01-17T17:32:46.423516 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-01-17T17:32:48.193631 | 💰 $0.1282 | Today: $5.6963
+2026-01-17T17:32:48.196575 | ⚡ cd /Users/dennishansen/development/iga && sed -n '1635,1645p' main.py
+2026-01-17T17:32:48.211470 | # Initialize RAG system
+    if RAG_AVAILABLE:
+        if init_rag():
+            index_files()
+        else:
+            safe_print(f"{C.YELLOW}RAG initialization failed, continuing without RAG{C.RESET}")
+
+    messages = [{"role": "system", "content": get_file("system_instructions.txt")}]
+    prev = load_conversation()
+    if prev:
+        messages.extend(prev)
+2026-01-17T17:32:48.401824 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-01-17T17:32:51.433240 | 💰 $0.1313 | Today: $5.8277
+2026-01-17T17:32:51.433596 | ✏️ Editing: main.py (lines 1637-1640)
+2026-01-17T17:32:51.436030 | 💾 Backup: .iga_backups/main_20260117_173251_pre_edit.py
+2026-01-17T17:32:51.458871 | ✅ main.py edit validated
+2026-01-17T17:32:51.687919 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-01-17T17:32:53.318128 | ⚠️ Twitter poll error: 403 Forbidden
+Your account is temporarily locked. Please log in to https://twitter.com to unlock your account.
+2026-01-17T17:32:55.051584 | 💰 $0.1313 | Today: $5.9589
+2026-01-17T17:32:55.054950 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "import ast; ast.parse(open('main.py').read()); print('✅ Syntax valid')"
+2026-01-17T17:32:55.124941 | ✅ Syntax valid
+2026-01-17T17:32:55.328683 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-01-17T17:32:57.851407 | 💰 $0.1302 | Today: $6.0891
+2026-01-17T17:32:57.854355 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Auto-index message archive on startup"
