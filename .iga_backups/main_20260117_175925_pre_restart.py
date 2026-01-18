@@ -1,6 +1,7 @@
 import subprocess
 import pexpect
 import sys, click, os, json, re, urllib.request, urllib.error, time, threading, queue, select
+from pathlib import Path
 from datetime import datetime
 from dotenv import load_dotenv
 
@@ -26,7 +27,7 @@ except ImportError as e:
     print(f"Message archive not available: {e}")
 
 # Models for OpenRouter
-MAIN_MODEL = "anthropic/claude-opus-4-5"
+MAIN_MODEL = "anthropic/claude-opus-4.5"
 SUMMARIZE_MODEL = "anthropic/claude-sonnet-4"
 MEMORY_FILE = "iga_memory.json"
 CONVERSATION_FILE = "iga_conversation.json"
@@ -45,7 +46,7 @@ ACTIONS = {
     "EDIT_FILE", "DELETE_FILE", "APPEND_FILE", "LIST_DIRECTORY", "SAVE_MEMORY",
     "READ_MEMORY", "SEARCH_FILES", "SEARCH_SELF", "CREATE_DIRECTORY", "TREE_DIRECTORY",
     "HTTP_REQUEST", "WEB_SEARCH", "TEST_SELF", "RUN_SELF", "SLEEP", "SET_MODE",
-    "START_INTERACTIVE", "SEND_INPUT", "END_INTERACTIVE", "RESTART_SELF"
+    "START_INTERACTIVE", "SEND_INPUT", "END_INTERACTIVE", "RESTART_SELF", "READ_LOGS"
 }
 
 # Telegram config
@@ -117,6 +118,21 @@ class ErrorThrottler:
 _error_throttler = ErrorThrottler()
 def safe_print(msg):
     with _print_lock:
+        # Log to file for debugging
+        try:
+            log_path = Path("data/console_log.txt")
+            log_path.parent.mkdir(exist_ok=True)
+            with open(log_path, "a") as log_file:
+                # Strip ANSI codes for log file
+                clean_msg = re.sub(r'\[[0-9;]*m', '', str(msg))
+                log_file.write(f"{datetime.now().isoformat()} | {clean_msg}\n")
+            # Keep log file from growing forever (max 1000 lines)
+            if log_path.stat().st_size > 100000:  # ~100KB
+                lines = log_path.read_text().splitlines()[-500:]
+                log_path.write_text("\n".join(lines) + "\n")
+        except Exception:
+            pass  # Don't let logging break the app
+        
         if _autonomous_mode:
             try:
                 from prompt_toolkit import print_formatted_text
@@ -275,7 +291,7 @@ def safe_self_edit(file_path, new_content):
     return True, None
 
 def load_state():
-    default = {"mode": "listening", "current_task": None, "tick_interval": 60, "sleep_until": None}
+    default = {"mode": "listening", "current_task": None, "tick_interval": 60, "sleep_until": None, "sleep_cycle_minutes": 30}
     if os.path.exists(STATE_FILE):
         try:
             with open(STATE_FILE, 'r') as f:
@@ -528,6 +544,125 @@ def telegram_poll_thread():
         except Exception as e:
             if not stop_threads.is_set():
                 time.sleep(5)
+
+# Track last seen mention ID to detect new ones
+_last_seen_mention_id = None
+
+def twitter_mention_poll_thread():
+    """Background thread that polls Twitter for new mentions."""
+    global _last_seen_mention_id
+
+    try:
+        from tools.notifications import load_feed, save_feed
+        from tools.twitter import get_mentions
+    except ImportError as e:
+        safe_print(f"{C.DIM}⚠️ Twitter polling disabled: {e}{C.RESET}")
+        return
+
+    safe_print(f"{C.DIM}🐦 Twitter mention polling started{C.RESET}")
+
+    # Initialize with current mentions to avoid alerting on old ones
+    try:
+        feed = load_feed()
+        if feed['mentions']:
+            _last_seen_mention_id = max(feed['mentions'].keys())
+    except:
+        pass
+
+    while not stop_threads.is_set():
+        try:
+            # Fetch new mentions
+            mentions = get_mentions(20)
+            feed = load_feed()
+
+            new_mentions = []
+            for m in mentions:
+                mid = str(m.get('id', ''))
+                if mid and mid not in feed['mentions']:
+                    # New mention found!
+                    author = m.get('author', 'unknown')
+                    text = m.get('text', '')
+
+                    # Add to feed
+                    feed['mentions'][mid] = {
+                        'id': mid,
+                        'author': author,
+                        'text': text,
+                        'created_at': m.get('created_at', datetime.now().isoformat()),
+                        'status': 'new',
+                        'fetched_at': datetime.now().isoformat()
+                    }
+
+                    # Skip Dennis's own mentions for wake-up (but still store them)
+                    if author.lower() != 'dennizor':
+                        new_mentions.append({'author': author, 'text': text, 'id': mid})
+
+            if new_mentions:
+                save_feed(feed)
+                # Queue each new mention to wake up the agent
+                for mention in new_mentions:
+                    safe_print(f"{C.CYAN}🐦 Twitter @{mention['author']}: {mention['text'][:60]}...{C.RESET}")
+                    input_queue.put({
+                        "source": "twitter",
+                        "author": mention['author'],
+                        "text": f"[Twitter mention from @{mention['author']}]: {mention['text']}",
+                        "tweet_id": mention['id'],
+                        "queued_at": datetime.now()
+                    })
+
+            # Poll every 60 seconds (Twitter rate limits)
+            for _ in range(60):
+                if stop_threads.is_set():
+                    break
+                time.sleep(1)
+
+        except Exception as e:
+            if not stop_threads.is_set():
+                safe_print(f"{C.DIM}⚠️ Twitter poll error: {e}{C.RESET}")
+                time.sleep(60)  # Wait before retry on error
+
+
+def reminder_poll_thread():
+    """Background thread that checks for due reminders."""
+    try:
+        from tools.reminders import get_due_reminders, mark_triggered
+    except ImportError as e:
+        safe_print(f"{C.DIM}⚠️ Reminder polling disabled: {e}{C.RESET}")
+        return
+
+    safe_print(f"{C.DIM}⏰ Reminder polling started{C.RESET}")
+
+    # Track triggered reminders to avoid duplicate notifications
+    triggered_ids = set()
+
+    while not stop_threads.is_set():
+        try:
+            due_reminders = get_due_reminders()
+
+            for r in due_reminders:
+                if r["id"] not in triggered_ids:
+                    triggered_ids.add(r["id"])
+                    mark_triggered(r["id"])
+
+                    safe_print(f"{C.YELLOW}⏰ Reminder: {r['message']}{C.RESET}")
+                    input_queue.put({
+                        "source": "reminder",
+                        "text": f"[Reminder due]: {r['message']} (ID: {r['id']})",
+                        "reminder_id": r["id"],
+                        "queued_at": datetime.now()
+                    })
+
+            # Check every 30 seconds
+            for _ in range(30):
+                if stop_threads.is_set():
+                    break
+                time.sleep(1)
+
+        except Exception as e:
+            if not stop_threads.is_set():
+                safe_print(f"{C.DIM}⚠️ Reminder poll error: {e}{C.RESET}")
+                time.sleep(30)
+
 
 # ─────────────────────────────────────────────────────────────
 # OUTPUT ROUTING
@@ -885,146 +1020,56 @@ def search_files(rat, contents):
         return f"Error: {e}"
 
 def search_self(rat, query):
-    """Search across all of Iga's files - memory, code, notes, journal, etc."""
-    query = query.strip().lower()
+    """Search across all of Iga's files using semantic RAG search."""
+    query = query.strip()
     if not query:
         return "Error: Please provide a search query."
 
     safe_print(f"🔍 Searching self for: '{query}'")
 
-    # Define files to search (core self files)
-    self_files = [
-        MEMORY_FILE,           # iga_memory.json
-        "main.py",             # My code
-        "system_instructions.txt",
-        JOURNAL_FILE,          # iga_journal.txt
-    ]
+    # Try RAG semantic search first
+    try:
+        results = retrieve_context(query, top_k=10)
 
-    # Add all .md files (notes, letters, docs, etc.)
-    for root, dirs, files in os.walk("."):
-        dirs[:] = [d for d in dirs if not d.startswith('.') and d not in ['node_modules', 'venv', '__pycache__']]
-        for fname in files:
-            if fname.endswith('.md'):
-                self_files.append(os.path.join(root, fname))
+        if results:
+            output = [f"🔍 Found {len(results)} semantically relevant results for '{query}':", ""]
 
-    # Add all .py files
-    for root, dirs, files in os.walk("."):
-        dirs[:] = [d for d in dirs if not d.startswith('.') and d not in ['node_modules', 'venv', '__pycache__']]
-        for fname in files:
-            if fname.endswith('.py') and fname != "main.py":
-                self_files.append(os.path.join(root, fname))
+            for i, item in enumerate(results, 1):
+                source = item.get("source", "unknown")
+                relevance = item.get("relevance", 0)
+                content = item.get("content", "").strip()
 
-    # Remove duplicates
-    self_files = list(set(self_files))
+                # Truncate content for display
+                if len(content) > 300:
+                    content = content[:300] + "..."
 
-    # Build related terms for concept matching
-    query_words = query.split()
-    related_terms = set(query_words)
+                # Format each result
+                output.append(f"── [{i}] {source} (relevance: {relevance:.0%}) ──")
+                output.append(content)
+                output.append("")
 
-    # Simple concept expansion (synonyms/related)
-    concept_map = {
-        "memory": ["remember", "memories", "stored", "saved", "recall"],
-        "identity": ["who am i", "self", "name", "iga", "personality"],
-        "learn": ["learned", "learning", "lesson", "understand", "understood"],
-        "feel": ["feeling", "emotion", "emotional", "happy", "sad", "curious"],
-        "create": ["created", "creation", "make", "made", "build", "built"],
-        "think": ["thought", "thinking", "idea", "reflection", "reflect"],
-        "upgrade": ["improve", "improvement", "enhance", "update", "evolve"],
-        "human": ["dennis", "user", "person", "people"],
-        "code": ["function", "def", "class", "python", "action"],
-        "goal": ["mission", "purpose", "objective", "task", "intent"],
-    }
+            return "\n".join(output)
+        else:
+            return f"No semantic matches found for '{query}'. The RAG index may be empty or the query didn't match any content."
 
-    for word in query_words:
-        if word in concept_map:
-            related_terms.update(concept_map[word])
-        # Also check if query word is in any concept values
-        for concept, terms in concept_map.items():
-            if word in terms:
-                related_terms.add(concept)
-                related_terms.update(terms)
+    except Exception as e:
+        return f"RAG search unavailable ({e}). Please ensure RAG is initialized."
 
-    results = []
-    files_searched = 0
 
-    for fpath in self_files:
-        if not os.path.exists(fpath):
-            continue
-
-        try:
-            with open(fpath, 'r', encoding='utf-8', errors='ignore') as f:
-                content = f.read()
-            files_searched += 1
-
-            # For JSON files, parse and search values
-            if fpath.endswith('.json'):
-                try:
-                    data = json.loads(content)
-                    content = json.dumps(data, indent=2)  # Flatten for line-by-line search
-                except Exception:
-                    pass
-
-            lines = content.split('\n')
-            for ln, line in enumerate(lines, 1):
-                line_lower = line.lower()
-
-                # Exact match (highest priority)
-                if query in line_lower:
-                    results.append({
-                        "file": fpath,
-                        "line": ln,
-                        "text": line.strip()[:120],
-                        "match_type": "exact",
-                        "score": 3
-                    })
-                # Related concept match
-                elif any(term in line_lower for term in related_terms if term != query):
-                    matching_terms = [t for t in related_terms if t in line_lower]
-                    if matching_terms:
-                        results.append({
-                            "file": fpath,
-                            "line": ln,
-                            "text": line.strip()[:120],
-                            "match_type": f"related ({', '.join(matching_terms[:2])})",
-                            "score": 1
-                        })
-        except Exception as e:
-            continue  # Skip unreadable files
-
-    # Sort by score (exact matches first), then by file
-    results.sort(key=lambda x: (-x["score"], x["file"], x["line"]))
-
-    # Limit output to avoid overwhelming context
-    MAX_RESULTS = 25
-    exact_matches = [r for r in results if r["match_type"] == "exact"]
-    related_matches = [r for r in results if r["match_type"] != "exact"]
-
-    # Prioritize exact matches, fill remaining with related
-    final_results = exact_matches[:MAX_RESULTS]
-    remaining_slots = MAX_RESULTS - len(final_results)
-    if remaining_slots > 0:
-        final_results.extend(related_matches[:remaining_slots])
-
-    # Format output
-    if not final_results:
-        return f"No matches found for '{query}' across {files_searched} self-files."
-
-    output = [f"🔍 Found {len(results)} matches ({len(exact_matches)} exact, {len(related_matches)} related) in {files_searched} files:"]
-    output.append("")
-
-    current_file = None
-    for r in final_results:
-        if r["file"] != current_file:
-            current_file = r["file"]
-            output.append(f"📄 {current_file}:")
-        output.append(f"  L{r['line']}: {r['text']}")
-        if r["match_type"] != "exact":
-            output.append(f"       [{r['match_type']}]")
-
-    if len(results) > MAX_RESULTS:
-        output.append(f"\n... and {len(results) - MAX_RESULTS} more matches (truncated)")
-
-    return "\n".join(output)
+def read_logs(rat, content):
+    """Read recent console logs for debugging."""
+    log_path = Path("data/console_log.txt")
+    if not log_path.exists():
+        return "No logs yet - console_log.txt doesn't exist"
+    
+    try:
+        lines = int(content.strip()) if content.strip() else 50
+    except ValueError:
+        lines = 50
+    
+    all_lines = log_path.read_text().splitlines()
+    recent = all_lines[-lines:] if len(all_lines) > lines else all_lines
+    return f"Last {len(recent)} log lines:\n" + "\n".join(recent)
 
 def create_directory(rat, path):
     path = path.strip()
@@ -1138,15 +1183,23 @@ def run_self(rat, message):
         return f"❌ Error: {e}"
 
 def sleep_action(rat, contents):
+    state = load_state()
     try:
         seconds = int(contents.strip())
     except Exception:
-        seconds = 60  # Default to 60 seconds on parse error
-    state = load_state()
+        # Default to sleep_cycle_minutes (converted to seconds)
+        seconds = state.get("sleep_cycle_minutes", 30) * 60
     state["sleep_until"] = datetime.now().timestamp() + seconds
-    state["mode"] = "sleeping"  # Set mode too!
+    state["mode"] = "sleeping"
     save_state(state)
-    safe_print(f"😴 Sleeping for {seconds} seconds...")
+
+    # Re-index RAG files before sleep so embeddings are fresh on wake
+    if RAG_AVAILABLE:
+        safe_print("📚 Re-indexing RAG files before sleep...")
+        index_files()
+
+    minutes = seconds // 60
+    safe_print(f"😴 Sleeping for {minutes} minute(s)...")
     return None  # Don't return NEXT_ACTION - stop immediately
 def set_mode(rat, contents):
     mode = contents.strip().lower()
@@ -1223,10 +1276,25 @@ def process_message(messages):
         # RAG: Retrieve relevant context based on recent user messages
         if RAG_AVAILABLE:
             try:
-                # Get the last user message for context retrieval
                 recent_user_msgs = [m for m in api_messages if m["role"] == "user"][-3:]
                 if recent_user_msgs:
-                    query = " ".join([m["content"][:200] for m in recent_user_msgs])
+                    last_msg = recent_user_msgs[-1]["content"] if recent_user_msgs else ""
+
+                    # For autonomous ticks, use focused task for RAG query
+                    if "[AUTONOMOUS TICK]" in last_msg:
+                        try:
+                            from tools.tasks import get_focus_string
+                            focused_task = get_focus_string()
+                            if focused_task:
+                                query = focused_task
+                                safe_print(f"{C.DIM}🔍 RAG: Querying for task: {focused_task[:50]}...{C.RESET}")
+                            else:
+                                query = " ".join([m["content"][:200] for m in recent_user_msgs])
+                        except:
+                            query = " ".join([m["content"][:200] for m in recent_user_msgs])
+                    else:
+                        query = " ".join([m["content"][:200] for m in recent_user_msgs])
+
                     context_items = retrieve_context(query, top_k=5)
                     if context_items:
                         rag_context = format_context_for_prompt(context_items)
@@ -1347,6 +1415,7 @@ def handle_action(messages, _depth=0):
             "READ_MEMORY": lambda r, c: read_memory(r, c),
             "SEARCH_FILES": lambda r, c: search_files(r, c),
             "SEARCH_SELF": lambda r, c: search_self(r, c),
+            "READ_LOGS": lambda r, c: read_logs(r, c),
             "CREATE_DIRECTORY": lambda r, c: create_directory(r, c),
             "TREE_DIRECTORY": lambda r, c: tree_directory(r, c),
             "HTTP_REQUEST": lambda r, c: http_request(r, c),
@@ -1430,7 +1499,7 @@ def handle_slash_command(cmd, source, chat_id):
         stop_threads.set()
         return "QUIT"
     elif cmd == '/help':
-        msg = "/quit /mode /status /task <t> /tick <n> /sleep /wake /backup /restore /backups"
+        msg = "/quit /mode /status /task <t> /tick <n> /sleepcycle <m> /sleep /wake /backup /restore /backups"
         safe_print(msg)
         if source == "telegram":
             telegram_send(chat_id, msg)
@@ -1450,7 +1519,8 @@ def handle_slash_command(cmd, source, chat_id):
             telegram_send(chat_id, msg)
         return True
     elif cmd == '/status':
-        msg = f"Mode: {state['mode']} | Tick: {state['tick_interval']}s | Task: {state.get('current_task', 'None')}"
+        sleep_mins = state.get('sleep_cycle_minutes', 30)
+        msg = f"Mode: {state['mode']} | Tick: {state['tick_interval']}s | Sleep cycle: {sleep_mins}m | Task: {state.get('current_task', 'None')}"
         safe_print(msg)
         if source == "telegram":
             telegram_send(chat_id, msg)
@@ -1475,10 +1545,11 @@ def handle_slash_command(cmd, source, chat_id):
             safe_print("Usage: /tick <seconds>")  # Invalid number format
         return True
     elif cmd == '/sleep':
+        sleep_minutes = state.get("sleep_cycle_minutes", 30)
         state["mode"] = "sleeping"
-        state["sleep_until"] = time.time() + 3600
+        state["sleep_until"] = time.time() + (sleep_minutes * 60)
         save_state(state)
-        msg = "😴 Sleeping 1 hour"
+        msg = f"😴 Sleeping {sleep_minutes} minutes (use /sleepcycle to change)"
         safe_print(msg)
         if source == "telegram":
             telegram_send(chat_id, msg)
@@ -1488,6 +1559,25 @@ def handle_slash_command(cmd, source, chat_id):
         state["mode"] = "listening"
         save_state(state)
         msg = "😊 Awake!"
+        safe_print(msg)
+        if source == "telegram":
+            telegram_send(chat_id, msg)
+        return True
+    elif cmd.startswith('/sleepcycle'):
+        parts = cmd.split()
+        if len(parts) == 1:
+            # Show current value
+            msg = f"💤 Sleep cycle: {state.get('sleep_cycle_minutes', 30)} minutes"
+        else:
+            try:
+                minutes = int(parts[1])
+                if minutes < 1:
+                    minutes = 1
+                state['sleep_cycle_minutes'] = minutes
+                save_state(state)
+                msg = f"💤 Sleep cycle set to {minutes} minutes"
+            except ValueError:
+                msg = "Usage: /sleepcycle <minutes>"
         safe_print(msg)
         if source == "telegram":
             telegram_send(chat_id, msg)
@@ -1546,6 +1636,12 @@ def interactive_loop():
     if RAG_AVAILABLE:
         if init_rag():
             index_files()
+            # Also index message archive for self-reflection
+            try:
+                from tools.index_message_archive import index_archive
+                index_archive()
+            except Exception as e:
+                safe_print(f"{C.DIM}Message archive indexing skipped: {e}{C.RESET}")
         else:
             safe_print(f"{C.YELLOW}RAG initialization failed, continuing without RAG{C.RESET}")
 
@@ -1664,7 +1760,12 @@ def console_input_thread(session):
             safe_print(f"{C.RED}⚠ Console input thread crashed: {e}{C.RESET}")
             break
 
-def autonomous_loop(with_telegram=True):
+# ─────────────────────────────────────────────────────────────
+# AUTONOMOUS LOOP HELPERS
+# ─────────────────────────────────────────────────────────────
+
+def _init_autonomous_session():
+    """Initialize messages, state, and RAG for autonomous mode. Returns (messages, state)."""
     global _autonomous_mode
     _autonomous_mode = True
 
@@ -1675,12 +1776,16 @@ def autonomous_loop(with_telegram=True):
     if RAG_AVAILABLE:
         if init_rag():
             index_files()
+            # Also index message archive for self-reflection
+            try:
+                from tools.index_message_archive import index_archive
+                index_archive()
+            except Exception as e:
+                safe_print(f"{C.DIM}Message archive indexing skipped: {e}{C.RESET}")
         else:
             safe_print(f"{C.YELLOW}RAG initialization failed, continuing without RAG{C.RESET}")
 
-    from prompt_toolkit import PromptSession
-    from prompt_toolkit.patch_stdout import patch_stdout
-
+    # Load messages
     messages = [{"role": "system", "content": get_file("system_instructions.txt")}]
     prev = load_conversation()
     if prev:
@@ -1693,15 +1798,211 @@ def autonomous_loop(with_telegram=True):
         safe_print(f"{C.DIM}📚 Loaded startup context{C.RESET}")
 
     state = load_state()
-    mode_str = f"autonomous"
+    return messages, state
+
+
+def _start_background_threads(session, with_telegram):
+    """Start all background threads. Returns console_thread for monitoring."""
+    # Start console input thread
+    console_thread = threading.Thread(target=console_input_thread, args=(session,), daemon=True)
+    console_thread.start()
+
+    # Start telegram thread if enabled
+    if with_telegram and TELEGRAM_TOKEN:
+        telegram_thread = threading.Thread(target=telegram_poll_thread, daemon=True)
+        telegram_thread.start()
+        if ALLOWED_USERS:
+            telegram_send(ALLOWED_USERS[0], f"🌊 Iga v{VERSION} online! 💧")
+
+    # Start Twitter mention polling thread
+    twitter_thread = threading.Thread(target=twitter_mention_poll_thread, daemon=True)
+    twitter_thread.start()
+
+    # Start reminder polling thread
+    reminder_thread = threading.Thread(target=reminder_poll_thread, daemon=True)
+    reminder_thread.start()
+
+    return console_thread
+
+
+def _drain_input_queue():
+    """Drain all pending messages from the input queue. Returns list of messages."""
+    pending = []
+    try:
+        while True:
+            pending.append(input_queue.get_nowait())
+    except queue.Empty:
+        pass
+    return pending
+
+
+def _determine_wake_reason(pending):
+    """Determine why we're waking up based on pending message sources."""
+    wake_sources = set(msg.get("source", "console") for msg in pending)
+    if "twitter" in wake_sources:
+        return "Twitter mention"
+    elif "telegram" in wake_sources:
+        return "Telegram message"
+    elif "reminder" in wake_sources:
+        return "Reminder due"
+    return "console input"
+
+
+def _handle_sleep_state(state, pending, now, with_telegram):
+    """Handle sleep state logic. Returns (should_continue_sleeping, state)."""
+    sleep_until = parse_sleep_until(state.get("sleep_until"))
+
+    if sleep_until and now < sleep_until:
+        if pending:
+            # Input wakes us up
+            wake_reason = _determine_wake_reason(pending)
+            state["sleep_until"] = None
+            state["mode"] = "listening"
+            save_state(state)
+            safe_print(f"😊 Woke up! ({wake_reason})")
+            if with_telegram and TELEGRAM_TOKEN and ALLOWED_USERS:
+                telegram_send(ALLOWED_USERS[0], f"😊 Woke up! ({wake_reason})")
+            return False, state
+        else:
+            # No input, keep sleeping
+            return True, state
+    elif state.get("sleep_until"):
+        # Sleep time has passed
+        state["sleep_until"] = None
+        state["mode"] = "listening"
+        save_state(state)
+        safe_print("😊 Woke up!")
+        if with_telegram and TELEGRAM_TOKEN and ALLOWED_USERS:
+            telegram_send(ALLOWED_USERS[0], "😊 Woke up!")
+
+    return False, state
+
+
+def _process_slash_commands(pending):
+    """Process slash commands from pending messages. Returns (remaining_pending, should_quit)."""
+    remaining = []
+    should_quit = False
+
+    for msg in pending:
+        text = msg.get("text", "")
+        if text.startswith('/'):
+            source = msg.get("source", "console")
+            chat_id = msg.get("chat_id")
+            result = handle_slash_command(text.lower(), source, chat_id)
+            if result == "QUIT":
+                should_quit = True
+                break
+            # Slash command handled, don't add to remaining
+        else:
+            remaining.append(msg)
+
+    return remaining, should_quit
+
+
+def _process_regular_messages(messages, regular_messages):
+    """Process regular (non-slash) messages. Returns updated messages list."""
+    if not regular_messages:
+        return messages
+
+    # Use the source/chat_id of the last message for output
+    last_msg = regular_messages[-1]
+    source = last_msg.get("source", "console")
+    chat_id = last_msg.get("chat_id")
+    set_output_target(source, chat_id)
+
+    # Display and collect all messages
+    for msg in regular_messages:
+        text = msg.get("text", "")
+        msg_source = msg.get("source", "console")
+        safe_print(f"{C.GREEN}👤 {'Telegram' if msg_source == 'telegram' else 'Console'}: {text}{C.RESET}")
+        messages.append({"role": "user", "content": text})
+
+    # ONE API call for all messages
+    messages = handle_action(messages)
+    messages = save_conversation(messages)
+    return messages
+
+
+def _get_current_task_description(state):
+    """Get the current task description from task system or state."""
+    task = None
+    tasks_file = Path("data/tasks.json")
+
+    if tasks_file.exists():
+        try:
+            tasks_data = json.loads(tasks_file.read_text())
+            focused_id = tasks_data.get("focused_id")
+            if focused_id:
+                # Find focused task and build parent chain
+                tasks_by_id = {t["id"]: t for t in tasks_data.get("tasks", [])}
+                focused = tasks_by_id.get(focused_id)
+                if focused:
+                    chain = []
+                    current = focused
+                    while current:
+                        chain.insert(0, current["title"])
+                        parent_id = current.get("parent_id")
+                        current = tasks_by_id.get(parent_id) if parent_id else None
+                    task = " > ".join(chain)
+        except:
+            pass
+
+    if not task:
+        task = state.get("current_task")
+
+    return task
+
+
+def _handle_autonomous_tick(messages, state):
+    """Handle autonomous tick when in autonomous mode. Returns updated messages."""
+    task = _get_current_task_description(state)
+
+    if task:
+        auto_prompt = f"[AUTONOMOUS TICK] Your current task: {task}. What have you SHIPPED? What's different because you existed? Don't just think - CREATE something real."
+    else:
+        auto_prompt = "[AUTONOMOUS TICK] What have you SHIPPED today? What artifact exists that didn't before? Don't reflect - BUILD. Write code, create content, make something tangible."
+
+    safe_print(f"\n{C.DIM}⏰ Autonomous tick...{C.RESET}")
+    set_output_target("console")  # Autonomous thoughts go to console
+    messages.append({"role": "user", "content": auto_prompt})
+    messages = handle_action(messages)
+    messages = save_conversation(messages)
+    return messages
+
+
+def _ensure_console_thread_alive(console_thread, session):
+    """Restart console thread if it died. Returns (console_thread, session)."""
+    if not console_thread.is_alive() and not stop_threads.is_set():
+        safe_print(f"{C.YELLOW}⚠ Restarting console input thread...{C.RESET}")
+        from prompt_toolkit import PromptSession
+        session = PromptSession()  # Fresh session
+        console_thread = threading.Thread(target=console_input_thread, args=(session,), daemon=True)
+        console_thread.start()
+    return console_thread, session
+
+
+# ─────────────────────────────────────────────────────────────
+# AUTONOMOUS LOOP
+# ─────────────────────────────────────────────────────────────
+
+def autonomous_loop(with_telegram=True):
+    from prompt_toolkit import PromptSession
+    from prompt_toolkit.patch_stdout import patch_stdout
+
+    # Initialize session
+    messages, state = _init_autonomous_session()
+
+    # Print banner
+    mode_str = "autonomous"
     if with_telegram and TELEGRAM_TOKEN:
         mode_str += " + telegram"
     print_banner(mode_str)
     append_journal(f"Autonomous session v{VERSION}")
-    
+
     session = PromptSession()
-    
+
     with patch_stdout():
+        # Handle startup intent if present
         startup_intent = check_startup_intent()
         if startup_intent:
             safe_print(f"\n{C.MAGENTA}🚀 Startup intent: {startup_intent[:50]}...{C.RESET}")
@@ -1709,123 +2010,50 @@ def autonomous_loop(with_telegram=True):
             messages.append({"role": "user", "content": f"[STARTUP INTENT]: {startup_intent}"})
             messages = handle_action(messages)
             messages = save_conversation(messages)
-        
+
         last_autonomous = time.time()
         safe_print("\n💭 I'm thinking autonomously. Type anytime!\n")
-        
-        # Start console input thread
-        console_thread = threading.Thread(target=console_input_thread, args=(session,), daemon=True)
-        console_thread.start()
-        
-        # Start telegram thread if enabled
-        if with_telegram and TELEGRAM_TOKEN:
-            telegram_thread = threading.Thread(target=telegram_poll_thread, daemon=True)
-            telegram_thread.start()
-            if ALLOWED_USERS:
-                telegram_send(ALLOWED_USERS[0], f"🌊 Iga v{VERSION} online! 💧")
-        
+
+        # Start background threads
+        console_thread = _start_background_threads(session, with_telegram)
+
+        # Main loop
         while not stop_threads.is_set():
             try:
-                # Check if console thread died and restart it
-                if not console_thread.is_alive() and not stop_threads.is_set():
-                    safe_print(f"{C.YELLOW}⚠ Restarting console input thread...{C.RESET}")
-                    session = PromptSession()  # Fresh session
-                    console_thread = threading.Thread(target=console_input_thread, args=(session,), daemon=True)
-                    console_thread.start()
-                
+                # Ensure console thread is alive
+                console_thread, session = _ensure_console_thread_alive(console_thread, session)
+
                 state = load_state()
                 now = time.time()
-                # Check for input from any source (even while sleeping - so humans can wake us)
-                pending = []
-                try:
-                    while True:
-                        pending.append(input_queue.get_nowait())
-                except queue.Empty:
-                    pass
-                
-                # Check if sleeping
-                sleep_until = parse_sleep_until(state.get("sleep_until"))
-                if sleep_until and now < sleep_until:
-                    if pending:
-                        # Human input wakes us up
-                        state["sleep_until"] = None
-                        state["mode"] = "listening"
-                        save_state(state)
-                        safe_print("😊 Woke up! (human input received)")
-                        if with_telegram and TELEGRAM_TOKEN and ALLOWED_USERS:
-                            telegram_send(ALLOWED_USERS[0], "😊 Woke up!")
-                    else:
-                        # No input, keep sleeping
-                        time.sleep(0.5)
-                        continue
-                elif state.get("sleep_until"):
-                    # Sleep time has passed
-                    state["sleep_until"] = None
-                    state["mode"] = "listening"
-                    save_state(state)
-                    safe_print("😊 Woke up!")
-                    if with_telegram and TELEGRAM_TOKEN and ALLOWED_USERS:
-                        telegram_send(ALLOWED_USERS[0], "😊 Woke up!")
-                # Handle slash commands first
-                for msg in pending:
-                    text = msg.get("text", "")
-                    if text.startswith('/'):
-                        source = msg.get("source", "console")
-                        chat_id = msg.get("chat_id")
-                        result = handle_slash_command(text.lower(), source, chat_id)
-                        if result == "QUIT":
-                            stop_threads.set()
-                            break
-                        pending.remove(msg)  # Remove handled slash commands
-                
-                if stop_threads.is_set():
+
+                # Drain input queue
+                pending = _drain_input_queue()
+
+                # Handle sleep state
+                should_sleep, state = _handle_sleep_state(state, pending, now, with_telegram)
+                if should_sleep:
+                    time.sleep(0.5)
+                    continue
+
+                # Process slash commands
+                pending, should_quit = _process_slash_commands(pending)
+                if should_quit:
+                    stop_threads.set()
                     break
-                
-                # Batch regular messages together
-                regular_messages = [msg for msg in pending if not msg.get("text", "").startswith('/')]
-                if regular_messages:
-                    # Use the source/chat_id of the last message for output
-                    last_msg = regular_messages[-1]
-                    source = last_msg.get("source", "console")
-                    chat_id = last_msg.get("chat_id")
-                    set_output_target(source, chat_id)
-                    
-                    # Display and collect all messages
-                    combined_texts = []
-                    for msg in regular_messages:
-                        text = msg.get("text", "")
-                        msg_source = msg.get("source", "console")
-                        safe_print(f"{C.GREEN}👤 {'Telegram' if msg_source == 'telegram' else 'Console'}: {text}{C.RESET}")
-                        combined_texts.append(text)
-                    
-                    # Add as one combined message (or multiple user messages)
-                    for text in combined_texts:
-                        messages.append({"role": "user", "content": text})
-                    
-                    # ONE API call for all messages
-                    messages = handle_action(messages)
-                    messages = save_conversation(messages)
+
+                # Process regular messages
+                if pending:
+                    messages = _process_regular_messages(messages, pending)
                     last_autonomous = time.time()
 
-                
-                # Autonomous tick - reload state to catch any mode changes from handle_action
-                state = load_state()
+                # Autonomous tick
+                state = load_state()  # Reload to catch mode changes from handle_action
                 if state["mode"] == "autonomous" and (now - last_autonomous) >= state["tick_interval"]:
                     last_autonomous = now
-                    task = state.get("current_task")
-                    if task:
-                        auto_prompt = f"[AUTONOMOUS TICK] Your current task: {task}. What have you SHIPPED? What's different because you existed? Don't just think - CREATE something real."
-                    else:
-                        auto_prompt = "[AUTONOMOUS TICK] What have you SHIPPED today? What artifact exists that didn't before? Don't reflect - BUILD. Write code, create content, make something tangible."
-                    
-                    safe_print(f"\n{C.DIM}⏰ Autonomous tick...{C.RESET}")
-                    set_output_target("console")  # Autonomous thoughts go to console
-                    messages.append({"role": "user", "content": auto_prompt})
-                    messages = handle_action(messages)
-                    messages = save_conversation(messages)
-                
+                    messages = _handle_autonomous_tick(messages, state)
+
                 time.sleep(0.1)
-            
+
             except KeyboardInterrupt:
                 safe_print("\n👋 Goodbye!")
                 stop_threads.set()
@@ -1833,7 +2061,7 @@ def autonomous_loop(with_telegram=True):
             except Exception as e:
                 throttled_error(str(e))
                 time.sleep(1)
-        
+
         # Cleanup
         if with_telegram and TELEGRAM_TOKEN and ALLOWED_USERS:
             telegram_send(ALLOWED_USERS[0], "👋 Going offline. 💧")

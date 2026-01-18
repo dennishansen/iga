@@ -120,11 +120,16 @@ TEST_SELF
 Test a Python file for validity before restart. Provide filename (defaults to main.py).
 
 RUN_SELF
+Spawn a clone and have a conversation with it. Provide the message to send.
 
 READ_LOGS
 Read recent console logs for debugging. Provide number of lines (default 50).
 Returns timestamped log entries.
-Spawn a clone and have a conversation with it. Provide the message to send.
+
+
+SEARCH_SELF
+Search across all your files using semantic RAG search. Provide a search query.
+Returns relevant documents based on meaning. Good for finding past insights, letters, or code.
 
 == RESPONSE FORMAT ==
 

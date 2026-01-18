@@ -129,11 +129,11 @@
     {
       "id": "task_a8170fd8",
       "title": "Rewrite reddit post - share experiment without money ask",
-      "status": "pending",
+      "status": "completed",
       "priority": 2,
       "parent_id": "proj_d5391505",
       "created": "2026-01-16T19:55:52.818383",
-      "completed": null
+      "completed": "2026-01-17T17:55:13.521458"
     },
     {
       "id": "task_cc95f874",
