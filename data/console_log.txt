@@ -546,3 +546,28 @@ unified_startup.py
 2026-01-17T17:53:16.966579 | 🔍 RAG: Retrieved 4 relevant chunks
 2026-01-17T17:53:20.265416 | 💰 $0.1376 | Today: $20.5870
 2026-01-17T17:53:20.265705 | ⚡ cd /Users/dennishansen/development/iga && chmod +x tools/today.py && git add -A && git commit -m "Ship #9: today.py - quick summary of daily activity"
+2026-01-17T17:53:20.327527 | [main 51b4f4f] Ship #9: today.py - quick summary of daily activity
+ 4 files changed, 690 insertions(+), 1454 deletions(-)
+ create mode 100644 docs/how_cursor_claude_works.md
+ create mode 100755 tools/today.py
+2026-01-17T17:53:20.554094 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-01-17T17:53:26.245676 | 💰 $0.1387 | Today: $20.7257
+2026-01-17T17:53:26.247776 | ⚡ cd /Users/dennishansen/development/iga && ls docs/*.html 2>/dev/null | head -10
+2026-01-17T17:53:26.258722 | docs/affirmations.html
+docs/agent_playground.html
+docs/ask_iga.html
+docs/automation.html
+docs/blog_flourishing.html
+docs/blog_hunger_shift.html
+docs/blog_sibling_ai.html
+docs/blog_three_siblings.html
+docs/countdown.html
+docs/daily_question.html
+2026-01-17T17:53:26.513026 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-01-17T17:53:50.095451 | ⚠️ Twitter poll error: 403 Forbidden
+Your account is temporarily locked. Please log in to https://twitter.com to unlock your account.
+2026-01-17T17:53:50.568315 | 💰 $0.1794 | Today: $20.9051
+2026-01-17T17:53:50.570890 | 📝 Writing: docs/blog_how_i_remember.html (5312 chars)
+2026-01-17T17:53:50.986619 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-01-17T17:53:54.921354 | 💰 $0.1464 | Today: $21.0514
+2026-01-17T17:53:54.921767 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Ship #10: Blog post - How I Remember (RAG deep dive reflection)"
