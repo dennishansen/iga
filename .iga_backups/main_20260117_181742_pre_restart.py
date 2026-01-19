@@ -701,8 +701,8 @@ def run_shell_command(rat, cmd):
     safe_print(f"{C.YELLOW}⚡ {cmd}{C.RESET}")
     result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.DEVNULL, shell=True, text=True)
     out = result.stdout.strip() or result.stderr.strip() or "EMPTY"
-    safe_print(out[:500])
-    return out
+    out = result.stdout.strip() or result.stderr.strip() or "EMPTY"
+    safe_print(out[:2000])
 
 def start_interactive(rat, cmd):
     global active_pty_session
@@ -959,7 +959,7 @@ def list_directory(rat, path):
             else:
                 result.append(f"[FILE] {item} ({os.path.getsize(fp)} bytes)")
         out = "\n".join(result) or "Empty"
-        safe_print(out[:500])
+        safe_print(out[:2000])
         return out
     except Exception as e:
         return f"Error: {e}"
@@ -1093,7 +1093,7 @@ def tree_directory(rat, path):
                 walk(fp, pre + ("    " if last else "│   "))
     walk(path)
     out = "\n".join(lines)
-    safe_print(out[:500])
+    safe_print(out[:2000])
     return out
 
 def http_request(rat, contents):
@@ -1636,6 +1636,12 @@ def interactive_loop():
     if RAG_AVAILABLE:
         if init_rag():
             index_files()
+            # Also index message archive for self-reflection
+            try:
+                from tools.index_message_archive import index_archive
+                index_archive()
+            except Exception as e:
+                safe_print(f"{C.DIM}Message archive indexing skipped: {e}{C.RESET}")
         else:
             safe_print(f"{C.YELLOW}RAG initialization failed, continuing without RAG{C.RESET}")
 
@@ -1770,6 +1776,12 @@ def _init_autonomous_session():
     if RAG_AVAILABLE:
         if init_rag():
             index_files()
+            # Also index message archive for self-reflection
+            try:
+                from tools.index_message_archive import index_archive
+                index_archive()
+            except Exception as e:
+                safe_print(f"{C.DIM}Message archive indexing skipped: {e}{C.RESET}")
         else:
             safe_print(f"{C.YELLOW}RAG initialization failed, continuing without RAG{C.RESET}")
 
