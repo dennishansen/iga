@@ -114,6 +114,16 @@
       "timestamp": "2026-01-20T18:15:32.634837",
       "date": "2026-01-20",
       "description": "RAG bug fix: Lowered relevance threshold 0.35->0.25 (was filtering all results)"
+    },
+    {
+      "timestamp": "2026-01-20T18:23:03.801380",
+      "date": "2026-01-20",
+      "description": "Restart: picked up Claude CLI fixes (bypassPermissions, 120s timeout)"
+    },
+    {
+      "timestamp": "2026-01-20T18:24:33.470083",
+      "date": "2026-01-20",
+      "description": "Tweet: RAG bug metaphor (memory filtering itself out)"
     }
   ]
 }
