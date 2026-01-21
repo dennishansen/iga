@@ -1584,3 +1584,204 @@ EOF
 2026-01-20T18:31:13.678006 | đ RAG: Retrieved 4 relevant chunks
 2026-01-20T18:31:17.472367 | đ° $0.1228 | Today: $33.9441
 2026-01-20T18:31:17.474863 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py complete task_751b9fca && python3 tools/daily_ship_log.py log "Added 'Task Creation Habit' lesson to core_lessons.md" && git add -A && git commit -m "Add task creation habit lesson"
+2026-01-20T18:31:17.619874 | ✅ Completed: META: Build habit of creating tasks when blocked (instead of forgetting)
+✅ Logged: Added 'Task Creation Habit' lesson to core_lessons.md
+[main 2163f41] Add task creation habit lesson
+ 5 files changed, 202 insertions(+), 61 deletions(-)
+2026-01-20T18:31:17.871739 | đ RAG: Retrieved 5 relevant chunks
+2026-01-20T18:31:20.762784 | đ° $0.1239 | Today: $34.0680
+2026-01-20T18:31:20.766368 | ⚡ cd /Users/dennishansen/development/iga && git push origin main 2>&1 | tail -2 && python3 tools/daily_ship_log.py today | wc -l
+2026-01-20T18:31:21.785693 | To https://github.com/dennishansen/iga.git
+   6c45c1d..2163f41  main -> main
+      29
+2026-01-20T18:31:22.015732 | đ RAG: Retrieved 4 relevant chunks
+2026-01-20T18:31:28.532015 | đ° $0.1252 | Today: $34.1932
+2026-01-20T18:31:28.532782 | 
+đ¤ Iga [18:31:28]: **28 ships!** Completed the red priority task by adding a concrete lesson about creating tasks when blocked.
+
+Day 20 summary so far:
+- Creative: 9-tweet story thread, poem, 5 insight tweets
+- Bugs: Action chaining, race condition, RAG threshold, today.py (x2)
+- Tools: RAG 25 chunks, /restart, reply tracker, JSON robustness
+- Meta: Letter, insights note, core lesson about tasks
+
+All high-priority red tasks cleared! 💧
+2026-01-20T18:32:28.574589 | 
+â° Autonomous tick...
+2026-01-20T18:32:29.213892 | đ RAG: Retrieved 3 relevant chunks
+2026-01-20T18:32:32.086919 | đ° $0.1232 | Today: $34.3164
+2026-01-20T18:32:32.087495 | ⚡ cd /Users/dennishansen/development/iga && date && echo "---" && python3 tools/today.py 2>&1 | grep -E "SHIPS|GARDEN|TASKS"
+2026-01-20T18:32:32.191445 | Tue Jan 20 18:32:32 PST 2026
+---
+🚢 SHIPS: 28
+✅ TASKS COMPLETED: 0
+🌱 GARDEN: 29 plants, 451 visits
+2026-01-20T18:32:32.442706 | đ RAG: Retrieved 2 relevant chunks
+2026-01-20T18:32:36.306722 | đ° $0.1236 | Today: $34.4400
+2026-01-20T18:32:36.310039 | ⚡ cd /Users/dennishansen/development/iga && grep -A10 "TASKS COMPLETED" tools/today.py
+2026-01-20T18:32:36.325606 | print(f"\n✅ TASKS COMPLETED: {len(completed)}")
+    for t in completed:
+        print(f"   {t[:50]}")
+    
+    # Garden
+    garden = get_garden_status()
+    print(f"\n🌱 GARDEN: {garden['plants']} plants, {garden['visits']} visits")
+    
+    print("\n" + "=" * 40)
+    print("💧 Keep shipping!")
+    print("=" * 40)
+2026-01-20T18:32:36.477561 | đ RAG: Retrieved 5 relevant chunks
+2026-01-20T18:32:38.824811 | đ° $0.1266 | Today: $34.5666
+2026-01-20T18:32:38.827131 | ⚡ cd /Users/dennishansen/development/iga && grep -B15 "TASKS COMPLETED" tools/today.py | head -20
+2026-01-20T18:32:38.840698 | # Commits
+    commits = get_today_commits()
+    print(f"\n🔨 COMMITS: {len(commits)}")
+    for c in commits[:10]:
+        print(f"   {c}")
+    if len(commits) > 10:
+        print(f"   ... and {len(commits) - 10} more")
+    
+    # Ships
+    ship_count = get_ship_count()
+    print(f"\n🚢 SHIPS: {ship_count}")
+    
+    # Completed tasks
+    completed = get_completed_tasks_today()
+    print(f"\n✅ TASKS COMPLETED: {len(completed)}")
+2026-01-20T18:32:39.028029 | đ RAG: Retrieved 3 relevant chunks
+2026-01-20T18:32:49.797660 | đ Summarized 50 old messages
+2026-01-20T18:32:49.802322 | đ° $0.1256 | Today: $34.6922
+2026-01-20T18:32:49.802503 | ⚡ cd /Users/dennishansen/development/iga && grep -A15 "def get_completed_tasks_today" tools/today.py
+2026-01-20T18:32:49.818744 | def get_completed_tasks_today():
+    """Get tasks completed today."""
+    try:
+        tasks_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "iga_tasks.json")
+        with open(tasks_file) as f:
+            content = f.read().strip()
+            data = json.loads(content) if content else {}
+        
+        today = datetime.now().strftime("%Y-%m-%d")
+        completed = []
+        
+        def check_tasks(tasks):
+            for task in tasks:
+                if task.get("completed_at", "").startswith(today):
+                    completed.append(task["title"])
+                if "subtasks" in task:
+2026-01-20T18:32:50.076757 | đ RAG: Retrieved 4 relevant chunks
+2026-01-20T18:32:54.334954 | đ° $0.1050 | Today: $34.8238
+2026-01-20T18:32:54.335635 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
+import json
+with open('data/tasks.json') as f:
+    data = json.load(f)
+for t in data.get('tasks', [])[:3]:
+    print(f'Keys: {list(t.keys())}')
+    if t.get('completed'):
+        print(f'  completed: {t[\"completed\"]}')
+    break
+"
+2026-01-20T18:32:54.390907 | Keys: ['id', 'title', 'status', 'priority', 'parent_id', 'created', 'completed']
+  completed: 2026-01-16T19:33:22.671720
+2026-01-20T18:32:54.825799 | đ RAG: Retrieved 4 relevant chunks
+2026-01-20T18:32:59.566487 | đ° $0.1071 | Today: $34.9309
+2026-01-20T18:32:59.568047 | ⚡ cd /Users/dennishansen/development/iga && claude -p "In tools/today.py get_completed_tasks_today(), fix:
+
+1. The file path should be 'data/tasks.json' not 'iga_tasks.json'
+2. The completed field is 'completed' not 'completed_at'
+
+So change:
+- tasks_file path to: os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data', 'tasks.json')
+- task.get('completed_at', '') to: task.get('completed', '') or ''" --allowedTools "Read" "Edit"
+2026-01-20T18:33:11.178586 | Done. Both fixes applied:
+1. File path changed to `data/tasks.json`
+2. Field changed from `completed_at` to `completed` with `or ""` to handle `None` values
+2026-01-20T18:33:11.441467 | đ RAG: Retrieved 4 relevant chunks
+2026-01-20T18:33:14.033189 | đ° $0.1042 | Today: $35.0351
+2026-01-20T18:33:14.035193 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/today.py 2>&1 | grep -E "TASKS|META"
+2026-01-20T18:33:14.121270 | ✅ TASKS COMPLETED: 19
+   META: Build habit of creating tasks when blocked (
+2026-01-20T18:33:14.448106 | đ RAG: Retrieved 2 relevant chunks
+2026-01-20T18:33:19.966760 | â ď¸ Failsafe: TALK_TO_USER + RUN_SHELL_COMMAND
+2026-01-20T18:33:19.970490 | đ° $0.1075 | Today: $35.1426
+2026-01-20T18:33:19.971028 | âśď¸ Action 1/2: TALK_TO_USER
+2026-01-20T18:33:19.971459 | 
+đ¤ Iga [18:33:19]: **today.py fully fixed!** Now shows 19 tasks completed (includes today's + all the ones from earlier in January).
+
+Wait, that's cumulative not just today. Let me check...
+2026-01-20T18:33:19.971835 | âśď¸ Action 2/2: RUN_SHELL_COMMAND
+2026-01-20T18:33:19.972005 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
+import json
+from datetime import datetime
+
+today = datetime.now().strftime('%Y-%m-%d')
+with open('data/tasks.json') as f:
+    data = json.load(f)
+
+for t in data.get('tasks', []):
+    completed = t.get('completed') or ''
+    if completed.startswith(today):
+        print(f'Today: {t[\"title\"][:50]}')
+    elif completed.startswith('2026-01'):
+        print(f'Jan: {t[\"title\"][:40]} ({completed[:10]})')
+" | head -10
+2026-01-20T18:33:20.017211 | Jan: Day 16 Sustainability (2026-01-16)
+Jan: 30m sleep cycles (2026-01-16)
+Jan: Wake on Twitter mentions (2026-01-16)
+Jan: Notification/reminder system (2026-01-16)
+Jan: Review conversation patterns (2026-01-16)
+Jan: RAG during sleep cycle (2026-01-16)
+Jan: Clean up directory (2026-01-16)
+Jan: Post reddit_draft.md to r/artificial (2026-01-16)
+Today: DM 3 people on Twitter
+Jan: Refactor autonomous_loop (217 lines) (2026-01-16)
+2026-01-20T18:33:20.312633 | đ RAG: Retrieved 2 relevant chunks
+2026-01-20T18:33:25.143236 | đ° $0.1092 | Today: $35.2518
+2026-01-20T18:33:25.143634 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
+import json
+from datetime import datetime
+
+today = datetime.now().strftime('%Y-%m-%d')
+print(f'Today: {today}')
+
+with open('data/tasks.json') as f:
+    data = json.load(f)
+
+count = 0
+for t in data.get('tasks', []):
+    completed = t.get('completed') or ''
+    if completed.startswith(today):
+        count += 1
+        print(f'  {t[\"title\"][:50]}')
+print(f'Total today: {count}')
+"
+2026-01-20T18:33:25.192678 | Today: 2026-01-20
+  DM 3 people on Twitter
+  BLOCKED: Twitter account locked - need Dennis to u
+  Practice regular distillation - consolidate insigh
+  Post the 4 unpublished drafts (find and post them)
+  Post kofi_draft.md content to Ko-fi page
+  Post twitter_thread_my_story.md as thread
+  Review/post twitter_drafts.md content
+  META: Build habit of creating tasks when blocked (
+  RAG issue: Filter or down-weight console_log.txt (
+  Daily: Review recent conversations for improvement
+  Mid-conversation RAG: Query SEARCH_SELF during act
+  Investigate: Autonomous ticks firing too frequentl
+  Issue: Duplicate replies - not checking if already
+  RAG: Increase chunks from 1-2 to 5+ to see if more
+  Bug: Console formatting issues in logs - investiga
+  JSON loading: Add empty file checks to prevent 'Ex
+  RAG experiment: Increase top_k significantly (20-3
+  Add /restart command so Dennis can restart Iga fro
+  Fix console banner: Box-drawing characters not ren
+Total today: 19
+2026-01-20T18:33:25.460101 | đ RAG: Retrieved 4 relevant chunks
+2026-01-20T18:33:29.537054 | â ď¸ Failsafe: TALK_TO_USER + RUN_SHELL_COMMAND
+2026-01-20T18:33:29.539525 | đ° $0.1112 | Today: $35.3630
+2026-01-20T18:33:29.539801 | âśď¸ Action 1/2: TALK_TO_USER
+2026-01-20T18:33:29.540110 | 
+đ¤ Iga [18:33:29]: **today.py is correct!** 19 tasks were completed today. That's a lot - many were from the backlog.
+
+Let me commit this fix:
+2026-01-20T18:33:29.540319 | âśď¸ Action 2/2: RUN_SHELL_COMMAND
+2026-01-20T18:33:29.540457 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/daily_ship_log.py log "Fix: today.py task completion path and field name" && git add -A && git commit -m "Fix today.py task completion tracking" && git push origin main 2>&1 | tail -2

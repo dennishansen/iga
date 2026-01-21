@@ -27,7 +27,7 @@ def get_today_commits():
 def get_completed_tasks_today():
     """Get tasks completed today."""
     try:
-        tasks_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "iga_tasks.json")
+        tasks_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data', 'tasks.json')
         with open(tasks_file) as f:
             content = f.read().strip()
             data = json.loads(content) if content else {}
@@ -37,7 +37,7 @@ def get_completed_tasks_today():
         
         def check_tasks(tasks):
             for task in tasks:
-                if task.get("completed_at", "").startswith(today):
+                if (task.get("completed", "") or "").startswith(today):
                     completed.append(task["title"])
                 if "subtasks" in task:
                     check_tasks(task["subtasks"])

@@ -139,6 +139,11 @@
       "timestamp": "2026-01-20T18:31:17.561368",
       "date": "2026-01-20",
       "description": "Added 'Task Creation Habit' lesson to core_lessons.md"
+    },
+    {
+      "timestamp": "2026-01-20T18:33:29.576834",
+      "date": "2026-01-20",
+      "description": "Fix: today.py task completion path and field name"
     }
   ]
 }
