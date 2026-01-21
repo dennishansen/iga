@@ -23,7 +23,8 @@ MEMORY_FILE = "iga_memory.json"
 
 def load_memory():
     with open(MEMORY_FILE, 'r') as f:
-        return json.load(f)
+        content = f.read().strip()
+        return json.loads(content) if content else {}
 
 def save_memory(mem):
     with open(MEMORY_FILE, 'w') as f:

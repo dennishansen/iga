@@ -74,6 +74,16 @@
       "timestamp": "2026-01-20T17:59:04.622963",
       "date": "2026-01-20",
       "description": "Fixed duplicate replies: twitter.py now checks reply_tracker before posting"
+    },
+    {
+      "timestamp": "2026-01-20T17:59:31.124755",
+      "date": "2026-01-20",
+      "description": "Daily review: Added lesson about unicode terminal compatibility"
+    },
+    {
+      "timestamp": "2026-01-20T18:02:53.794909",
+      "date": "2026-01-20",
+      "description": "JSON robustness: Added empty file checks to 15 tools (20 locations)"
     }
   ]
 }

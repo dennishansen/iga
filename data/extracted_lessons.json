@@ -48,10 +48,17 @@
       "source": "manual",
       "timestamp": "2026-01-20T17:13:36.947286",
       "applied_count": 0
+    },
+    {
+      "text": "Unicode in terminals: Box-drawing characters (\u256d\u256e\u2502) don't render on all terminals. Use ASCII (+, -, |) for compatibility. Claude Code can struggle with unicode string matching too.",
+      "category": "general",
+      "source": "manual",
+      "timestamp": "2026-01-20T17:59:27.102543",
+      "applied_count": 0
     }
   ],
   "metadata": {
     "created": "2026-01-14T12:10:17.166117",
-    "updated": "2026-01-20T17:13:36.947292"
+    "updated": "2026-01-20T17:59:27.102551"
   }
 }

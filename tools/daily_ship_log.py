@@ -18,7 +18,8 @@ LOG_FILE = Path(__file__).parent.parent / "ship_log.json"
 
 def load_log():
     if LOG_FILE.exists():
-        return json.loads(LOG_FILE.read_text())
+        content = LOG_FILE.read_text().strip()
+        return json.loads(content) if content else {"ships": []}
     return {"ships": []}
 
 def save_log(data):

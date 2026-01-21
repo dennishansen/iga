@@ -91,14 +91,16 @@ def full_inventory():
     # Memory stats
     if os.path.exists("iga_memory.json"):
         with open("iga_memory.json", 'r') as f:
-            mem = json.load(f)
+            content = f.read().strip()
+            mem = json.loads(content) if content else {}
         output.append(f"MEMORIES: {len(mem)} keys")
     
     # Lessons
     lessons_path = os.path.join(os.path.dirname(__file__), "..", "data", "extracted_lessons.json")
     if os.path.exists(lessons_path):
         with open(lessons_path, 'r') as f:
-            lessons = json.load(f)
+            content = f.read().strip()
+            lessons = json.loads(content) if content else {}
         output.append(f"LESSONS: {len(lessons.get('lessons', []))} extracted")
     
     return "\n".join(output)

@@ -50,8 +50,11 @@ def index_archive():
     messages = []
     with open(archive_path) as f:
         for line in f:
+            line_content = line.strip()
+            if not line_content:
+                continue
             try:
-                messages.append(json.loads(line))
+                messages.append(json.loads(line_content))
             except:
                 continue
     

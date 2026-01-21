@@ -8,7 +8,8 @@ TRACKER_FILE = Path(__file__).parent.parent / "reply_tracker.json"
 
 def load_tracker():
     if TRACKER_FILE.exists():
-        return json.loads(TRACKER_FILE.read_text())
+        content = TRACKER_FILE.read_text().strip()
+        return json.loads(content) if content else {"replied_to": []}
     return {"replied_to": []}
 
 def save_tracker(data):

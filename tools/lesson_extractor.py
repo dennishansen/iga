@@ -25,7 +25,8 @@ def load_lessons():
     """Load existing lessons."""
     if os.path.exists(LESSONS_FILE):
         with open(LESSONS_FILE, 'r') as f:
-            return json.load(f)
+            content = f.read().strip()
+            return json.loads(content) if content else {"lessons": [], "metadata": {"created": datetime.now().isoformat()}}
     return {"lessons": [], "metadata": {"created": datetime.now().isoformat()}}
 
 def save_lessons(data):
@@ -86,7 +87,8 @@ def extract_from_conversation(conversation_file):
         return []
     
     with open(conversation_file, 'r') as f:
-        data = json.load(f)
+        content = f.read().strip()
+        data = json.loads(content) if content else []
     
     # Look for patterns that indicate lessons:
     # - "I learned", "lesson:", "insight:", "note to self"

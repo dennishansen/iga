@@ -41,7 +41,8 @@ def load_all_memory():
         return {}
     try:
         with open(MEMORY_FILE, 'r') as f:
-            return json.load(f)
+            content = f.read().strip()
+            return json.loads(content) if content else {}
     except Exception:
         return {}
 
@@ -153,7 +154,8 @@ def generate_unified_startup():
     if os.path.exists('iga_garden.json'):
         try:
             with open('iga_garden.json', 'r') as f:
-                garden = json.load(f)
+                content = f.read().strip()
+                garden = json.loads(content) if content else {}
             stats.append(f"{len(garden.get('plants', []))} plants in garden")
         except:
             pass

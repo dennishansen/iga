@@ -25,7 +25,8 @@ FEED_FILE = "data/notification_feed.json"
 def load_feed():
     if os.path.exists(FEED_FILE):
         with open(FEED_FILE, 'r') as f:
-            return json.load(f)
+            content = f.read().strip()
+            return json.loads(content) if content else {"mentions": {}, "last_fetch": None}
     return {"mentions": {}, "last_fetch": None}
 
 def save_feed(data):

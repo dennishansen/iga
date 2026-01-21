@@ -27,7 +27,8 @@ def get_completed_tasks_today():
     try:
         tasks_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "iga_tasks.json")
         with open(tasks_file) as f:
-            data = json.load(f)
+            content = f.read().strip()
+            data = json.loads(content) if content else {}
         
         today = datetime.now().strftime("%Y-%m-%d")
         completed = []
@@ -53,10 +54,11 @@ def get_ship_count():
 def get_garden_status():
     """Get garden plant count and visits."""
     try:
-        garden_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 
+        garden_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
                                     "projects", "garden_state.json")
         with open(garden_file) as f:
-            data = json.load(f)
+            content = f.read().strip()
+            data = json.loads(content) if content else {}
         return {
             "plants": len(data.get("plants", [])),
             "visits": data.get("total_visits", 0)

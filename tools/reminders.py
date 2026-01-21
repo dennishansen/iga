@@ -43,7 +43,8 @@ def generate_id():
 
 def load_reminders():
     if REMINDERS_FILE.exists():
-        return json.loads(REMINDERS_FILE.read_text())
+        content = REMINDERS_FILE.read_text().strip()
+        return json.loads(content) if content else {"reminders": []}
     return {"reminders": []}
 
 

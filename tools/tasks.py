@@ -36,7 +36,8 @@ def generate_id(prefix="task"):
 
 def load_tasks():
     if TASKS_FILE.exists():
-        return json.loads(TASKS_FILE.read_text())
+        content = TASKS_FILE.read_text().strip()
+        return json.loads(content) if content else {"tasks": [], "focused_id": None}
     return {"tasks": [], "focused_id": None}
 
 def save_tasks(data):
@@ -45,7 +46,8 @@ def save_tasks(data):
 
 def load_state():
     if STATE_FILE.exists():
-        return json.loads(STATE_FILE.read_text())
+        content = STATE_FILE.read_text().strip()
+        return json.loads(content) if content else {}
     return {}
 
 def save_state(state):

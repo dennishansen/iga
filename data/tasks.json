@@ -372,11 +372,11 @@
     {
       "id": "task_f26b88d0",
       "title": "Daily: Review recent conversations for improvement opportunities",
-      "status": "pending",
+      "status": "completed",
       "priority": 1,
       "parent_id": null,
       "created": "2026-01-17T18:15:54.356501",
-      "completed": null
+      "completed": "2026-01-20T17:59:31.092507"
     },
     {
       "id": "task_4f7367ee",
@@ -462,11 +462,11 @@
     {
       "id": "task_73ae9498",
       "title": "JSON loading: Add empty file checks to prevent 'Expecting value' errors",
-      "status": "pending",
+      "status": "completed",
       "priority": 2,
       "parent_id": null,
       "created": "2026-01-20T17:12:31.070217",
-      "completed": null
+      "completed": "2026-01-20T18:02:53.764513"
     },
     {
       "id": "task_d5586ca0",

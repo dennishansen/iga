@@ -11,7 +11,8 @@ OUTPUT_FILE = "public/garden.html"
 def load_garden():
     if os.path.exists(GARDEN_FILE):
         with open(GARDEN_FILE, 'r') as f:
-            return json.load(f)
+            content = f.read().strip()
+            return json.loads(content) if content else {"plots": [], "visits": 0}
     return {"plots": [], "visits": 0}
 
 def get_emoji(stage_idx, plant_type):

@@ -20,7 +20,8 @@ ARCHIVE_FILE = "data/tweet_archive.json"
 def load_archive():
     if os.path.exists(ARCHIVE_FILE):
         with open(ARCHIVE_FILE, 'r') as f:
-            return json.load(f)
+            content = f.read().strip()
+            return json.loads(content) if content else {"tweets": {}, "last_sync": None, "interactions": {}}
     return {"tweets": {}, "last_sync": None, "interactions": {}}
 
 def save_archive(data):

@@ -68,8 +68,11 @@ def search_archive(query, limit=50):
     try:
         with open(ARCHIVE_FILE, 'r') as f:
             for line in f:
+                line_content = line.strip()
+                if not line_content:
+                    continue
                 try:
-                    msg = json.loads(line.strip())
+                    msg = json.loads(line_content)
                     content = msg.get("content", "")
                     if query_lower in content.lower():
                         results.append(msg)
@@ -96,8 +99,11 @@ def get_recent_archived(n=100):
         messages = []
         
         for line in recent_lines:
+            line_content = line.strip()
+            if not line_content:
+                continue
             try:
-                messages.append(json.loads(line.strip()))
+                messages.append(json.loads(line_content))
             except json.JSONDecodeError:
                 continue
         

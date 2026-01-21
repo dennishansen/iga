@@ -32,7 +32,8 @@ def generate_startup_context():
             import json
             from datetime import datetime
             with open(ship_log, 'r') as f:
-                data = json.load(f)
+                content = f.read().strip()
+                data = json.loads(content) if content else {}
             today = datetime.now().strftime("%Y-%m-%d")
             yesterday = datetime.now().strftime("%Y-%m-%d")  # Could calc properly
             recent = data.get('ships', {}).get(today, [])
