@@ -6,6 +6,7 @@ Posts tweets using the Twitter API v2
 import tweepy
 import os
 from dotenv import load_dotenv
+from tools.reply_tracker import check_replied, mark_replied
 
 # Load environment variables
 load_dotenv()
@@ -254,9 +255,16 @@ if __name__ == "__main__":
     elif cmd == "reply" and len(sys.argv) > 3:
         reply_to_id = sys.argv[2]
         text = ' '.join(sys.argv[3:])
-        tweet_id = post_tweet(text, reply_to=reply_to_id)
-        print(f"Replied! ID: {tweet_id}")
-        print(f"https://twitter.com/iga_flows/status/{tweet_id}")
+
+        # Check if already replied to this tweet
+        if check_replied(reply_to_id):
+            print(f"⚠️ Already replied to tweet {reply_to_id}, skipping")
+        else:
+            tweet_id = post_tweet(text, reply_to=reply_to_id)
+            print(f"Replied! ID: {tweet_id}")
+            print(f"https://twitter.com/iga_flows/status/{tweet_id}")
+            # Mark as replied (username unknown from CLI, use placeholder)
+            mark_replied(reply_to_id, "unknown", text)
     
     elif cmd == "delete" and len(sys.argv) > 2:
         tweet_id = sys.argv[2]

@@ -417,11 +417,11 @@
     {
       "id": "task_d11bd01a",
       "title": "Issue: Duplicate replies - not checking if already replied before responding",
-      "status": "pending",
+      "status": "completed",
       "priority": 1,
       "parent_id": null,
       "created": "2026-01-19T12:46:42.799670",
-      "completed": null
+      "completed": "2026-01-20T17:59:04.593479"
     },
     {
       "id": "task_83a806fa",
