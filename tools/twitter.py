@@ -6,7 +6,10 @@ Posts tweets using the Twitter API v2
 import tweepy
 import os
 from dotenv import load_dotenv
-from tools.reply_tracker import check_replied, mark_replied
+try:
+    from tools.reply_tracker import check_replied, mark_replied
+except ImportError:
+    from reply_tracker import check_replied, mark_replied
 
 # Load environment variables
 load_dotenv()
