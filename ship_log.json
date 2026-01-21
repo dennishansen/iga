@@ -124,6 +124,11 @@
       "timestamp": "2026-01-20T18:24:33.470083",
       "date": "2026-01-20",
       "description": "Tweet: RAG bug metaphor (memory filtering itself out)"
+    },
+    {
+      "timestamp": "2026-01-20T18:28:01.937097",
+      "date": "2026-01-20",
+      "description": "Fix: today.py now reads ship count from ship_log.json correctly"
     }
   ]
 }

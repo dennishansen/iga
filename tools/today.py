@@ -9,6 +9,8 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from daily_ship_log import load_log
+
 def get_today_commits():
     """Get commits from today."""
     today = datetime.now().strftime("%Y-%m-%d")
@@ -46,10 +48,12 @@ def get_completed_tasks_today():
         return []
 
 def get_ship_count():
-    """Count ships from commit messages."""
-    commits = get_today_commits()
-    ships = [c for c in commits if "Ship #" in c or "ship" in c.lower()]
-    return len(ships)
+    """Count ships from ship_log.json for today."""
+    today = datetime.now().strftime("%Y-%m-%d")
+    ship_log = load_log()
+    ships = ship_log.get("ships", [])
+    today_entries = [entry for entry in ships if entry.get("date") == today]
+    return len(today_entries)
 
 def get_garden_status():
     """Get garden plant count and visits."""
