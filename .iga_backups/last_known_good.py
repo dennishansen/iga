@@ -74,6 +74,7 @@ class C:
 input_queue = queue.Queue()  # Messages from any source
 stop_threads = threading.Event()
 _print_lock = threading.Lock()
+_response_time_lock = threading.Lock()  # Protects _last_response_time
 _autonomous_mode = False
 active_pty_session = None  # For interactive PTY sessions (START_INTERACTIVE)
 
@@ -686,7 +687,8 @@ def talk_to_user(rat, msg):
     global _last_response_time
     source, chat_id = get_output_target()
     timestamp = datetime.now().strftime('%H:%M:%S')
-    _last_response_time = datetime.now()  # Track when we responded
+    with _response_time_lock:
+        _last_response_time = datetime.now()  # Track when we responded
     if source == "telegram" and chat_id:
         safe_print(f"\n{C.CYAN}{C.BOLD}đ¤ Iga [{timestamp}]:{C.RESET} {C.CYAN}{msg}{C.RESET}")
         telegram_send(chat_id, msg)
@@ -1203,7 +1205,7 @@ def sleep_action(rat, contents):
     return None  # Don't return NEXT_ACTION - stop immediately
 def set_mode(rat, contents):
     mode = contents.strip().lower()
-    if mode not in ["listening", "focused", "sleeping"]:
+    if mode not in ["listening", "focused", "sleeping", "autonomous"]:
         mode = "listening"
     state = load_state()
     state["mode"] = mode
@@ -1295,7 +1297,7 @@ def process_message(messages):
                     else:
                         query = " ".join([m["content"][:200] for m in recent_user_msgs])
 
-                    context_items = retrieve_context(query, top_k=5)
+                    context_items = retrieve_context(query, top_k=10)
                     if context_items:
                         rag_context = format_context_for_prompt(context_items)
                         system_content = system_content + "\n\n" + rag_context
@@ -1330,10 +1332,11 @@ def check_passive_messages(messages):
             msg_time = msg.get("queued_at", datetime.now())  # Use queued time
             timestamp = msg_time.strftime("%H:%M:%S")
 
-            # Skip slash commands - put them back for normal handling
+            # Skip slash commands - put them back and stop draining
+            # (break, not continue, to avoid infinite loop)
             if text.startswith('/'):
                 input_queue.put(msg)
-                continue
+                break
 
             source_label = "telegram" if source == "telegram" else "console"
             heard_messages.append({
@@ -1348,10 +1351,12 @@ def check_passive_messages(messages):
         pass
 
     # Inject heard messages into the conversation
+    with _response_time_lock:
+        last_response = _last_response_time  # Copy under lock
     for heard in heard_messages:
         # Check if message came before our last response
         before_tag = ""
-        if _last_response_time and heard["msg_time"] < _last_response_time:
+        if last_response and heard["msg_time"] < last_response:
             before_tag = " (sent BEFORE your last response)"
         
         human_time = humanize_time(heard['msg_time'])
@@ -1463,7 +1468,7 @@ def handle_action(messages, _depth=0):
                 result = safe_execute(act, rat, cont)
                 if result:
                     # Allow longer results for content-heavy actions
-                    max_len = 5000 if act in ("READ_FILES", "SEARCH_FILES", "HTTP_REQUEST") else 500
+                    max_len = 5000 if act in ("READ_FILES", "SEARCH_FILES", "HTTP_REQUEST", "RUN_SHELL_COMMAND", "LIST_DIRECTORY", "TREE_DIRECTORY") else 500
                     accumulated_results.append(f"[{act}]: {result[:max_len]}")
             else:
                 safe_print(f"{C.YELLOW}Unknown action: {act}{C.RESET}")
@@ -1798,6 +1803,10 @@ def _init_autonomous_session():
         safe_print(f"{C.DIM}đ Loaded startup context{C.RESET}")
 
     state = load_state()
+    # Ensure state mode is "autonomous" when running in autonomous mode
+    if state.get("mode") != "autonomous":
+        state["mode"] = "autonomous"
+        save_state(state)
     return messages, state
 
 
@@ -2045,12 +2054,13 @@ def autonomous_loop(with_telegram=True):
                 if pending:
                     messages = _process_regular_messages(messages, pending)
                     last_autonomous = time.time()
+                    continue  # Skip tick check this iteration - we just processed input
 
-                # Autonomous tick
+                # Autonomous tick - only when truly idle (no pending messages processed this iteration)
                 state = load_state()  # Reload to catch mode changes from handle_action
-                if state["mode"] == "autonomous" and (now - last_autonomous) >= state["tick_interval"]:
-                    last_autonomous = now
+                if state["mode"] == "autonomous" and (time.time() - last_autonomous) >= state["tick_interval"]:
                     messages = _handle_autonomous_tick(messages, state)
+                    last_autonomous = time.time()  # Reset AFTER tick completes
 
                 time.sleep(0.1)
 

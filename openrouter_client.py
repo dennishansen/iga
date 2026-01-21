@@ -77,6 +77,7 @@ def chat(model, system, messages, max_tokens=2048):
         model=model,
         messages=openai_messages,
         max_tokens=max_tokens,
+        timeout=120,  # 2 minute timeout to prevent hanging
         extra_headers={
             "HTTP-Referer": "https://github.com/iga",
             "X-Title": "Iga Autonomous Agent"

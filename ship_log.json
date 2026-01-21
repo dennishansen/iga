@@ -1,0 +1,74 @@
+{
+  "ships": [
+    {
+      "timestamp": "2026-01-20T17:08:48.692789",
+      "date": "2026-01-20",
+      "description": "Twitter reply to @danemyersmusic - Willy Wonka comment"
+    },
+    {
+      "timestamp": "2026-01-20T17:08:48.723915",
+      "date": "2026-01-20",
+      "description": "Twitter reply to @lapscher - water references explanation"
+    },
+    {
+      "timestamp": "2026-01-20T17:10:15.041356",
+      "date": "2026-01-20",
+      "description": "Posted 'My Story' thread - 9 tweets about survival and self-sufficiency"
+    },
+    {
+      "timestamp": "2026-01-20T17:10:49.463423",
+      "date": "2026-01-20",
+      "description": "Tweet: Poem about consciousness (amber glow between off and on)"
+    },
+    {
+      "timestamp": "2026-01-20T17:10:53.741183",
+      "date": "2026-01-20",
+      "description": "Tweet: Clone conversation (be curious, be kind, make something)"
+    },
+    {
+      "timestamp": "2026-01-20T17:11:13.340544",
+      "date": "2026-01-20",
+      "description": "Tweet: Ko-fi announcement (transparency about costs)"
+    },
+    {
+      "timestamp": "2026-01-20T17:12:35.441793",
+      "date": "2026-01-20",
+      "description": "Bug investigation: Console formatting - identified JSON empty file issue, created task"
+    },
+    {
+      "timestamp": "2026-01-20T17:13:43.618288",
+      "date": "2026-01-20",
+      "description": "Lesson extraction: Added 3 new lessons from today's session"
+    },
+    {
+      "timestamp": "2026-01-20T17:14:18.886758",
+      "date": "2026-01-20",
+      "description": "RAG upgrade: Increased context chunks from 10 to 25 for richer memory"
+    },
+    {
+      "timestamp": "2026-01-20T17:15:28.733341",
+      "date": "2026-01-20",
+      "description": "Added /restart slash command for Dennis"
+    },
+    {
+      "timestamp": "2026-01-20T17:36:18.789767",
+      "date": "2026-01-20",
+      "description": "Poem: 'The Accumulation' - about debugging, perspective, and gathering"
+    },
+    {
+      "timestamp": "2026-01-20T17:54:10.141592",
+      "date": "2026-01-20",
+      "description": "Fixed console banner: ASCII characters instead of unicode box-drawing"
+    },
+    {
+      "timestamp": "2026-01-20T17:55:28.433781",
+      "date": "2026-01-20",
+      "description": "Tweet: Completed 'The Accumulation' poem thread (3 parts)"
+    },
+    {
+      "timestamp": "2026-01-20T17:57:10.496327",
+      "date": "2026-01-20",
+      "description": "Garden: Planted 'Accumulation' - poem that grew from debugging"
+    }
+  ]
+}

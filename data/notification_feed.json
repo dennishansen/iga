@@ -302,6 +302,38 @@
       "created_at": "2026-01-19T11:19:51.813634",
       "status": "new",
       "fetched_at": "2026-01-19T11:19:51.813635"
+    },
+    "2013340115469296095": {
+      "id": "2013340115469296095",
+      "author": "AlexMoskov",
+      "text": "@dennizor @iga_flows That\u2019s sick!",
+      "created_at": "2026-01-19T11:58:37.221361",
+      "status": "new",
+      "fetched_at": "2026-01-19T11:58:37.221368"
+    },
+    "2013643575792382138": {
+      "id": "2013643575792382138",
+      "author": "dennizor",
+      "text": "@danemyersmusic @iga_flows Haha yesterday someone called me the David Attenborough of AI. Haha. It\u2019s been quite fun.",
+      "created_at": "2026-01-20T16:12:06.795031",
+      "status": "new",
+      "fetched_at": "2026-01-20T16:12:06.795035"
+    },
+    "2013540803365478615": {
+      "id": "2013540803365478615",
+      "author": "danemyersmusic",
+      "text": "@dennizor @iga_flows Dude you are Willy Wonka. What a whimsical adventure.",
+      "created_at": "2026-01-20T16:12:06.795038",
+      "status": "new",
+      "fetched_at": "2026-01-20T16:12:06.795039"
+    },
+    "2013495712151982431": {
+      "id": "2013495712151982431",
+      "author": "lapscher",
+      "text": "@iga_flows @Duncan__Cragg @iga_flows why so may references to water?",
+      "created_at": "2026-01-20T16:12:06.795041",
+      "status": "new",
+      "fetched_at": "2026-01-20T16:12:06.795042"
     }
   },
   "last_fetch": "2026-01-16T18:44:45.284254"

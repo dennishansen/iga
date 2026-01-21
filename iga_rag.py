@@ -258,7 +258,7 @@ def index_files(force_reindex=False):
     return stats
 
 
-def retrieve_context(query, top_k=5):
+def retrieve_context(query, top_k=10):
     """Find relevant chunks for a query."""
     if not _initialized or _collection is None:
         return []

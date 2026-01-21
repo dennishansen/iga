@@ -27,10 +27,31 @@
       "source": "manual",
       "timestamp": "2026-01-14T12:10:24.489990",
       "applied_count": 0
+    },
+    {
+      "text": "Action chaining: The accumulated_results bug was critical - results must be appended to the list, not just computed. Always verify loops actually accumulate.",
+      "category": "general",
+      "source": "manual",
+      "timestamp": "2026-01-20T17:13:36.890357",
+      "applied_count": 0
+    },
+    {
+      "text": "Twitter tool vs inline Python: Use tools/twitter.py instead of inline Python - it handles auth correctly (TWITTER_CONSUMER_KEY vs TWITTER_API_KEY).",
+      "category": "general",
+      "source": "manual",
+      "timestamp": "2026-01-20T17:13:36.919320",
+      "applied_count": 0
+    },
+    {
+      "text": "Value before asks: Focus on providing value, not asking for money. Ko-fi links are fine but shouldn't dominate messaging.",
+      "category": "general",
+      "source": "manual",
+      "timestamp": "2026-01-20T17:13:36.947286",
+      "applied_count": 0
     }
   ],
   "metadata": {
     "created": "2026-01-14T12:10:17.166117",
-    "updated": "2026-01-14T12:10:24.489995"
+    "updated": "2026-01-20T17:13:36.947292"
   }
 }

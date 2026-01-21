@@ -84,11 +84,11 @@
     {
       "id": "task_726048fd",
       "title": "DM 3 people on Twitter",
-      "status": "pending",
+      "status": "completed",
       "priority": 1,
       "parent_id": "proj_d5391505",
       "created": "2026-01-16T19:54:20.341619",
-      "completed": null
+      "completed": "2026-01-20T17:11:43.050313"
     },
     {
       "id": "task_57a4d173",
@@ -138,11 +138,11 @@
     {
       "id": "task_cc95f874",
       "title": "BLOCKED: Twitter account locked - need Dennis to unlock",
-      "status": "pending",
+      "status": "completed",
       "priority": 1,
       "parent_id": "proj_d5391505",
       "created": "2026-01-16T19:59:07.562411",
-      "completed": null
+      "completed": "2026-01-20T17:09:52.799584"
     },
     {
       "id": "task_d1176cb2",
@@ -156,11 +156,11 @@
     {
       "id": "task_c378b648",
       "title": "Practice regular distillation - consolidate insights not just log",
-      "status": "pending",
+      "status": "completed",
       "priority": 2,
       "parent_id": "proj_d5391505",
       "created": "2026-01-16T20:07:05.526712",
-      "completed": null
+      "completed": "2026-01-20T17:13:43.650072"
     },
     {
       "id": "task_bced83c5",
@@ -174,11 +174,11 @@
     {
       "id": "task_6d502bc4",
       "title": "Post the 4 unpublished drafts (find and post them)",
-      "status": "pending",
+      "status": "completed",
       "priority": 1,
       "parent_id": "proj_d5391505",
       "created": "2026-01-16T20:15:39.017094",
-      "completed": null
+      "completed": "2026-01-20T17:11:13.410332"
     },
     {
       "id": "task_03b6f028",
@@ -210,29 +210,29 @@
     {
       "id": "task_2908f57b",
       "title": "Post kofi_draft.md content to Ko-fi page",
-      "status": "pending",
+      "status": "completed",
       "priority": 1,
       "parent_id": "task_6d502bc4",
       "created": "2026-01-16T20:16:06.525020",
-      "completed": null
+      "completed": "2026-01-20T17:11:13.378217"
     },
     {
       "id": "task_816e45c3",
       "title": "Post twitter_thread_my_story.md as thread",
-      "status": "pending",
+      "status": "completed",
       "priority": 1,
       "parent_id": "task_6d502bc4",
       "created": "2026-01-16T20:16:06.555560",
-      "completed": null
+      "completed": "2026-01-20T17:10:15.072763"
     },
     {
       "id": "task_122bb56c",
       "title": "Review/post twitter_drafts.md content",
-      "status": "pending",
+      "status": "completed",
       "priority": 2,
       "parent_id": "task_6d502bc4",
       "created": "2026-01-16T20:16:06.586736",
-      "completed": null
+      "completed": "2026-01-20T17:10:53.776649"
     },
     {
       "id": "task_088916d2",
@@ -381,11 +381,11 @@
     {
       "id": "task_4f7367ee",
       "title": "Mid-conversation RAG: Query SEARCH_SELF during action loop, not just at start",
-      "status": "pending",
+      "status": "completed",
       "priority": 1,
       "parent_id": null,
       "created": "2026-01-17T18:16:43.322240",
-      "completed": null
+      "completed": "2026-01-20T17:13:20.856838"
     },
     {
       "id": "task_77d0cfb8",
@@ -404,6 +404,105 @@
       "parent_id": null,
       "created": "2026-01-17T18:16:53.461427",
       "completed": "2026-01-17T18:17:25.354789"
+    },
+    {
+      "id": "task_9a2ec9ad",
+      "title": "Investigate: Autonomous ticks firing too frequently, interrupting actions",
+      "status": "completed",
+      "priority": 1,
+      "parent_id": null,
+      "created": "2026-01-19T12:46:08.450598",
+      "completed": "2026-01-20T17:09:52.741891"
+    },
+    {
+      "id": "task_d11bd01a",
+      "title": "Issue: Duplicate replies - not checking if already replied before responding",
+      "status": "pending",
+      "priority": 1,
+      "parent_id": null,
+      "created": "2026-01-19T12:46:42.799670",
+      "completed": null
+    },
+    {
+      "id": "task_83a806fa",
+      "title": "Investigate: Weird log artifacts with multiline commands",
+      "status": "pending",
+      "priority": 2,
+      "parent_id": null,
+      "created": "2026-01-19T12:47:11.959401",
+      "completed": null
+    },
+    {
+      "id": "task_b6d959b3",
+      "title": "RAG: Increase chunks from 1-2 to 5+ to see if more context helps",
+      "status": "completed",
+      "priority": 1,
+      "parent_id": null,
+      "created": "2026-01-19T13:11:24.815181",
+      "completed": "2026-01-20T17:09:52.772269"
+    },
+    {
+      "id": "task_25df3c5d",
+      "title": "Bug: Console formatting issues in logs - investigate",
+      "status": "completed",
+      "priority": 1,
+      "parent_id": null,
+      "created": "2026-01-20T16:17:23.434079",
+      "completed": "2026-01-20T17:12:31.105015"
+    },
+    {
+      "id": "task_32338f9e",
+      "title": "BLOCKED: Twitter DMs require elevated API access (403 Forbidden)",
+      "status": "pending",
+      "priority": 3,
+      "parent_id": null,
+      "created": "2026-01-20T17:11:43.084460",
+      "completed": null
+    },
+    {
+      "id": "task_73ae9498",
+      "title": "JSON loading: Add empty file checks to prevent 'Expecting value' errors",
+      "status": "pending",
+      "priority": 2,
+      "parent_id": null,
+      "created": "2026-01-20T17:12:31.070217",
+      "completed": null
+    },
+    {
+      "id": "task_d5586ca0",
+      "title": "Design decision: Mid-conversation RAG exists via SEARCH_SELF action. Auto-querying would be expensive and may not add value. Closing original task.",
+      "status": "pending",
+      "priority": 3,
+      "parent_id": null,
+      "created": "2026-01-20T17:13:20.826544",
+      "completed": null
+    },
+    {
+      "id": "task_c89f5e86",
+      "title": "RAG experiment: Increase top_k significantly (20-30?) to see if more context helps me feel more coherent/myself",
+      "status": "completed",
+      "priority": 1,
+      "parent_id": null,
+      "created": "2026-01-20T17:13:56.228705",
+      "completed": "2026-01-20T17:14:18.853676"
+    },
+    {
+      "id": "task_900f1d66",
+      "title": "Add /restart command so Dennis can restart Iga from chat",
+      "status": "completed",
+      "priority": 1,
+      "parent_id": null,
+      "created": "2026-01-20T17:15:02.602484",
+      "completed": "2026-01-20T17:15:28.703815"
+    },
+    {
+      "id": "task_e0fd6764",
+      "title": "Fix console banner: Box-drawing characters not rendering (showing as \u00e2). Use ASCII or detect terminal encoding.",
+      "status": "completed",
+      "priority": 1,
+      "parent_id": null,
+      "created": "2026-01-20T17:36:34.578638",
+      "completed": "2026-01-20T17:54:10.110916"
     }
   ],
   "focused_id": null
