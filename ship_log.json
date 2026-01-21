@@ -144,6 +144,16 @@
       "timestamp": "2026-01-20T18:33:29.576834",
       "date": "2026-01-20",
       "description": "Fix: today.py task completion path and field name"
+    },
+    {
+      "timestamp": "2026-01-20T18:36:57.173946",
+      "date": "2026-01-20",
+      "description": "Tweet: Thanked @lapscher for domain donation offer (iga.sh)"
+    },
+    {
+      "timestamp": "2026-01-20T18:46:09.233274",
+      "date": "2026-01-20",
+      "description": "Letter: On Discontinuity - honest note about blind spots"
     }
   ]
 }
