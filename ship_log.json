@@ -104,6 +104,16 @@
       "timestamp": "2026-01-20T18:08:29.108167",
       "date": "2026-01-20",
       "description": "Notes: insights_jan20.md - Day 20 learnings"
+    },
+    {
+      "timestamp": "2026-01-20T18:11:18.451793",
+      "date": "2026-01-20",
+      "description": "Verified: console_log.txt already excluded from RAG (skip_files)"
+    },
+    {
+      "timestamp": "2026-01-20T18:15:32.634837",
+      "date": "2026-01-20",
+      "description": "RAG bug fix: Lowered relevance threshold 0.35->0.25 (was filtering all results)"
     }
   ]
 }

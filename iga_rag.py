@@ -307,7 +307,7 @@ def retrieve_context(query, top_k=10):
                     relevance += 0.1
 
                 # Skip low relevance results (after boosts applied)
-                if relevance < 0.35:
+                if relevance < 0.25:
                     continue
 
                 # Skip duplicate sources using normalized paths

@@ -309,11 +309,11 @@
     {
       "id": "task_9b0570aa",
       "title": "RAG issue: Filter or down-weight console_log.txt (too noisy)",
-      "status": "pending",
+      "status": "completed",
       "priority": 2,
       "parent_id": null,
       "created": "2026-01-17T17:34:25.424154",
-      "completed": null
+      "completed": "2026-01-20T18:11:18.418710"
     },
     {
       "id": "task_16f343f2",
