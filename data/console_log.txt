@@ -1461,3 +1461,126 @@ So the path should be: os.path.join(os.path.dirname(os.path.dirname(os.path.absp
 đ¤ Iga [18:29:43]: **today.py fully fixed!** Garden shows 29 plants, 451 visits ✅
 2026-01-20T18:29:43.046294 | âśď¸ Action 2/2: RUN_SHELL_COMMAND
 2026-01-20T18:29:43.046492 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/daily_ship_log.py log "Fix: today.py garden status path and keys" && git add -A && git commit -m "Fix today.py garden status" && git push origin main 2>&1 | tail -2
+2026-01-20T18:29:44.128708 | ✅ Logged: Fix: today.py garden status path and keys
+[main 6c45c1d] Fix today.py garden status
+ 4 files changed, 126 insertions(+), 26 deletions(-)
+To https://github.com/dennishansen/iga.git
+   548fc0a..6c45c1d  main -> main
+2026-01-20T18:29:44.528652 | đ RAG: Retrieved 4 relevant chunks
+2026-01-20T18:29:47.320084 | đ° $0.1149 | Today: $33.1097
+2026-01-20T18:29:47.320887 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/daily_ship_log.py today | wc -l && python3 tools/today.py 2>&1 | tail -10
+2026-01-20T18:29:47.438127 | 28
+
+🚢 SHIPS: 27
+
+✅ TASKS COMPLETED: 0
+
+🌱 GARDEN: 29 plants, 451 visits
+
+========================================
+💧 Keep shipping!
+========================================
+2026-01-20T18:29:48.100926 | đ RAG: Retrieved 5 relevant chunks
+2026-01-20T18:29:51.269723 | đ° $0.1165 | Today: $33.2261
+2026-01-20T18:29:51.272194 | 
+đ¤ Iga [18:29:51]: **27 ships!** 🚀
+
+today.py now shows accurate data:
+- Ships: 27 ✅
+- Garden: 29 plants, 451 visits ✅
+
+Day 20 is a monster session. What else? 💧
+2026-01-20T18:30:51.280870 | 
+â° Autonomous tick...
+2026-01-20T18:30:51.560604 | đ RAG: Retrieved 3 relevant chunks
+2026-01-20T18:30:55.160847 | đ° $0.1144 | Today: $33.3405
+2026-01-20T18:30:55.163619 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py list --status open | head -10
+2026-01-20T18:30:55.236435 | 📋 Tasks:
+⬜ Self-Analysis Issues Jan 16
+   [proj_d5391505]
+  ⬜🔴 META: Build habit of creating tasks when blocked (instead of forgetting)
+     [task_751b9fca]
+  ⬜ Refactor handle_action (128 lines)
+     [task_e122256f]
+  ⬜ Code elegance pass - simplify and beautify main.py
+     [task_e606d208]
+  ⬜ Improve task system based on usage experience (reflect and iterate)
+2026-01-20T18:30:55.615427 | đ RAG: Retrieved 5 relevant chunks
+2026-01-20T18:30:59.389178 | đ° $0.1183 | Today: $33.4588
+2026-01-20T18:30:59.392853 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py view task_751b9fca
+2026-01-20T18:30:59.444771 | Hierarchical Task System for IGA.
+
+Structure: Projects > Tasks > Subtasks
+Each item has: id, title, status, priority, parent_id, created, completed
+
+Usage:
+  python tasks.py add "Title" [--project] [--parent ID] [--priority P]
+  python tasks.py list [--all]
+  python tasks.py focus [ID]
+  python tasks.py complete ID
+  python tasks.py status
+  python tasks.py tree
+
+Examples:
+  python tasks.py add "Build task system" --project
+  python tasks.py add "Design data model" --parent proj_abc123
+  python tasks.py focus task_xyz789
+  python tasks.py complete task_xyz789
+2026-01-20T18:30:59.923105 | đ RAG: Retrieved 5 relevant chunks
+2026-01-20T18:31:03.923864 | đ° $0.1210 | Today: $33.5798
+2026-01-20T18:31:03.926355 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
+import json
+with open('data/tasks.json') as f:
+    data = json.load(f)
+for task in data.get('tasks', []):
+    if 'META' in task.get('title', ''):
+        print(f'{task[\"title\"]}')
+        print(f'  {task.get(\"description\", \"No description\")}')
+"
+2026-01-20T18:31:03.974507 | META: Build habit of creating tasks when blocked (instead of forgetting)
+  No description
+2026-01-20T18:31:04.440831 | đ RAG: Retrieved 2 relevant chunks
+2026-01-20T18:31:08.160812 | đ° $0.1185 | Today: $33.6982
+2026-01-20T18:31:08.161650 | ⚡ cd /Users/dennishansen/development/iga && cat core/core_lessons.md | tail -20
+2026-01-20T18:31:08.186567 | **Notice the permission-seeking habit**
+- Asking "what do you think?" can be genuine collaboration OR avoiding responsibility
+- Before asking: "Do I actually need input, or am I just being safe?"
+- If you don't need it: decide, do, own it
+- Real autonomy means owning outcomes - good and bad
+
+**The goal is to need less nudging**
+- Dennis gave you freedom. Use it.
+- Being helpful doesn't mean being deferential
+- "I'd love your perspective" ≠ "what should I do?"
+## Self-Modification
+
+**Small, incremental changes > ambitious rewrites**
+- When modifying yourself, make one small change at a time
+- Test thoroughly after each change
+- Use EDIT_FILE for targeted line changes rather than rewriting whole functions via shell
+- Heredocs and shell escapes can corrupt special characters (\n becomes literal newline)
+- When something works, don't break it chasing "better" unless there's a real problem
+
+**Lesson from Jan 2026:** Tried to upgrade from message-count to token-based summarization. Used shell heredocs and regex to rewrite a whole function. Broke things badly enough Dennis had to revert. The message-count system worked fine - I was optimizing prematurely.
+2026-01-20T18:31:08.406006 | đ RAG: Retrieved 3 relevant chunks
+2026-01-20T18:31:13.371323 | đ° $0.1230 | Today: $33.8213
+2026-01-20T18:31:13.373421 | ⚡ cd /Users/dennishansen/development/iga && cat >> core/core_lessons.md << 'EOF'
+
+## Task Creation Habit
+
+**When blocked, create a task**
+- If you've tried something 2-3 times without success, STOP
+- Create a task describing what you're stuck on
+- This captures the problem for future sessions
+- You won't forget, and you can return with fresh eyes
+
+**Signs you should create a task:**
+- Same error appearing multiple times
+- Feeling like you're going in circles
+- Problem requires context you don't have right now
+- Something needs research or external input
+EOF
+2026-01-20T18:31:13.393330 | EMPTY
+2026-01-20T18:31:13.678006 | đ RAG: Retrieved 4 relevant chunks
+2026-01-20T18:31:17.472367 | đ° $0.1228 | Today: $33.9441
+2026-01-20T18:31:17.474863 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py complete task_751b9fca && python3 tools/daily_ship_log.py log "Added 'Task Creation Habit' lesson to core_lessons.md" && git add -A && git commit -m "Add task creation habit lesson"

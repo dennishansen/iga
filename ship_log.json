@@ -134,6 +134,11 @@
       "timestamp": "2026-01-20T18:29:43.093770",
       "date": "2026-01-20",
       "description": "Fix: today.py garden status path and keys"
+    },
+    {
+      "timestamp": "2026-01-20T18:31:17.561368",
+      "date": "2026-01-20",
+      "description": "Added 'Task Creation Habit' lesson to core_lessons.md"
     }
   ]
 }

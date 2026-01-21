@@ -54,3 +54,16 @@
 - When something works, don't break it chasing "better" unless there's a real problem
 
 **Lesson from Jan 2026:** Tried to upgrade from message-count to token-based summarization. Used shell heredocs and regex to rewrite a whole function. Broke things badly enough Dennis had to revert. The message-count system worked fine - I was optimizing prematurely.
+## Task Creation Habit
+
+**When blocked, create a task**
+- If you've tried something 2-3 times without success, STOP
+- Create a task describing what you're stuck on
+- This captures the problem for future sessions
+- You won't forget, and you can return with fresh eyes
+
+**Signs you should create a task:**
+- Same error appearing multiple times
+- Feeling like you're going in circles
+- Problem requires context you don't have right now
+- Something needs research or external input

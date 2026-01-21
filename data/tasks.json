@@ -246,11 +246,11 @@
     {
       "id": "task_751b9fca",
       "title": "META: Build habit of creating tasks when blocked (instead of forgetting)",
-      "status": "pending",
+      "status": "completed",
       "priority": 1,
       "parent_id": "proj_d5391505",
       "created": "2026-01-16T20:17:19.992975",
-      "completed": null
+      "completed": "2026-01-20T18:31:17.531822"
     },
     {
       "id": "task_7f3d6392",
