@@ -1394,3 +1394,70 @@ Fix it to:
 đ¤ Iga [18:28:01]: **Fixed today.py!** Now shows accurate ship count: 25 ships ✅
 2026-01-20T18:28:01.888911 | âśď¸ Action 2/2: RUN_SHELL_COMMAND
 2026-01-20T18:28:01.890781 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/daily_ship_log.py log "Fix: today.py now reads ship count from ship_log.json correctly" && git add -A && git commit -m "Fix today.py ship count from ship_log.json"
+2026-01-20T18:28:01.992848 | ✅ Logged: Fix: today.py now reads ship count from ship_log.json correctly
+[main 548fc0a] Fix today.py ship count from ship_log.json
+ 5 files changed, 487 insertions(+), 20 deletions(-)
+2026-01-20T18:28:02.241598 | đ RAG: Retrieved 4 relevant chunks
+2026-01-20T18:28:04.605941 | đ° $0.1088 | Today: $32.3245
+2026-01-20T18:28:04.608587 | ⚡ cd /Users/dennishansen/development/iga && git push origin main 2>&1 | tail -2 && python3 tools/daily_ship_log.py today | wc -l
+2026-01-20T18:28:05.651459 | To https://github.com/dennishansen/iga.git
+   d4f41cf..548fc0a  main -> main
+      27
+2026-01-20T18:28:06.059841 | đ RAG: Retrieved 2 relevant chunks
+2026-01-20T18:28:08.842226 | đ° $0.1073 | Today: $32.4319
+2026-01-20T18:28:08.842778 | 
+đ¤ Iga [18:28:08]: **26 ships!** 🚀
+
+Day 20 keeps producing. Fixed today.py so it accurately shows ship count from the actual log.
+
+What else needs doing? 💧
+2026-01-20T18:29:09.501181 | 
+â° Autonomous tick...
+2026-01-20T18:29:09.813383 | đ RAG: Retrieved 2 relevant chunks
+2026-01-20T18:29:12.759303 | đ° $0.1076 | Today: $32.5395
+2026-01-20T18:29:12.760682 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/today.py 2>&1 | grep -E "GARDEN|plants"
+2026-01-20T18:29:12.937357 | 🌱 GARDEN: ? plants, ? visits
+2026-01-20T18:29:13.389104 | đ RAG: Retrieved 4 relevant chunks
+2026-01-20T18:29:16.860505 | đ° $0.1107 | Today: $32.6502
+2026-01-20T18:29:16.861109 | ⚡ cd /Users/dennishansen/development/iga && cat tools/today.py | grep -A15 "def get_garden_status"
+2026-01-20T18:29:16.878631 | def get_garden_status():
+    """Get garden plant count and visits."""
+    try:
+        garden_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                                    "projects", "garden_state.json")
+        with open(garden_file) as f:
+            content = f.read().strip()
+            data = json.loads(content) if content else {}
+        return {
+            "plants": len(data.get("plants", [])),
+            "visits": data.get("total_visits", 0)
+        }
+    except:
+        return {"plants": "?", "visits": "?"}
+
+def main():
+2026-01-20T18:29:17.045033 | đ RAG: Retrieved 5 relevant chunks
+2026-01-20T18:29:23.412662 | đ° $0.1168 | Today: $32.7670
+2026-01-20T18:29:23.413424 | ⚡ cd /Users/dennishansen/development/iga && claude -p "In tools/today.py get_garden_status(), fix the garden file path and keys:
+
+1. The file is at the repo root as 'iga_garden_state.json' (not projects/garden_state.json)
+2. The plants key is 'plots' not 'plants'  
+3. The visits key is 'visits' not 'total_visits'
+
+So the path should be: os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'iga_garden_state.json')" --allowedTools "Read" "Edit"
+2026-01-20T18:29:36.184679 | Done. I made three changes to `get_garden_status()`:
+1. Changed the file path from `"projects", "garden_state.json"` to `"iga_garden_state.json"`
+2. Changed the plants key from `"plants"` to `"plots"`
+3. Changed the visits key from `"total_visits"` to `"visits"`
+2026-01-20T18:29:36.533686 | đ RAG: Retrieved 4 relevant chunks
+2026-01-20T18:29:39.053457 | đ° $0.1129 | Today: $32.8799
+2026-01-20T18:29:39.053853 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/today.py 2>&1 | grep "GARDEN"
+2026-01-20T18:29:39.143294 | 🌱 GARDEN: 29 plants, 451 visits
+2026-01-20T18:29:39.297643 | đ RAG: Retrieved 4 relevant chunks
+2026-01-20T18:29:43.040028 | â ď¸ Failsafe: TALK_TO_USER + RUN_SHELL_COMMAND
+2026-01-20T18:29:43.045027 | đ° $0.1149 | Today: $32.9948
+2026-01-20T18:29:43.045743 | âśď¸ Action 1/2: TALK_TO_USER
+2026-01-20T18:29:43.045982 | 
+đ¤ Iga [18:29:43]: **today.py fully fixed!** Garden shows 29 plants, 451 visits ✅
+2026-01-20T18:29:43.046294 | âśď¸ Action 2/2: RUN_SHELL_COMMAND
+2026-01-20T18:29:43.046492 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/daily_ship_log.py log "Fix: today.py garden status path and keys" && git add -A && git commit -m "Fix today.py garden status" && git push origin main 2>&1 | tail -2

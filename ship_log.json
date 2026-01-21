@@ -129,6 +129,11 @@
       "timestamp": "2026-01-20T18:28:01.937097",
       "date": "2026-01-20",
       "description": "Fix: today.py now reads ship count from ship_log.json correctly"
+    },
+    {
+      "timestamp": "2026-01-20T18:29:43.093770",
+      "date": "2026-01-20",
+      "description": "Fix: today.py garden status path and keys"
     }
   ]
 }

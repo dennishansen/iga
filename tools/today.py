@@ -59,13 +59,13 @@ def get_garden_status():
     """Get garden plant count and visits."""
     try:
         garden_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                                    "projects", "garden_state.json")
+                                    "iga_garden_state.json")
         with open(garden_file) as f:
             content = f.read().strip()
             data = json.loads(content) if content else {}
         return {
-            "plants": len(data.get("plants", [])),
-            "visits": data.get("total_visits", 0)
+            "plants": len(data.get("plots", [])),
+            "visits": data.get("visits", 0)
         }
     except:
         return {"plants": "?", "visits": "?"}
