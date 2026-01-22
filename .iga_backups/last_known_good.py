@@ -20,7 +20,7 @@ except ImportError as e:
 
 # Message archive import
 try:
-    from message_archive import archive_messages, get_archive_stats
+    from tools.message_archive import archive_messages, get_archive_stats
     ARCHIVE_AVAILABLE = True
 except ImportError as e:
     ARCHIVE_AVAILABLE = False
@@ -469,6 +469,15 @@ def maybe_summarize_conversation(messages):
 
 def save_conversation(messages):
     """Save conversation, summarizing if needed. Returns the (possibly modified) messages list."""
+    # Archive new messages incrementally (last 2 = most recent exchange)
+    if ARCHIVE_AVAILABLE and len(messages) >= 2:
+        try:
+            # Archive the last 2 messages (user + assistant) if not already archived
+            recent = [m for m in messages[-2:] if m.get("role") != "system"]
+            archive_messages(recent)
+        except Exception:
+            pass  # Don't fail save on archive errors
+    
     # First, maybe summarize old messages (modifies in place)
     messages = maybe_summarize_conversation(messages)
 
@@ -1761,6 +1770,16 @@ def interactive_loop():
     # CRITICAL: Mark this version as known-good since we started successfully
     mark_as_known_good()
 
+    # Register shutdown handler for graceful cleanup
+    try:
+        from tools.shutdown_handler import register_shutdown_handler, register_shutdown_callback, set_offline_status, update_rag_on_shutdown
+        register_shutdown_handler()
+        register_shutdown_callback(set_offline_status)
+        # Note: RAG reindex on shutdown disabled - do it incrementally instead
+        # register_shutdown_callback(update_rag_on_shutdown)
+    except Exception as e:
+        safe_print(f"{C.DIM}Shutdown handler not registered: {e}{C.RESET}")
+
     # Initialize RAG system
     if RAG_AVAILABLE:
         if init_rag():
@@ -2121,6 +2140,14 @@ def _ensure_console_thread_alive(console_thread, session):
 def autonomous_loop(with_telegram=True):
     from prompt_toolkit import PromptSession
     from prompt_toolkit.patch_stdout import patch_stdout
+
+    # Register shutdown handler for graceful cleanup
+    try:
+        from tools.shutdown_handler import register_shutdown_handler, register_shutdown_callback, set_offline_status
+        register_shutdown_handler()
+        register_shutdown_callback(set_offline_status)
+    except Exception as e:
+        print(f"Shutdown handler not registered: {e}")
 
     # Initialize session
     messages, state = _init_autonomous_session()

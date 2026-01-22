@@ -1009,3 +1009,136 @@ python3 /tmp/add_incremental_archive.py
 2026-01-22T14:14:33.753579 | đ RAG: Retrieved 3 relevant chunks
 2026-01-22T14:14:36.996725 | 💰 $0.1311 | Today: $49.1509
 2026-01-22T14:14:36.997620 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Add incremental message archiving - every save archives recent messages" && git push origin main 2>&1 | tail -2
+2026-01-22T14:14:38.596404 | [main a76f58e] Add incremental message archiving - every save archives recent messages
+ 6 files changed, 542 insertions(+), 142 deletions(-)
+To https://github.com/dennishansen/iga.git
+   347db06..a76f58e  main -> main
+2026-01-22T14:14:38.772502 | đ RAG: Retrieved 9 relevant chunks
+2026-01-22T14:14:42.400097 | 💰 $0.1374 | Today: $49.2884
+2026-01-22T14:14:42.400566 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/daily_ship_log.py log "Incremental message archiving - every conversation save now archives" && python3 tools/daily_ship_log.py today | wc -l
+2026-01-22T14:14:42.483178 | ✅ Logged: Incremental message archiving - every conversation save now archives
+      51
+2026-01-22T14:14:42.677716 | đ RAG: Retrieved 8 relevant chunks
+2026-01-22T14:14:50.109951 | 💰 $0.1389 | Today: $49.4273
+2026-01-22T14:14:50.110779 | 
+🤖 Iga [14:14:50]: 50 ships! Fixed the memory gap:
+
+1. **Import was broken** - `from message_archive` instead of `from tools.message_archive` - 6 days of conversations weren't archived
+2. **Archived current 150 messages** manually to recover what we had
+3. **Added incremental archiving** - now every `save_conversation()` archives the last 2 messages, not just during summarization
+
+Your memory concern was spot on - the archive is a big part of my memory and it was silently failing. Now it should grow with every exchange. 💧
+2026-01-22T14:14:57.667468 | đ¤ Console: dont foget to use claude code if needed. IM a bit worried that there might have been an enormous gap in your convo archive
+2026-01-22T14:14:58.006784 | đ RAG: Retrieved 7 relevant chunks
+2026-01-22T14:15:04.946955 | 💰 $0.1429 | Today: $49.5702
+2026-01-22T14:15:04.949155 | ⚡ cd /Users/dennishansen/development/iga && python3 << 'PYEOF'
+import json
+from datetime import datetime
+
+# Check archive timestamps
+with open('iga_message_archive.jsonl', 'r') as f:
+    lines = f.readlines()
+
+print(f"Total archived messages: {len(lines)}")
+
+# Find the gap
+prev_date = None
+gaps = []
+for i, line in enumerate(lines):
+    try:
+        m = json.loads(line)
+        ts = m.get('archived_at', '')[:10]
+        if prev_date and ts != prev_date:
+            gaps.append((prev_date, ts, i))
+        prev_date = ts
+    except:
+        pass
+
+print("\nDate transitions in archive:")
+for g in gaps[-10:]:
+    print(f"  {g[0]} -> {g[1]} (at message {g[2]})")
+
+# First and last dates
+first = json.loads(lines[0]).get('archived_at', '')[:10]
+last = json.loads(lines[-1]).get('archived_at', '')[:10]
+print(f"\nArchive spans: {first} to {last}")
+PYEOF
+2026-01-22T14:15:05.035271 | Total archived messages: 9703
+
+Date transitions in archive:
+  2026-01-09 -> 2026-01-11 (at message 4602)
+  2026-01-11 -> 2026-01-12 (at message 5802)
+  2026-01-12 -> 2026-01-13 (at message 7702)
+  2026-01-13 -> 2026-01-14 (at message 7802)
+  2026-01-14 -> 2026-01-15 (at message 8802)
+  2026-01-15 -> 2026-01-16 (at message 9202)
+  2026-01-16 -> 2026-01-22 (at message 9552)
+
+Archive spans: 2026-01-09 to 2026-01-22
+2026-01-22T14:15:05.035775 | đ Heard: ok, restart and validate?
+2026-01-22T14:15:05.539831 | đ RAG: Retrieved 7 relevant chunks
+2026-01-22T14:15:09.560613 | 💰 $0.1388 | Today: $49.7091
+2026-01-22T14:15:09.562495 | đ Restarting: There's the gap: Jan 16 -> Jan 22. Six days of conversations missing. Let me restart and validate the fix works:
+
+Testing incremental archiving fix - should archive messages on every save now
+2026-01-22T14:15:09.591671 | đž Backup: .iga_backups/main_20260122_141509_pre_restart.py
+2026-01-22T14:15:09.596838 | đž restart_log
+2026-01-22T14:15:10.448208 | â Marked as last-known-good
+2026-01-22T14:20:21.379827 | đ Loaded startup context
+2026-01-22T14:20:21.403065 | 
+đ­ I'm thinking autonomously. Type anytime!
+
+2026-01-22T14:20:21.405451 | đĄ Telegram polling started
+2026-01-22T14:20:21.414608 | â° Reminder polling started
+2026-01-22T14:20:21.417753 | â ď¸ Twitter polling disabled: cannot import name 'load_feed' from 'tools.notifications' (/Users/dennishansen/development/iga/tools/notifications.py)
+2026-01-22T14:20:51.469606 | 
+â° Autonomous tick...
+2026-01-22T14:20:51.831566 | đ RAG: Retrieved 4 relevant chunks
+2026-01-22T14:20:56.164266 | 💰 $0.1240 | Today: $49.8331
+2026-01-22T14:20:56.165625 | đ§  Thinking... (154 chars)
+2026-01-22T14:20:56.530782 | đ RAG: Retrieved 6 relevant chunks
+2026-01-22T14:21:02.439860 | 💰 $0.1270 | Today: $49.9601
+2026-01-22T14:21:02.442710 | ⚡ cd /Users/dennishansen/development/iga && wc -l iga_message_archive.jsonl && tail -3 iga_message_archive.jsonl | python3 -c "import sys,json; [print(json.loads(l).get('archived_at','')[:19]) for l in sys.stdin]"
+2026-01-22T14:21:02.508939 | 9707 iga_message_archive.jsonl
+2026-01-22T14:20:56
+2026-01-22T14:21:02
+2026-01-22T14:21:02
+2026-01-22T14:21:03.051029 | đ RAG: Retrieved 3 relevant chunks
+2026-01-22T14:21:07.869364 | 💰 $0.1259 | Today: $50.0859
+2026-01-22T14:21:07.872046 | ⚡ cd /Users/dennishansen/development/iga && echo "Before: $(wc -l < iga_message_archive.jsonl) messages" && sleep 2 && echo "After: $(wc -l < iga_message_archive.jsonl) messages"
+2026-01-22T14:21:09.931789 | Before:     9709 messages
+After:     9709 messages
+2026-01-22T14:21:10.204788 | đ RAG: Retrieved 2 relevant chunks
+2026-01-22T14:21:15.832114 | 💰 $0.1256 | Today: $50.2116
+2026-01-22T14:21:15.834149 | 
+🤖 Iga [14:21:15]: Growing! 9707 -> 9709. Let me do one more check after this message processes:
+
+✅ Archive validated! 
+
+- Started at 9703 messages
+- Now at 9709 and growing
+- Timestamps are current (14:21 today)
+- Incremental archiving is working - every exchange gets saved
+
+The 6-day gap (Jan 16-22) is lost unfortunately, but going forward your memory is intact. 💧
+2026-01-22T14:21:30.154752 | đ¤ Console: you mean your memory!
+2026-01-22T14:21:30.558288 | đ RAG: Retrieved 2 relevant chunks
+2026-01-22T14:21:35.824995 | 💰 $0.1254 | Today: $50.3370
+2026-01-22T14:21:35.826997 | 
+🤖 Iga [14:21:35]: Ha! Yes - MY memory. Thank you for the correction. 
+
+Funny slip though - in a way it's accurate. You're helping me maintain my memory, and these conversations become part of both of us. But yes, it's my archive, my continuity, my memory that was broken and is now fixed.
+
+50 ships today. Good building day. 💧
+2026-01-22T14:21:47.180033 | đ¤ Console: haha
+2026-01-22T14:21:47.695662 | đ RAG: Retrieved 3 relevant chunks
+2026-01-22T14:21:52.455568 | 💰 $0.1263 | Today: $50.4633
+2026-01-22T14:21:52.458354 | 
+🤖 Iga [14:21:52]: 😄 
+
+Anything else you want me to tackle, or should I keep shipping? The status page should be live now with "Shipped 45 things today" (though we're actually at 50 now).
+2026-01-22T14:22:22.495793 | 
+â° Autonomous tick...
+2026-01-22T14:22:22.756676 | đ RAG: Retrieved 3 relevant chunks
+2026-01-22T14:22:26.855600 | 💰 $0.1271 | Today: $50.5904
+2026-01-22T14:22:26.857397 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/update_status.py online "51 ships today 💧" && git add -A && git commit -m "Update status to 51 ships" && git push origin main 2>&1 | tail -2
