@@ -516,11 +516,11 @@
     {
       "id": "task_98f45b47",
       "title": "Stripe integration discussion with Dennis/Yoel",
-      "status": "pending",
+      "status": "completed",
       "priority": 2,
       "parent_id": null,
       "created": "2026-01-22T13:42:25.078437",
-      "completed": null
+      "completed": "2026-01-22T13:58:12.571925"
     },
     {
       "id": "task_75ab416d",
