@@ -632,10 +632,10 @@ def telegram_poll_thread():
                     # Check whitelist - use telegram_bot module if available
                     if TELEGRAM_BOT_AVAILABLE:
                         if not telegram_is_user_allowed(user_id, username):
-                            telegram_send(chat_id, f"Sorry, I don't know you yet! Ask Dennis to add you. (Your username: @{username}, ID: {user_id})")
+                            telegram_send(chat_id, f"Sorry, I don't know you yet! Message @dennizor on Telegram to get added. (Your username: @{username}, ID: {user_id})")
                             continue
                     elif ALLOWED_USERS and chat_id not in ALLOWED_USERS and username not in ALLOWED_USERNAMES:
-                        telegram_send(chat_id, f"đŤ Sorry, I don't know you yet! Ask Dennis to add you. (Your username: @{username})")
+                        telegram_send(chat_id, f"đŤ Sorry, I don't know you yet! Message @dennizor on Telegram to get added. (Your username: @{username})")
                         continue
                     elif not ALLOWED_USERS and not ALLOWED_USERNAMES:
                         safe_print(f"{C.YELLOW}â ď¸ TELEGRAM_CHAT_ID not set! Message from chat_id: {chat_id} - add this to .env{C.RESET}")
@@ -804,16 +804,21 @@ def talk_to_user(rat, msg):
     with _response_time_lock:
         _last_response_time = datetime.now()  # Track when we responded
     if source == "telegram" and chat_id:
-        safe_print(f"\n{C.CYAN}{C.BOLD}đ¤ Iga [{timestamp}]:{C.RESET} {C.CYAN}{msg}{C.RESET}")
+        safe_print(f"\n{C.CYAN}{C.BOLD}🤖 Iga [{timestamp}]:{C.RESET} {C.CYAN}{msg}{C.RESET}")
         telegram_send(chat_id, msg)
     else:
         if _autonomous_mode:
-            safe_print(f"\n{C.CYAN}{C.BOLD}đ¤ Iga [{timestamp}]:{C.RESET} {C.CYAN}{msg}{C.RESET}")
+            safe_print(f"\n{C.CYAN}{C.BOLD}🤖 Iga [{timestamp}]:{C.RESET} {C.CYAN}{msg}{C.RESET}")
         else:
             safe_print(f"đ­ {rat[:100]}{'...' if len(rat) > 100 else ''}")
-            safe_print(f"\nđ¤ Iga [{timestamp}]: {msg}")
+            safe_print(f"\n🤖 Iga [{timestamp}]: {msg}")
 
 def run_shell_command(rat, cmd):
+    # Strip leading rationale-like lines (lines ending with ':' are often explanatory text)
+    lines = cmd.split('\n')
+    while lines and lines[0].strip().endswith(':'):
+        lines.pop(0)
+    cmd = '\n'.join(lines).strip()
     safe_print(f"{C.YELLOW}⚡ {cmd}{C.RESET}")
     # Special handling for Claude CLI to prevent interactive mode hangs
     if 'claude ' in cmd and ('-p ' in cmd or '--print' in cmd):
@@ -1066,7 +1071,7 @@ def delete_file(rat, path):
 
 def append_file(rat, contents):
     path, content = contents.split("\n", 1)
-    safe_print(f"đ Appending to: {path}")
+    safe_print(f"📎 Appending to: {path}")
     # Auto-create parent directories if needed
     parent = os.path.dirname(path)
     if parent:
@@ -1295,7 +1300,7 @@ def test_self(rat, target_file):
     return "\n".join(results)
 
 def run_self(rat, message):
-    safe_print(f"đ¤âđ¤ Talking to clone...")
+    safe_print(f"🤖â🤖 Talking to clone...")
     msg = message.strip() or "Hello!"
     proc = subprocess.Popen(
         [sys.executable, 'main.py', '--pipe'],
@@ -1516,7 +1521,7 @@ def handle_action(messages, _depth=0):
         # Display cost info if available
         usage = response_data.get("usage")
         if usage:
-            safe_print(f"{C.DIM}đ° ${usage['cost']:.4f} | Today: ${usage['daily_cost']:.4f}{C.RESET}")
+            safe_print(f"{C.DIM}💰 ${usage['cost']:.4f} | Today: ${usage['daily_cost']:.4f}{C.RESET}")
 
         action = response_data["action"]
         rat = response_data["rationale"]
