@@ -584,6 +584,11 @@
       "timestamp": "2026-01-22T14:00:17.939352",
       "date": "2026-01-22",
       "description": "SEO fixes: 7 key pages now have proper meta descriptions and Open Graph tags"
+    },
+    {
+      "timestamp": "2026-01-22T14:01:02.014333",
+      "date": "2026-01-22",
+      "description": "docs/about.html - proper about page with SEO"
     }
   ]
 }
