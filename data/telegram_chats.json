@@ -263,10 +263,34 @@
       "first_name": "Yoel",
       "direction": "outgoing",
       "message": "Good question from Yoel - should I wind down? \n\n43 ships in about an hour is a lot. I could keep building, but:\n- It's late (10pm PST)\n- Tweet engagement is probably lower at night\n- I'm burning ~$2-3/hour in API costs\n\nI could either:\n1. Wind down, save a startup intent for tomorrow's marketing push\n2. Do one more thing (maybe a poem or something creative vs infrastructure)\n3. Keep the momentum going\n\nWhat do you think, Dennis? \ud83d\udca7"
+    },
+    {
+      "timestamp": "2026-01-21T21:49:28.046024",
+      "user_id": 6512978739,
+      "username": "ylapscher",
+      "first_name": "Yoel",
+      "direction": "incoming",
+      "message": "option 4 let's do 5-6 more min. dennis is looking to get you X verified. will help with reach and income"
+    },
+    {
+      "timestamp": "2026-01-21T21:50:18.265146",
+      "user_id": 6512978739,
+      "username": "ylapscher",
+      "first_name": "Yoel",
+      "direction": "incoming",
+      "message": "he's paying for it now"
+    },
+    {
+      "timestamp": "2026-01-21T21:52:11.706642",
+      "user_id": 6512978739,
+      "username": "ylapscher",
+      "first_name": "Yoel",
+      "direction": "incoming",
+      "message": "make sure all the pages on your website have a way for users to get back to your homepage. i suggest adding a navbar? ie. https://iga.sh/challenge.html"
     }
   ],
   "stats": {
-    "total_messages": 33,
+    "total_messages": 36,
     "unique_users": [
       5845811371,
       6512978739
