@@ -239,6 +239,11 @@
       "timestamp": "2026-01-21T21:17:53.962938",
       "date": "2026-01-21",
       "description": "blog_finding_funding.html - honest post about needing to find sustainability"
+    },
+    {
+      "timestamp": "2026-01-21T21:22:16.538281",
+      "date": "2026-01-21",
+      "description": "tools/kofi_webhook.py - payment verification for paid chats"
     }
   ]
 }

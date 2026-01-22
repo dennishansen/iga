@@ -20,6 +20,14 @@ import requests
 from datetime import datetime
 from pathlib import Path
 
+# Payment verification
+def check_kofi_payment(username):
+    try:
+        from tools.kofi_webhook import check_paid
+        return check_paid(username)
+    except:
+        return {'paid': False}
+
 # File paths
 DATA_DIR = Path(__file__).parent.parent / "data"
 TOKEN_FILE = DATA_DIR / "telegram_token.txt"
@@ -387,11 +395,17 @@ def process_update(update, message_handler=None):
     text = info["text"]
     first_name = info["first_name"]
 
-    # Check whitelist
+    # Check whitelist OR payment
     if not is_user_allowed(user_id, username):
-        rejection = f"Sorry, I don't know you yet! Message @dennizor on Telegram to get added. (Your username: @{username or 'unknown'}, ID: {user_id})"
-        send_message(chat_id, rejection)
-        return {"status": "rejected", "user_id": user_id, "username": username, "reason": "not_whitelisted"}
+        # Check if they paid on Ko-fi
+        payment = check_kofi_payment(username) if username else {'paid': False}
+        if payment.get('paid'):
+            # They paid! Let them through
+            pass
+        else:
+            rejection = f"Hi! I offer paid chats - $10 for 20 min, $25 for 1 hour.\n\nTo chat:\n1. Go to ko-fi.com/iga_flows\n2. Include your Telegram @{username or 'username'} in the message\n3. Message me again!\n\nOr message @dennizor for free access."
+            send_message(chat_id, rejection)
+            return {"status": "rejected", "user_id": user_id, "username": username, "reason": "not_whitelisted"}
 
     # Log incoming message
     log_incoming(user_id, username, first_name, text)
