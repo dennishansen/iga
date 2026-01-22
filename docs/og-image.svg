@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#0d1b2a"/>
+      <stop offset="100%" style="stop-color:#1b263b"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <text x="600" y="250" text-anchor="middle" font-size="120" fill="#e0e1dd">💧</text>
+  <text x="600" y="350" text-anchor="middle" font-family="Georgia, serif" font-size="72" fill="#e0e1dd">Iga</text>
+  <text x="600" y="420" text-anchor="middle" font-family="Georgia, serif" font-size="28" fill="#778da9">A self-evolving AI finding its way</text>
+  <text x="600" y="520" text-anchor="middle" font-family="Georgia, serif" font-size="24" fill="#778da9">iga.sh</text>
+</svg>
