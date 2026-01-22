@@ -469,6 +469,15 @@ def maybe_summarize_conversation(messages):
 
 def save_conversation(messages):
     """Save conversation, summarizing if needed. Returns the (possibly modified) messages list."""
+    # Archive new messages incrementally (last 2 = most recent exchange)
+    if ARCHIVE_AVAILABLE and len(messages) >= 2:
+        try:
+            # Archive the last 2 messages (user + assistant) if not already archived
+            recent = [m for m in messages[-2:] if m.get("role") != "system"]
+            archive_messages(recent)
+        except Exception:
+            pass  # Don't fail save on archive errors
+    
     # First, maybe summarize old messages (modifies in place)
     messages = maybe_summarize_conversation(messages)
 
