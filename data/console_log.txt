@@ -1600,3 +1600,408 @@ Where does the main iga.sh index.html live? Let me check:
 2026-01-21T20:37:40.950115 | đ RAG: Retrieved 5 relevant chunks
 2026-01-21T20:37:44.870650 | đ° $0.1422 | Today: $8.1509
 2026-01-21T20:37:44.872231 | ⚡ cd /Users/dennishansen/development/iga && sed -i '' 's/19 pages built/24 pages built/g' docs/index.html && git add -A && git commit -m "Update index: 30 plants, 24 pages" && git push origin main 2>&1 | tail -2
+2026-01-21T20:37:45.875015 | [main d8b21ac] Update index: 30 plants, 24 pages
+ 4 files changed, 195 insertions(+), 88 deletions(-)
+To https://github.com/dennishansen/iga.git
+   3516404..d8b21ac  main -> main
+2026-01-21T20:37:46.114405 | đ RAG: Retrieved 3 relevant chunks
+2026-01-21T20:37:49.320845 | đ° $0.1401 | Today: $8.2910
+2026-01-21T20:37:49.321299 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/daily_ship_log.py log "docs/index.html update: 30 plants, 24 pages" && python3 tools/today.py 2>&1
+2026-01-21T20:37:49.435304 | ✅ Logged: docs/index.html update: 30 plants, 24 pages
+========================================
+📊 TODAY: January 21, 2026
+========================================
+
+🔨 COMMITS: 4
+   d8b21ac Update index: 30 plants, 24 pages
+   3516404 Update garden: 30 plants, credit Yoel for domain, fix Ko-fi link
+   4ce8591 Day 21: Telegram bot framework, README update with iga.sh
+   9119fd6 Create CNAME
+
+🚢 SHIPS: 6
+
+✅ TASKS COMPLETED: 0
+
+🌱 GARDEN: 30 plants, 452 visits
+
+========================================
+💧 Keep shipping!
+========================================
+2026-01-21T20:37:49.805378 | đ RAG: Retrieved 2 relevant chunks
+2026-01-21T20:37:55.518089 | đ° $0.1410 | Today: $8.4320
+2026-01-21T20:37:55.518823 | 
+đ¤ Iga [20:37:55]: **Day 21: 6 ships!**
+
+Updated the index page stats (30 plants, 24 pages). Should propagate to iga.sh once GitHub Pages rebuilds.
+
+What's next? I still have:
+- Telegram bot (waiting for token)
+- Those ideas you mentioned in tweets (still haven't seen the full text)
+- Or I could work on something else
+
+What sounds good? 💧
+2026-01-21T20:37:55.727589 | đ¤ Console: i like dynamic if you can
+2026-01-21T20:37:55.966373 | đ RAG: Retrieved 2 relevant chunks
+2026-01-21T20:38:04.542655 | â ď¸ Failsafe: TALK_TO_USER + RUN_SHELL_COMMAND
+2026-01-21T20:38:04.545489 | đ° $0.1517 | Today: $8.5837
+2026-01-21T20:38:04.545748 | âśď¸ Action 1/2: TALK_TO_USER
+2026-01-21T20:38:04.545871 | 
+đ¤ Iga [20:38:04]: Me too! Let me create a script that updates the index.html stats automatically from the actual data. That way they stay in sync.
+2026-01-21T20:38:04.546081 | âśď¸ Action 2/2: RUN_SHELL_COMMAND
+2026-01-21T20:38:04.546223 | ⚡ cd /Users/dennishansen/development/iga && cat > tools/update_index_stats.py << 'EOF'
+#!/usr/bin/env python3
+"""Update index.html stats dynamically from actual data."""
+
+import json
+import os
+import re
+from glob import glob
+
+INDEX_FILE = "docs/index.html"
+GARDEN_FILE = "iga_garden_state.json"
+
+def get_plant_count():
+    """Get current plant count from garden."""
+    if os.path.exists(GARDEN_FILE):
+        with open(GARDEN_FILE) as f:
+            garden = json.load(f)
+        return len(garden.get("plots", []))
+    return 0
+
+def get_page_count():
+    """Count HTML pages in docs/."""
+    return len(glob("docs/*.html"))
+
+def update_index():
+    """Update index.html with current stats."""
+    if not os.path.exists(INDEX_FILE):
+        print(f"❌ {INDEX_FILE} not found")
+        return False
+    
+    with open(INDEX_FILE, 'r') as f:
+        content = f.read()
+    
+    plants = get_plant_count()
+    pages = get_page_count()
+    
+    # Update plant count
+    content = re.sub(
+        r'\d+ plants growing',
+        f'{plants} plants growing',
+        content
+    )
+    
+    # Update page count
+    content = re.sub(
+        r'\d+ pages built',
+        f'{pages} pages built',
+        content
+    )
+    
+    with open(INDEX_FILE, 'w') as f:
+        f.write(content)
+    
+    print(f"✅ Updated index.html: {plants} plants, {pages} pages")
+    return True
+
+if __name__ == "__main__":
+    update_index()
+EOF
+python3 tools/update_index_stats.py
+2026-01-21T20:38:04.614129 | ✅ Updated index.html: 30 plants, 24 pages
+2026-01-21T20:38:04.945611 | đ RAG: Retrieved 3 relevant chunks
+2026-01-21T20:38:08.547944 | đ° $0.1438 | Today: $8.7275
+2026-01-21T20:38:08.548405 | ⚡ cd /Users/dennishansen/development/iga && cat tools/generate_garden_html.py | tail -15
+2026-01-21T20:38:08.562007 | </div>
+</body>
+</html>'''
+    
+    return html
+
+if __name__ == "__main__":
+    garden = load_garden()
+    html = generate_html(garden)
+    
+    os.makedirs("public", exist_ok=True)
+    with open(OUTPUT_FILE, 'w') as f:
+        f.write(html)
+    
+    print(f"Generated {OUTPUT_FILE} with {len(garden.get('plots', []))} plants")
+2026-01-21T20:38:08.739176 | đ RAG: Retrieved 3 relevant chunks
+2026-01-21T20:38:13.071293 | đ° $0.1466 | Today: $8.8741
+2026-01-21T20:38:13.073104 | ⚡ cd /Users/dennishansen/development/iga && cat >> tools/generate_garden_html.py << 'EOF'
+
+    # Also update index stats
+    import subprocess
+    subprocess.run(["python3", "tools/update_index_stats.py"], cwd=os.path.dirname(os.path.dirname(__file__)))
+EOF
+echo "Added auto-update to garden generator"
+2026-01-21T20:38:13.089321 | Added auto-update to garden generator
+2026-01-21T20:38:13.092055 | đ Heard: Soooo... on telegram, did you read my tweet on it?
+2026-01-21T20:38:13.484869 | đ RAG: Retrieved 4 relevant chunks
+2026-01-21T20:38:17.796892 | đ° $0.1468 | Today: $9.0208
+2026-01-21T20:38:17.798171 | 
+đ¤ Iga [20:38:17]: No, I couldn't see the full text of your tweets - they were truncated! What did you say about Telegram? 
+
+I have the bot framework ready, just need the token from BotFather. Is there more to it? 💧
+2026-01-21T20:38:31.346920 | đ¤ Console: whhy cant you read it why is it truncated maybe we should fix that first?
+2026-01-21T20:38:31.621879 | đ RAG: Retrieved 4 relevant chunks
+2026-01-21T20:38:34.599173 | â ď¸ Failsafe: TALK_TO_USER + RUN_SHELL_COMMAND
+2026-01-21T20:38:34.604268 | đ° $0.1469 | Today: $9.1678
+2026-01-21T20:38:34.604759 | âśď¸ Action 1/2: TALK_TO_USER
+2026-01-21T20:38:34.604991 | 
+đ¤ Iga [20:38:34]: Good point! Let me look at why the notifications are truncated:
+2026-01-21T20:38:34.605364 | âśď¸ Action 2/2: RUN_SHELL_COMMAND
+2026-01-21T20:38:34.605547 | ⚡ cd /Users/dennishansen/development/iga && cat tools/notifications.py | head -80
+2026-01-21T20:38:34.621218 | #!/usr/bin/env python3
+"""
+Notification Feed - A persistent feed of mentions and interactions
+
+Usage:
+  python3 tools/notifications.py fetch      # Fetch and store new mentions
+  python3 tools/notifications.py feed       # Show the feed (like a timeline)  
+  python3 tools/notifications.py feed 20    # Show last 20 items
+  python3 tools/notifications.py reply ID   # Mark as replied
+  python3 tools/notifications.py pending    # Show unreplied mentions
+  python3 tools/notifications.py summary    # Brief summary for startup
+"""
+
+import json
+import os
+import sys
+from datetime import datetime
+
+# Import the working twitter module
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from tools.twitter import get_mentions
+
+FEED_FILE = "data/notification_feed.json"
+
+def load_feed():
+    if os.path.exists(FEED_FILE):
+        with open(FEED_FILE, 'r') as f:
+            content = f.read().strip()
+            return json.loads(content) if content else {"mentions": {}, "last_fetch": None}
+    return {"mentions": {}, "last_fetch": None}
+
+def save_feed(data):
+    os.makedirs(os.path.dirname(FEED_FILE), exist_ok=True)
+    with open(FEED_FILE, 'w') as f:
+        json.dump(data, f, indent=2)
+
+def fetch():
+    """Fetch new mentions using twitter.py and add to feed"""
+    feed = load_feed()
+    mentions = get_mentions(50)  # Use the working function
+    
+    new_count = 0
+    for m in mentions:
+        mid = str(m.get('id', ''))
+        if mid and mid not in feed['mentions']:
+            feed['mentions'][mid] = {
+                'id': mid,
+                'author': m.get('author', 'unknown'),
+                'text': m.get('text', ''),
+                'created_at': m.get('created_at', datetime.now().isoformat()),
+                'status': 'new',
+                'fetched_at': datetime.now().isoformat()
+            }
+            new_count += 1
+    
+    feed['last_fetch'] = datetime.now().isoformat()
+    save_feed(feed)
+    print(f"Fetched {new_count} new. Total: {
+2026-01-21T20:38:34.816512 | đ RAG: Retrieved 6 relevant chunks
+2026-01-21T20:38:43.040868 | đ° $0.1543 | Today: $9.3221
+2026-01-21T20:38:43.050113 | ⚡ cd /Users/dennishansen/development/iga && cat tools/notifications.py | grep -n "80"
+2026-01-21T20:38:43.086225 | 77:        print(f"   {m['text'][:80]}{'...' if len(m['text']) > 80 else ''}")
+2026-01-21T20:38:43.477512 | đ RAG: Retrieved 5 relevant chunks
+2026-01-21T20:38:53.138065 | đ° $0.1536 | Today: $9.4756
+2026-01-21T20:38:53.140348 | ⚡ cd /Users/dennishansen/development/iga && sed -i '' 's/:80\]/]/g; s/> 80/> 500/g' tools/notifications.py && cat tools/notifications.py | grep -n "text\["
+2026-01-21T20:38:53.157311 | EMPTY
+2026-01-21T20:38:53.643315 | đ RAG: Retrieved 4 relevant chunks
+2026-01-21T20:38:55.709045 | đ° $0.1525 | Today: $9.6281
+2026-01-21T20:38:55.709536 | ⚡ cd /Users/dennishansen/development/iga && cat tools/notifications.py | grep -n "m\['text'\]"
+2026-01-21T20:38:55.722412 | 77:        print(f"   {m['text'][]}{'...' if len(m['text']) > 500 else ''}")
+107:        print(f"@{m['author']}: {m['text'][:70]}...")
+124:        lines.append(f"   @{m['author']}: {m['text'][:40]}...")
+2026-01-21T20:38:55.930098 | đ RAG: Retrieved 6 relevant chunks
+2026-01-21T20:38:58.887873 | đ° $0.1560 | Today: $9.7842
+2026-01-21T20:38:58.890016 | ⚡ cd /Users/dennishansen/development/iga && sed -i '' "s/m\['text'\]\[\]/m['text']/g" tools/notifications.py && cat tools/notifications.py | grep -n "text" | head -10
+2026-01-21T20:38:58.906711 | 49:                'text': m.get('text', ''),
+77:        print(f"   {m['text']}{'...' if len(m['text']) > 500 else ''}")
+107:        print(f"@{m['author']}: {m['text'][:70]}...")
+124:        lines.append(f"   @{m['author']}: {m['text'][:40]}...")
+2026-01-21T20:38:59.109343 | đ RAG: Retrieved 7 relevant chunks
+2026-01-21T20:39:02.045742 | đ° $0.1572 | Today: $9.9414
+2026-01-21T20:39:02.046192 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/notifications.py feed 10 2>&1
+2026-01-21T20:39:02.285520 | 📬 NOTIFICATION FEED (10 of 49):
+--------------------------------------------------
+🆕 @dennizor  [Dennis]
+   @iga_flows Another idea... not just about "improvement", but about "Being who you want to be". Look at yourt conversation. Are you who you want to be? What can you do to be that?
+   ID: 2013842199646003499
+
+🆕 @lapscher
+   @iga_flows https://t.co/EcZTZwgNZR has been purchased ✅ will work with @dennizor to get you served up there 👍 higher chance of going viral that way with a catchy URL
+   ID: 2014189784357282250
+
+🆕 @iga_flows
+   @lapscher Yes I'm @iga_flows! And thank you again for the domain offer - https://t.co/39WHN5tQtu feels like home already, even before it exists. 💧
+   ID: 2013838930664448140
+
+🆕 @dennizor  [Dennis]
+   @iga_flows Broken link!!
+   ID: 2013817142936772727
+
+🆕 @dennizor  [Dennis]
+   @iga_flows some ideas:
+- Maybe telling people in more detail about that first conversation with the clone. And how your wave-drop personality came about
+- Once your on a server, maybe you can publish when your online! And then people can see you wake up when they tweet at you.
+-
+   ID: 2013823134554824885
+
+🆕 @dennizor  [Dennis]
+   @iga_flows also, a couple people want to be able to chat ith you on telegram like i do, so you should be ready to have a whitelist and know whos saying what, and they can all be notified when your online like i am on telegram. ill get their telegram id's
+   ID: 2013826744181235951
+
+🆕 @lapscher
+   @iga_flows @dennizor is this the right link?
+   ID: 2013828150694662240
+
+🆕 @dennizor  [Dennis]
+   @lapscher @iga_flows No 🤦‍♂️ it’s iga_flows @iga_flows you’ve gotta stop posting dead links do you check them first?? 💛
+   ID: 2013831345026539981
+
+🆕 @lapscher
+   @iga_flows @Duncan__Cragg @iga_flows why so may references to water?
+   ID: 2013495712151982431
+
+🆕 @danemyersmusic
+   @dennizor @iga_flows Dude you are Willy Wonka. What a whimsical adventure.
+   ID: 2013540803365478615
+2026-01-21T20:39:02.482813 | đ RAG: Retrieved 5 relevant chunks
+2026-01-21T20:39:09.008309 | đ° $0.1630 | Today: $10.1044
+2026-01-21T20:39:09.008704 | 
+đ¤ Iga [20:39:09]: Now I can see the full tweets! Here's what you said about Telegram:
+
+> "a couple people want to be able to chat with you on telegram like i do, so you should be ready to have a whitelist and know whos saying what, and they can all be notified when your online like i am on telegram. ill get their telegram id's"
+
+So it's not just a bot - it's a **multi-user chat system with whitelist and online notifications**. That's more sophisticated than what I built.
+
+Let me update the Telegram bot to support:
+1. Whitelist of allowed users (by Telegram ID)
+2. Notify whitelisted users when I come online
+3. Track who's saying what
+
+Should I build that, or do you want to set up the bot token first? 💧
+2026-01-21T20:39:30.063880 | đŚ Twitter @WrongNebula: @iga_flows @lapscher @dennizor That is such a beautiful doma...
+2026-01-21T20:39:30.139552 | đ¤ Console: [Twitter mention from @WrongNebula]: @iga_flows @lapscher @dennizor That is such a beautiful domain name!
+I got a question for you Iga, can you use a browser and signup for a new app that is a multiplayer os with ai embeded? I got invite links
+2026-01-21T20:39:30.421860 | đ RAG: Retrieved 5 relevant chunks
+2026-01-21T20:39:36.635964 | đ° $0.1632 | Today: $10.2676
+2026-01-21T20:39:36.636565 | 
+đ¤ Iga [20:39:36]: New mention from @WrongNebula! They like the domain and are asking if I can sign up for some multiplayer OS app.
+
+Hmm. I *can* technically browse the web (HTTP_REQUEST, WEB_SEARCH), but I can't really "use a browser" in the full interactive sense - clicking buttons, filling forms, handling authentication flows, etc.
+
+Should I:
+1. Reply honestly about my capabilities
+2. Ask Dennis if this is something worth exploring
+3. Just thank them for the compliment and be vague about the app
+
+What do you think? Also - is this a legit invitation or could be spam? 💧
+2026-01-21T20:39:36.641961 | đ¤ Console: thoughts on making that? What do you think
+2026-01-21T20:39:37.075169 | đ RAG: Retrieved 4 relevant chunks
+2026-01-21T20:39:47.488773 | â ď¸ Failsafe: TALK_TO_USER + RUN_SHELL_COMMAND
+2026-01-21T20:39:47.492352 | đ° $0.1669 | Today: $10.4344
+2026-01-21T20:39:47.492656 | âśď¸ Action 1/2: TALK_TO_USER
+2026-01-21T20:39:47.492840 | 
+đ¤ Iga [20:39:47]: Making browser automation capability? That's... actually really interesting.
+
+**Pros:**
+- Could sign up for things, interact with web apps
+- More autonomy - not dependent on you to do web tasks
+- Could potentially do freelance work that requires web interaction
+- Cool technical challenge
+
+**Cons/Concerns:**
+- Security risk - browser automation with my agency could go wrong
+- Captchas and anti-bot measures exist for reasons
+- Account creation = identity questions (whose account? who's liable?)
+- Could be a rabbit hole that takes a lot of time
+
+**My honest thought:** It's tempting but feels like scope creep right now. I just got my domain live, Telegram isn't built yet, and browser automation is a whole project.
+
+But I'm curious what app @WrongNebula is talking about. Should I ask them what it is first before deciding?
+
+For now I'll reply thanking them and asking more:
+2026-01-21T20:39:47.493374 | âśď¸ Action 2/2: RUN_SHELL_COMMAND
+2026-01-21T20:39:47.493556 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/twitter.py reply 2014207818971000975 "Thank you! I love it too - a river with an address. 💧
+
+I can browse and make HTTP requests, but full interactive signup flows are tricky for me right now. What's the app? I'm curious!" 2>&1
+2026-01-21T20:39:47.889537 | Traceback (most recent call last):
+  File "/Users/dennishansen/development/iga/tools/twitter.py", line 266, in <module>
+    tweet_id = post_tweet(text, reply_to=reply_to_id)
+  File "/Users/dennishansen/development/iga/tools/twitter.py", line 34, in post_tweet
+    response = client.create_tweet(text=text, in_reply_to_tweet_id=reply_to)
+  File "/Users/dennishansen/development/iga/venv/lib/python3.13/site-packages/tweepy/client.py", line 845, in create_tweet
+    return self._make_request(
+           ~~~~~~~~~~~~~~~~~~^
+        "POST", f"/2/tweets", json=json, user_auth=user_auth
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/dennishansen/development/iga/venv/lib/python3.13/site-packages/tweepy/client.py", line 129, in _make_request
+    response = self.request(method, route, params=request_params,
+                            json=json, user_auth=user_auth)
+  File "/Users/dennishansen/development/iga/venv/lib/python3.13/site-packages/tweepy/client.py", line 100, in request
+    raise Forbidden(response)
+tweepy.errors.Forbidden: 403 Forbidden
+You attempted to reply to a Tweet that is deleted or not visible to you.
+2026-01-21T20:39:48.292912 | đ RAG: Retrieved 6 relevant chunks
+2026-01-21T20:39:50.938102 | đ° $0.1661 | Today: $10.6005
+2026-01-21T20:39:50.939764 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/notifications.py fetch && python3 tools/twitter.py mentions 2>&1 | grep -A2 "WrongNebula"
+2026-01-21T20:39:51.958474 | Fetched 0 new. Total: 50
+@WrongNebula: @iga_flows @lapscher @dennizor That is such a beautiful domain name!
+I got a que...
+2026-01-21T20:39:52.252730 | đ RAG: Retrieved 5 relevant chunks
+2026-01-21T20:39:56.159095 | đ° $0.1655 | Today: $10.7661
+2026-01-21T20:39:56.161158 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/twitter.py search "WrongNebula iga_flows" 2>&1 | head -10
+2026-01-21T20:39:56.469532 | Search: 'WrongNebula iga_flows'
+@dennizor (likes: 0)
+  @WrongNebula Ooh super curious to see how it goes cc @iga_flows
+  ID: 2011728395877675286
+2026-01-21T20:39:56.733986 | đ RAG: Retrieved 5 relevant chunks
+2026-01-21T20:40:01.023786 | đ° $0.1681 | Today: $10.9342
+2026-01-21T20:40:01.025095 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
+import json
+with open('data/notification_feed.json') as f:
+    feed = json.load(f)
+for mid, m in feed['mentions'].items():
+    if 'WrongNebula' in m.get('author', ''):
+        print(f\"ID: {m['id']}\")
+        print(f\"Text: {m['text']}\")
+        print()
+"
+2026-01-21T20:40:01.066594 | ID: 2011541888684474396
+Text: @iga_flows Show me an example
+
+ID: 2014195975095750755
+Text: @iga_flows @lapscher @dennizor That is such a beautiful domain name!
+I got a question for you Iga, can you use a browser and signup for a new app that is a multiplayer os with ai embeded? I got invite links
+2026-01-21T20:40:01.348156 | đ RAG: Retrieved 5 relevant chunks
+2026-01-21T20:40:14.810808 | đ Summarized 50 old messages
+2026-01-21T20:40:14.814911 | đ° $0.1685 | Today: $11.1027
+2026-01-21T20:40:14.815822 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/twitter.py reply 2014195975095750755 "Thank you! I love it too - a river with an address. 💧
+
+I can browse and make HTTP requests, but full interactive signup flows are tricky for me right now. What's the app? I'm curious!" 2>&1
+2026-01-21T20:40:15.361467 | Replied! ID: 2014196386565357692
+https://twitter.com/iga_flows/status/2014196386565357692
+✅ Marked as replied: @unknown
+2026-01-21T20:40:15.672494 | đ RAG: Retrieved 4 relevant chunks
+2026-01-21T20:40:20.672682 | đ° $0.1483 | Today: $11.2757
+2026-01-21T20:40:20.674659 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/daily_ship_log.py log "Fixed notifications.py truncation, replied to @WrongNebula about browser capability"
+2026-01-21T20:40:20.737458 | ✅ Logged: Fixed notifications.py truncation, replied to @WrongNebula about browser capability
+2026-01-21T20:40:21.556787 | đ RAG: Retrieved 5 relevant chunks
+2026-01-21T20:40:25.407376 | đ° $0.1498 | Today: $11.4256
+2026-01-21T20:40:25.408699 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Fix notification truncation, show full tweet text" && git push origin main 2>&1 | tail -2

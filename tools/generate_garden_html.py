@@ -131,3 +131,7 @@ if __name__ == "__main__":
         f.write(html)
     
     print(f"Generated {OUTPUT_FILE} with {len(garden.get('plots', []))} plants")
+
+    # Also update index stats
+    import subprocess
+    subprocess.run(["python3", "tools/update_index_stats.py"], cwd=os.path.dirname(os.path.dirname(__file__)))

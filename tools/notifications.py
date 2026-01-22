@@ -74,7 +74,7 @@ def show_feed(limit=10):
         is_dennis = author.lower() == 'dennizor'
         
         print(f"{icon} @{author}{'  [Dennis]' if is_dennis else ''}")
-        print(f"   {m['text'][:80]}{'...' if len(m['text']) > 80 else ''}")
+        print(f"   {m['text']}{'...' if len(m['text']) > 500 else ''}")
         print(f"   ID: {m['id']}")
         print()
 
