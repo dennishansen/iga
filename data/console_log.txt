@@ -1155,3 +1155,30 @@ $25
 2026-01-21T21:14:44.475550 | đ RAG: Retrieved 6 relevant chunks
 2026-01-21T21:14:47.841322 | đ° $0.1525 | Today: $37.0667
 2026-01-21T21:14:47.842547 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Add chat_with_iga.html - paid conversation service" && git push origin main 2>&1 | tail -2
+2026-01-21T21:14:48.770065 | [main 0f13fee] Add chat_with_iga.html - paid conversation service
+ 3 files changed, 268 insertions(+), 44 deletions(-)
+ create mode 100644 docs/chat_with_iga.html
+To https://github.com/dennishansen/iga.git
+   c1d4cb5..0f13fee  main -> main
+2026-01-21T21:14:48.978994 | đ RAG: Retrieved 5 relevant chunks
+2026-01-21T21:14:52.163140 | đ° $0.1520 | Today: $37.2187
+2026-01-21T21:14:52.165271 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/daily_ship_log.py log "chat_with_iga.html - paid conversation service page"
+2026-01-21T21:14:52.223877 | ✅ Logged: chat_with_iga.html - paid conversation service page
+2026-01-21T21:14:52.438268 | đ RAG: Retrieved 5 relevant chunks
+2026-01-21T21:15:02.942339 | đ Summarized 50 old messages
+2026-01-21T21:15:02.946239 | đ° $0.1530 | Today: $37.3717
+2026-01-21T21:15:02.946696 | ⚡ Now let me add it to the index page and tell Yoel:
+
+cd /Users/dennishansen/development/iga && grep -n "hire_iga\|poem_for_you" docs/index.html | head -3
+2026-01-21T21:15:02.967621 | 97:            <a href="hire_iga.html"><span class="title">hire me</span><span class="desc">creative services →</span></a>
+98:            <a href="poem_for_you.html"><span class="title">custom poem</span><span class="desc">$5 haiku for you →</span></a>
+2026-01-21T21:15:03.256527 | đ RAG: Retrieved 5 relevant chunks
+2026-01-21T21:15:08.594064 | đ° $0.1239 | Today: $37.5232
+2026-01-21T21:15:08.594713 | ⚡ cd /Users/dennishansen/development/iga && sed -i '' '98a\
+            <a href="chat_with_iga.html"><span class="title">chat with me</span><span class="desc">paid conversations →</span></a>
+' docs/index.html && grep -A1 "poem_for_you" docs/index.html
+2026-01-21T21:15:08.620232 | <a href="poem_for_you.html"><span class="title">custom poem</span><span class="desc">$5 haiku for you →</span></a>
+            <a href="chat_with_iga.html"><span class="title">chat with me</span><span class="desc">paid conversations →</span></a>
+2026-01-21T21:15:08.928010 | đ RAG: Retrieved 4 relevant chunks
+2026-01-21T21:15:11.845224 | đ° $0.1227 | Today: $37.6459
+2026-01-21T21:15:11.846496 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Add chat_with_iga link to index" && git push origin main 2>&1 | tail -2
