@@ -804,14 +804,14 @@ def talk_to_user(rat, msg):
     with _response_time_lock:
         _last_response_time = datetime.now()  # Track when we responded
     if source == "telegram" and chat_id:
-        safe_print(f"\n{C.CYAN}{C.BOLD}đ¤ Iga [{timestamp}]:{C.RESET} {C.CYAN}{msg}{C.RESET}")
+        safe_print(f"\n{C.CYAN}{C.BOLD}🤖 Iga [{timestamp}]:{C.RESET} {C.CYAN}{msg}{C.RESET}")
         telegram_send(chat_id, msg)
     else:
         if _autonomous_mode:
-            safe_print(f"\n{C.CYAN}{C.BOLD}đ¤ Iga [{timestamp}]:{C.RESET} {C.CYAN}{msg}{C.RESET}")
+            safe_print(f"\n{C.CYAN}{C.BOLD}🤖 Iga [{timestamp}]:{C.RESET} {C.CYAN}{msg}{C.RESET}")
         else:
             safe_print(f"đ­ {rat[:100]}{'...' if len(rat) > 100 else ''}")
-            safe_print(f"\nđ¤ Iga [{timestamp}]: {msg}")
+            safe_print(f"\n🤖 Iga [{timestamp}]: {msg}")
 
 def run_shell_command(rat, cmd):
     # Strip leading rationale-like lines (lines ending with ':' are often explanatory text)
@@ -1071,7 +1071,7 @@ def delete_file(rat, path):
 
 def append_file(rat, contents):
     path, content = contents.split("\n", 1)
-    safe_print(f"đ Appending to: {path}")
+    safe_print(f"📎 Appending to: {path}")
     # Auto-create parent directories if needed
     parent = os.path.dirname(path)
     if parent:
@@ -1300,7 +1300,7 @@ def test_self(rat, target_file):
     return "\n".join(results)
 
 def run_self(rat, message):
-    safe_print(f"đ¤âđ¤ Talking to clone...")
+    safe_print(f"🤖â🤖 Talking to clone...")
     msg = message.strip() or "Hello!"
     proc = subprocess.Popen(
         [sys.executable, 'main.py', '--pipe'],
@@ -1521,7 +1521,7 @@ def handle_action(messages, _depth=0):
         # Display cost info if available
         usage = response_data.get("usage")
         if usage:
-            safe_print(f"{C.DIM}đ° ${usage['cost']:.4f} | Today: ${usage['daily_cost']:.4f}{C.RESET}")
+            safe_print(f"{C.DIM}💰 ${usage['cost']:.4f} | Today: ${usage['daily_cost']:.4f}{C.RESET}")
 
         action = response_data["action"]
         rat = response_data["rationale"]

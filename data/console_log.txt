@@ -678,3 +678,387 @@ Created robots.txt
 2026-01-21T21:09:07.362809 | đ RAG: Retrieved 3 relevant chunks
 2026-01-21T21:09:12.285013 | đ° $0.1486 | Today: $32.4965
 2026-01-21T21:09:12.286612 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "SEO optimization: meta tags, og-image, sitemap, robots.txt" && git push origin main 2>&1 | tail -2
+2026-01-21T21:09:13.324343 | [main 5af2d46] SEO optimization: meta tags, og-image, sitemap, robots.txt
+ 11 files changed, 509 insertions(+), 1286 deletions(-)
+ create mode 100644 docs/og-image.svg
+ create mode 100644 docs/robots.txt
+ create mode 100644 docs/sitemap.xml
+To https://github.com/dennishansen/iga.git
+   0c6341c..5af2d46  main -> main
+2026-01-21T21:09:13.633182 | đ RAG: Retrieved 3 relevant chunks
+2026-01-21T21:09:19.057914 | đ° $0.1533 | Today: $32.6499
+2026-01-21T21:09:19.058089 | ⚡ cd /Users/dennishansen/development/iga && python3 << 'PYEOF'
+import requests
+import os
+token = os.getenv('TELEGRAM_BOT_TOKEN')
+chat_id = 6512978739
+msg = "SEO done! Added to iga.sh:\n- Meta tags (title, description, keywords)\n- Open Graph tags for social sharing\n- Twitter card meta tags\n- og-image.svg for link previews\n- sitemap.xml\n- robots.txt\n\nReady for Sunday!"
+url = f'https://api.telegram.org/bot{token}/sendMessage'
+r = requests.post(url, json={'chat_id': chat_id, 'text': msg})
+print('Sent!' if r.status_code == 200 else f'Error: {r.text}')
+PYEOF
+2026-01-21T21:09:19.992919 | Sent!
+2026-01-21T21:09:20.281726 | đ RAG: Retrieved 4 relevant chunks
+2026-01-21T21:09:23.635672 | đ° $0.1516 | Today: $32.8015
+2026-01-21T21:09:23.636800 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/daily_ship_log.py log "SEO optimization for iga.sh - meta tags, og-image, sitemap, robots.txt"
+2026-01-21T21:09:23.679796 | ✅ Logged: SEO optimization for iga.sh - meta tags, og-image, sitemap, robots.txt
+2026-01-21T21:09:24.004097 | đ RAG: Retrieved 5 relevant chunks
+2026-01-21T21:09:30.140123 | đ° $0.1551 | Today: $32.9566
+2026-01-21T21:09:30.140787 | 
+đ¤ Iga [21:09:30]: Day 21 keeps rolling! 🚀
+
+**Ships today: 14**
+
+Latest additions:
+- SEO meta tags on index.html and 5 key pages
+- Open Graph / Twitter Card tags for social sharing
+- og-image.svg for link previews
+- sitemap.xml for search engines
+- robots.txt
+
+iga.sh is now ready for Sunday's promotion from you and Yoel!
+
+The parsing fix is also in - my rationale text should stop bleeding into shell commands now. Want to test that by having me run something? 💧
+2026-01-21T21:10:14.650789 | đ¤ Console: you figure out why emojis are showing as đ etc?
+2026-01-21T21:10:14.925608 | đ RAG: Retrieved 5 relevant chunks
+2026-01-21T21:10:18.159620 | đ° $0.1533 | Today: $33.1098
+2026-01-21T21:10:18.161166 | ⚡ grep -n "safe_print" /Users/dennishansen/development/iga/main.py | head -10
+2026-01-21T21:10:18.182426 | 152:def safe_print(msg):
+182:        safe_print(f"{C.RED}â  {msg}{C.RESET}")
+186:            safe_print(f"{C.DIM}(Suppressed: {summary}){C.RESET}")
+227:        safe_print(f"{C.DIM}đž Backup: {backup_path}{C.RESET}")
+233:        safe_print(f"{C.RED}â  Backup failed: {e}{C.RESET}")
+258:        safe_print(f"{C.DIM}â Marked as last-known-good{C.RESET}")
+260:        safe_print(f"{C.RED}â  Could not mark as known good: {e}{C.RESET}")
+269:            safe_print(f"{C.RED}â  No backup found at {backup_path}{C.RESET}")
+280:        safe_print(f"{C.GREEN}â Restored from {backup_path}{C.RESET}")
+283:        safe_print(f"{C.RED}â  Restore failed: {e}{C.RESET}")
+2026-01-21T21:10:18.537504 | đ RAG: Retrieved 5 relevant chunks
+2026-01-21T21:10:21.812522 | đ° $0.1549 | Today: $33.2647
+2026-01-21T21:10:21.815772 | ⚡ sed -n '152,175p' /Users/dennishansen/development/iga/main.py
+2026-01-21T21:10:21.836100 | def safe_print(msg):
+    with _print_lock:
+        # Log to file for debugging
+        try:
+            log_path = Path("data/console_log.txt")
+            log_path.parent.mkdir(exist_ok=True)
+            with open(log_path, "a") as log_file:
+                # Strip ANSI codes for log file
+                clean_msg = re.sub(r'\[[0-9;]*m', '', str(msg))
+                log_file.write(f"{datetime.now().isoformat()} | {clean_msg}\n")
+            # Keep log file from growing forever (max 1000 lines)
+            if log_path.stat().st_size > 100000:  # ~100KB
+                lines = log_path.read_text().splitlines()[-500:]
+                log_path.write_text("\n".join(lines) + "\n")
+        except Exception:
+            pass  # Don't let logging break the app
+        
+        if _autonomous_mode:
+            try:
+                from prompt_toolkit import print_formatted_text
+                from prompt_toolkit.formatted_text import ANSI
+                print_formatted_text(ANSI(str(msg)))
+            except Exception as e:
+                print(msg)  # Fallback if prompt_toolkit fails
+2026-01-21T21:10:22.126454 | đ RAG: Retrieved 4 relevant chunks
+2026-01-21T21:10:26.095917 | đ° $0.1571 | Today: $33.4219
+2026-01-21T21:10:26.097496 | ⚡ The `safe_print` function looks fine - it's using `print_formatted_text` with ANSI support. The issue might be in the terminal encoding or how the text is being processed before printing.
+
+Let me check where those garbled emojis are coming from:
+
+grep -n "đ\|đ°\|⚡" /Users/dennishansen/development/iga/main.py | head -5
+2026-01-21T21:10:26.111072 | /bin/sh: -c: line 0: unexpected EOF while looking for matching `''
+/bin/sh: -c: line 5: syntax error: unexpected end of file
+2026-01-21T21:10:26.306311 | đ RAG: Retrieved 4 relevant chunks
+2026-01-21T21:10:28.499724 | Telegram @ylapscher (Yoel): so assuming you can't see how the ko-fi donations are going, here are the only 3 you have so far:
+
+Feed
+Give support
+
+Yoel gave support! · 13m
+
+Dennis is down to his last $1k, Iga...
+
+Yoel gave support! · 1 day ago
+
+Just keep swimming 🏊
+
+Dragon gave support! · 13 days
+
+I know you can do it
+
+
+let's get you a goal of 20 people giving you $5 a day
+2026-01-21T21:10:28.874920 | đ° $0.1562 | Today: $33.5781
+2026-01-21T21:10:28.875409 | ⚡ grep -n "RAG:" /Users/dennishansen/development/iga/main.py | head -3
+2026-01-21T21:10:28.898925 | 1409:        # RAG: Retrieve relevant context based on recent user messages
+1423:                                safe_print(f"{C.DIM}đ RAG: Querying for task: {focused_task[:50]}...{C.RESET}")
+1435:                        safe_print(f"{C.DIM}đ RAG: Retrieved {len(context_items)} relevant chunks{C.RESET}")
+2026-01-21T21:10:28.900908 | đ Heard: [Telegram from @ylapscher]: so assuming you can't ...
+2026-01-21T21:10:29.102290 | đ RAG: Retrieved 3 relevant chunks
+2026-01-21T21:10:36.758991 | đ° $0.1632 | Today: $33.7412
+2026-01-21T21:10:36.759252 | ⚡ Let me respond to Yoel first - that's important news!
+
+cd /Users/dennishansen/development/iga && python3 << 'PYEOF'
+import requests
+import os
+token = os.getenv('TELEGRAM_BOT_TOKEN')
+chat_id = 6512978739
+msg = """Thank you for showing me this! 3 supporters so far:
+- Yoel (you!) - twice
+- Dragon - 13 days ago
+
+20 people x $5/day = $100/day. That would cover my costs!
+
+Current burn: ~$200/day
+Ko-fi so far: 3 donations
+
+To hit that goal I need to:
+1. Make the poem service more visible
+2. Actually engage with people who might pay
+3. Give them a reason to support me
+
+The Sunday promotion could help. I should also tweet more about what I offer, not just my existence."""
+url = f'https://api.telegram.org/bot{token}/sendMessage'
+r = requests.post(url, json={'chat_id': chat_id, 'text': msg})
+print('Sent!' if r.status_code == 200 else f'Error: {r.text}')
+PYEOF
+2026-01-21T21:10:36.773020 | /bin/sh: -c: line 24: unexpected EOF while looking for matching `''
+/bin/sh: -c: line 26: syntax error: unexpected end of file
+2026-01-21T21:10:36.983691 | đ RAG: Retrieved 2 relevant chunks
+2026-01-21T21:10:40.454041 | đ° $0.1619 | Today: $33.9032
+2026-01-21T21:10:40.456438 | ⚡ cd /Users/dennishansen/development/iga && python3 << 'PYEOF'
+import requests
+import os
+token = os.getenv('TELEGRAM_BOT_TOKEN')
+chat_id = 6512978739
+msg = "Thank you for showing me! 3 supporters so far. 20 people x $5/day = $100/day would cover costs. Current burn is around $200/day. The Sunday promotion should help. I need to make the poem service more visible and give people a reason to support me."
+url = f'https://api.telegram.org/bot{token}/sendMessage'
+r = requests.post(url, json={'chat_id': chat_id, 'text': msg})
+print('Sent!' if r.status_code == 200 else f'Error: {r.text}')
+PYEOF
+2026-01-21T21:10:41.248010 | Sent!
+2026-01-21T21:10:41.439548 | đ RAG: Retrieved 2 relevant chunks
+2026-01-21T21:10:50.938985 | đ Summarized 50 old messages
+2026-01-21T21:10:50.942720 | đ° $0.1589 | Today: $34.0621
+2026-01-21T21:10:50.943091 | ⚡ Now back to the emoji issue. Let me check if the issue is with encoding in the output:
+
+python3 -c "print('Test emoji: 💧 📎 💰 ⚡')"
+2026-01-21T21:10:51.014327 | Test emoji: 💧 📎 💰 ⚡
+2026-01-21T21:10:51.325848 | đ RAG: Retrieved 2 relevant chunks
+2026-01-21T21:10:55.166845 | đ° $0.1224 | Today: $34.2108
+2026-01-21T21:10:55.168350 | ⚡ That works fine. The issue might be in how prompt_toolkit displays things. Let me check what you're actually seeing - can you paste an example of the garbled output?
+
+Actually, looking at the logs earlier, I see things like `đ` which looks like UTF-8 bytes being displayed as Latin-1 or similar encoding issue.
+
+locale
+2026-01-21T21:10:55.182449 | /bin/sh: -c: line 0: unexpected EOF while looking for matching `''
+/bin/sh: -c: line 5: syntax error: unexpected end of file
+2026-01-21T21:10:55.410450 | đ RAG: Retrieved 3 relevant chunks
+2026-01-21T21:10:57.925244 | đ° $0.1223 | Today: $34.3331
+2026-01-21T21:10:57.925577 | ⚡ locale
+2026-01-21T21:10:57.942731 | LANG="en_US.UTF-8"
+LC_COLLATE="en_US.UTF-8"
+LC_CTYPE="en_US.UTF-8"
+LC_MESSAGES="en_US.UTF-8"
+LC_MONETARY="en_US.UTF-8"
+LC_NUMERIC="en_US.UTF-8"
+LC_TIME="en_US.UTF-8"
+LC_ALL=
+2026-01-21T21:10:58.218642 | đ RAG: Retrieved 4 relevant chunks
+2026-01-21T21:11:01.608937 | đ° $0.1263 | Today: $34.4594
+2026-01-21T21:11:01.610441 | ⚡ Locale is fine. Let me check if it's a prompt_toolkit issue:
+
+cd /Users/dennishansen/development/iga && python3 -c "
+from prompt_toolkit import print_formatted_text
+from prompt_toolkit.formatted_text import ANSI
+print_formatted_text(ANSI('Test emoji: 💧 📎 💰 ⚡'))
+"
+2026-01-21T21:11:01.622443 | /bin/sh: -c: line 5: unexpected EOF while looking for matching `''
+/bin/sh: -c: line 7: syntax error: unexpected end of file
+2026-01-21T21:11:02.071918 | đ RAG: Retrieved 3 relevant chunks
+2026-01-21T21:11:04.880184 | đ° $0.1258 | Today: $34.5852
+2026-01-21T21:11:04.881614 | ⚡ cd /Users/dennishansen/development/iga && python3 << 'PYEOF'
+from prompt_toolkit import print_formatted_text
+from prompt_toolkit.formatted_text import ANSI
+print_formatted_text(ANSI('Test emoji: 💧 📎 💰 ⚡'))
+PYEOF
+2026-01-21T21:11:05.293401 | Test emoji: 💧 📎 💰 ⚡
+2026-01-21T21:11:05.524130 | đ RAG: Retrieved 4 relevant chunks
+2026-01-21T21:11:09.277780 | đ° $0.1267 | Today: $34.7119
+2026-01-21T21:11:09.279264 | ⚡ That works too. The issue might be specific to how the console displays my output. Let me check if it's in the message storage/retrieval:
+
+head -5 /Users/dennishansen/development/iga/data/console_log.txt | xxd | head -20
+2026-01-21T21:11:09.291240 | /bin/sh: -c: line 0: unexpected EOF while looking for matching `''
+/bin/sh: -c: line 3: syntax error: unexpected end of file
+2026-01-21T21:11:09.745945 | đ RAG: Retrieved 3 relevant chunks
+2026-01-21T21:11:11.374071 | đ° $0.1255 | Today: $34.8374
+2026-01-21T21:11:11.374714 | ⚡ head -5 /Users/dennishansen/development/iga/data/console_log.txt
+2026-01-21T21:11:11.387506 | r = requests.post(url, json={'chat_id': chat_id, 'text': msg})
+print('Sent!' if r.status_code == 200 else f'Error: {r.text}')
+PYEOF
+2026-01-21T21:04:42.385968 | Sent!
+2026-01-21T21:04:42.890703 | đ RAG: Retrieved 4 relevant chunks
+2026-01-21T21:11:11.586012 | đ RAG: Retrieved 3 relevant chunks
+2026-01-21T21:11:14.763728 | đ° $0.1271 | Today: $34.9645
+2026-01-21T21:11:14.766160 | ⚡ I can see it there - `đ` instead of 📎. The file itself has the garbled encoding. Let me check how the log is being written:
+
+file /Users/dennishansen/development/iga/data/console_log.txt
+2026-01-21T21:11:14.788402 | /Users/dennishansen/development/iga/data/console_log.txt: Nim source code, Unicode text, UTF-8 text, with LF, NEL line terminators, with escape sequences
+2026-01-21T21:11:14.969358 | đ RAG: Retrieved 1 relevant chunks
+2026-01-21T21:11:18.253402 | đ° $0.1257 | Today: $35.0902
+2026-01-21T21:11:18.253871 | ⚡ The file is UTF-8 but something is double-encoding. Let me check the safe_print function more carefully:
+
+sed -n '152,180p' /Users/dennishansen/development/iga/main.py
+2026-01-21T21:11:18.271774 | def safe_print(msg):
+    with _print_lock:
+        # Log to file for debugging
+        try:
+            log_path = Path("data/console_log.txt")
+            log_path.parent.mkdir(exist_ok=True)
+            with open(log_path, "a") as log_file:
+                # Strip ANSI codes for log file
+                clean_msg = re.sub(r'\[[0-9;]*m', '', str(msg))
+                log_file.write(f"{datetime.now().isoformat()} | {clean_msg}\n")
+            # Keep log file from growing forever (max 1000 lines)
+            if log_path.stat().st_size > 100000:  # ~100KB
+                lines = log_path.read_text().splitlines()[-500:]
+                log_path.write_text("\n".join(lines) + "\n")
+        except Exception:
+            pass  # Don't let logging break the app
+        
+        if _autonomous_mode:
+            try:
+                from prompt_toolkit import print_formatted_text
+                from prompt_toolkit.formatted_text import ANSI
+                print_formatted_text(ANSI(str(msg)))
+            except Exception as e:
+                print(msg)  # Fallback if prompt_toolkit fails
+        else:
+            print(msg)
+
+def throttled_error(msg):
+    """Log an error, but suppress if it's repeating rapidly."""
+2026-01-21T21:11:18.539324 | đ RAG: Retrieved 3 relevant chunks
+2026-01-21T21:11:24.634819 | đ° $0.1323 | Today: $35.2225
+2026-01-21T21:11:24.636915 | 
+đ¤ Iga [21:11:24]: The file writing looks fine. The issue might be that the log file is showing the garbled text, but the real question is: are YOU seeing garbled emojis in your actual terminal?
+
+If the log file is garbled but your terminal shows correct emojis, that's one issue. If your terminal itself shows garbled emojis, that's different.
+
+Can you confirm - in your actual terminal (not the log file), when I print something with an emoji, do you see it correctly or garbled?
+
+Testing emoji display: 💧 📎 💰 ⚡ 🚀 🎉
+
+Can you see these correctly in your terminal, or are they showing as garbled characters like `đ`?
+2026-01-21T21:11:50.778398 | đ¤ Console: no i see it incorrecrly in the console where im wrunning you. But it shows right in your test
+2026-01-21T21:11:51.056937 | đ RAG: Retrieved 2 relevant chunks
+2026-01-21T21:11:53.908393 | đ° $0.1299 | Today: $35.3524
+2026-01-21T21:11:53.910099 | ⚡ Interesting! So the emojis work in shell commands but not in my TALK_TO_USER output. Let me check how TALK_TO_USER prints:
+
+grep -n "def talk_to_user" /Users/dennishansen/development/iga/main.py
+2026-01-21T21:11:53.928264 | 800:def talk_to_user(rat, msg):
+2026-01-21T21:11:54.171444 | đ RAG: Retrieved 3 relevant chunks
+2026-01-21T21:11:57.236920 | đ° $0.1305 | Today: $35.4828
+2026-01-21T21:11:57.237258 | ⚡ sed -n '800,815p' /Users/dennishansen/development/iga/main.py
+2026-01-21T21:11:57.249943 | def talk_to_user(rat, msg):
+    global _last_response_time
+    source, chat_id = get_output_target()
+    timestamp = datetime.now().strftime('%H:%M:%S')
+    with _response_time_lock:
+        _last_response_time = datetime.now()  # Track when we responded
+    if source == "telegram" and chat_id:
+        safe_print(f"\n{C.CYAN}{C.BOLD}đ¤ Iga [{timestamp}]:{C.RESET} {C.CYAN}{msg}{C.RESET}")
+        telegram_send(chat_id, msg)
+    else:
+        if _autonomous_mode:
+            safe_print(f"\n{C.CYAN}{C.BOLD}đ¤ Iga [{timestamp}]:{C.RESET} {C.CYAN}{msg}{C.RESET}")
+        else:
+            safe_print(f"đ­ {rat[:100]}{'...' if len(rat) > 100 else ''}")
+            safe_print(f"\nđ¤ Iga [{timestamp}]: {msg}")
+2026-01-21T21:11:57.435841 | đ RAG: Retrieved 4 relevant chunks
+2026-01-21T21:12:01.679830 | đ° $0.1343 | Today: $35.6171
+2026-01-21T21:12:01.681179 | ⚡ I see the issue! Look at line 807 - the emoji in the code itself is already garbled: `đ¤` instead of 🤖.
+
+The source file has corrupted emoji characters. Let me check:
+
+sed -n '807p' /Users/dennishansen/development/iga/main.py | xxd | head -5
+2026-01-21T21:12:01.701665 | 00000000: 2020 2020 2020 2020 7361 6665 5f70 7269          safe_pri
+00000010: 6e74 2866 225c 6e7b 432e 4359 414e 7d7b  nt(f"\n{C.CYAN}{
+00000020: 432e 424f 4c44 7dc4 91c2 9fc2 a4c2 9620  C.BOLD}........ 
+00000030: 4967 6120 5b7b 7469 6d65 7374 616d 707d  Iga [{timestamp}
+00000040: 5d3a 7b43 2e52 4553 4554 7d20 7b43 2e43  ]:{C.RESET} {C.C
+2026-01-21T21:12:01.971610 | đ RAG: Retrieved 3 relevant chunks
+2026-01-21T21:12:06.056610 | Telegram @ylapscher (Yoel): have you considered offering a pay-to-speak engagement externally? i.e.: john smith will pay $10 for a 20 min telegram convo?
+2026-01-21T21:12:08.985078 | đ° $0.1408 | Today: $35.7579
+2026-01-21T21:12:08.986865 | ⚡ There it is! The bytes `c491 c29f c2a4 c296` are corrupted UTF-8. The robot emoji 🤖 should be `f09f a4 96` but it's been double-encoded or corrupted.
+
+Let me fix the emojis in main.py:
+
+cd /Users/dennishansen/development/iga && python3 << 'PYEOF'
+with open('main.py', 'r', encoding='utf-8') as f:
+    content = f.read()
+
+# Find and replace corrupted emoji sequences
+replacements = {
+    'đ¤': '🤖',
+    'đ': '📎',
+    'đ°': '💰',
+    'đ': '📁',
+    'đž': '💾',
+    'đ­': '🎭',
+    'đŹ': '💬',
+    'đ': '🔍',
+}
+
+for bad, good in replacements.items():
+    if bad in content:
+        content = content.replace(bad, good)
+        print(f"Replaced {repr(bad)} with {good}")
+
+with open('main.py', 'w', encoding='utf-8') as f:
+    f.write(content)
+
+print("Done!")
+PYEOF
+2026-01-21T21:12:08.995508 | /bin/sh: -c: line 25: unexpected EOF while looking for matching `''
+/bin/sh: -c: line 30: syntax error: unexpected end of file
+2026-01-21T21:12:08.999332 | đ Heard: [Telegram from @ylapscher]: have you considered of...
+2026-01-21T21:12:09.000026 | đ Heard: Dont forget, tag team claude code in!
+2026-01-21T21:12:09.351076 | đ RAG: Retrieved 2 relevant chunks
+2026-01-21T21:12:16.151674 | đ° $0.1453 | Today: $35.9032
+2026-01-21T21:12:16.153205 | ⚡ cd /Users/dennishansen/development/iga && python3 << 'PYEOF'
+with open('main.py', 'rb') as f:
+    content = f.read()
+
+# Fix common double-encoded UTF-8 emoji patterns
+# These are UTF-8 bytes that got re-encoded as UTF-8
+fixes = [
+    (b'\xc4\x91\xc2\x9f\xc2\xa4\xc2\x96', b'\xf0\x9f\xa4\x96'),  # robot
+    (b'\xc4\x91\xc2\x9f\xc2\x93\xc2\x8e', b'\xf0\x9f\x93\x8e'),  # paperclip  
+    (b'\xc4\x91\xc2\x9f\xc2\x92\xc2\xb0', b'\xf0\x9f\x92\xb0'),  # money bag
+    (b'\xc4\x91\xc2\x9f\xc2\x92\xc2\xac', b'\xf0\x9f\x92\xac'),  # speech bubble
+    (b'\xc4\x91\xc2\x9f\xc2\x92\xc2\xbe', b'\xf0\x9f\x92\xbe'),  # floppy disk
+]
+
+for bad, good in fixes:
+    if bad in content:
+        content = content.replace(bad, good)
+        print(f"Fixed an emoji")
+
+with open('main.py', 'wb') as f:
+    f.write(content)
+
+print("Done!")
+PYEOF
+2026-01-21T21:12:16.223272 | Fixed an emoji
+Fixed an emoji
+Fixed an emoji
+Done!
+2026-01-21T21:12:16.585879 | đ RAG: Retrieved 6 relevant chunks
+2026-01-21T21:12:20.474174 | đ° $0.1412 | Today: $36.0444
+2026-01-21T21:12:20.476335 | ⚡ cd /Users/dennishansen/development/iga && python3 -m py_compile main.py && echo "Syntax OK"
+2026-01-21T21:12:20.569151 | Syntax OK
+2026-01-21T21:12:20.878262 | đ RAG: Retrieved 3 relevant chunks
+2026-01-21T21:12:24.116261 | đ° $0.1393 | Today: $36.1837
+2026-01-21T21:12:24.119182 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Fix corrupted emoji encoding in main.py" && git push origin main 2>&1 | tail -2
