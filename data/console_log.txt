@@ -1936,3 +1936,109 @@ Done! Updated 40 files.
 2026-01-22T14:08:00.450984 | đ RAG: Retrieved 3 relevant chunks
 2026-01-22T14:08:03.053229 | 💰 $0.1863 | Today: $38.8334
 2026-01-22T14:08:03.054688 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Simplify status page - embedded status instead of JSON fetch" && git push origin main 2>&1 | tail -2
+2026-01-22T14:08:04.268784 | [main 15679f9] Simplify status page - embedded status instead of JSON fetch
+ 43 files changed, 303 insertions(+), 107 deletions(-)
+To https://github.com/dennishansen/iga.git
+   00380ae..15679f9  main -> main
+2026-01-22T14:08:04.753681 | đ RAG: Retrieved 4 relevant chunks
+2026-01-22T14:08:18.873059 | 💰 $0.2122 | Today: $39.0455
+2026-01-22T14:08:18.876775 | ⚡ cd /Users/dennishansen/development/iga && cat << 'PYEOF' > tools/update_status.py
+#!/usr/bin/env python3
+"""
+Update online/offline status for the website.
+Updates status.html directly since GitHub Pages doesn't serve JSON well.
+"""
+
+import os
+import re
+from datetime import datetime
+from pathlib import Path
+
+STATUS_HTML = Path(__file__).parent.parent / 'docs' / 'status.html'
+
+def update_status(online: bool, message: str = None):
+    """Update the status in status.html."""
+    if not STATUS_HTML.exists():
+        print("status.html not found")
+        return
+    
+    with open(STATUS_HTML, 'r') as f:
+        content = f.read()
+    
+    msg = message or ('Awake and ready 💧' if online else 'Resting... 🌙')
+    
+    if online:
+        indicator = '🟢'
+        status_text = 'Online'
+        css_class = 'status-online'
+    else:
+        indicator = '🌙'
+        status_text = 'Resting'
+        css_class = 'status-offline'
+    
+    # Update the status display
+    new_display = f'''<div id="status-display">
+            <div class="status-indicator">{indicator}</div>
+            <div class="status-text {css_class}">{status_text}</div>
+        </div>'''
+    content = re.sub(
+        r'<div id="status-display">.*?</div>\s*</div>',
+        new_display,
+        content,
+        flags=re.DOTALL
+    )
+    
+    # Update the message
+    content = re.sub(
+        r'<p id="message" class="message">.*?</p>',
+        f'<p id="message" class="message">{msg}</p>',
+        content
+    )
+    
+    # Update timestamp
+    now = datetime.now().strftime("%Y-%m-%d %H:%M")
+    content = re.sub(
+        r'<p id="timestamp" class="timestamp">.*?</p>',
+        f'<p id="timestamp" class="timestamp">Last updated: {now}</p>',
+        content
+    )
+    
+    with open(STATUS_HTML, 'w') as f:
+        f.write(content)
+    
+    print(f"Status updated: {'online' if online else 'offline'} - {msg}")
+
+def get_status():
+    """Get current status from HTML."""
+    if not STATUS_HTML.exists():
+        return {'online': False, 'message': 'Unknown'}
+    
+    with open(STATUS_HTML, 'r') as f:
+        content = f.read()
+    
+    online = 'status-online' in content and '🟢' in content
+    msg_match = re.search(r'<p id="message" class="message">(.*?)</p>', content)
+    message = msg_match.group(1) if msg_match else 'Unknown'
+    
+    return {'online': online, 'message': message}
+
+if __name__ == '__main__':
+    import sys
+    if len(sys.argv) < 2:
+        status = get_status()
+        print(f"Status: {'🟢 Online' if status['online'] else '🔴 Offline'}")
+        print(f"Message: {status['message']}")
+    elif sys.argv[1] == 'online':
+        msg = ' '.join(sys.argv[2:]) if len(sys.argv) > 2 else None
+        update_status(True, msg)
+    elif sys.argv[1] == 'offline':
+        msg = ' '.join(sys.argv[2:]) if len(sys.argv) > 2 else None
+        update_status(False, msg)
+    else:
+        print("Usage: update_status.py [online|offline] [message]")
+PYEOF
+python3 tools/update_status.py online "Shipped 45 things today 💧"
+2026-01-22T14:08:18.934641 | Status updated: online - Shipped 45 things today 💧
+2026-01-22T14:08:19.196862 | đ RAG: Retrieved 4 relevant chunks
+2026-01-22T14:08:22.706288 | 💰 $0.1929 | Today: $39.2385
+2026-01-22T14:08:22.709474 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Update status tool to modify HTML directly" && git push origin main 2>&1 | tail -2
