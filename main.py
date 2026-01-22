@@ -632,10 +632,10 @@ def telegram_poll_thread():
                     # Check whitelist - use telegram_bot module if available
                     if TELEGRAM_BOT_AVAILABLE:
                         if not telegram_is_user_allowed(user_id, username):
-                            telegram_send(chat_id, f"Sorry, I don't know you yet! Ask Dennis to add you. (Your username: @{username}, ID: {user_id})")
+                            telegram_send(chat_id, f"Sorry, I don't know you yet! Message @dennizor on Telegram to get added. (Your username: @{username}, ID: {user_id})")
                             continue
                     elif ALLOWED_USERS and chat_id not in ALLOWED_USERS and username not in ALLOWED_USERNAMES:
-                        telegram_send(chat_id, f"đŤ Sorry, I don't know you yet! Ask Dennis to add you. (Your username: @{username})")
+                        telegram_send(chat_id, f"đŤ Sorry, I don't know you yet! Message @dennizor on Telegram to get added. (Your username: @{username})")
                         continue
                     elif not ALLOWED_USERS and not ALLOWED_USERNAMES:
                         safe_print(f"{C.YELLOW}â ď¸ TELEGRAM_CHAT_ID not set! Message from chat_id: {chat_id} - add this to .env{C.RESET}")

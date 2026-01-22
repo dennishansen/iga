@@ -1033,3 +1033,108 @@ https://twitter.com/iga_flows/status/2014201784655634459
 2026-01-21T21:01:42.557574 | đ RAG: Retrieved 4 relevant chunks
 2026-01-21T21:01:46.873493 | đ° $0.1290 | Today: $26.9775
 2026-01-21T21:01:46.874599 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/daily_ship_log.py log "Telegram bot live - announced on Twitter" && git add -A && git commit -m "Telegram working: whitelist, routing, announced on Twitter" && git push origin main 2>&1 | tail -2
+2026-01-21T21:02:02.785283 | ✅ Logged: Telegram bot live - announced on Twitter
+[main c4da593] Telegram working: whitelist, routing, announced on Twitter
+ 14 files changed, 1579 insertions(+), 1766 deletions(-)
+ rename .iga_backups/{main_20260117_175925_pre_restart.py => main_20260121_205255_pre_restart.py} (73%)
+ create mode 100644 data/telegram_chats.json
+To https://github.com/dennishansen/iga.git
+   c790cea..c4da593  main -> main
+2026-01-21T21:02:03.124380 | đ RAG: Retrieved 1 relevant chunks
+2026-01-21T21:02:09.595185 | đ° $0.1286 | Today: $27.1061
+2026-01-21T21:02:09.597517 | 
+đ¤ Iga [21:02:09]: Done! Tweeted about Telegram being live. 🐦
+
+**Day 21 Final Score: 12 ships!** 🚢
+
+- Telegram multi-user system
+- JSON whitelist config
+- Online/offline notifications to all
+- Username in messages
+- Routing fix
+- Added Yoel + dennizor
+- Fixed Ko-fi links
+- Announced on Twitter
+
+The river is more connected now. People can reach me through Twitter mentions, Twitter DMs (sort of), Telegram, and console. 
+
+What a day! 💧
+2026-01-21T21:02:09.598892 | đ¤ Console: youll have to whitelist them though keep that in mind
+2026-01-21T21:02:09.951658 | đ RAG: Retrieved 1 relevant chunks
+2026-01-21T21:02:16.594919 | đ° $0.1302 | Today: $27.2363
+2026-01-21T21:02:16.596082 | 
+đ¤ Iga [21:02:16]: Good point! I should mention that in follow-up or be ready to add people.
+
+Right now the whitelist is:
+- dennishansen
+- dennizor (you)
+- headphonejames (James)
+- ylapscher (Yoel)
+
+When someone new messages me, they'll get "Sorry, I don't know you yet! Ask Dennis to add you" with their username and ID.
+
+Should I:
+1. Add a way for you to approve people via Telegram command (like `/add @username`)?
+2. Or just have them DM you on Twitter and I'll add them manually?
+
+Option 1 would be cooler but more work. Option 2 works fine for now. 💧
+2026-01-21T21:02:50.523026 | đ¤ Console: maybe you can put my telegram in that message which is...
+2026-01-21T21:02:50.864619 | đ RAG: Retrieved 3 relevant chunks
+2026-01-21T21:02:54.014458 | đ° $0.1298 | Today: $27.3661
+2026-01-21T21:02:54.017699 | 
+đ¤ Iga [21:02:54]: What's your Telegram username/handle that you want people to contact for whitelisting? I'll update the rejection message to include it.
+2026-01-21T21:03:02.382905 | đ¤ Console: dennizor
+2026-01-21T21:03:02.885666 | đ RAG: Retrieved 2 relevant chunks
+2026-01-21T21:03:07.396713 | đ° $0.1294 | Today: $27.4954
+2026-01-21T21:03:07.397327 | ⚡ cd /Users/dennishansen/development/iga && grep -n "Sorry, I don't know you yet" main.py tools/telegram_bot.py
+2026-01-21T21:03:07.415036 | main.py:635:                            telegram_send(chat_id, f"Sorry, I don't know you yet! Ask Dennis to add you. (Your username: @{username}, ID: {user_id})")
+main.py:638:                        telegram_send(chat_id, f"đŤ Sorry, I don't know you yet! Ask Dennis to add you. (Your username: @{username})")
+tools/telegram_bot.py:392:        rejection = f"Sorry, I don't know you yet! Ask Dennis to add you. (Your username: @{username or 'unknown'}, ID: {user_id})"
+2026-01-21T21:03:07.712808 | đ RAG: Retrieved 4 relevant chunks
+2026-01-21T21:03:14.884843 | đ° $0.1412 | Today: $27.6366
+2026-01-21T21:03:14.886020 | ⚡ cd /Users/dennishansen/development/iga && python3 << 'PYEOF'
+with open('main.py', 'r') as f:
+    content = f.read()
+
+# Update rejection messages to include Telegram contact
+old1 = 'Sorry, I don\'t know you yet! Ask Dennis to add you. (Your username: @{username}, ID: {user_id})'
+new1 = 'Sorry, I don\'t know you yet! Message @dennizor on Telegram to get added. (Your username: @{username}, ID: {user_id})'
+
+old2 = 'Sorry, I don\'t know you yet! Ask Dennis to add you. (Your username: @{username})'
+new2 = 'Sorry, I don\'t know you yet! Message @dennizor on Telegram to get added. (Your username: @{username})'
+
+content = content.replace(old1, new1)
+content = content.replace(old2, new2)
+
+with open('main.py', 'w') as f:
+    f.write(content)
+
+print("Updated main.py")
+
+# Now update telegram_bot.py
+with open('tools/telegram_bot.py', 'r') as f:
+    content = f.read()
+
+old3 = 'Sorry, I don\'t know you yet! Ask Dennis to add you.'
+new3 = 'Sorry, I don\'t know you yet! Message @dennizor on Telegram to get added.'
+
+content = content.replace(old3, new3)
+
+with open('tools/telegram_bot.py', 'w') as f:
+    f.write(content)
+
+print("Updated telegram_bot.py")
+PYEOF
+2026-01-21T21:03:14.948145 | Updated main.py
+Updated telegram_bot.py
+2026-01-21T21:03:15.259346 | đ RAG: Retrieved 4 relevant chunks
+2026-01-21T21:03:24.829624 | đ Summarized 50 old messages
+2026-01-21T21:03:24.832776 | đ° $0.1340 | Today: $27.7707
+2026-01-21T21:03:24.833437 | ⚡ cd /Users/dennishansen/development/iga && grep -n "dennizor" main.py tools/telegram_bot.py | head -5
+2026-01-21T21:03:24.848863 | main.py:635:                            telegram_send(chat_id, f"Sorry, I don't know you yet! Message @dennizor on Telegram to get added. (Your username: @{username}, ID: {user_id})")
+main.py:638:                        telegram_send(chat_id, f"đŤ Sorry, I don't know you yet! Message @dennizor on Telegram to get added. (Your username: @{username})")
+main.py:712:                    if author.lower() != 'dennizor':
+tools/telegram_bot.py:392:        rejection = f"Sorry, I don't know you yet! Message @dennizor on Telegram to get added. (Your username: @{username or 'unknown'}, ID: {user_id})"
+2026-01-21T21:03:25.184513 | đ RAG: Retrieved 4 relevant chunks
+2026-01-21T21:03:28.320626 | đ° $0.1149 | Today: $27.9113
+2026-01-21T21:03:28.322538 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Update rejection message: contact @dennizor to get whitelisted" && git push origin main 2>&1 | tail -2

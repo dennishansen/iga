@@ -389,7 +389,7 @@ def process_update(update, message_handler=None):
 
     # Check whitelist
     if not is_user_allowed(user_id, username):
-        rejection = f"Sorry, I don't know you yet! Ask Dennis to add you. (Your username: @{username or 'unknown'}, ID: {user_id})"
+        rejection = f"Sorry, I don't know you yet! Message @dennizor on Telegram to get added. (Your username: @{username or 'unknown'}, ID: {user_id})"
         send_message(chat_id, rejection)
         return {"status": "rejected", "user_id": user_id, "username": username, "reason": "not_whitelisted"}
 
