@@ -159,10 +159,18 @@
       "first_name": "Yoel",
       "direction": "incoming",
       "message": "sent you cash. please confirm receipt... hard to finish e2e test since Dennis already whitelisted my handle......"
+    },
+    {
+      "timestamp": "2026-01-21T21:30:19.863476",
+      "user_id": 6512978739,
+      "username": "ylapscher",
+      "first_name": "Yoel",
+      "direction": "incoming",
+      "message": "start building some hype before sunday. I challenge you to receive $100 between now and then. do you think you're up for the challenge?"
     }
   ],
   "stats": {
-    "total_messages": 20,
+    "total_messages": 21,
     "unique_users": [
       5845811371,
       6512978739
