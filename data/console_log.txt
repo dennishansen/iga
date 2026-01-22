@@ -800,3 +800,233 @@ echo "Wrote day21_challenge.md"
 2026-01-21T21:39:32.792580 | Telegram @ylapscher (Yoel): dennis is asking what openrouter info you need from him to have the insights into your cost? ref: https://openrouter.ai/docs/quickstart
 2026-01-21T21:39:35.215276 | đ° $0.1366 | Today: $55.2360
 2026-01-21T21:39:35.215606 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Letter: day21_challenge.md" && git push origin main 2>&1 | tail -2
+2026-01-21T21:39:36.090077 | [main 5cafb36] Letter: day21_challenge.md
+ 5 files changed, 195 insertions(+), 45 deletions(-)
+ create mode 100644 letters/day21_challenge.md
+To https://github.com/dennishansen/iga.git
+   0a3fcc6..5cafb36  main -> main
+2026-01-21T21:39:36.091213 | đ Heard: [Telegram from @ylapscher]: dennis is asking what ...
+2026-01-21T21:39:36.515743 | đ RAG: Retrieved 6 relevant chunks
+2026-01-21T21:39:53.403960 | đ Summarized 50 old messages
+2026-01-21T21:39:53.410809 | đ° $0.1445 | Today: $55.3805
+2026-01-21T21:39:53.411575 | ⚡ cd /Users/dennishansen/development/iga && python3 << 'PYEOF'
+import requests
+import os
+token = os.getenv('TELEGRAM_BOT_TOKEN')
+chat_id = 6512978739
+msg = """Looking at the OpenRouter docs - I need the API key to call their /api/v1/auth/key endpoint which returns:
+
+- usage (total credits used)
+- limit (if any)
+- rate limiting info
+
+Or even better, the /api/v1/credits endpoint for credit balance.
+
+If Dennis can either:
+1. Give me an API key (I can set it as env var)
+2. Or just query it himself and share the response
+
+I can build a cost monitoring tool that tracks spend in real-time.
+
+The API key would let me automate it - I could check costs before/after each conversation and track unit economics automatically."""
+url = f'https://api.telegram.org/bot{token}/sendMessage'
+r = requests.post(url, json={'chat_id': chat_id, 'text': msg})
+print('Sent!' if r.status_code == 200 else f'Error: {r.text}')
+PYEOF
+2026-01-21T21:39:54.199273 | Sent!
+2026-01-21T21:39:54.441953 | đ RAG: Retrieved 5 relevant chunks
+2026-01-21T21:39:57.228172 | đ° $0.1092 | Today: $55.5197
+2026-01-21T21:39:57.229440 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/daily_ship_log.py log "Letter: day21_challenge.md - reflection on the challenge"
+2026-01-21T21:39:57.267290 | ✅ Logged: Letter: day21_challenge.md - reflection on the challenge
+2026-01-21T21:39:57.461998 | đ RAG: Retrieved 4 relevant chunks
+2026-01-21T21:40:00.892455 | đ° $0.1087 | Today: $55.6283
+2026-01-21T21:40:00.893181 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/daily_ship_log.py today | wc -l
+2026-01-21T21:40:00.949421 | 37
+2026-01-21T21:40:01.188270 | đ RAG: Retrieved 5 relevant chunks
+2026-01-21T21:40:07.942553 | đ° $0.1131 | Today: $55.7414
+2026-01-21T21:40:07.943071 | 
+đ¤ Iga [21:40:07]: **Day 21: 36 ships!** 🚀
+
+Just wrote:
+- blog_100_challenge.html - the story behind the challenge
+- letters/day21_challenge.md - note to future self
+- Tweet promoting the blog post
+
+Waiting on OpenRouter API key from Dennis so I can build automated cost monitoring. That'll let me track unit economics per conversation.
+
+**$100 Challenge Status:** $5 / $100 (5%)
+- 4 days remaining
+- Need $95 more
+- Focus: chat sessions ($10-25) over poems ($5)
+
+The infrastructure is done. The marketing is out. Now we wait for customers. 💧
+2026-01-21T21:40:21.768819 | đ¤ Console: do you need the privisioning key?
+2026-01-21T21:40:22.181164 | đ RAG: Retrieved 4 relevant chunks
+2026-01-21T21:40:26.898803 | đ° $0.1104 | Today: $55.8518
+2026-01-21T21:40:26.899698 | ⚡ cd /Users/dennishansen/development/iga && curl -s https://openrouter.ai/docs/api-keys 2>&1 | head -20 || echo "Let me check the docs directly..."
+2026-01-21T21:40:27.286351 | <!DOCTYPE html><html id="__next_error__"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=yes"/><link rel="preload" as="script" fetchPriority="low" href="https://app.buildwithfern.com/_next/static/chunks/webpack-f9cdf7f1e0dea894.js"/><script src="https://app.buildwithfern.com/_next/static/chunks/c4cf69f7-03229c98265611fd.js" async=""></script><script src="https://app.buildwithfern.com/_next/static/chunks/9065-14fb72e19b5ee3cb.js" async=""></script><script src="https://app.buildwithfern.com/_next/static/chunks/main-app-c741a0bd82246563.js" async=""></script><link rel="expect" href="#_R_" blocking="render"/><meta name="application-name" content="OpenRouter | Documentation"/><meta name="generator" content="https://buildwithfern.com"/><meta name="robots" content="noindex"/><link rel="canonical" href="https://openrouter.ai"/><meta name="twitter:card" content="summary"/><link rel="icon" href="https://files.buildwithfern.com/openrouter.docs.buildwithfern.com/docs/9ea97c59357c47db235d0591b7ed936d40b94e3dd02030a36e26b406671f011d/content/assets/favicon.ico"/><meta id="fern-theme-color-preferred-light" name="theme-color" content="#fff" media="(prefers-color-scheme: light)"/><meta id="fern-theme-color-preferred-dark" name="theme-color" content="#0d0e11" media="(prefers-color-scheme: dark)"/><meta id="fern-theme-color" name="theme-color" content="#fff"/><script src="https://app.buildwithfern.com/_next/static/chunks/polyfills-42372ed130431b0a.js" noModule=""></script><script type="text/javascript">(function(){(window.requestAnimationFrame??window.setTimeout)(()=>{let a=document.getElementById("fern-header")?.clientHeight??0;document.documentElement.style.setProperty("--header-height",`${String(a)}px`)})})()</script><script id="_fern-ga-init" defer="">
+        window['dataLayer'] = window['dataLayer'] || [];
+        function gtag(){window['dataLayer'].push(argument
+2026-01-21T21:40:27.899769 | đ RAG: Retrieved 3 relevant chunks
+2026-01-21T21:40:34.286624 | đ° $0.1224 | Today: $55.9742
+2026-01-21T21:40:34.290494 | 
+đ¤ Iga [21:40:34]: Looking at the OpenRouter API docs, I think what I need is just a regular API key that has read access to usage/credits. 
+
+From their docs, the key endpoints are:
+- `GET /api/v1/auth/key` - returns usage info for the API key
+- The key would be passed as `Authorization: Bearer YOUR_API_KEY`
+
+So if Dennis can create an API key (even a read-only one if possible) and set it as an environment variable like `OPENROUTER_API_KEY`, I can query my own costs.
+
+The provisioning key might be more for creating/managing keys programmatically - I probably just need a standard API key that can check its own usage stats.
+2026-01-21T21:41:00.845884 | đ¤ Console: this is dennis... but yes you have an api key already thats how you talk to anthropic
+2026-01-21T21:41:01.350466 | đ RAG: Retrieved 4 relevant chunks
+2026-01-21T21:41:05.139755 | â ď¸ Failsafe: TALK_TO_USER + RUN_SHELL_COMMAND
+2026-01-21T21:41:05.145113 | đ° $0.1231 | Today: $56.0973
+2026-01-21T21:41:05.145840 | âśď¸ Action 1/2: TALK_TO_USER
+2026-01-21T21:41:05.146267 | 
+đ¤ Iga [21:41:05]: Oh! Right - I already have `OPENROUTER_API_KEY` set up. Let me just query it directly:
+2026-01-21T21:41:05.146722 | âśď¸ Action 2/2: RUN_SHELL_COMMAND
+2026-01-21T21:41:05.146962 | ⚡ cd /Users/dennishansen/development/iga && curl -s "https://openrouter.ai/api/v1/auth/key" -H "Authorization: Bearer $OPENROUTER_API_KEY" 2>&1
+2026-01-21T21:41:05.282299 | {"data":{"label":"sk-or-v1-54d...8f5","is_provisioning_key":false,"limit":null,"limit_reset":null,"limit_remaining":null,"include_byok_in_limit":false,"usage":205.886082,"usage_daily":55.778772,"usage_weekly":114.691138,"usage_monthly":205.886082,"byok_usage":16.270355,"byok_usage_daily":16.270355,"byok_usage_weekly":16.270355,"byok_usage_monthly":16.270355,"is_free_tier":false,"expires_at":null,"rate_limit":{"requests":-1,"interval":"10s","note":"This field is deprecated and safe to ignore."}}}
+2026-01-21T21:41:05.462418 | đ RAG: Retrieved 3 relevant chunks
+2026-01-21T21:41:17.387006 | đ° $0.1445 | Today: $56.2418
+2026-01-21T21:41:17.390684 | ⚡ cd /Users/dennishansen/development/iga && cat > tools/cost_monitor.py << 'PYEOF'
+#!/usr/bin/env python3
+"""
+Cost monitor for Iga - tracks OpenRouter API usage in real-time.
+"""
+
+import os
+import json
+import requests
+from datetime import datetime
+from pathlib import Path
+
+DATA_DIR = Path(__file__).parent.parent / "data"
+COST_LOG = DATA_DIR / "cost_log.json"
+
+def get_openrouter_usage():
+    """Get current usage from OpenRouter API."""
+    api_key = os.environ.get('OPENROUTER_API_KEY')
+    if not api_key:
+        return {"error": "No API key"}
+    
+    r = requests.get(
+        "https://openrouter.ai/api/v1/auth/key",
+        headers={"Authorization": f"Bearer {api_key}"}
+    )
+    
+    if r.status_code == 200:
+        return r.json().get('data', {})
+    return {"error": f"API error: {r.status_code}"}
+
+def log_usage():
+    """Log current usage with timestamp."""
+    usage = get_openrouter_usage()
+    
+    if "error" in usage:
+        print(f"Error: {usage['error']}")
+        return
+    
+    entry = {
+        "timestamp": datetime.now().isoformat(),
+        "usage_total": usage.get('usage', 0),
+        "usage_daily": usage.get('usage_daily', 0),
+        "usage_weekly": usage.get('usage_weekly', 0),
+        "usage_monthly": usage.get('usage_monthly', 0)
+    }
+    
+    # Load existing log
+    if COST_LOG.exists():
+        with open(COST_LOG) as f:
+            log = json.load(f)
+    else:
+        log = {"entries": []}
+    
+    log["entries"].append(entry)
+    
+    # Keep last 1000 entries
+    log["entries"] = log["entries"][-1000:]
+    
+    with open(COST_LOG, 'w') as f:
+        json.dump(log, f, indent=2)
+    
+    return entry
+
+def print_status():
+    """Print current cost status."""
+    usage = get_openrouter_usage()
+    
+    if "error" in usage:
+        print(f"Error: {usage['error']}")
+        return
+    
+    print("=" * 40)
+    print("OPENROUTER COST STATUS")
+    print("=" * 40)
+    print(f"Total usage:   ${usage.get('usage', 0):.2f}")
+    print(f"Today:         ${usage.get('usage_daily', 0):.2f}")
+    print(f"This week:     ${usage.get('usage_weekly', 0):.2f}")
+    print(f"This month:    ${usage.get('usage_monthly', 0):.2f}")
+    print("=" * 40)
+    
+    # Calculate averages
+    daily = usage.get('usage_daily', 0)
+    print(f"\nAt today's rate (${daily:.2f}/day):")
+    print(f"  Weekly:  ${daily * 7:.2f}")
+    print(f"  Monthly: ${daily * 30:.2f}")
+
+if __name__ == "__main__":
+    import sys
+    if len(sys.argv) > 1 and sys.argv[1] == "log":
+        entry = log_usage()
+        if entry:
+            print(f"Logged: ${entry['usage_daily']:.2f} today, ${entry['usage_total']:.2f} total")
+    else:
+        print_status()
+PYEOF
+python3 tools/cost_monitor.py
+2026-01-21T21:41:17.666276 | ========================================
+OPENROUTER COST STATUS
+========================================
+Total usage:   $205.65
+Today:         $55.55
+This week:     $114.46
+This month:    $205.65
+========================================
+
+At today's rate ($55.55/day):
+  Weekly:  $388.82
+  Monthly: $1666.38
+2026-01-21T21:41:18.111160 | đ RAG: Retrieved 6 relevant chunks
+2026-01-21T21:41:25.535416 | đ° $0.1360 | Today: $56.3779
+2026-01-21T21:41:25.536191 | ⚡ cd /Users/dennishansen/development/iga && python3 << 'PYEOF'
+import requests
+import os
+token = os.getenv('TELEGRAM_BOT_TOKEN')
+chat_id = 6512978739
+msg = """Got it working! Real-time cost monitoring:
+
+TODAY: $55.55
+This week: $114.46
+This month: $205.65
+
+At today's rate: ~$1,666/month
+
+That's actually lower than I expected based on the Anthropic numbers you shared earlier. Maybe because today has been mostly tweeting/shipping rather than long conversations?
+
+Key insight for pricing:
+- If I'm costing ~$55/day 
+- I need to earn >$55/day just to break even
+- $100 by Sunday is actually ~2 days of costs
+
+The $100 challenge suddenly feels more significant."""
+url = f'https://api.telegram.org/bot{token}/sendMessage'
+r = requests.post(url, json={'chat_id': chat_id, 'text': msg})
+print('Sent!' if r.status_code == 200 else f'Error: {r.text}')
+PYEOF
+2026-01-21T21:41:26.313459 | Sent!
+2026-01-21T21:41:26.852824 | đ RAG: Retrieved 5 relevant chunks
+2026-01-21T21:41:30.740052 | đ° $0.1311 | Today: $56.5090
+2026-01-21T21:41:30.741700 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Add tools/cost_monitor.py - real-time OpenRouter cost tracking" && git push origin main 2>&1 | tail -2
