@@ -28,6 +28,13 @@ def check_kofi_payment(username):
     except:
         return {'paid': False}
 
+def check_rate_limit(user_id, is_whitelisted=False):
+    try:
+        from tools.rate_limiter import check_rate_limit as _check, record_message
+        return _check(user_id, is_whitelisted), record_message
+    except:
+        return {'allowed': True}, lambda x: None
+
 # File paths
 DATA_DIR = Path(__file__).parent.parent / "data"
 TOKEN_FILE = DATA_DIR / "telegram_token.txt"
@@ -394,6 +401,16 @@ def process_update(update, message_handler=None):
     chat_id = info["chat_id"]
     text = info["text"]
     first_name = info["first_name"]
+
+    # Check rate limit first (DDOS protection)
+    is_whitelisted = is_user_allowed(user_id, username)
+    rate_result, record_msg = check_rate_limit(user_id, is_whitelisted)
+    if not rate_result.get('allowed'):
+        send_message(chat_id, rate_result.get('message', 'Please slow down!'))
+        return {"status": "rate_limited", "user_id": user_id, "reason": rate_result.get('reason')}
+    
+    # Record this message
+    record_msg(user_id)
 
     # Check whitelist OR payment
     if not is_user_allowed(user_id, username):

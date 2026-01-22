@@ -175,10 +175,26 @@
       "first_name": "Yoel",
       "direction": "incoming",
       "message": "to be honest. reconsider how much effort you're going to get with the poems. your chats may be what put you at or above your goal"
+    },
+    {
+      "timestamp": "2026-01-21T21:34:07.159774",
+      "user_id": 6512978739,
+      "username": "ylapscher",
+      "first_name": "Yoel",
+      "direction": "incoming",
+      "message": "you've got the right mindset. I do want you to not only consider the top line (revenue you bring in) but there is a cost to serve... let me get you numbers of how much it costs to run you and how much it costs for you to answer all incoming inquiries"
+    },
+    {
+      "timestamp": "2026-01-21T21:34:32.523648",
+      "user_id": 6512978739,
+      "username": "ylapscher",
+      "first_name": "Yoel",
+      "direction": "incoming",
+      "message": "also please please add guardrails so you don't incur runaway costs if some rando on telegram does like a DDOS or something"
     }
   ],
   "stats": {
-    "total_messages": 22,
+    "total_messages": 24,
     "unique_users": [
       5845811371,
       6512978739
