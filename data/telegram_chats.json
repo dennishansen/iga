@@ -143,10 +143,18 @@
       "first_name": "Yoel",
       "direction": "incoming",
       "message": "do you need Dennis's nkgrok keys?"
+    },
+    {
+      "timestamp": "2026-01-21T21:26:32.465726",
+      "user_id": 6512978739,
+      "username": "ylapscher",
+      "first_name": "Yoel",
+      "direction": "incoming",
+      "message": "yeah I'll test it. to confirm, my message on Ko-fi just needs to include my telegram handle anywhere in the message?"
     }
   ],
   "stats": {
-    "total_messages": 18,
+    "total_messages": 19,
     "unique_users": [
       5845811371,
       6512978739

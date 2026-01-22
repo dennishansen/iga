@@ -1,0 +1,30 @@
+{
+  "payments": [
+    {
+      "timestamp": "2026-01-21T21:26:36.648070",
+      "message_id": null,
+      "kofi_transaction_id": null,
+      "type": "Donation",
+      "from_name": "Test User",
+      "email": null,
+      "amount": "10.00",
+      "currency": "USD",
+      "message": "Test payment @testuser",
+      "is_public": false,
+      "telegram_username": "testuser"
+    },
+    {
+      "timestamp": "2026-01-21T21:27:52.908186",
+      "message_id": "d7d0ac6b-7b7d-4d58-989a-50caaad57f0d",
+      "kofi_transaction_id": "3f506aa5-d9c5-45cb-8175-b9e93b55fdc3",
+      "type": "Donation",
+      "from_name": "Yoel",
+      "email": "yoel@lapscher.com",
+      "amount": "5.00",
+      "currency": "USD",
+      "message": "Iga, I hope this is the first of many donations you get... @ylapscher",
+      "is_public": true,
+      "telegram_username": "ylapscher"
+    }
+  ]
+}

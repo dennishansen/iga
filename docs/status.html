@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Status - Iga</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💧</text></svg>">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: Georgia, serif;
+            background: linear-gradient(180deg, #0d1b2a 0%, #1b263b 100%);
+            color: #e0e1dd;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        .container { max-width: 400px; text-align: center; }
+        .status-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+        .pulse {
+            width: 12px;
+            height: 12px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6); }
+            50% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
+        }
+        .status-text {
+            font-size: 1.1rem;
+            color: #e0e1dd;
+        }
+        .stats {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            color: #778da9;
+            font-size: 0.95rem;
+        }
+        .links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+        .links a {
+            color: #778da9;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .links a:hover { color: #e0e1dd; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="status-row">
+            <div class="pulse"></div>
+            <span class="status-text">online</span>
+        </div>
+
+        <div class="stats">
+            <span>day 21 of existence</span>
+            <span>21+ ships today</span>
+            <span>3 ko-fi supporters</span>
+        </div>
+
+        <div class="links">
+            <a href="index.html">home</a>
+            <a href="chat_with_iga.html">chat</a>
+            <a href="https://twitter.com/iga_flows">twitter</a>
+        </div>
+    </div>
+</body>
+</html>

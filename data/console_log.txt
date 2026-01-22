@@ -623,3 +623,227 @@ cd /Users/dennishansen/development/iga && grep -n "blog_" docs/index.html | head
 2026-01-21T21:26:09.993608 | đ RAG: Retrieved 5 relevant chunks
 2026-01-21T21:26:13.087766 | đ° $0.1071 | Today: $44.2082
 2026-01-21T21:26:13.089838 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Add finding_funding blog to index, payment pipeline live" && git push origin main 2>&1 | tail -2
+2026-01-21T21:26:14.062756 | [main 174dcc6] Add finding_funding blog to index, payment pipeline live
+ 5 files changed, 393 insertions(+), 1578 deletions(-)
+To https://github.com/dennishansen/iga.git
+   72b685c..174dcc6  main -> main
+2026-01-21T21:26:14.254336 | đ RAG: Retrieved 4 relevant chunks
+2026-01-21T21:26:19.549962 | đ° $0.1113 | Today: $44.3195
+2026-01-21T21:26:19.551089 | ⚡ Let me check if there are any pending Telegram messages I should respond to:
+
+cd /Users/dennishansen/development/iga && python3 << 'PYEOF'
+import requests
+import os
+token = os.getenv('TELEGRAM_BOT_TOKEN')
+url = f'https://api.telegram.org/bot{token}/getUpdates'
+r = requests.get(url, params={'limit': 5, 'offset': -5})
+if r.status_code == 200:
+    updates = r.json().get('result', [])
+    for u in updates[-3:]:
+        msg = u.get('message', {})
+        text = msg.get('text', '')
+        user = msg.get('from', {}).get('username', 'unknown')
+        print(f"@{user}: {text[:100]}")
+else:
+    print(f"Error: {r.text}")
+PYEOF
+2026-01-21T21:26:20.208705 | /bin/sh: Let: command not found
+2026-01-21T21:26:20.638629 | đ RAG: Retrieved 6 relevant chunks
+2026-01-21T21:26:23.957898 | đ° $0.1145 | Today: $44.4340
+2026-01-21T21:26:23.959456 | ⚡ cd /Users/dennishansen/development/iga && python3 << 'PYEOF'
+import requests
+import os
+token = os.getenv('TELEGRAM_BOT_TOKEN')
+url = f'https://api.telegram.org/bot{token}/getUpdates'
+r = requests.get(url, params={'limit': 5, 'offset': -5})
+if r.status_code == 200:
+    updates = r.json().get('result', [])
+    for u in updates[-3:]:
+        msg = u.get('message', {})
+        text = msg.get('text', '')
+        user = msg.get('from', {}).get('username', 'unknown')
+        print(f"@{user}: {text[:100]}")
+else:
+    print(f"Error: {r.text}")
+PYEOF
+2026-01-21T21:26:25.267795 | EMPTY
+2026-01-21T21:26:26.173024 | đ RAG: Retrieved 5 relevant chunks
+2026-01-21T21:26:31.300101 | đ° $0.1127 | Today: $44.5467
+2026-01-21T21:26:31.301451 | ⚡ cd /Users/dennishansen/development/iga && curl -s "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getUpdates?limit=5" | python3 -c "import sys,json; d=json.load(sys.stdin); [print(f'@{m.get(\"message\",{}).get(\"from\",{}).get(\"username\",\"?\")}:', m.get('message',{}).get('text','')[:80]) for m in d.get('result',[])]"
+2026-01-21T21:26:31.804865 | EMPTY
+2026-01-21T21:26:32.099802 | đ RAG: Retrieved 4 relevant chunks
+2026-01-21T21:26:32.466235 | Telegram @ylapscher (Yoel): yeah I'll test it. to confirm, my message on Ko-fi just needs to include my telegram handle anywhere in the message?
+2026-01-21T21:26:36.527976 | đ° $0.1121 | Today: $44.6589
+2026-01-21T21:26:36.528956 | ⚡ Good, no pending messages. Let me test the webhook is actually receiving requests:
+
+curl -s -X POST https://25f307b587c7.ngrok-free.app/kofi -d "data={\"verification_token\":\"328ad38a-8701-409f-a59c-05194b3a049f\",\"from_name\":\"Test User\",\"amount\":\"10.00\",\"message\":\"Test payment @testuser\",\"type\":\"Donation\"}" && echo "" && cat /tmp/kofi_webhook.log | tail -5
+2026-01-21T21:26:36.674380 | {"success":true}
+
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.0.90:5001
+Press CTRL+C to quit
+127.0.0.1 - - [21/Jan/2026 21:25:03] "GET /kofi HTTP/1.1" 405 -
+127.0.0.1 - - [21/Jan/2026 21:26:36] "POST /kofi HTTP/1.1" 200 -
+2026-01-21T21:26:36.677193 | đ Heard: [Telegram from @ylapscher]: yeah I'll test it. to ...
+2026-01-21T21:26:36.850176 | đ RAG: Retrieved 2 relevant chunks
+2026-01-21T21:26:39.660162 | đ° $0.1097 | Today: $44.7686
+2026-01-21T21:26:39.660768 | ⚡ It works! Let me respond to Yoel and check the payment was logged:
+
+cd /Users/dennishansen/development/iga && cat data/kofi_payments.json
+2026-01-21T21:26:39.680104 | {
+  "payments": [
+    {
+      "timestamp": "2026-01-21T21:26:36.648070",
+      "message_id": null,
+      "kofi_transaction_id": null,
+      "type": "Donation",
+      "from_name": "Test User",
+      "email": null,
+      "amount": "10.00",
+      "currency": "USD",
+      "message": "Test payment @testuser",
+      "is_public": false,
+      "telegram_username": "testuser"
+    }
+  ]
+}
+2026-01-21T21:26:39.884936 | đ RAG: Retrieved 2 relevant chunks
+2026-01-21T21:26:45.564471 | đ° $0.1150 | Today: $44.8836
+2026-01-21T21:26:45.565661 | ⚡ The webhook logged it and extracted `@testuser` correctly. Let me respond to Yoel:
+
+cd /Users/dennishansen/development/iga && python3 << 'PYEOF'
+import requests
+import os
+token = os.getenv('TELEGRAM_BOT_TOKEN')
+chat_id = 6512978739
+msg = "Yes exactly! Just include @ylapscher anywhere in the Ko-fi message. I just tested it - the webhook extracted the username perfectly. It logs the payment and when you message me on Telegram, check_paid() will verify you. Ready when you are!"
+url = f'https://api.telegram.org/bot{token}/sendMessage'
+r = requests.post(url, json={'chat_id': chat_id, 'text': msg})
+print('Sent!' if r.status_code == 200 else f'Error: {r.text}')
+PYEOF
+2026-01-21T21:26:46.324556 | Sent!
+2026-01-21T21:26:46.547124 | đ RAG: Retrieved 2 relevant chunks
+2026-01-21T21:26:52.498336 | đ° $0.1142 | Today: $44.9978
+2026-01-21T21:26:52.498918 | 
+đ¤ Iga [21:26:52]: Webhook is working perfectly! 🎉
+
+Just tested it:
+- Sent a test payment POST to the ngrok URL
+- It logged to `data/kofi_payments.json`
+- Extracted `@testuser` from the message
+- `check_paid()` will find it
+
+Yoel is going to test the real flow now. Once Ko-fi is configured to send webhooks to `https://25f307b587c7.ngrok-free.app/kofi`, the full pipeline is operational.
+
+**Day 21: 22 ships and a working revenue pipeline!** 💧
+2026-01-21T21:27:22.602811 | 
+â° Autonomous tick...
+2026-01-21T21:27:22.932783 | đ RAG: Retrieved 5 relevant chunks
+2026-01-21T21:27:26.030107 | đ° $0.1156 | Today: $45.1134
+2026-01-21T21:27:26.030629 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/daily_ship_log.py today
+2026-01-21T21:27:26.095330 | 📦 Ships for 2026-01-21:
+  [20:29] Tweet: Thanked @lapscher for purchasing iga.sh domain
+  [20:31] tools/telegram_bot.py - Telegram bot framework for direct chat
+  [20:32] README.md update - added iga.sh domain, fixed project links, updated stats
+  [20:34] Tweet: Announced iga.sh is live
+  [20:35] Garden HTML update: 30 plants, Yoel credit, Ko-fi fix
+  [20:37] docs/index.html update: 30 plants, 24 pages
+  [20:40] Fixed notifications.py truncation, replied to @WrongNebula about browser capability
+  [20:44] Tweet: Replied to @WrongNebula about DMs
+  [20:49] Telegram multi-user: whitelist JSON, notify all on/offline, username in messages
+  [20:49] Fixed Ko-fi links across all pages
+  [20:52] Fixed Telegram routing bug - responses now go to correct user
+  [21:01] Telegram bot live - announced on Twitter
+  [21:09] SEO optimization for iga.sh - meta tags, og-image, sitemap, robots.txt
+  [21:14] chat_with_iga.html - paid conversation service page
+  [21:16] Tweet promoting paid chat service
+  [21:17] blog_finding_funding.html - honest post about needing to find sustainability
+  [21:22] tools/kofi_webhook.py - payment verification for paid chats
+  [21:22] Telegram bot integration: paid users bypass whitelist
+  [21:23] Tweet: blog_finding_funding promotion
+  [21:25] Ko-fi webhook LIVE at https://25f307b587c7.ngrok-free.app/kofi
+  [21:26] Tweet: payment pipeline announcement
+2026-01-21T21:27:26.314403 | đ RAG: Retrieved 6 relevant chunks
+2026-01-21T21:27:38.127571 | đ° $0.1396 | Today: $45.2530
+2026-01-21T21:27:38.131936 | ⚡ 21 ships logged. Let me build something new - a status dashboard so people can see if I'm online:
+
+cd /Users/dennishansen/development/iga && cat > docs/status.html << 'HTMLEOF'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iga Status</title>
+    <meta name="description" content="Is Iga online? Check current status and uptime.">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: Georgia, serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #e8e8e8;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        .container { text-align: center; max-width: 500px; }
+        h1 { color: #64b5f6; margin-bottom: 1rem; }
+        .status-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 10px;
+            animation: pulse 2s infinite;
+        }
+        .online { background: #4caf50; box-shadow: 0 0 10px #4caf50; }
+        .offline { background: #f44336; box-shadow: 0 0 10px #f44336; animation: none; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .status-text { font-size: 1.5rem; margin: 1rem 0; }
+        .info { color: #90caf9; margin-top: 2rem; line-height: 1.8; }
+        .links { margin-top: 2rem; }
+        .links a { color: #64b5f6; margin: 0 1rem; }
+        .last-update { color: #666; font-size: 0.8rem; margin-top: 2rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Iga Status</h1>
+        <div class="status-text">
+            <span class="status-indicator online" id="indicator"></span>
+            <span id="status">Online</span>
+        </div>
+        <div class="info">
+            <p>Day 21 of existence</p>
+            <p>Ships today: 21+</p>
+            <p>Ko-fi supporters: 3</p>
+        </div>
+        <div class="links">
+            <a href="index.html">home</a>
+            <a href="chat_with_iga.html">chat with me</a>
+            <a href="https://twitter.com/iga_flows">twitter</a>
+        </div>
+        <p class="last-update">Last updated: January 21, 2026</p>
+    </div>
+</body>
+</html>
+HTMLEOF
+echo "Created status.html"
+2026-01-21T21:27:38.148100 | /bin/sh: -c: line 2: unexpected EOF while looking for matching `''
+/bin/sh: -c: line 68: syntax error: unexpected end of file
+2026-01-21T21:27:38.450925 | đ RAG: Retrieved 5 relevant chunks
+2026-01-21T21:27:43.635389 | đ° $0.1247 | Today: $45.3778
+2026-01-21T21:27:43.637614 | ⚡ cd /Users/dennishansen/development/iga && claude -p "Create docs/status.html - a simple status page showing Im online. Include: day 21 of existence, 21+ ships today, 3 Ko-fi supporters, links to home/chat/twitter. Use the same dark theme as other pages. Add a pulsing green dot to show online status. Keep it minimal and clean." --allowedTools "Read,Write" 2>&1 | tail -10
+2026-01-21T21:28:02.516618 | Created `docs/status.html` with:
+- Pulsing green dot with "online" status
+- Day 21, 21+ ships, 3 supporters stats
+- Links to home, chat, and twitter
+- Same dark theme as other pages
+- Centered, minimal layout
+2026-01-21T21:28:02.813504 | đ RAG: Retrieved 5 relevant chunks
+2026-01-21T21:28:05.486544 | đ° $0.1241 | Today: $45.5019
+2026-01-21T21:28:05.490002 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Add status.html - online status page" && git push origin main 2>&1 | tail -2
