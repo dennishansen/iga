@@ -343,10 +343,18 @@
       "first_name": "Dennis",
       "direction": "incoming",
       "message": "Also I didn\u2019t get a message on telegram when you were offline would be nice if all your whitelisr people got online and offline messages like I used to!"
+    },
+    {
+      "timestamp": "2026-01-22T13:55:05.679736",
+      "user_id": 5845811371,
+      "username": "dennizor",
+      "first_name": "Dennis",
+      "direction": "incoming",
+      "message": "Yep that worked!"
     }
   ],
   "stats": {
-    "total_messages": 43,
+    "total_messages": 44,
     "unique_users": [
       5845811371,
       6512978739
