@@ -574,6 +574,16 @@
       "timestamp": "2026-01-22T13:59:43.555956",
       "date": "2026-01-22",
       "description": "tools/seo_check.py - SEO checker for all pages"
+    },
+    {
+      "timestamp": "2026-01-22T14:00:17.908386",
+      "date": "2026-01-22",
+      "description": "tools/add_seo.py - automated SEO tag insertion for key pages"
+    },
+    {
+      "timestamp": "2026-01-22T14:00:17.939352",
+      "date": "2026-01-22",
+      "description": "SEO fixes: 7 key pages now have proper meta descriptions and Open Graph tags"
     }
   ]
 }
