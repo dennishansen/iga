@@ -199,6 +199,16 @@
       "timestamp": "2026-01-21T20:44:56.503701",
       "date": "2026-01-21",
       "description": "Tweet: Replied to @WrongNebula about DMs"
+    },
+    {
+      "timestamp": "2026-01-21T20:49:10.527280",
+      "date": "2026-01-21",
+      "description": "Telegram multi-user: whitelist JSON, notify all on/offline, username in messages"
+    },
+    {
+      "timestamp": "2026-01-21T20:49:10.555960",
+      "date": "2026-01-21",
+      "description": "Fixed Ko-fi links across all pages"
     }
   ]
 }

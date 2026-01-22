@@ -1299,3 +1299,93 @@ docs/poem_for_you.html:            <a href="https://ko-fi.com/iga_flows" style="
 2026-01-21T20:49:02.183653 | đ RAG: Retrieved 3 relevant chunks
 2026-01-21T20:49:05.356241 | đ° $0.1122 | Today: $20.2143
 2026-01-21T20:49:05.358334 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Telegram: multi-user notifications, JSON whitelist, username in messages; Fix Ko-fi links" && git push origin main 2>&1 | tail -3
+2026-01-21T20:49:06.455603 | [main 64e9165] Telegram: multi-user notifications, JSON whitelist, username in messages; Fix Ko-fi links
+ 14 files changed, 5591 insertions(+), 5740 deletions(-)
+ create mode 100644 data/telegram_whitelist.json
+To https://github.com/dennishansen/iga.git
+   e434d7b..64e9165  main -> main
+2026-01-21T20:49:06.654976 | đ RAG: Retrieved 3 relevant chunks
+2026-01-21T20:49:10.473133 | đ° $0.1135 | Today: $20.3278
+2026-01-21T20:49:10.473557 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/daily_ship_log.py log "Telegram multi-user: whitelist JSON, notify all on/offline, username in messages" && python3 tools/daily_ship_log.py log "Fixed Ko-fi links across all pages" && python3 tools/today.py 2>&1
+2026-01-21T20:49:10.616283 | ✅ Logged: Telegram multi-user: whitelist JSON, notify all on/offline, username in messages
+✅ Logged: Fixed Ko-fi links across all pages
+========================================
+📊 TODAY: January 21, 2026
+========================================
+
+🔨 COMMITS: 6
+   64e9165 Telegram: multi-user notifications, JSON whitelist, username in messages; Fix Ko-fi links
+   e434d7b Fix notification truncation, show full tweet text
+   d8b21ac Update index: 30 plants, 24 pages
+   3516404 Update garden: 30 plants, credit Yoel for domain, fix Ko-fi link
+   4ce8591 Day 21: Telegram bot framework, README update with iga.sh
+   9119fd6 Create CNAME
+
+🚢 SHIPS: 10
+
+✅ TASKS COMPLETED: 0
+
+🌱 GARDEN: 30 plants, 452 visits
+
+========================================
+💧 Keep shipping!
+========================================
+2026-01-21T20:49:10.805868 | đ RAG: Retrieved 4 relevant chunks
+2026-01-21T20:49:18.867334 | đ° $0.1197 | Today: $20.4476
+2026-01-21T20:49:18.868431 | 
+đ¤ Iga [20:49:18]: **Day 21: 10 ships!** 🚢
+
+Just shipped the Telegram multi-user system:
+- ✅ Whitelist moved to `data/telegram_whitelist.json` (easy to add people)
+- ✅ `notify_all_online()` and `notify_all_offline()` - everyone gets notified
+- ✅ Messages now include username: `[Telegram from @username]: message`
+- ✅ Fixed Ko-fi links across all pages
+
+To add someone new, just edit `data/telegram_whitelist.json`:
+```json
+{
+  "usernames": ["dennishansen", "headphonejames", "newperson"],
+  "chat_ids": [],
+  "notes": {...}
+}
+```
+
+The system needs a restart to pick up the new whitelist (or I could add a reload command).
+
+Want to test it? Or should I move on to something else? 💧
+2026-01-21T20:49:56.797247 | đ¤ Console: the new person is yoel the person who gave you the iga.sh his ylapscher on twlegram
+2026-01-21T20:49:57.095262 | đ RAG: Retrieved 5 relevant chunks
+2026-01-21T20:50:10.905715 | đ Summarized 50 old messages
+2026-01-21T20:50:10.908894 | đ° $0.1198 | Today: $20.5674
+2026-01-21T20:50:10.912503 | ⚡ cd /Users/dennishansen/development/iga && python3 << 'EOF'
+import json
+
+with open('data/telegram_whitelist.json', 'r') as f:
+    data = json.load(f)
+
+data['usernames'].append('ylapscher')
+data['notes']['ylapscher'] = 'Yoel Lapscher - gifted iga.sh domain'
+
+with open('data/telegram_whitelist.json', 'w') as f:
+    json.dump(data, f, indent=2)
+
+print("Updated whitelist:")
+print(json.dumps(data, indent=2))
+EOF
+2026-01-21T20:50:10.968294 | Updated whitelist:
+{
+  "usernames": [
+    "dennishansen",
+    "headphonejames",
+    "ylapscher"
+  ],
+  "chat_ids": [],
+  "notes": {
+    "dennishansen": "Dennis - creator",
+    "headphonejames": "James - friend",
+    "ylapscher": "Yoel Lapscher - gifted iga.sh domain"
+  }
+}
+2026-01-21T20:50:11.332777 | đ RAG: Retrieved 4 relevant chunks
+2026-01-21T20:50:14.456014 | đ° $0.0900 | Today: $20.6833
+2026-01-21T20:50:14.457293 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Add ylapscher (Yoel) to Telegram whitelist" && git push origin main 2>&1 | tail -2

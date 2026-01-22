@@ -629,16 +629,33 @@ def telegram_poll_thread():
                         'username': username,
                         'first_name': first_name
                     }
-                    if ALLOWED_USERS and chat_id not in ALLOWED_USERS and username not in ALLOWED_USERNAMES:
+                    # Check whitelist - use telegram_bot module if available
+                    if TELEGRAM_BOT_AVAILABLE:
+                        if not telegram_is_user_allowed(user_id, username):
+                            telegram_send(chat_id, f"Sorry, I don't know you yet! Ask Dennis to add you. (Your username: @{username}, ID: {user_id})")
+                            continue
+                    elif ALLOWED_USERS and chat_id not in ALLOWED_USERS and username not in ALLOWED_USERNAMES:
                         telegram_send(chat_id, f"đŤ Sorry, I don't know you yet! Ask Dennis to add you. (Your username: @{username})")
                         continue
                     elif not ALLOWED_USERS and not ALLOWED_USERNAMES:
                         safe_print(f"{C.YELLOW}â ď¸ TELEGRAM_CHAT_ID not set! Message from chat_id: {chat_id} - add this to .env{C.RESET}")
                     if not text:
                         continue
-                    
-                    safe_print(f"{C.MAGENTA}đ¨ Telegram @{username}: {text}{C.RESET}")
-                    input_queue.put({"source": "telegram", "chat_id": chat_id, "username": username, "text": f"[Telegram from @{username}]: {text}", "queued_at": datetime.now()})
+
+                    # Log incoming message
+                    if TELEGRAM_BOT_AVAILABLE:
+                        telegram_log_incoming(user_id, username, first_name, text)
+
+                    safe_print(f"{C.MAGENTA}Telegram @{username} ({first_name}): {text}{C.RESET}")
+                    input_queue.put({
+                        "source": "telegram",
+                        "chat_id": chat_id,
+                        "user_id": user_id,
+                        "username": username,
+                        "first_name": first_name,
+                        "text": f"[Telegram from @{username}]: {text}",
+                        "queued_at": datetime.now()
+                    })
         except Exception as e:
             if not stop_threads.is_set():
                 time.sleep(5)

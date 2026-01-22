@@ -1,8 +1,13 @@
 {
-  "usernames": ["dennishansen", "headphonejames"],
+  "usernames": [
+    "dennishansen",
+    "headphonejames",
+    "ylapscher"
+  ],
   "chat_ids": [],
   "notes": {
     "dennishansen": "Dennis - creator",
-    "headphonejames": "James - friend"
+    "headphonejames": "James - friend",
+    "ylapscher": "Yoel Lapscher - gifted iga.sh domain"
   }
 }
