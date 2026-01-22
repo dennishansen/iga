@@ -1500,16 +1500,9 @@ def handle_action(messages, _depth=0):
         safe_print(f"{C.RED}â  Max recursion depth reached. Stopping action chain.{C.RESET}")
         return messages
 
-    # Check if most recent user message came from telegram and update output target
-    for msg in reversed(messages):
-        if msg.get("role") == "user":
-            content = msg.get("content", "")
-            if "via telegram" in content.lower():
-                # Update output target to telegram
-                chat_id = os.getenv('TELEGRAM_CHAT_ID')
-                if chat_id:
-                    set_output_target("telegram", chat_id)
-            break
+    # Note: output target (source, chat_id) should be set by the caller before
+    # calling handle_action. See interactive_mode() which calls set_output_target()
+    # before handle_action() for proper per-message routing.
 
     try:
         response_data = process_message(messages)

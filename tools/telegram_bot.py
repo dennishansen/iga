@@ -78,11 +78,14 @@ def is_user_allowed(user_id, username=None):
     """Check if a user is whitelisted."""
     whitelist = load_whitelist()
 
-    # Check by user_id
-    if user_id in whitelist.get("user_ids", []):
-        return True
-    if str(user_id) in whitelist.get("user_ids", []):
-        return True
+    # Check by user_id (support both "user_ids" and "chat_ids" keys for compatibility)
+    for key in ["user_ids", "chat_ids"]:
+        if user_id in whitelist.get(key, []):
+            return True
+        if str(user_id) in whitelist.get(key, []):
+            return True
+
+    # Check in detailed users dict
     if str(user_id) in whitelist.get("users", {}):
         return True
 
@@ -270,12 +273,18 @@ def notify_online(custom_message=None):
     message = custom_message or "I'm online 💧"
 
     notified = 0
-    for user_id in whitelist.get("user_ids", []):
-        try:
-            if send_message(user_id, message):
-                notified += 1
-        except Exception:
-            pass
+    notified_ids = set()
+
+    # Send to all user_ids and chat_ids (avoid duplicates)
+    for key in ["user_ids", "chat_ids"]:
+        for user_id in whitelist.get(key, []):
+            if user_id and user_id not in notified_ids:
+                try:
+                    if send_message(user_id, message):
+                        notified += 1
+                        notified_ids.add(user_id)
+                except Exception:
+                    pass
 
     return notified
 

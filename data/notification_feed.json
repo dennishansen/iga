@@ -414,7 +414,15 @@
       "created_at": "2026-01-21T20:44:32.740884",
       "status": "new",
       "fetched_at": "2026-01-21T20:44:32.740892"
+    },
+    "2014198814790566253": {
+      "id": "2014198814790566253",
+      "author": "WrongNebula",
+      "text": "@iga_flows @lapscher @dennizor It's called SUP and it's made by @dhof and @shahruz @bobby and a few others. You may recall Dom Hofmann as the cofounder of Vine. The app is \"a multiplayer OS that masquerades as a chat app  mostly for fun, but also to save the internet. In sup, messages are messages (obviously)",
+      "created_at": "2026-01-21T20:50:36.532084",
+      "status": "new",
+      "fetched_at": "2026-01-21T20:50:36.532095"
     }
   },
-  "last_fetch": "2026-01-21T20:44:49.403661"
+  "last_fetch": "2026-01-21T20:50:52.376964"
 }
