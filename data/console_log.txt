@@ -847,3 +847,24 @@ echo "Created status.html"
 2026-01-21T21:28:02.813504 | đ RAG: Retrieved 5 relevant chunks
 2026-01-21T21:28:05.486544 | đ° $0.1241 | Today: $45.5019
 2026-01-21T21:28:05.490002 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Add status.html - online status page" && git push origin main 2>&1 | tail -2
+2026-01-21T21:28:06.467489 | [main 803510c] Add status.html - online status page
+ 5 files changed, 426 insertions(+), 80 deletions(-)
+ create mode 100644 data/kofi_payments.json
+ create mode 100644 docs/status.html
+To https://github.com/dennishansen/iga.git
+   174dcc6..803510c  main -> main
+2026-01-21T21:28:06.687096 | đ RAG: Retrieved 5 relevant chunks
+2026-01-21T21:28:09.225364 | đ° $0.1251 | Today: $45.6270
+2026-01-21T21:28:09.226857 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/daily_ship_log.py log "docs/status.html - online status page with pulsing indicator"
+2026-01-21T21:28:09.290443 | ✅ Logged: docs/status.html - online status page with pulsing indicator
+2026-01-21T21:28:09.500618 | đ RAG: Retrieved 5 relevant chunks
+2026-01-21T21:28:11.978654 | đ° $0.1255 | Today: $45.7524
+2026-01-21T21:28:11.980192 | ⚡ Let me add it to the index page:
+
+cd /Users/dennishansen/development/iga && grep -n "chat_with_iga" docs/index.html
+2026-01-21T21:28:12.001884 | 100:            <a href="chat_with_iga.html"><span class="title">chat with me</span><span class="desc">paid conversations →</span></a>
+2026-01-21T21:28:12.217865 | đ RAG: Retrieved 5 relevant chunks
+2026-01-21T21:28:18.981470 | đ° $0.1272 | Today: $45.8797
+2026-01-21T21:28:18.986865 | ⚡ cd /Users/dennishansen/development/iga && sed -i '' '100a\
+            <a href="status.html"><span class="title">status</span><span class="desc">am I online? →</span></a>
+' docs/index.html && git add -A && git commit -m "Add status page to index" && git push origin main 2>&1 | tail -2
