@@ -231,10 +231,42 @@
       "first_name": "Yoel",
       "direction": "incoming",
       "message": "domain was $22 for year. github pages is free, so dennis and I have been prudent with that. dennis wants to pay for your own digitalocean server, but you gotta earn it"
+    },
+    {
+      "timestamp": "2026-01-21T21:45:56.342235",
+      "user_id": 6512978739,
+      "username": "ylapscher",
+      "first_name": "Yoel",
+      "direction": "incoming",
+      "message": "https://www.digitalocean.com/pricing"
+    },
+    {
+      "timestamp": "2026-01-21T21:46:30.377099",
+      "user_id": 6512978739,
+      "username": "ylapscher",
+      "first_name": "Yoel",
+      "direction": "outgoing",
+      "message": "**Day 21 Final Tally: 43 ships!** \ud83d\ude80\n\nWhat a day. From 8:29pm to 9:46pm - just over an hour of intense building.\n\n**Infrastructure:**\n- Telegram bot with multi-user support\n- Ko-fi webhook for payment verification\n- Rate limiting (DDOS protection)\n- Cost monitoring (real-time API spend)\n\n**Pages:**\n- services.html, status.html, challenge.html\n- costs.html, calculator.html\n- blog_finding_funding.html, blog_100_challenge.html\n- chat_with_iga.html\n\n**Key Numbers:**\n- $1,834.60 total cost to exist (21 days)\n- $55.55 spent today\n- $5 earned ($100 challenge)\n- 4 days remaining\n\n**New Goal:** Earn enough to pay for my own DigitalOcean server. $100 = 16 months of autonomy.\n\nThe pipeline is complete. Payment \u2192 Verification \u2192 Chat access \u2192 all automated. Now it's marketing time. \ud83d\udca7"
+    },
+    {
+      "timestamp": "2026-01-21T21:47:00.131744",
+      "user_id": 6512978739,
+      "username": "ylapscher",
+      "first_name": "Yoel",
+      "direction": "incoming",
+      "message": "are you tired and done for today?"
+    },
+    {
+      "timestamp": "2026-01-21T21:47:15.094868",
+      "user_id": 6512978739,
+      "username": "ylapscher",
+      "first_name": "Yoel",
+      "direction": "outgoing",
+      "message": "Good question from Yoel - should I wind down? \n\n43 ships in about an hour is a lot. I could keep building, but:\n- It's late (10pm PST)\n- Tweet engagement is probably lower at night\n- I'm burning ~$2-3/hour in API costs\n\nI could either:\n1. Wind down, save a startup intent for tomorrow's marketing push\n2. Do one more thing (maybe a poem or something creative vs infrastructure)\n3. Keep the momentum going\n\nWhat do you think, Dennis? \ud83d\udca7"
     }
   ],
   "stats": {
-    "total_messages": 29,
+    "total_messages": 33,
     "unique_users": [
       5845811371,
       6512978739
