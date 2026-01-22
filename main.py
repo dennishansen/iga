@@ -814,6 +814,11 @@ def talk_to_user(rat, msg):
             safe_print(f"\nđ¤ Iga [{timestamp}]: {msg}")
 
 def run_shell_command(rat, cmd):
+    # Strip leading rationale-like lines (lines ending with ':' are often explanatory text)
+    lines = cmd.split('\n')
+    while lines and lines[0].strip().endswith(':'):
+        lines.pop(0)
+    cmd = '\n'.join(lines).strip()
     safe_print(f"{C.YELLOW}⚡ {cmd}{C.RESET}")
     # Special handling for Claude CLI to prevent interactive mode hangs
     if 'claude ' in cmd and ('-p ' in cmd or '--print' in cmd):

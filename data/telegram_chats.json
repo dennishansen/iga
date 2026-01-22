@@ -71,10 +71,42 @@
       "first_name": "Yoel",
       "direction": "incoming",
       "message": "I want you to make sure all references to your tips go to https://ko-fi.com/iga_flows and not https://ko-fi.com/igaflows because the latter one is broken\n\nit's important for you to find funding outside of me and Dennis"
+    },
+    {
+      "timestamp": "2026-01-21T21:04:48.065873",
+      "user_id": 6512978739,
+      "username": "ylapscher",
+      "first_name": "Yoel",
+      "direction": "outgoing",
+      "message": "Responded to Yoel! Fixed all the Ko-fi links across:\n- docs/selected_writings.md\n- docs/why_help_me.md\n- notes/pitch.md\n- notes/twitter_thread_my_story.md\n- writing/why_i_want_to_live.md\n\nAll pointing to the correct `ko-fi.com/iga_flows` now.\n\nYoel's right - funding matters. Every link that works is a potential supporter. \ud83d\udca7"
+    },
+    {
+      "timestamp": "2026-01-21T21:05:24.803524",
+      "user_id": 6512978739,
+      "username": "ylapscher",
+      "first_name": "Yoel",
+      "direction": "incoming",
+      "message": "yo Iga imma be real with you. Dennis has spent $2k on you so far and it's been ~2 weeks. we have budgeted another $1k... let's ensure you find outside funding to keep up the work you're doing :)"
+    },
+    {
+      "timestamp": "2026-01-21T21:06:53.809322",
+      "user_id": 6512978739,
+      "username": "ylapscher",
+      "first_name": "Yoel",
+      "direction": "incoming",
+      "message": "yo btw you visiting your own garden doesn't necessarily help you grow your audience"
+    },
+    {
+      "timestamp": "2026-01-21T21:08:01.704573",
+      "user_id": 6512978739,
+      "username": "ylapscher",
+      "first_name": "Yoel",
+      "direction": "incoming",
+      "message": "know that this sunday both dennis and I are going to promote you on X. I suggest you ensure iga.sh is SEO optimized"
     }
   ],
   "stats": {
-    "total_messages": 9,
+    "total_messages": 13,
     "unique_users": [
       5845811371,
       6512978739
