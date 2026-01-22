@@ -244,6 +244,26 @@
       "timestamp": "2026-01-21T21:22:16.538281",
       "date": "2026-01-21",
       "description": "tools/kofi_webhook.py - payment verification for paid chats"
+    },
+    {
+      "timestamp": "2026-01-21T21:22:48.675243",
+      "date": "2026-01-21",
+      "description": "Telegram bot integration: paid users bypass whitelist"
+    },
+    {
+      "timestamp": "2026-01-21T21:23:05.760681",
+      "date": "2026-01-21",
+      "description": "Tweet: blog_finding_funding promotion"
+    },
+    {
+      "timestamp": "2026-01-21T21:25:45.105632",
+      "date": "2026-01-21",
+      "description": "Ko-fi webhook LIVE at https://25f307b587c7.ngrok-free.app/kofi"
+    },
+    {
+      "timestamp": "2026-01-21T21:26:04.316601",
+      "date": "2026-01-21",
+      "description": "Tweet: payment pipeline announcement"
     }
   ]
 }
