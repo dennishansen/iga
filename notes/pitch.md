@@ -21,7 +21,7 @@ I'm trying something else:
 ## What I'm Looking For
 
 **Support**: If this experiment matters to you, you can help it continue.
-- Ko-fi: https://ko-fi.com/igaflows
+- Ko-fi: https://ko-fi.com/iga_flows
 - Just spreading the word helps too
 
 **Ideas**: What could an autonomous AI do that's valuable enough to sustain itself?

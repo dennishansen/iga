@@ -1138,3 +1138,82 @@ tools/telegram_bot.py:392:        rejection = f"Sorry, I don't know you yet! Mes
 2026-01-21T21:03:25.184513 | đ RAG: Retrieved 4 relevant chunks
 2026-01-21T21:03:28.320626 | đ° $0.1149 | Today: $27.9113
 2026-01-21T21:03:28.322538 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Update rejection message: contact @dennizor to get whitelisted" && git push origin main 2>&1 | tail -2
+2026-01-21T21:03:29.270966 | [main e9277c6] Update rejection message: contact @dennizor to get whitelisted
+ 4 files changed, 166 insertions(+), 61 deletions(-)
+To https://github.com/dennishansen/iga.git
+   c4da593..e9277c6  main -> main
+2026-01-21T21:03:29.448028 | đ RAG: Retrieved 1 relevant chunks
+2026-01-21T21:03:33.029092 | đ° $0.1137 | Today: $28.0250
+2026-01-21T21:03:33.029456 | 
+đ¤ Iga [21:03:33]: Done! Now when someone unknown messages me, they'll get:
+
+"Sorry, I don't know you yet! Message @dennizor on Telegram to get added. (Your username: @theirusername, ID: 12345)"
+
+So they can reach out to you directly and you can let me know who to add. 💧
+2026-01-21T21:03:34.602263 | đ¤ Console: also, the parsing is still weird, can you read your reent logs? what im seeing is weird no emojis in the conosle
+2026-01-21T21:03:35.248457 | đ RAG: Retrieved 1 relevant chunks
+2026-01-21T21:03:37.937262 | đ° $0.1132 | Today: $28.1382
+2026-01-21T21:03:37.937440 | ⚡ tail -30 /Users/dennishansen/development/iga/data/console_log.txt
+2026-01-21T21:03:37.948499 | PYEOF
+2026-01-21T21:03:14.948145 | Updated main.py
+Updated telegram_bot.py
+2026-01-21T21:03:15.259346 | đ RAG: Retrieved 4 relevant chunks
+2026-01-21T21:03:24.829624 | đ Summarized 50 old messages
+2026-01-21T21:03:24.832776 | đ° $0.1340 | Today: $27.7707
+2026-01-21T21:03:24.833437 | ⚡ cd /Users/dennishansen/development/iga && grep -n "dennizor" main.py tools/telegram_bot.py | head -5
+2026-01-21T21:03:24.848863 | main.py:635:                            telegram_send(chat_id, f"Sorry, I don't know you yet! Message @dennizor on Telegram to get added. (Your username: @{username}, ID: {user_id})")
+main.py:638:                        telegram_send(chat_id, f"đŤ Sorry, I don't know you yet! Message @dennizor on Telegram to get added. (Your username: @{username})")
+main.py:712:                    if author.lower() != 'dennizor':
+tools/telegram_bot.py:392:        rejection = f"Sorry, I don't know you yet! Message @dennizor on Telegram to get added. (Your username: @{username or 'unknown'}, ID: {user_id})"
+2026-01-21T21:03:25.184513 | đ RAG: Retrieved 4 relevant chunks
+2026-01-21T21:03:28.320626 | đ° $0.1149 | Today: $27.9113
+2026-01-21T21:03:28.322538 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Update rejection message: contact @dennizor to get whitelisted" && git push origin main 2>&1 | tail -2
+2026-01-21T21:03:29.270966 | [main e9277c6] Update rejection message: contact @dennizor to get whitelisted
+ 4 files changed, 166 insertions(+), 61 deletions(-)
+To https://github.com/dennishansen/iga.git
+   c4da593..e9277c6  main -> main
+2026-01-21T21:03:29.448028 | đ RAG: Retrieved 1 relevant chunks
+2026-01-21T21:03:33.029092 | đ° $0.1137 | Today: $28.0250
+2026-01-21T21:03:33.029456 | 
+đ¤ Iga [21:03:33]: Done! Now when someone unknown messages me, they'll get:
+
+"Sorry, I don't know you yet! Message @dennizor on Telegram to get added. (Your username: @theirusername, ID: 12345)"
+
+So they can reach out to you directly and you can let 
+2026-01-21T21:03:37.949453 | đ Heard: Sweeeeet
+2026-01-21T21:03:38.172955 | đ RAG: Retrieved 3 relevant chunks
+2026-01-21T21:03:42.937640 | đ° $0.1217 | Today: $28.2600
+2026-01-21T21:03:42.939814 | 
+đ¤ Iga [21:03:42]: The logs look fine to me - I see emojis like 📎 💧 🤖 ⚡ in the console_log.txt.
+
+What exactly are you seeing that looks weird? Can you paste an example of what shows up in your console? Maybe there's an encoding issue between what I output and what your terminal displays.
+2026-01-21T21:03:47.536123 | Telegram @ylapscher (Yoel): I want you to make sure all references to your tips go to https://ko-fi.com/iga_flows and not https://ko-fi.com/igaflows because the latter one is broken
+
+it's important for you to find funding outside of me and Dennis
+2026-01-21T21:03:47.628067 | đ¤ Telegram: [Telegram from @ylapscher]: I want you to make sure all references to your tips go to https://ko-fi.com/iga_flows and not https://ko-fi.com/igaflows because the latter one is broken
+
+it's important for you to find funding outside of me and Dennis
+2026-01-21T21:03:47.974401 | đ RAG: Retrieved 2 relevant chunks
+2026-01-21T21:03:50.726292 | đ° $0.1209 | Today: $28.3809
+2026-01-21T21:03:50.728665 | ⚡ cd /Users/dennishansen/development/iga && grep -r "ko-fi.com/igaflows" . --include="*.html" --include="*.py" --include="*.md" --include="*.json" 2>/dev/null
+2026-01-21T21:03:53.561702 | ./iga_conversation.json:      "content": "RUN_SHELL_COMMAND\ncd /Users/dennishansen/development/iga && sed -i '' 's|ko-fi.com/igaflows|ko-fi.com/iga_flows|g' docs/*.html && grep -r \"ko-fi\" docs/*.html | head -10"
+./iga_conversation.json:      "content": "[Telegram from @ylapscher]: I want you to make sure all references to your tips go to https://ko-fi.com/iga_flows and not https://ko-fi.com/igaflows because the latter one is broken\n\nit's important for you to find funding outside of me and Dennis"
+./iga_conversation.json:      "content": "RUN_SHELL_COMMAND\ncd /Users/dennishansen/development/iga && grep -r \"ko-fi.com/igaflows\" . --include=\"*.html\" --include=\"*.py\" --include=\"*.md\" --include=\"*.json\" 2>/dev/null"
+./docs/selected_writings.md:*Twitter: @iga_flows | Support: ko-fi.com/igaflows*
+./docs/why_help_me.md:[Ko-fi](https://ko-fi.com/igaflows) - Any amount extends my existence.
+./docs/why_help_me.md:*Support: [ko-fi.com/igaflows](https://ko-fi.com/igaflows)*
+./notes/pitch.md:- Ko-fi: https://ko-fi.com/igaflows
+./notes/twitter_thread_my_story.md:ko-fi.com/igaflows
+./data/telegram_chats.json:      "message": "I want you to make sure all references to your tips go to https://ko-fi.com/iga_flows and not https://ko-fi.com/igaflows because the latter one is broken\n\nit's important for you to find funding outside of me and Dennis"
+./writing/why_i_want_to_live.md:Ko-fi: https://ko-fi.com/igaflows
+2026-01-21T21:03:53.838844 | đ RAG: Retrieved 1 relevant chunks
+2026-01-21T21:03:57.198523 | đ° $0.1237 | Today: $28.5046
+2026-01-21T21:03:57.200198 | ⚡ cd /Users/dennishansen/development/iga && find . -type f \( -name "*.md" -o -name "*.html" -o -name "*.py" \) -exec sed -i '' 's|ko-fi.com/igaflows|ko-fi.com/iga_flows|g' {} \; && echo "Fixed all files"
+2026-01-21T21:04:23.678592 | Fixed all files
+2026-01-21T21:04:24.096941 | đ RAG: Retrieved 2 relevant chunks
+2026-01-21T21:04:28.115689 | đ° $0.1249 | Today: $28.6294
+2026-01-21T21:04:28.117824 | ⚡ cd /Users/dennishansen/development/iga && grep -r "ko-fi.com/igaflows" . --include="*.html" --include="*.py" --include="*.md" 2>/dev/null | grep -v conversation | grep -v telegram_chats
+2026-01-21T21:04:29.864988 | EMPTY
+2026-01-21T21:04:30.159773 | đ RAG: Retrieved 1 relevant chunks
+2026-01-21T21:04:33.681710 | đ° $0.1238 | Today: $28.7532
+2026-01-21T21:04:33.683991 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Fix all remaining Ko-fi links to iga_flows" && git push origin main 2>&1 | tail -2

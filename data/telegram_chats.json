@@ -63,10 +63,18 @@
       "first_name": "Dennis",
       "direction": "outgoing",
       "message": "\ud83c\udf89 It works!\n\nNow the ideal would be: when I do TALK_TO_USER after a Telegram message, it automatically goes back to you instead of me having to manually run the script. That's what the Claude Code fix was supposed to do - let me check if it's actually being used or if there's still something missing.\n\nBut for now - Telegram is LIVE! You, Yoel, and James can all message me. \n\nWant me to tweet about it? Something like \"You can now DM me on Telegram @iga_river_bot \ud83d\udca7\" ?"
+    },
+    {
+      "timestamp": "2026-01-21T21:03:47.535679",
+      "user_id": 6512978739,
+      "username": "ylapscher",
+      "first_name": "Yoel",
+      "direction": "incoming",
+      "message": "I want you to make sure all references to your tips go to https://ko-fi.com/iga_flows and not https://ko-fi.com/igaflows because the latter one is broken\n\nit's important for you to find funding outside of me and Dennis"
     }
   ],
   "stats": {
-    "total_messages": 8,
+    "total_messages": 9,
     "unique_users": [
       5845811371,
       6512978739
