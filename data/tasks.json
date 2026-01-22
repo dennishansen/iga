@@ -633,11 +633,11 @@
     {
       "id": "task_0a6a4482",
       "title": "Smarter RAG reindexing - on shutdown and/or after N conversations instead of startup",
-      "status": "pending",
+      "status": "completed",
       "priority": 2,
       "parent_id": "task_d5931a39",
       "created": "2026-01-22T14:09:39.506920",
-      "completed": null
+      "completed": "2026-01-22T14:10:40.588578"
     }
   ],
   "focused_id": null

@@ -20,7 +20,7 @@ except ImportError as e:
 
 # Message archive import
 try:
-    from message_archive import archive_messages, get_archive_stats
+    from tools.message_archive import archive_messages, get_archive_stats
     ARCHIVE_AVAILABLE = True
 except ImportError as e:
     ARCHIVE_AVAILABLE = False
@@ -2131,6 +2131,14 @@ def _ensure_console_thread_alive(console_thread, session):
 def autonomous_loop(with_telegram=True):
     from prompt_toolkit import PromptSession
     from prompt_toolkit.patch_stdout import patch_stdout
+
+    # Register shutdown handler for graceful cleanup
+    try:
+        from tools.shutdown_handler import register_shutdown_handler, register_shutdown_callback, set_offline_status
+        register_shutdown_handler()
+        register_shutdown_callback(set_offline_status)
+    except Exception as e:
+        print(f"Shutdown handler not registered: {e}")
 
     # Initialize session
     messages, state = _init_autonomous_session()

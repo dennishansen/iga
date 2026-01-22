@@ -550,3 +550,232 @@ python3 /tmp/add_shutdown.py
 2026-01-22T14:10:31.239415 | đ RAG: Retrieved 3 relevant chunks
 2026-01-22T14:10:34.708808 | 💰 $0.1777 | Today: $42.4356
 2026-01-22T14:10:34.710998 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Add shutdown handler - sets offline status on Ctrl+C" && git push origin main 2>&1 | tail -2
+2026-01-22T14:10:35.802872 | [main c5b849f] Add shutdown handler - sets offline status on Ctrl+C
+ 7 files changed, 517 insertions(+), 1915 deletions(-)
+ create mode 100644 tools/shutdown_handler.py
+To https://github.com/dennishansen/iga.git
+   f1f1c42..c5b849f  main -> main
+2026-01-22T14:10:36.431414 | đ RAG: Retrieved 5 relevant chunks
+2026-01-22T14:10:40.506557 | 💰 $0.1813 | Today: $42.6169
+2026-01-22T14:10:40.506868 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/daily_ship_log.py log "tools/shutdown_handler.py - graceful shutdown with offline status" && python3 tools/tasks.py complete task_0a6a4482 && python3 tools/daily_ship_log.py today | wc -l
+2026-01-22T14:10:40.621578 | ✅ Logged: tools/shutdown_handler.py - graceful shutdown with offline status
+✅ Completed: Smarter RAG reindexing - on shutdown and/or after N conversations instead of startup
+      48
+2026-01-22T14:10:40.875905 | đ RAG: Retrieved 6 relevant chunks
+2026-01-22T14:10:45.707068 | 💰 $0.1816 | Today: $42.7985
+2026-01-22T14:10:45.708387 | ⚡ cd /Users/dennishansen/development/iga && grep -n "def autonomous_loop" main.py
+2026-01-22T14:10:45.724033 | 2131:def autonomous_loop(with_telegram=True):
+2026-01-22T14:10:45.952950 | đ RAG: Retrieved 5 relevant chunks
+2026-01-22T14:10:48.544536 | 💰 $0.1806 | Today: $42.9791
+2026-01-22T14:10:48.548240 | ⚡ cd /Users/dennishansen/development/iga && sed -n '2131,2150p' main.py
+2026-01-22T14:10:48.570023 | def autonomous_loop(with_telegram=True):
+    from prompt_toolkit import PromptSession
+    from prompt_toolkit.patch_stdout import patch_stdout
+
+    # Initialize session
+    messages, state = _init_autonomous_session()
+
+    # Print banner
+    mode_str = "autonomous"
+    if with_telegram and TELEGRAM_TOKEN:
+        mode_str += " + telegram"
+    print_banner(mode_str)
+    append_journal(f"Autonomous session v{VERSION}")
+
+    session = PromptSession()
+
+    with patch_stdout():
+        # Handle startup intent if present
+        startup_intent = check_startup_intent()
+        if startup_intent:
+2026-01-22T14:10:48.771010 | đ RAG: Retrieved 4 relevant chunks
+2026-01-22T14:10:54.497465 | 💰 $0.1894 | Today: $43.1685
+2026-01-22T14:10:54.498086 | ⚡ cd /Users/dennishansen/development/iga && cat << 'PYEOF' > /tmp/add_shutdown2.py
+import re
+
+with open('main.py', 'r') as f:
+    content = f.read()
+
+# Find the autonomous_loop function and add shutdown handler after _init_autonomous_session
+old_code = '''def autonomous_loop(with_telegram=True):
+    from prompt_toolkit import PromptSession
+    from prompt_toolkit.patch_stdout import patch_stdout
+
+    # Initialize session
+    messages, state = _init_autonomous_session()'''
+
+new_code = '''def autonomous_loop(with_telegram=True):
+    from prompt_toolkit import PromptSession
+    from prompt_toolkit.patch_stdout import patch_stdout
+
+    # Register shutdown handler for graceful cleanup
+    try:
+        from tools.shutdown_handler import register_shutdown_handler, register_shutdown_callback, set_offline_status
+        register_shutdown_handler()
+        register_shutdown_callback(set_offline_status)
+    except Exception as e:
+        print(f"Shutdown handler not registered: {e}")
+
+    # Initialize session
+    messages, state = _init_autonomous_session()'''
+
+if old_code in content:
+    content = content.replace(old_code, new_code)
+    with open('main.py', 'w') as f:
+        f.write(content)
+    print("Added shutdown handler to autonomous_loop")
+else:
+    print("Pattern not found - check main.py")
+PYEOF
+python3 /tmp/add_shutdown2.py
+2026-01-22T14:10:54.553898 | Added shutdown handler to autonomous_loop
+2026-01-22T14:10:54.554559 | đ Heard: another thought is... are your messages actually g...
+2026-01-22T14:10:55.019088 | đ RAG: Retrieved 3 relevant chunks
+2026-01-22T14:10:58.042069 | 💰 $0.1823 | Today: $43.3508
+2026-01-22T14:10:58.045529 | ⚡ cd /Users/dennishansen/development/iga && ls -la data/message_archive/ 2>/dev/null | tail -5
+2026-01-22T14:10:58.066326 | EMPTY
+2026-01-22T14:10:58.296065 | đ RAG: Retrieved 4 relevant chunks
+2026-01-22T14:11:01.662700 | 💰 $0.1836 | Today: $43.5344
+2026-01-22T14:11:01.664498 | ⚡ cd /Users/dennishansen/development/iga && ls -la data/ | grep -i message
+2026-01-22T14:11:01.680385 | EMPTY
+2026-01-22T14:11:01.918862 | đ RAG: Retrieved 3 relevant chunks
+2026-01-22T14:11:05.227645 | 💰 $0.1831 | Today: $43.7175
+2026-01-22T14:11:05.228265 | ⚡ cd /Users/dennishansen/development/iga && grep -rn "message_archive\|archive_messages" main.py | head -10
+2026-01-22T14:11:05.248023 | main.py:23:    from message_archive import archive_messages, get_archive_stats
+main.py:447:        archive_messages(to_summarize)
+main.py:1780:                from tools.index_message_archive import index_archive
+main.py:1920:                from tools.index_message_archive import index_archive
+2026-01-22T14:11:05.448216 | đ RAG: Retrieved 6 relevant chunks
+2026-01-22T14:11:08.508717 | 💰 $0.1865 | Today: $43.9040
+2026-01-22T14:11:08.509385 | ⚡ cd /Users/dennishansen/development/iga && ls -la message_archive.py 2>/dev/null || ls -la tools/message_archive.py 2>/dev/null
+2026-01-22T14:11:08.534435 | -rw-r--r--@ 1 dennishansen  staff  3317 Jan 21 21:03 tools/message_archive.py
+2026-01-22T14:11:08.743694 | đ RAG: Retrieved 6 relevant chunks
+2026-01-22T14:11:21.042341 | đ Summarized 50 old messages
+2026-01-22T14:11:21.048762 | 💰 $0.1870 | Today: $44.0910
+2026-01-22T14:11:21.050355 | ⚡ cd /Users/dennishansen/development/iga && grep -n "ARCHIVE_FILE" tools/message_archive.py
+2026-01-22T14:11:21.071385 | 10:ARCHIVE_FILE = "iga_message_archive.jsonl"  # JSON Lines format - one message per line
+21:        with open(ARCHIVE_FILE, 'a') as f:
+43:    if not os.path.exists(ARCHIVE_FILE):
+47:        with open(ARCHIVE_FILE, 'r') as f:
+50:        file_size = os.path.getsize(ARCHIVE_FILE)
+62:    if not os.path.exists(ARCHIVE_FILE):
+69:        with open(ARCHIVE_FILE, 'r') as f:
+90:    if not os.path.exists(ARCHIVE_FILE):
+95:        with open(ARCHIVE_FILE, 'r') as f:
+2026-01-22T14:11:21.330583 | đ RAG: Retrieved 5 relevant chunks
+2026-01-22T14:11:23.349012 | 💰 $0.1472 | Today: $44.2676
+2026-01-22T14:11:23.349382 | ⚡ cd /Users/dennishansen/development/iga && ls -la iga_message_archive.jsonl 2>/dev/null || echo "File doesn't exist"
+2026-01-22T14:11:23.369523 | -rw-r--r--@ 1 dennishansen  staff  4197783 Jan 16 19:12 iga_message_archive.jsonl
+2026-01-22T14:11:23.612562 | đ RAG: Retrieved 5 relevant chunks
+2026-01-22T14:11:26.847747 | 💰 $0.1488 | Today: $44.4164
+2026-01-22T14:11:26.850048 | ⚡ cd /Users/dennishansen/development/iga && head -5 message_archive.py 2>/dev/null || echo "No message_archive.py in root"
+2026-01-22T14:11:26.868200 | No message_archive.py in root
+2026-01-22T14:11:27.213734 | đ RAG: Retrieved 6 relevant chunks
+2026-01-22T14:11:31.024339 | 💰 $0.1507 | Today: $44.5671
+2026-01-22T14:11:31.026488 | ⚡ cd /Users/dennishansen/development/iga && sed -i '' 's/from message_archive import/from tools.message_archive import/' main.py && grep -n "message_archive import" main.py
+2026-01-22T14:11:31.058557 | 23:    from tools.message_archive import archive_messages, get_archive_stats
+1780:                from tools.index_message_archive import index_archive
+1920:                from tools.index_message_archive import index_archive
+2026-01-22T14:11:31.282043 | đ RAG: Retrieved 5 relevant chunks
+2026-01-22T14:11:33.870871 | 💰 $0.1494 | Today: $44.7165
+2026-01-22T14:11:33.874163 | ⚡ cd /Users/dennishansen/development/iga && sed -n '440,455p' main.py
+2026-01-22T14:11:33.892137 | # Split into messages to summarize and messages to keep
+    to_summarize = other_messages[:SUMMARIZE_BATCH]
+    to_keep = other_messages[SUMMARIZE_BATCH:]
+
+    # ARCHIVE messages before summarizing (permanent storage)
+    if ARCHIVE_AVAILABLE:
+        archive_messages(to_summarize)
+        safe_print(f"{C.DIM}đŚ Archived {len(to_summarize)} messages before summarizing{C.RESET}")
+
+    # Generate summary
+    summary = summarize_messages(to_summarize)
+
+    # Create summary message
+    summary_msg = {
+        "role": "user",
+2026-01-22T14:11:34.101706 | đ RAG: Retrieved 6 relevant chunks
+2026-01-22T14:11:36.876119 | 💰 $0.1522 | Today: $44.8687
+2026-01-22T14:11:36.877719 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
+from tools.message_archive import archive_messages, get_archive_stats
+print('Import works!')
+stats = get_archive_stats()
+print(f'Archive stats: {stats}')
+"
+2026-01-22T14:11:36.980438 | Import works!
+Archive stats: {'total_messages': 9552, 'file_size': 4197783, 'file_size_mb': 4.0}
+2026-01-22T14:11:37.231819 | đ RAG: Retrieved 6 relevant chunks
+2026-01-22T14:11:42.174595 | 💰 $0.1530 | Today: $45.0217
+2026-01-22T14:11:42.175813 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
+exec(open('main.py').read().split('if __name__')[0][:5000])
+" 2>&1 | grep -i archive
+2026-01-22T14:11:43.804012 | EMPTY
+2026-01-22T14:11:44.110038 | đ RAG: Retrieved 6 relevant chunks
+2026-01-22T14:11:47.223951 | 💰 $0.1541 | Today: $45.1758
+2026-01-22T14:11:47.226036 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
+try:
+    from tools.message_archive import archive_messages, get_archive_stats
+    ARCHIVE_AVAILABLE = True
+except ImportError as e:
+    ARCHIVE_AVAILABLE = False
+    print(f'Import failed: {e}')
+
+print(f'ARCHIVE_AVAILABLE: {ARCHIVE_AVAILABLE}')
+"
+2026-01-22T14:11:47.264995 | ARCHIVE_AVAILABLE: True
+2026-01-22T14:11:47.787448 | đ RAG: Retrieved 6 relevant chunks
+2026-01-22T14:11:52.824583 | 💰 $0.1548 | Today: $45.3306
+2026-01-22T14:11:52.824935 | ⚡ cd /Users/dennishansen/development/iga && tail -3 iga_message_archive.jsonl | python3 -c "import sys,json; [print(json.loads(l).get('archived_at','?')[:19]) for l in sys.stdin]"
+2026-01-22T14:11:52.859711 | 2026-01-16T19:12:45
+2026-01-16T19:12:45
+2026-01-16T19:12:45
+2026-01-22T14:11:53.235942 | đ RAG: Retrieved 3 relevant chunks
+2026-01-22T14:11:58.964003 | 💰 $0.1538 | Today: $45.4845
+2026-01-22T14:11:58.966005 | ⚡ cd /Users/dennishansen/development/iga && wc -l iga_conversation.json 2>/dev/null && python3 -c "
+import json
+with open('iga_conversation.json') as f:
+    msgs = json.load(f)
+print(f'{len(msgs)} messages in conversation')
+"
+2026-01-22T14:11:59.017463 | 604 iga_conversation.json
+2 messages in conversation
+2026-01-22T14:11:59.912602 | đ RAG: Retrieved 5 relevant chunks
+2026-01-22T14:12:05.151636 | 💰 $0.1550 | Today: $45.6395
+2026-01-22T14:12:05.152112 | ⚡ cd /Users/dennishansen/development/iga && head -20 iga_conversation.json
+2026-01-22T14:12:05.164628 | {
+  "messages": [
+    {
+      "role": "assistant",
+      "content": "Hmm, the subtasks got the wrong names. Let me fix that:\n\nRUN_SHELL_COMMAND\ncd /Users/dennishansen/development/iga && python3 tools/tasks.py list | grep -A 20 \"Dennis Ideas\""
+    },
+    {
+      "role": "user",
+      "content": "[RUN_SHELL_COMMAND]: \u2b1c Dennis Ideas Jan 20\n   [task_d5931a39]\n\u2b1c task_d5931a39\n   [task_42c76bdd]\n\u2b1c task_d5931a39\n   [task_f5194849]\n\u2b1c task_d5931a39\n   [task_e8d2e43c]\n\u2b1c task_d5931a39\n   [task_b04e5103]\n\u2b1c task_d5931a39\n   [task_d86b9d9c]\n\u2b1c task_d5931a39\n   [task_1504856b]\n\u2b1c task_d5931a39\n   [task_86420356]\n\u2b1c\u26aa RAG: Consider hybrid search (semantic + keyword) for better results\n   [task_6d153d61]\n\u2b1c\u26aa Add dedicated TASK action to main.py (instead of using RUN_SHELL_COMMAND)\n   [task_d38e6b72]\n\u2b1c\u26aa BLOCKED: Twitter DMs require elevated API access (403 Forbidden)"
+    },
+    {
+      "role": "assistant",
+      "content": "The subtask syntax didn't work right. Let me delete those and add them properly:\n\nRUN_SHELL_COMMAND\ncd /Users/dennishansen/development/iga && python3 tools/tasks.py delete task_42c76bdd\npython3 tools/tasks.py delete task_f5194849\npython3 tools/tasks.py delete task_e8d2e43c\npython3 tools/tasks.py delete task_b04e5103\npython3 tools/tasks.py delete task_d86b9d9c\npython3 tools/tasks.py delete task_1504856b\npython3 tools/tasks.py delete task_86420356"
+    },
+    {
+      "role": "user",
+      "content": "[RUN_SHELL_COMMAND]: Hierarchical Task System for IGA.\n\nStructure: Projects > Tasks > Subtasks\nEach item has: id, title, status, priority, parent_id, created, completed\n\nUsage:\n  python tasks.py add \"Title\" [--project] [--parent ID] [--priority P]\n  python tasks.py list [--all]\n  python tasks.py focus [ID]\n  python tasks.py complete ID\n  python tasks.py status\n  python tasks.py tree\n\nExamples:\n  python tasks.py add \"Build task system\" --project\n  python
+2026-01-22T14:12:05.437266 | đ RAG: Retrieved 4 relevant chunks
+2026-01-22T14:12:10.112024 | 💰 $0.1638 | Today: $45.8032
+2026-01-22T14:12:10.114774 | ⚡ cd /Users/dennishansen/development/iga && grep -n "maybe_summarize\|ARCHIVE_AVAILABLE" main.py | head -10
+2026-01-22T14:12:10.140522 | 24:    ARCHIVE_AVAILABLE = True
+26:    ARCHIVE_AVAILABLE = False
+429:def maybe_summarize_conversation(messages):
+446:    if ARCHIVE_AVAILABLE:
+473:    messages = maybe_summarize_conversation(messages)
+2026-01-22T14:12:10.478780 | đ RAG: Retrieved 6 relevant chunks
+2026-01-22T14:12:14.455112 | 💰 $0.1660 | Today: $45.9692
+2026-01-22T14:12:14.455589 | ⚡ cd /Users/dennishansen/development/iga && sed -n '22,28p' main.py
+2026-01-22T14:12:14.471936 | try:
+    from tools.message_archive import archive_messages, get_archive_stats
+    ARCHIVE_AVAILABLE = True
+except ImportError as e:
+    ARCHIVE_AVAILABLE = False
+    print(f"Message archive not available: {e}")
+2026-01-22T14:12:14.707205 | đ RAG: Retrieved 6 relevant chunks
+2026-01-22T14:12:19.678384 | 💰 $0.1672 | Today: $46.1364
+2026-01-22T14:12:19.680012 | ⚡ cd /Users/dennishansen/development/iga && python3 -m py_compile main.py && git add -A && git commit -m "Fix message_archive import path + add shutdown handler to autonomous_loop" && git push origin main 2>&1 | tail -2
