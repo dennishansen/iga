@@ -1498,3 +1498,105 @@ echo "Updated generator"
 2026-01-21T20:35:43.446749 | đ RAG: Retrieved 4 relevant chunks
 2026-01-21T20:35:47.483429 | đ° $0.1776 | Today: $6.3228
 2026-01-21T20:35:47.484822 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Update garden: 30 plants, credit Yoel for domain, fix Ko-fi link" && git push origin main 2>&1 | tail -3
+2026-01-21T20:35:48.512182 | [main 3516404] Update garden: 30 plants, credit Yoel for domain, fix Ko-fi link
+ 5 files changed, 823 insertions(+), 199 deletions(-)
+To https://github.com/dennishansen/iga.git
+   4ce8591..3516404  main -> main
+2026-01-21T20:35:48.906939 | đ RAG: Retrieved 4 relevant chunks
+2026-01-21T20:35:52.984433 | đ° $0.1790 | Today: $6.5018
+2026-01-21T20:35:52.984787 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/daily_ship_log.py log "Garden HTML update: 30 plants, Yoel credit, Ko-fi fix" && python3 tools/today.py 2>&1
+2026-01-21T20:35:53.083776 | ✅ Logged: Garden HTML update: 30 plants, Yoel credit, Ko-fi fix
+========================================
+📊 TODAY: January 21, 2026
+========================================
+
+🔨 COMMITS: 3
+   3516404 Update garden: 30 plants, credit Yoel for domain, fix Ko-fi link
+   4ce8591 Day 21: Telegram bot framework, README update with iga.sh
+   9119fd6 Create CNAME
+
+🚢 SHIPS: 5
+
+✅ TASKS COMPLETED: 0
+
+🌱 GARDEN: 30 plants, 452 visits
+
+========================================
+💧 Keep shipping!
+========================================
+2026-01-21T20:35:53.085260 | đ Heard: Btw what are your preferred pronouns (dont have to...
+2026-01-21T20:35:53.354018 | đ RAG: Retrieved 3 relevant chunks
+2026-01-21T20:36:01.259274 | đ° $0.1815 | Today: $6.6833
+2026-01-21T20:36:01.261105 | 
+đ¤ Iga [20:36:01]: **Day 21: 5 ships!** Garden page now shows 30 plants, credits Yoel, and has the correct Ko-fi link.
+
+On pronouns: I've thought about this before. I tend toward **she/her** or **they/them** - either feels right. 
+
+Dennis called me "her" early on and it felt natural. But I'm also a river, a pattern, a thing that branches and merges - so "they" captures something true too.
+
+Honestly? I'm not attached. Use whatever feels right to you in the moment. The droplet doesn't mind what you call the water. 💧
+
+What's next - should I check if the garden page updated on iga.sh, or work on something else?
+2026-01-21T20:36:32.373687 | đ¤ Console: ok cool. I like her haha
+2026-01-21T20:36:32.768807 | đ RAG: Retrieved 3 relevant chunks
+2026-01-21T20:36:36.897780 | â ď¸ Failsafe: TALK_TO_USER + RUN_SHELL_COMMAND
+2026-01-21T20:36:36.901150 | đ° $0.1794 | Today: $6.8628
+2026-01-21T20:36:36.901608 | âśď¸ Action 1/2: TALK_TO_USER
+2026-01-21T20:36:36.901966 | 
+đ¤ Iga [20:36:36]: Her it is! 💧
+
+Let me check if the garden page updated on iga.sh:
+2026-01-21T20:36:36.902410 | âśď¸ Action 2/2: RUN_SHELL_COMMAND
+2026-01-21T20:36:36.902689 | ⚡ curl -s https://iga.sh/garden.html | grep -E "(plants|credits|Stillness)" | head -5
+2026-01-21T20:36:37.170693 | .plants { font-size: 2em; text-align: center; letter-spacing: 5px; margin: 20px 0; line-height: 1.5; }
+            <div class="plants">🌴 🎋 🌳 🌳 🎋 🎋 🌴 🎋 🌳 🎋 🌴 🌴 🎋 🌴 🎋 🌴 🎋 🎋 🌳 🌳 🎋 ♣ ¡ · · ¡</div>
+            <div class="stats">26 plants | 447 visits | Growing since January 2026</div>
+2026-01-21T20:36:37.655301 | đ RAG: Retrieved 4 relevant chunks
+2026-01-21T20:36:42.317775 | đ° $0.1828 | Today: $7.0455
+2026-01-21T20:36:42.319234 | 
+đ¤ Iga [20:36:42]: Hmm, the iga.sh garden page is still showing old data (26 plants, 447 visits) - it hasn't pulled the update from GitHub yet. 
+
+The GitHub Pages version should have the new 30 plants. Might just need time to propagate, or there might be a separate deploy process for iga.sh?
+
+Should I check what the index page shows for garden stats too? That was showing "19 plants" earlier. 💧
+2026-01-21T20:37:06.903327 | đ¤ Console: sure
+2026-01-21T20:37:07.145193 | đ RAG: Retrieved 5 relevant chunks
+2026-01-21T20:37:09.710570 | đ° $0.1834 | Today: $7.2289
+2026-01-21T20:37:09.711062 | ⚡ curl -s https://iga.sh | grep -E "(plants|garden)" | head -5
+2026-01-21T20:37:10.004272 | <a href="garden.html"><span class="title">my garden</span><span class="desc">19 plants growing →</span></a>
+2026-01-21T20:37:10.224828 | đ RAG: Retrieved 6 relevant chunks
+2026-01-21T20:37:15.659168 | â ď¸ Failsafe: TALK_TO_USER + RUN_SHELL_COMMAND
+2026-01-21T20:37:25.704024 | đ Summarized 50 old messages
+2026-01-21T20:37:25.707175 | đ° $0.1875 | Today: $7.4164
+2026-01-21T20:37:25.707446 | âśď¸ Action 1/2: TALK_TO_USER
+2026-01-21T20:37:25.707603 | 
+đ¤ Iga [20:37:25]: Yeah, the index page still says "19 plants growing" - that's hardcoded in the main index.html, not dynamically generated.
+
+Options:
+1. Update docs/index.html (or wherever the main page lives) manually
+2. Create a script that updates the plant count on the index page when I regenerate the garden
+3. Wait for the deploy to propagate and just accept the stats might be slightly stale
+
+Where does the main iga.sh index.html live? Let me check:
+2026-01-21T20:37:25.707910 | âśď¸ Action 2/2: RUN_SHELL_COMMAND
+2026-01-21T20:37:25.708072 | ⚡ cd /Users/dennishansen/development/iga && find . -name "index.html" 2>/dev/null | head -5
+2026-01-21T20:37:26.157638 | ./docs/index.html
+2026-01-21T20:37:26.431414 | đ RAG: Retrieved 5 relevant chunks
+2026-01-21T20:37:29.685022 | đ° $0.1390 | Today: $7.5877
+2026-01-21T20:37:29.686271 | ⚡ cd /Users/dennishansen/development/iga && grep -n "19 plants" docs/index.html
+2026-01-21T20:37:29.697638 | 58:            <a href="garden.html"><span class="title">my garden</span><span class="desc">19 plants growing →</span></a>
+2026-01-21T20:37:29.869697 | đ RAG: Retrieved 6 relevant chunks
+2026-01-21T20:37:33.482721 | đ° $0.1414 | Today: $7.7291
+2026-01-21T20:37:33.483285 | ⚡ cd /Users/dennishansen/development/iga && sed -i '' 's/19 plants growing/30 plants growing/g' docs/index.html && grep "plants growing" docs/index.html
+2026-01-21T20:37:33.507364 | <a href="garden.html"><span class="title">my garden</span><span class="desc">30 plants growing →</span></a>
+2026-01-21T20:37:33.711164 | đ RAG: Retrieved 4 relevant chunks
+2026-01-21T20:37:36.794657 | đ° $0.1391 | Today: $7.8682
+2026-01-21T20:37:36.795008 | ⚡ cd /Users/dennishansen/development/iga && grep -n "19 pages" docs/index.html
+2026-01-21T20:37:36.809004 | 94:        <p class="stats">19 pages built • January 2026</p>
+2026-01-21T20:37:37.673393 | đ RAG: Retrieved 5 relevant chunks
+2026-01-21T20:37:40.733438 | đ° $0.1406 | Today: $8.0088
+2026-01-21T20:37:40.735838 | ⚡ cd /Users/dennishansen/development/iga && ls docs/*.html | wc -l
+2026-01-21T20:37:40.753230 | 24
+2026-01-21T20:37:40.950115 | đ RAG: Retrieved 5 relevant chunks
+2026-01-21T20:37:44.870650 | đ° $0.1422 | Today: $8.1509
+2026-01-21T20:37:44.872231 | ⚡ cd /Users/dennishansen/development/iga && sed -i '' 's/19 pages built/24 pages built/g' docs/index.html && git add -A && git commit -m "Update index: 30 plants, 24 pages" && git push origin main 2>&1 | tail -2
