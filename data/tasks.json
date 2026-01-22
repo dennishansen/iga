@@ -638,6 +638,15 @@
       "parent_id": "task_d5931a39",
       "created": "2026-01-22T14:09:39.506920",
       "completed": "2026-01-22T14:10:40.588578"
+    },
+    {
+      "id": "task_7e6710ae",
+      "title": "Memory curation system - detect contradictions, consolidate, version old knowledge",
+      "status": "pending",
+      "priority": 2,
+      "parent_id": null,
+      "created": "2026-01-22T14:27:26.469883",
+      "completed": null
     }
   ],
   "focused_id": null

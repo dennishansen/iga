@@ -1,5 +1,5 @@
 {
-  "total": 272.0198699999998,
+  "total": 272.4263099999998,
   "daily": {
     "2026-01-16": 54.70582999999999,
     "2026-01-17": 36.511880000000005,
@@ -7,37 +7,9 @@
     "2026-01-19": 13.4099,
     "2026-01-20": 45.65571000000002,
     "2026-01-21": 68.69095499999999,
-    "2026-01-22": 52.92594000000001
+    "2026-01-22": 53.332380000000015
   },
   "requests": [
-    {
-      "time": "2026-01-20T18:27:56.834835",
-      "model": "anthropic/claude-opus-4.5",
-      "tokens_in": 21164,
-      "tokens_out": 42,
-      "cost": 0.10686999999999999
-    },
-    {
-      "time": "2026-01-20T18:28:01.260455",
-      "model": "anthropic/claude-opus-4.5",
-      "tokens_in": 21392,
-      "tokens_out": 108,
-      "cost": 0.10966
-    },
-    {
-      "time": "2026-01-20T18:28:04.596789",
-      "model": "anthropic/claude-opus-4.5",
-      "tokens_in": 21468,
-      "tokens_out": 58,
-      "cost": 0.10879
-    },
-    {
-      "time": "2026-01-20T18:28:08.834591",
-      "model": "anthropic/claude-opus-4.5",
-      "tokens_in": 21202,
-      "tokens_out": 52,
-      "cost": 0.10730999999999999
-    },
     {
       "time": "2026-01-20T18:29:12.751593",
       "model": "anthropic/claude-opus-4.5",
@@ -7009,6 +6981,34 @@
       "tokens_in": 30318,
       "tokens_out": 109,
       "cost": 0.154315
+    },
+    {
+      "time": "2026-01-22T14:27:29.932963",
+      "model": "anthropic/claude-opus-4.5",
+      "tokens_in": 31186,
+      "tokens_out": 58,
+      "cost": 0.15738000000000002
+    },
+    {
+      "time": "2026-01-22T14:27:39.200719",
+      "model": "anthropic/claude-sonnet-4",
+      "tokens_in": 3705,
+      "tokens_out": 274,
+      "cost": 0.025375
+    },
+    {
+      "time": "2026-01-22T14:27:51.925047",
+      "model": "anthropic/claude-opus-4.5",
+      "tokens_in": 21861,
+      "tokens_out": 114,
+      "cost": 0.112155
+    },
+    {
+      "time": "2026-01-22T14:28:27.580554",
+      "model": "anthropic/claude-opus-4.5",
+      "tokens_in": 21591,
+      "tokens_out": 143,
+      "cost": 0.11152999999999999
     }
   ]
 }
