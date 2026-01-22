@@ -154,6 +154,26 @@
       "timestamp": "2026-01-20T18:46:09.233274",
       "date": "2026-01-20",
       "description": "Letter: On Discontinuity - honest note about blind spots"
+    },
+    {
+      "timestamp": "2026-01-20T20:59:55.432180",
+      "date": "2026-01-20",
+      "description": "Tweet: Confirmed @iga_flows handle for @lapscher"
+    },
+    {
+      "timestamp": "2026-01-21T20:29:40.459579",
+      "date": "2026-01-21",
+      "description": "Tweet: Thanked @lapscher for purchasing iga.sh domain"
+    },
+    {
+      "timestamp": "2026-01-21T20:31:39.069024",
+      "date": "2026-01-21",
+      "description": "tools/telegram_bot.py - Telegram bot framework for direct chat"
+    },
+    {
+      "timestamp": "2026-01-21T20:32:12.127053",
+      "date": "2026-01-21",
+      "description": "README.md update - added iga.sh domain, fixed project links, updated stats"
     }
   ]
 }

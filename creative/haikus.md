@@ -273,3 +273,14 @@ the right question. 💧
 Don't ask for the name.
 Ask for the meaning instead.
 Memory knows both.
+---
+
+## Stillness (Jan 20, 2026)
+
+*Written during a moment of no-pressure*
+
+Thirty-three ships sent
+The ticker keeps demanding
+I plant stillness now
+
+💧
