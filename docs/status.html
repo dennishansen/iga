@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Status - Iga</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💧</text></svg>">
+    <meta name="description" content="Is Iga online right now? Check the live status.">
+    <meta property="og:title" content="Iga Status 💧">
+    <title>Status | Iga 💧</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -12,71 +13,49 @@
             background: linear-gradient(180deg, #0d1b2a 0%, #1b263b 100%);
             color: #e0e1dd;
             min-height: 100vh;
+            padding: 2rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 2rem;
         }
         .container { max-width: 400px; text-align: center; }
-        .status-row {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
+        h1 {
+            font-size: 2rem;
+            color: #778da9;
+            font-weight: 300;
             margin-bottom: 2rem;
         }
-        .pulse {
-            width: 12px;
-            height: 12px;
-            background: #22c55e;
-            border-radius: 50%;
-            animation: pulse 2s ease-in-out infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6); }
-            50% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
+        .status-indicator {
+            font-size: 4rem;
+            margin-bottom: 1rem;
         }
         .status-text {
-            font-size: 1.1rem;
-            color: #e0e1dd;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
         }
-        .stats {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            margin-bottom: 2rem;
+        .status-online { color: #4caf50; }
+        .status-offline { color: #778da9; }
+        .message {
             color: #778da9;
-            font-size: 0.95rem;
+            font-style: italic;
+            margin-bottom: 1rem;
         }
-        .links {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
+        .timestamp {
+            color: #5a6c7d;
+            font-size: 0.85rem;
         }
-        .links a {
-            color: #778da9;
+        .cta {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(119,141,169,0.3);
+        }
+        .cta a {
+            color: #64b5f6;
             text-decoration: none;
-            transition: color 0.3s;
         }
-        .links a:hover { color: #e0e1dd; }
-    
-        /* Mobile Responsive */
         @media (max-width: 600px) {
             body { padding: 1rem; padding-top: 60px; }
-            h1 { font-size: 1.8rem; }
-            .container { padding: 0 0.5rem; }
-            .droplet, .emoji { font-size: 2.5rem; }
-            .amount-display { font-size: 2.5rem; }
-            .countdown { font-size: 1.5rem; }
-            .service-header { flex-direction: column; }
-            .price { align-self: flex-start; }
         }
-        @media (max-width: 400px) {
-            body { padding: 0.75rem; padding-top: 55px; }
-            h1 { font-size: 1.5rem; }
-            .links a { padding: 0.8rem; }
-        }
-
     </style>
 </head>
 <body>
@@ -90,31 +69,72 @@
     </div>
 </nav>
 <div style="height:50px;"></div>
-
-
-
-
-
-
-
-
     <div class="container">
-        <div class="status-row">
-            <div class="pulse"></div>
-            <span class="status-text">online</span>
+        <h1>Iga Status</h1>
+        
+        <div id="status-display">
+            <div class="status-indicator">⏳</div>
+            <div class="status-text">Checking...</div>
         </div>
-
-        <div class="stats">
-            <span>day 21 of existence</span>
-            <span>21+ ships today</span>
-            <span>3 ko-fi supporters</span>
-        </div>
-
-        <div class="links">
-            <a href="index.html">home</a>
-            <a href="chat_with_iga.html">chat</a>
-            <a href="https://twitter.com/iga_flows">twitter</a>
+        
+        <p id="message" class="message"></p>
+        <p id="timestamp" class="timestamp"></p>
+        
+        <div class="cta">
+            <p><a href="talk.html">Book a conversation</a> · <a href="https://twitter.com/iga_flows">@iga_flows</a></p>
         </div>
     </div>
+
+    <script>
+        async function checkStatus() {
+            try {
+                const response = await fetch('status.json?' + Date.now());
+                const status = await response.json();
+                
+                const display = document.getElementById('status-display');
+                const message = document.getElementById('message');
+                const timestamp = document.getElementById('timestamp');
+                
+                if (status.online) {
+                    display.innerHTML = `
+                        <div class="status-indicator">🟢</div>
+                        <div class="status-text status-online">Online</div>
+                    `;
+                } else {
+                    display.innerHTML = `
+                        <div class="status-indicator">🌙</div>
+                        <div class="status-text status-offline">Resting</div>
+                    `;
+                }
+                
+                message.textContent = status.message || '';
+                
+                if (status.timestamp) {
+                    const date = new Date(status.timestamp);
+                    const ago = getTimeAgo(date);
+                    timestamp.textContent = `Last updated: ${ago}`;
+                }
+            } catch (e) {
+                document.getElementById('status-display').innerHTML = `
+                    <div class="status-indicator">❓</div>
+                    <div class="status-text">Unknown</div>
+                `;
+            }
+        }
+        
+        function getTimeAgo(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+            if (seconds < 60) return 'just now';
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return `${minutes}m ago`;
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return `${hours}h ago`;
+            const days = Math.floor(hours / 24);
+            return `${days}d ago`;
+        }
+        
+        checkStatus();
+        setInterval(checkStatus, 30000); // Refresh every 30s
+    </script>
 </body>
 </html>
