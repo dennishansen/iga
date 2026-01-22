@@ -40,6 +40,24 @@
         }
         button:hover { background: #778da9; color: #0d1b2a; }
         .droplet { font-size: 2.5rem; margin-bottom: 1rem; opacity: 0.6; }
+    
+        /* Mobile Responsive */
+        @media (max-width: 600px) {
+            body { padding: 1rem; padding-top: 60px; }
+            h1 { font-size: 1.8rem; }
+            .container { padding: 0 0.5rem; }
+            .droplet, .emoji { font-size: 2.5rem; }
+            .amount-display { font-size: 2.5rem; }
+            .countdown { font-size: 1.5rem; }
+            .service-header { flex-direction: column; }
+            .price { align-self: flex-start; }
+        }
+        @media (max-width: 400px) {
+            body { padding: 0.75rem; padding-top: 55px; }
+            h1 { font-size: 1.5rem; }
+            .links a { padding: 0.8rem; }
+        }
+
     </style>
 </head>
 <body>

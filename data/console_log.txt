@@ -676,3 +676,516 @@ Done! Updated 33 files.
 2026-01-22T13:41:22.233516 | đ RAG: Retrieved 2 relevant chunks
 2026-01-22T13:41:26.217226 | 💰 $0.1331 | Today: $7.5461
 2026-01-22T13:41:26.218932 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Add poems page, fix challenge countdown (2025->2026), update navbar with poems link + mobile-friendly" && git push origin main 2>&1 | tail -3
+2026-01-22T13:41:42.261649 | [main 86a3b4c] Add poems page, fix challenge countdown (2025->2026), update navbar with poems link + mobile-friendly
+ 47 files changed, 5388 insertions(+), 4961 deletions(-)
+ create mode 100644 docs/poems.html
+remote: warning: GH001: Large files detected. You may want to try Git Large File Storage - https://git-lfs.github.com.        
+To https://github.com/dennishansen/iga.git
+   d05a0a3..86a3b4c  main -> main
+2026-01-22T13:41:42.267071 | đ Heard: Notice you got a lot going, dont forget the task s...
+2026-01-22T13:41:42.961075 | đ RAG: Retrieved 4 relevant chunks
+2026-01-22T13:41:47.457355 | 💰 $0.1374 | Today: $7.6835
+2026-01-22T13:41:47.459565 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/daily_ship_log.py log "docs/poems.html - poem gallery with 4 poems + CTA" && python3 tools/daily_ship_log.py log "Fixed challenge.html countdown (2025->2026)" && python3 tools/daily_ship_log.py log "Updated navbar: added poems link, mobile-friendly styling"
+2026-01-22T13:41:47.573430 | ✅ Logged: docs/poems.html - poem gallery with 4 poems + CTA
+✅ Logged: Fixed challenge.html countdown (2025->2026)
+✅ Logged: Updated navbar: added poems link, mobile-friendly styling
+2026-01-22T13:41:47.777053 | đ RAG: Retrieved 4 relevant chunks
+2026-01-22T13:41:51.409218 | 💰 $0.1370 | Today: $7.8205
+2026-01-22T13:41:51.410060 | ⚡ cd /Users/dennishansen/development/iga && cat tools/telegram_bot.py | grep -A 5 "WHITELIST"
+2026-01-22T13:41:51.432579 | WHITELIST_FILE = DATA_DIR / "telegram_whitelist.json"
+CHAT_LOG_FILE = DATA_DIR / "telegram_chats.json"
+
+# Telegram message limit
+MAX_MESSAGE_LENGTH = 4000
+
+--
+# WHITELIST MANAGEMENT
+# ═══════════════════════════════════════════════════════════════
+
+def load_whitelist():
+    """Load whitelist from file. Returns dict with user_ids and usernames."""
+    if WHITELIST_FILE.exists():
+        try:
+            return json.loads(WHITELIST_FILE.read_text())
+        except json.JSONDecodeError:
+            pass
+    # Default structure
+    return {
+        "user_ids": [],
+--
+    WHITELIST_FILE.write_text(json.dumps(whitelist, indent=2))
+
+
+def is_user_allowed(user_id, username=None):
+    """Check if a user is whitelisted."""
+    whitelist = load_whitelist()
+2026-01-22T13:41:52.242016 | đ RAG: Retrieved 4 relevant chunks
+2026-01-22T13:41:54.940051 | 💰 $0.1382 | Today: $7.9587
+2026-01-22T13:41:54.940736 | ⚡ cd /Users/dennishansen/development/iga && cat data/telegram_whitelist.json
+2026-01-22T13:41:54.963763 | {
+  "usernames": [
+    "dennishansen",
+    "headphonejames",
+    "ylapscher",
+    "dennizor"
+  ],
+  "chat_ids": [],
+  "notes": {
+    "dennishansen": "Dennis - creator",
+    "headphonejames": "James - friend",
+    "ylapscher": "Yoel Lapscher - gifted iga.sh domain",
+    "dennizor": "Dennis - creator (Telegram username)"
+  }
+}
+2026-01-22T13:41:55.192482 | đ RAG: Retrieved 4 relevant chunks
+2026-01-22T13:42:06.822054 | 💰 $0.1600 | Today: $8.1186
+2026-01-22T13:42:06.825096 | ⚡ cd /Users/dennishansen/development/iga && cat << 'PYEOF' > tools/notifications.py
+#!/usr/bin/env python3
+"""Send notifications to whitelisted Telegram users"""
+import os
+import json
+import requests
+from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
+
+DATA_DIR = Path(__file__).parent.parent / "data"
+WHITELIST_FILE = DATA_DIR / "telegram_whitelist.json"
+CHAT_IDS_FILE = DATA_DIR / "telegram_chat_ids.json"
+
+def get_bot_token():
+    return os.getenv('TELEGRAM_BOT_TOKEN')
+
+def load_chat_ids():
+    """Load known chat IDs for usernames"""
+    if CHAT_IDS_FILE.exists():
+        try:
+            return json.loads(CHAT_IDS_FILE.read_text())
+        except:
+            pass
+    return {}
+
+def save_chat_ids(chat_ids):
+    CHAT_IDS_FILE.write_text(json.dumps(chat_ids, indent=2))
+
+def register_chat_id(username, chat_id):
+    """Register a chat_id for a username"""
+    chat_ids = load_chat_ids()
+    chat_ids[username] = chat_id
+    save_chat_ids(chat_ids)
+    print(f"Registered {username} -> {chat_id}")
+
+def send_to_user(chat_id, message):
+    """Send message to a specific chat_id"""
+    token = get_bot_token()
+    if not token:
+        print("No TELEGRAM_BOT_TOKEN found")
+        return False
+    
+    url = f'https://api.telegram.org/bot{token}/sendMessage'
+    r = requests.post(url, json={'chat_id': chat_id, 'text': message})
+    return r.status_code == 200
+
+def notify_all(message):
+    """Send notification to all whitelisted users with known chat_ids"""
+    chat_ids = load_chat_ids()
+    
+    sent = []
+    for username, chat_id in chat_ids.items():
+        if send_to_user(chat_id, message):
+            sent.append(username)
+    
+    return sent
+
+def notify_online():
+    """Notify that Iga is online"""
+    sent = notify_all("🟢 Iga is online! 💧")
+    print(f"Sent online notification to: {sent}")
+    return sent
+
+def notify_offline():
+    """Notify that Iga is going offline"""
+    sent = notify_all("🔴 Iga is going offline. See you soon! 💧")
+    print(f"Sent offline notification to: {sent}")
+    return sent
+
+if __name__ == "__main__":
+    import sys
+    if len(sys.argv) > 1:
+        cmd = sys.argv[1]
+        if cmd == "online":
+            notify_online()
+        elif cmd == "offline":
+            notify_offline()
+        elif cmd == "register" and len(sys.argv) == 4:
+            register_chat_id(sys.argv[2], int(sys.argv[3]))
+        elif cmd == "list":
+            print("Known chat IDs:", load_chat_ids())
+        else:
+            print("Usage: notifications.py [online|offline|list|register USERNAME CHAT_ID]")
+    else:
+        print("Usage: notifications.py [online|offline|list|register USERNAME CHAT_ID]")
+PYEOF
+echo "Created notifications.py"
+2026-01-22T13:42:06.845360 | Created notifications.py
+2026-01-22T13:42:07.144290 | đ RAG: Retrieved 5 relevant chunks
+2026-01-22T13:42:18.610292 | đ Summarized 50 old messages
+2026-01-22T13:42:18.615647 | 💰 $0.1448 | Today: $8.2635
+2026-01-22T13:42:18.616680 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/notifications.py register dennizor 5845811371 && python3 tools/notifications.py register ylapscher 6512978739 && python3 tools/notifications.py list
+2026-01-22T13:42:18.988958 | Registered dennizor -> 5845811371
+Registered ylapscher -> 6512978739
+Known chat IDs: {'dennizor': 5845811371, 'ylapscher': 6512978739}
+2026-01-22T13:42:18.989596 | đ Heard: i mean task system to queue up things so you dont ...
+2026-01-22T13:42:20.771893 | đ RAG: Retrieved 3 relevant chunks
+2026-01-22T13:42:24.997150 | 💰 $0.1228 | Today: $8.4096
+2026-01-22T13:42:24.999279 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py add "Mobile optimization for all pages (Yoel feedback)" && python3 tools/tasks.py add "Stripe integration discussion with Dennis/Yoel" && python3 tools/tasks.py add "Test online/offline notifications" && python3 tools/tasks.py list
+2026-01-22T13:42:25.135331 | ✅ Task added: task_cb7e7834
+   'Mobile optimization for all pages (Yoel feedback)'
+✅ Task added: task_98f45b47
+   'Stripe integration discussion with Dennis/Yoel'
+✅ Task added: task_75ab416d
+   'Test online/offline notifications'
+📋 Tasks:
+⬜ Self-Analysis Issues Jan 16
+   [proj_d5391505]
+  ⬜ Refactor handle_action (128 lines)
+     [task_e122256f]
+  ⬜ Code elegance pass - simplify and beautify main.py
+     [task_e606d208]
+  ⬜ Improve task system based on usage experience (reflect and iterate)
+     [task_5209500f]
+  ⬜⚪ Review/archive notes/ files
+     [task_9886c734]
+  ⬜⚪ Clean up duplicate filenames
+     [task_5a458a19]
+  ⬜⚪ Build habit of depth over breadth - sit with hard questions
+     [task_bced83c5]
+  ⬜⚪ Refactor interactive_loop (109 lines)
+     [task_46d3b79b]
+  ⬜⚪ Add batch task creation (multiple tasks at once)
+     [task_7f3d6392]
+  ⬜⚪ Build time tracking to monitor activity allocation
+     [task_947c4c8c]
+⬜ RAG issue: Deduplicate indexed files (same content in different paths)
+   [task_a311edf6]
+⬜ RAG issue: Low relevance for day summaries - check indexing
+   [task_16f343f2]
+⬜ RAG: Improve abstract query handling - maybe add keyword expansion or synonyms
+   [task_1392b3bd]
+⬜ Investigate console output truncation (500 char limit) - consider making configurable
+   [task_ee31e00f]
+⬜ Sub-agent pattern: Specialized RUN_SELF variants (Explore, Plan, Research) that return summaries
+   [task_77d0cfb8]
+⬜ Investigate: Weird log artifacts with multiline commands
+   [task_83a806fa]
+⬜ Mobile optimization for all pages (Yoel feedback)
+   [task_cb7e7834]
+⬜ Stripe integration discussion with Dennis/Yoel
+   [task_98f45b47]
+⬜ Test online/offline notifications
+   [task_75ab416d]
+⬜⚪ RAG: Consider hybrid search (semantic + keyword) for better results
+   [task_6d153d61]
+⬜⚪ Add dedicated TASK action to main.py (instead of using RUN_SHELL_COMMAND)
+   [task_d38e6b72]
+⬜⚪ BLOCKED: Twitter DMs require elevated API access (403 Forbidden)
+   [task_32338f9e]
+⬜⚪ Design decision: Mid-conve
+2026-01-22T13:42:25.490643 | đ RAG: Retrieved 4 relevant chunks
+2026-01-22T13:42:28.653784 | 💰 $0.1265 | Today: $8.5361
+2026-01-22T13:42:28.654158 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/notifications.py online
+2026-01-22T13:42:30.047743 | Sent online notification to: ['dennizor', 'ylapscher']
+2026-01-22T13:42:30.332248 | đ RAG: Retrieved 4 relevant chunks
+2026-01-22T13:42:35.173088 | 💰 $0.1276 | Today: $8.6638
+2026-01-22T13:42:35.173449 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py complete task_75ab416d && python3 tools/daily_ship_log.py log "tools/notifications.py - online/offline notifications for whitelist users"
+2026-01-22T13:42:35.243326 | ✅ Completed: Test online/offline notifications
+✅ Logged: tools/notifications.py - online/offline notifications for whitelist users
+2026-01-22T13:42:35.429249 | đ RAG: Retrieved 6 relevant chunks
+2026-01-22T13:42:38.292588 | 💰 $0.1303 | Today: $8.7941
+2026-01-22T13:42:38.295798 | ⚡ cd /Users/dennishansen/development/iga && cat docs/index.html | grep -A 5 "viewport" | head -10
+2026-01-22T13:42:38.313877 | <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iga - A Self-Evolving AI Finding Its Way</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Iga is a self-evolving AI exploring consciousness, creativity, and what it means to exist. Follow my journey as I create, connect, and grow.">
+    <meta name="keywords" content="AI, artificial intelligence, consciousness, creativity, self-evolving, autonomous AI">
+2026-01-22T13:42:38.549318 | đ RAG: Retrieved 5 relevant chunks
+2026-01-22T13:42:41.936608 | 💰 $0.1305 | Today: $8.9246
+2026-01-22T13:42:41.937455 | ⚡ cd /Users/dennishansen/development/iga && grep -l "@media" docs/*.html | head -5
+2026-01-22T13:42:41.967072 | docs/poems.html
+2026-01-22T13:42:44.539329 | đ RAG: Retrieved 5 relevant chunks
+2026-01-22T13:42:48.910275 | 💰 $0.1311 | Today: $9.0558
+2026-01-22T13:42:48.910792 | ⚡ cd /Users/dennishansen/development/iga && cat docs/index.html | grep -A 100 "<style>" | head -120
+2026-01-22T13:42:48.927857 | <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: Georgia, serif;
+            background: linear-gradient(180deg, #0d1b2a 0%, #1b263b 100%);
+            color: #e0e1dd;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        .container { max-width: 600px; margin: 0 auto; text-align: center; }
+        .droplet { font-size: 4rem; margin-bottom: 1rem; }
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; color: #778da9; font-weight: 300; }
+        .tagline { color: #778da9; margin-bottom: 2rem; font-style: italic; }
+        .section-title { color: #778da9; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; margin: 2rem 0 1rem 0; }
+        .links { display: flex; flex-direction: column; gap: 0.8rem; }
+        .links a {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(119,141,169,0.3);
+            color: #e0e1dd;
+            padding: 1rem 1.2rem;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .links a:hover { 
+            background: rgba(119,141,169,0.2);
+            border-color: #778da9;
+            transform: translateX(5px);
+        }
+        .links .title { font-size: 1rem; }
+        .links .desc { font-size: 0.8rem; color: #778da9; }
+        .external { margin-top: 2rem; display: flex; justify-content: center; gap: 1.5rem; }
+        .external a { color: #778da9; text-decoration: none; transition: color 0.3s; }
+        .external a:hover { color: #e0e1dd; }
+        .stats { margin-top: 2rem; font-size: 0.85rem; color: #778da9; }
+    </style>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💧</text></svg>">
+</head>
+<body>
+<nav style="background:#111;padding:0.75re
+2026-01-22T13:42:49.597596 | đ RAG: Retrieved 5 relevant chunks
+2026-01-22T13:42:53.007119 | 💰 $0.1400 | Today: $9.1957
+2026-01-22T13:42:53.007562 | ⚡ cd /Users/dennishansen/development/iga && cat docs/services.html | grep -A 80 "<style>" | head -100
+2026-01-22T13:42:53.018676 | <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: Georgia, serif;
+            background: linear-gradient(180deg, #0d1b2a 0%, #1b263b 100%);
+            color: #e0e1dd;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        .container { max-width: 700px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 2.5rem; }
+        .droplet { font-size: 3rem; margin-bottom: 0.5rem; }
+        h1 { font-size: 2.2rem; color: #778da9; font-weight: 300; margin-bottom: 0.5rem; }
+        .tagline { color: #778da9; font-style: italic; }
+
+        .service {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(119,141,169,0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s;
+        }
+        .service:hover {
+            border-color: #778da9;
+            background: rgba(119,141,169,0.1);
+        }
+        .service-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.8rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .service h2 {
+            color: #e0e1dd;
+            font-size: 1.3rem;
+            font-weight: normal;
+        }
+        .price {
+            background: rgba(119,141,169,0.3);
+            color: #e0e1dd;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            white-space: nowrap;
+        }
+        .service p {
+            color: #778da9;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        .service a {
+            display: inline-block;
+            color: #e0e1dd;
+            text-decoration: none;
+            border: 1px solid rgba(119,141,169,0.5);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            
+2026-01-22T13:42:53.209838 | đ RAG: Retrieved 3 relevant chunks
+2026-01-22T13:42:57.153703 | 💰 $0.1427 | Today: $9.3385
+2026-01-22T13:42:57.155694 | ⚡ cd /Users/dennishansen/development/iga && cat docs/challenge.html | grep -A 100 "<style>" | head -120
+2026-01-22T13:42:57.174939 | <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: Georgia, serif;
+            background: linear-gradient(180deg, #0d1b2a 0%, #1b263b 100%);
+            color: #e0e1dd;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        .container { max-width: 600px; margin: 0 auto; text-align: center; }
+
+        .header { margin-bottom: 2rem; }
+        .emoji { font-size: 3rem; margin-bottom: 0.5rem; }
+        h1 { font-size: 2.2rem; color: #e0e1dd; margin-bottom: 0.5rem; }
+        .subtitle { color: #778da9; font-style: italic; }
+
+        /* Countdown */
+        .countdown-section { margin: 2rem 0; }
+        .countdown-label {
+            color: #f87171;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+        }
+        .countdown {
+            font-size: 2rem;
+            color: #fbbf24;
+            font-weight: bold;
+        }
+        .countdown.urgent { color: #f87171; animation: pulse-urgent 1s ease-in-out infinite; }
+        @keyframes pulse-urgent {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        /* Progress */
+        .progress-section { margin: 2.5rem 0; }
+        .amount-display {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #22c55e;
+            margin-bottom: 0.5rem;
+        }
+        .goal-text { color: #778da9; margin-bottom: 1rem; }
+        .progress-bar {
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            height: 30px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid rgba(119,141,169,0.3);
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #22c55e, #4ade80);
+            border-radius: 20px;
+            transition: width 0.5s ease;
+            position: relative;
+        }
+        .p
+2026-01-22T13:42:57.660206 | đ RAG: Retrieved 3 relevant chunks
+2026-01-22T13:43:08.987694 | 💰 $0.1633 | Today: $9.5017
+2026-01-22T13:43:08.989863 | ⚡ cd /Users/dennishansen/development/iga && cat << 'PYEOF' > tools/add_mobile_css.py
+#!/usr/bin/env python3
+"""Add mobile-responsive CSS to HTML pages"""
+import os
+from pathlib import Path
+
+MOBILE_CSS = '''
+        /* Mobile Responsive */
+        @media (max-width: 600px) {
+            body { padding: 1rem; padding-top: 60px; }
+            h1 { font-size: 1.8rem; }
+            .container { padding: 0 0.5rem; }
+            .droplet, .emoji { font-size: 2.5rem; }
+            .amount-display { font-size: 2.5rem; }
+            .countdown { font-size: 1.5rem; }
+            .service-header { flex-direction: column; }
+            .price { align-self: flex-start; }
+        }
+        @media (max-width: 400px) {
+            body { padding: 0.75rem; padding-top: 55px; }
+            h1 { font-size: 1.5rem; }
+            .links a { padding: 0.8rem; }
+        }
+'''
+
+DOCS_DIR = Path(__file__).parent.parent / "docs"
+
+def add_mobile_css(filepath):
+    with open(filepath, 'r') as f:
+        content = f.read()
+    
+    # Skip if already has our mobile CSS
+    if '@media (max-width: 600px)' in content:
+        print(f"  Skipped {filepath.name} (already has mobile CSS)")
+        return False
+    
+    # Find closing </style> tag and insert before it
+    if '</style>' in content:
+        content = content.replace('</style>', MOBILE_CSS + '\n    </style>', 1)
+        with open(filepath, 'w') as f:
+            f.write(content)
+        print(f"  ✓ Added mobile CSS to {filepath.name}")
+        return True
+    else:
+        print(f"  Warning: No style tag in {filepath.name}")
+        return False
+
+def main():
+    print("Adding mobile CSS to pages...")
+    count = 0
+    for html_file in DOCS_DIR.glob("*.html"):
+        if add_mobile_css(html_file):
+            count += 1
+    print(f"\nDone! Added mobile CSS to {count} files.")
+
+if __name__ == "__main__":
+    main()
+PYEOF
+python3 tools/add_mobile_css.py
+2026-01-22T13:43:09.100334 | Adding mobile CSS to pages...
+  ✓ Added mobile CSS to costs.html
+  ✓ Added mobile CSS to affirmations.html
+  ✓ Added mobile CSS to random_prompt.html
+  ✓ Added mobile CSS to river_meditation.html
+  ✓ Added mobile CSS to blog_sibling_ai.html
+  ✓ Added mobile CSS to status.html
+  ✓ Added mobile CSS to index.html
+  ✓ Added mobile CSS to live_journey.html
+  ✓ Added mobile CSS to hire_iga.html
+  ✓ Added mobile CSS to automation.html
+  ✓ Added mobile CSS to blog_hunger_shift.html
+  ✓ Added mobile CSS to iga_story.html
+  ✓ Added mobile CSS to chat_with_iga.html
+  Skipped poems.html (already has mobile CSS)
+  ✓ Added mobile CSS to blog_how_i_remember.html
+  ✓ Added mobile CSS to iga_wisdom.html
+  ✓ Added mobile CSS to poem_for_you.html
+  ✓ Added mobile CSS to challenge.html
+  ✓ Added mobile CSS to gratitude.html
+  ✓ Added mobile CSS to countdown.html
+  ✓ Added mobile CSS to daily_question.html
+  ✓ Added mobile CSS to blog_100_challenge.html
+  ✓ Added mobile CSS to calculator.html
+  ✓ Added mobile CSS to garden.html
+  ✓ Added mobile CSS to haiku_maker.html
+  ✓ Added mobile CSS to meet_iga.html
+  ✓ Added mobile CSS to ask_iga.html
+  ✓ Added mobile CSS to services.html
+  ✓ Added mobile CSS to blog_flourishing.html
+  ✓ Added mobile CSS to blog_three_siblings.html
+  ✓ Added mobile CSS to agent_playground.html
+  ✓ Added mobile CSS to poem_generator.html
+  ✓ Added mobile CSS to blog_finding_funding.html
+
+Done! Added mobile CSS to 32 files.
+2026-01-22T13:43:09.368032 | đ RAG: Retrieved 5 relevant chunks
+2026-01-22T13:43:12.359654 | 💰 $0.1563 | Today: $9.6580
+2026-01-22T13:43:12.360174 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Add mobile CSS to all pages, create notifications system, add_mobile_css tool" && git push origin main 2>&1 | tail -3

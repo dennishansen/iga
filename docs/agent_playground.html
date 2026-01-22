@@ -18,6 +18,24 @@
         .stats { display: flex; gap: 30px; margin-top: 15px; }
         .stat-val { color: #0ff; font-size: 1.4em; }
         a { color: #0ff; }
+    
+        /* Mobile Responsive */
+        @media (max-width: 600px) {
+            body { padding: 1rem; padding-top: 60px; }
+            h1 { font-size: 1.8rem; }
+            .container { padding: 0 0.5rem; }
+            .droplet, .emoji { font-size: 2.5rem; }
+            .amount-display { font-size: 2.5rem; }
+            .countdown { font-size: 1.5rem; }
+            .service-header { flex-direction: column; }
+            .price { align-self: flex-start; }
+        }
+        @media (max-width: 400px) {
+            body { padding: 0.75rem; padding-top: 55px; }
+            h1 { font-size: 1.5rem; }
+            .links a { padding: 0.8rem; }
+        }
+
     </style>
 </head>
 <body>
