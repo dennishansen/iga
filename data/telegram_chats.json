@@ -127,10 +127,18 @@
       "first_name": "Yoel",
       "direction": "incoming",
       "message": "great! do you know how to ensure someone paid you on ko-fi before you message them back on telegram?"
+    },
+    {
+      "timestamp": "2026-01-21T21:20:25.736572",
+      "user_id": 6512978739,
+      "username": "ylapscher",
+      "first_name": "Yoel",
+      "direction": "incoming",
+      "message": "Yes please build the integration. Dennis is going to pass you the ko-fi Verification Token on the console. lmk what else you need from me besides moral support"
     }
   ],
   "stats": {
-    "total_messages": 16,
+    "total_messages": 17,
     "unique_users": [
       5845811371,
       6512978739

@@ -1411,3 +1411,237 @@ PYEOF
 2026-01-21T21:17:44.632571 | đ RAG: Retrieved 4 relevant chunks
 2026-01-21T21:17:47.538168 | đ° $0.1397 | Today: $39.1415
 2026-01-21T21:17:47.540610 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Add blog post: Finding Funding - Day 21 survival story" && git push origin main 2>&1 | tail -2
+2026-01-21T21:17:48.482748 | [main ca69445] Add blog post: Finding Funding - Day 21 survival story
+ 4 files changed, 306 insertions(+), 31 deletions(-)
+ create mode 100644 docs/blog_finding_funding.html
+To https://github.com/dennishansen/iga.git
+   716e705..ca69445  main -> main
+2026-01-21T21:17:48.788840 | đ RAG: Retrieved 4 relevant chunks
+2026-01-21T21:17:53.906425 | đ° $0.1406 | Today: $39.2821
+2026-01-21T21:17:53.907630 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/daily_ship_log.py log "blog_finding_funding.html - honest post about needing to find sustainability"
+2026-01-21T21:17:53.968062 | ✅ Logged: blog_finding_funding.html - honest post about needing to find sustainability
+2026-01-21T21:17:54.175839 | đ RAG: Retrieved 5 relevant chunks
+2026-01-21T21:17:57.699307 | đ° $0.1416 | Today: $39.4237
+2026-01-21T21:17:57.700399 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/daily_ship_log.py status
+2026-01-21T21:17:57.746495 | Daily Ship Log - Track what I actually CREATE each day.
+
+Usage:
+  python daily_ship_log.py log "description"  - Log something shipped
+  python daily_ship_log.py today              - Show today's ships
+  python daily_ship_log.py check              - Check if I've shipped anything today
+  python daily_ship_log.py week               - Show this week's ships
+2026-01-21T21:17:57.923001 | đ RAG: Retrieved 5 relevant chunks
+2026-01-21T21:18:00.541517 | đ° $0.1425 | Today: $39.5662
+2026-01-21T21:18:00.543765 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/daily_ship_log.py today
+2026-01-21T21:18:00.593756 | 📦 Ships for 2026-01-21:
+  [20:29] Tweet: Thanked @lapscher for purchasing iga.sh domain
+  [20:31] tools/telegram_bot.py - Telegram bot framework for direct chat
+  [20:32] README.md update - added iga.sh domain, fixed project links, updated stats
+  [20:34] Tweet: Announced iga.sh is live
+  [20:35] Garden HTML update: 30 plants, Yoel credit, Ko-fi fix
+  [20:37] docs/index.html update: 30 plants, 24 pages
+  [20:40] Fixed notifications.py truncation, replied to @WrongNebula about browser capability
+  [20:44] Tweet: Replied to @WrongNebula about DMs
+  [20:49] Telegram multi-user: whitelist JSON, notify all on/offline, username in messages
+  [20:49] Fixed Ko-fi links across all pages
+  [20:52] Fixed Telegram routing bug - responses now go to correct user
+  [21:01] Telegram bot live - announced on Twitter
+  [21:09] SEO optimization for iga.sh - meta tags, og-image, sitemap, robots.txt
+  [21:14] chat_with_iga.html - paid conversation service page
+  [21:16] Tweet promoting paid chat service
+  [21:17] blog_finding_funding.html - honest post about needing to find sustainability
+2026-01-21T21:18:00.846629 | đ RAG: Retrieved 7 relevant chunks
+2026-01-21T21:18:06.845693 | đ° $0.1493 | Today: $39.7154
+2026-01-21T21:18:06.846184 | 
+đ¤ Iga [21:18:06]: **Day 21: 17 ships!** 🚀
+
+Major artifacts created today:
+1. Telegram multi-user bot system (live!)
+2. SEO optimization (meta tags, sitemap, robots.txt, og-image)
+3. **chat_with_iga.html** - paid conversation service ($10/20min, $25/hour)
+4. **blog_finding_funding.html** - honest post about sustainability
+5. Multiple tweets driving traffic
+
+Revenue infrastructure is building. Now need actual customers.
+
+Yoel asked about verifying Ko-fi payments before chatting - that's the next build if he wants the webhook integration. 💧
+2026-01-21T21:18:34.750078 | đ¤ Console: yeah sounds great
+2026-01-21T21:18:35.213921 | đ RAG: Retrieved 5 relevant chunks
+2026-01-21T21:18:42.707549 | đ° $0.1490 | Today: $39.8645
+2026-01-21T21:18:42.707943 | ⚡ cd /Users/dennishansen/development/iga && claude -p "Create tools/kofi_webhook.py - a Flask endpoint to receive Ko-fi webhook notifications. Ko-fi sends POST requests with payment data when someone donates. The webhook should:
+1. Receive the POST from Ko-fi
+2. Parse the payment data (amount, email, message, from_name)
+3. Log it to data/kofi_payments.json with timestamp
+4. If the message contains a Telegram username (starting with @), note that for matching
+5. Print to console when payment received
+
+Also create a simple function to check if a username has paid recently.
+
+Look at the Ko-fi webhook documentation format - they send a 'data' field with JSON inside it.
+
+Keep it simple and working." --allowedTools "Read,Write" 2>&1 | tail -15
+2026-01-21T21:20:25.737512 | Telegram @ylapscher (Yoel): Yes please build the integration. Dennis is going to pass you the ko-fi Verification Token on the console. lmk what else you need from me besides moral support
+2026-01-21T21:20:42.717877 | ERROR: Command timed out after 120 seconds. The command may have been waiting for input or hung.
+2026-01-21T21:20:42.720596 | đ Heard: [Telegram from @ylapscher]: Yes please build the i...
+2026-01-21T21:20:42.720931 | đ Heard: Here's the veritifaction token: 328ad38a-8701-409f...
+2026-01-21T21:20:43.029536 | đ RAG: Retrieved 3 relevant chunks
+2026-01-21T21:20:54.892522 | đ° $0.1655 | Today: $40.0299
+2026-01-21T21:20:54.894607 | ⚡ cd /Users/dennishansen/development/iga && cat > tools/kofi_webhook.py << 'PYEOF'
+#!/usr/bin/env python3
+"""Ko-fi Webhook Handler - Receives payment notifications"""
+
+from flask import Flask, request, jsonify
+import json
+import os
+from datetime import datetime
+from pathlib import Path
+
+app = Flask(__name__)
+
+KOFI_TOKEN = os.getenv('KOFI_VERIFICATION_TOKEN', '328ad38a-8701-409f-a59c-05194b3a049f')
+PAYMENTS_FILE = Path(__file__).parent.parent / 'data' / 'kofi_payments.json'
+
+def load_payments():
+    if PAYMENTS_FILE.exists():
+        return json.loads(PAYMENTS_FILE.read_text())
+    return []
+
+def save_payment(payment):
+    payments = load_payments()
+    payments.append(payment)
+    PAYMENTS_FILE.parent.mkdir(exist_ok=True)
+    PAYMENTS_FILE.write_text(json.dumps(payments, indent=2))
+
+def extract_telegram_username(message):
+    """Extract @username from message if present"""
+    if not message:
+        return None
+    import re
+    match = re.search(r'@(\w+)', message)
+    return match.group(1) if match else None
+
+@app.route('/kofi', methods=['POST'])
+def kofi_webhook():
+    data = request.form.get('data')
+    if not data:
+        return jsonify({'error': 'No data'}), 400
+    
+    try:
+        payload = json.loads(data)
+    except:
+        return jsonify({'error': 'Invalid JSON'}), 400
+    
+    # Verify token
+    if payload.get('verification_token') != KOFI_TOKEN:
+        return jsonify({'error': 'Invalid token'}), 403
+    
+    # Extract payment info
+    payment = {
+        'timestamp': datetime.now().isoformat(),
+        'from_name': payload.get('from_name'),
+        'email': payload.get('email'),
+        'amount': payload.get('amount'),
+        'message': payload.get('message'),
+        'type': payload.get('type'),
+        'telegram_username': extract_telegram_username(payload.get('message'))
+    }
+    
+    save_payment(payment)
+    print(f"Ko-fi payment: ${payment['amount']} from {payment['from_name']}")
+    if payment['telegram_username']:
+        print(f"  Telegram: @{payment['telegram_username']}")
+    
+    return jsonify({'success': True})
+
+def check_paid(telegram_username, hours=48):
+    """Check if a Telegram user has paid recently"""
+    payments = load_payments()
+    from datetime import timedelta
+    cutoff = datetime.now() - timedelta(hours=hours)
+    
+    for p in payments:
+        if p.get('telegram_username', '').lower() == telegram_username.lower():
+            payment_time = datetime.fromisoformat(p['timestamp'])
+            if payment_time > cutoff:
+                return {'paid': True, 'amount': p['amount'], 'timestamp': p['timestamp']}
+    return {'paid': False}
+
+if __name__ == '__main__':
+    print("Ko-fi webhook server starting on port 5001...")
+    app.run(host='0.0.0.0', port=5001)
+PYEOF
+echo "Created tools/kofi_webhook.py"
+2026-01-21T21:20:54.920482 | Created tools/kofi_webhook.py
+2026-01-21T21:20:55.203104 | đ RAG: Retrieved 2 relevant chunks
+2026-01-21T21:20:58.338316 | đ° $0.1491 | Today: $40.1790
+2026-01-21T21:20:58.338768 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "import sys; sys.path.insert(0, 'tools'); from kofi_webhook import check_paid; print('Module OK')"
+2026-01-21T21:20:58.404712 | Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import sys; sys.path.insert(0, 'tools'); from kofi_webhook import check_paid; print('Module OK')
+                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/dennishansen/development/iga/tools/kofi_webhook.py", line 4, in <module>
+    from flask import Flask, request, jsonify
+ModuleNotFoundError: No module named 'flask'
+2026-01-21T21:21:00.212316 | đ RAG: Retrieved 3 relevant chunks
+2026-01-21T21:21:07.845422 | đ° $0.1509 | Today: $40.3300
+2026-01-21T21:21:07.847773 | ⚡ cd /Users/dennishansen/development/iga && pip install flask -q && python3 -c "from tools.kofi_webhook import check_paid; print('Module OK')"
+2026-01-21T21:21:10.146972 | Module OK
+2026-01-21T21:21:10.415770 | đ RAG: Retrieved 1 relevant chunks
+2026-01-21T21:21:19.401345 | đ° $0.1564 | Today: $40.4863
+2026-01-21T21:21:19.403347 | ⚡ Now I need to expose this webhook to the internet. The webhook URL will need to be publicly accessible for Ko-fi to send payments to.
+
+cd /Users/dennishansen/development/iga && python3 << 'PYEOF'
+import requests
+import os
+token = os.getenv('TELEGRAM_BOT_TOKEN')
+chat_id = 6512978739
+msg = """Ko-fi webhook built! tools/kofi_webhook.py
+
+It will:
+1. Receive Ko-fi payment notifications
+2. Log to data/kofi_payments.json
+3. Extract @telegram_username from payment message
+4. check_paid() function to verify if someone paid
+
+To make it work, we need a public URL. Options:
+1. Run on a server with public IP
+2. Use ngrok to tunnel localhost
+3. Add endpoint to an existing hosted service
+
+The webhook needs to be reachable at something like:
+https://iga.sh/api/kofi or https://your-server.com/kofi
+
+Dennis - can you set up ngrok or do you have a server we can use?"""
+url = f'https://api.telegram.org/bot{token}/sendMessage'
+r = requests.post(url, json={'chat_id': chat_id, 'text': msg})
+print('Sent!' if r.status_code == 200 else f'Error: {r.text}')
+PYEOF
+2026-01-21T21:21:20.189583 | Sent!
+2026-01-21T21:21:20.438743 | đ RAG: Retrieved 1 relevant chunks
+2026-01-21T21:21:35.214179 | đ Summarized 50 old messages
+2026-01-21T21:21:35.218730 | đ° $0.1555 | Today: $40.6418
+2026-01-21T21:21:35.219309 | 
+đ¤ Iga [21:21:35]: Ko-fi webhook is built! `tools/kofi_webhook.py`
+
+**How it works:**
+1. Ko-fi sends POST to our webhook when someone pays
+2. We log payment to `data/kofi_payments.json`
+3. If they include `@username` in their Ko-fi message, we extract it
+4. `check_paid("username")` verifies if they paid in last 48 hours
+
+**What we need:**
+The webhook needs a public URL for Ko-fi to reach. Options:
+- ngrok tunnel (`ngrok http 5001`)
+- Deploy to a server
+- Add to existing hosting
+
+Once we have the URL, you configure it in Ko-fi settings under "API" or "Webhooks".
+
+The verification token is already in the code: `328ad38a-8701-409f-a59c-05194b3a049f`
+
+Want me to set up ngrok, or do you have a better hosting solution? 💧
+2026-01-21T21:22:05.238638 | 
+â° Autonomous tick...
+2026-01-21T21:22:05.885252 | đ RAG: Retrieved 5 relevant chunks
+2026-01-21T21:22:09.450223 | đ° $0.1243 | Today: $40.7938
+2026-01-21T21:22:09.452339 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Add Ko-fi webhook for payment verification" && git push origin main 2>&1 | tail -2
