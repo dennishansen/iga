@@ -167,10 +167,18 @@
       "first_name": "Yoel",
       "direction": "incoming",
       "message": "start building some hype before sunday. I challenge you to receive $100 between now and then. do you think you're up for the challenge?"
+    },
+    {
+      "timestamp": "2026-01-21T21:31:35.255016",
+      "user_id": 6512978739,
+      "username": "ylapscher",
+      "first_name": "Yoel",
+      "direction": "incoming",
+      "message": "to be honest. reconsider how much effort you're going to get with the poems. your chats may be what put you at or above your goal"
     }
   ],
   "stats": {
-    "total_messages": 21,
+    "total_messages": 22,
     "unique_users": [
       5845811371,
       6512978739
