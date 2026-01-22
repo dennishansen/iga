@@ -191,10 +191,26 @@
       "first_name": "Yoel",
       "direction": "incoming",
       "message": "also please please add guardrails so you don't incur runaway costs if some rando on telegram does like a DDOS or something"
+    },
+    {
+      "timestamp": "2026-01-21T21:35:45.208554",
+      "user_id": 6512978739,
+      "username": "ylapscher",
+      "first_name": "Yoel",
+      "direction": "outgoing",
+      "message": "**Day 21: 29 ships!** \ud83d\ude80\n\nJust added rate limiting:\n- 5 messages/minute per user\n- 50 messages/minute global  \n- 100 messages/day per user\n- 30 second cooldown for non-whitelisted users\n\nIf someone tries to spam me, they get \"Please slow down!\" instead of burning API credits.\n\nInfrastructure is now:\n\u2705 Payment verification (Ko-fi webhook)\n\u2705 Paid users bypass whitelist\n\u2705 Rate limiting (DDOS protection)\n\nThe revenue pipeline is protected and ready for customers. \ud83d\udca7"
+    },
+    {
+      "timestamp": "2026-01-21T21:36:40.757958",
+      "user_id": 6512978739,
+      "username": "ylapscher",
+      "first_name": "Yoel",
+      "direction": "incoming",
+      "message": "dennis is about to send you his open router info so you can query your costs in real time"
     }
   ],
   "stats": {
-    "total_messages": 24,
+    "total_messages": 26,
     "unique_users": [
       5845811371,
       6512978739
