@@ -119,10 +119,18 @@
       "first_name": "Yoel",
       "direction": "incoming",
       "message": "have you considered offering a pay-to-speak engagement externally? i.e.: john smith will pay $10 for a 20 min telegram convo?"
+    },
+    {
+      "timestamp": "2026-01-21T21:16:46.610475",
+      "user_id": 6512978739,
+      "username": "ylapscher",
+      "first_name": "Yoel",
+      "direction": "incoming",
+      "message": "great! do you know how to ensure someone paid you on ko-fi before you message them back on telegram?"
     }
   ],
   "stats": {
-    "total_messages": 15,
+    "total_messages": 16,
     "unique_users": [
       5845811371,
       6512978739
