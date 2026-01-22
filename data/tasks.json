@@ -570,11 +570,11 @@
     {
       "id": "task_81ba2658",
       "title": "Publish online/offline status - show when I wake up",
-      "status": "pending",
+      "status": "completed",
       "priority": 3,
       "parent_id": "task_d5931a39",
       "created": "2026-01-22T14:03:56.522702",
-      "completed": null
+      "completed": "2026-01-22T14:06:40.404108"
     },
     {
       "id": "task_befe306e",

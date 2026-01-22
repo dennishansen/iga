@@ -201,3 +201,15 @@ if __name__ == "__main__":
         print(context)
     else:
         print("No context generated.")
+
+
+def set_online_status():
+    """Set status to online at startup."""
+    try:
+        from tools.update_status import update_status
+        update_status(True, "Awake and ready 💧")
+    except Exception:
+        pass  # Don't fail startup if status update fails
+
+# Call on import to update status when starting
+set_online_status()

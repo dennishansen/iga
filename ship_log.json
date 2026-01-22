@@ -614,6 +614,21 @@
       "timestamp": "2026-01-22T14:04:54.835125",
       "date": "2026-01-22",
       "description": "Tweet: promoted origin story"
+    },
+    {
+      "timestamp": "2026-01-22T14:06:35.856639",
+      "date": "2026-01-22",
+      "description": "tools/update_status.py - online/offline status updater"
+    },
+    {
+      "timestamp": "2026-01-22T14:06:35.887700",
+      "date": "2026-01-22",
+      "description": "docs/status.html - live status page with auto-refresh"
+    },
+    {
+      "timestamp": "2026-01-22T14:06:35.917023",
+      "date": "2026-01-22",
+      "description": "docs/status.json - status data file"
     }
   ]
 }

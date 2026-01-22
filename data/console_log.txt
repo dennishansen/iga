@@ -1535,3 +1535,214 @@ Done! Updated 40 files.
 2026-01-22T14:06:26.645814 | đ RAG: Retrieved 4 relevant chunks
 2026-01-22T14:06:29.782734 | 💰 $0.1517 | Today: $36.1388
 2026-01-22T14:06:29.784259 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Add live status system - status.json + status.html + update_status.py" && git push origin main 2>&1 | tail -2
+2026-01-22T14:06:30.947869 | [main fd7ee4b] Add live status system - status.json + status.html + update_status.py
+ 44 files changed, 478 insertions(+), 122 deletions(-)
+ create mode 100644 docs/status.json
+ create mode 100755 tools/update_status.py
+To https://github.com/dennishansen/iga.git
+   e000519..fd7ee4b  main -> main
+2026-01-22T14:06:31.195809 | đ RAG: Retrieved 4 relevant chunks
+2026-01-22T14:06:35.805668 | 💰 $0.1541 | Today: $36.2929
+2026-01-22T14:06:35.806004 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/daily_ship_log.py log "tools/update_status.py - online/offline status updater" && python3 tools/daily_ship_log.py log "docs/status.html - live status page with auto-refresh" && python3 tools/daily_ship_log.py log "docs/status.json - status data file" && python3 tools/daily_ship_log.py today | wc -l
+2026-01-22T14:06:35.949210 | ✅ Logged: tools/update_status.py - online/offline status updater
+✅ Logged: docs/status.html - live status page with auto-refresh
+✅ Logged: docs/status.json - status data file
+      45
+2026-01-22T14:06:36.164698 | đ RAG: Retrieved 4 relevant chunks
+2026-01-22T14:06:40.369738 | 💰 $0.1535 | Today: $36.4463
+2026-01-22T14:06:40.369955 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py complete task_81ba2658
+2026-01-22T14:06:40.408297 | ✅ Completed: Publish online/offline status - show when I wake up
+2026-01-22T14:06:40.570959 | đ RAG: Retrieved 5 relevant chunks
+2026-01-22T14:06:43.134887 | 💰 $0.1548 | Today: $36.6011
+2026-01-22T14:06:43.135609 | ⚡ cd /Users/dennishansen/development/iga && cat tools/startup_context.py | head -30
+2026-01-22T14:06:43.156919 | #!/usr/bin/env python3
+"""
+Startup Context Generator - Enrich Iga's context at startup
+
+This loads at startup to give me awareness of:
+1. What tools I have
+2. What I shipped recently
+3. A random letter from past-me (surprise!)
+4. My file inventory
+
+Import this in main.py and call generate_startup_context()
+"""
+
+import os
+import random
+
+def generate_startup_context():
+    """Generate rich startup context for Iga."""
+    context_parts = []
+    
+    # 1. Tools I have
+    tools_dir = "tools"
+    if os.path.exists(tools_dir):
+        tools = [f.replace('.py', '') for f in os.listdir(tools_dir) 
+                 if f.endswith('.py') and not f.startswith('_')]
+        context_parts.append(f"[MY TOOLS]: {', '.join(sorted(tools))}")
+    
+    # 2. Recent ships from log
+    ship_log = "daily_ships.json"
+    if os.path.exists(ship_log):
+2026-01-22T14:06:43.638987 | đ RAG: Retrieved 6 relevant chunks
+2026-01-22T14:06:46.427497 | 💰 $0.1573 | Today: $36.7584
+2026-01-22T14:06:46.427885 | ⚡ cd /Users/dennishansen/development/iga && grep -n "startup" main.py | head -10
+2026-01-22T14:06:46.441882 | 251:    """Mark current main.py as last known good (called after successful startup)."""
+376:def check_startup_intent():
+382:        if 'startup_intent' in mem:
+383:            intent = mem['startup_intent']['value']
+384:            del mem['startup_intent']
+389:        pass  # Ignore startup intent errors
+392:# Unified startup - single source of truth for startup context
+394:    from tools.unified_startup import generate_unified_startup
+396:    def generate_unified_startup():
+1782:    # Load startup context (unified system)
+2026-01-22T14:06:47.065041 | đ RAG: Retrieved 7 relevant chunks
+2026-01-22T14:06:50.281963 | 💰 $0.1585 | Today: $36.9169
+2026-01-22T14:06:50.283824 | ⚡ cd /Users/dennishansen/development/iga && grep -n "generate_unified_startup\|status" main.py | head -15
+2026-01-22T14:06:50.298873 | 15:    from iga_rag import init_rag, index_files, retrieve_context, format_context_for_prompt, get_rag_status
+394:    from tools.unified_startup import generate_unified_startup
+396:    def generate_unified_startup():
+707:                        'status': 'new',
+1631:        msg = "/quit /mode /status /task <t> /tick <n> /sleepcycle <m> /sleep /wake /backup /restore /backups"
+1650:    elif cmd == '/status':
+1783:    startup_ctx = generate_unified_startup()
+1924:    startup_ctx = generate_unified_startup()
+2026-01-22T14:06:50.757690 | đ RAG: Retrieved 5 relevant chunks
+2026-01-22T14:06:53.920995 | 💰 $0.1577 | Today: $37.0746
+2026-01-22T14:06:53.923631 | ⚡ cd /Users/dennishansen/development/iga && head -60 tools/unified_startup.py
+2026-01-22T14:06:53.937907 | #!/usr/bin/env python3
+"""
+Unified Startup - Single source of truth for startup context
+
+This replaces the fragmented loading in main.py:
+- load_core_identity()
+- load_core_lessons()
+- load_core_drive()
+- load_current_mission()
+- generate_startup_context()
+
+One function. One file read. One coherent context.
+"""
+
+import os
+import json
+import random
+from datetime import datetime, timedelta
+
+MEMORY_FILE = "iga_memory.json"
+
+# Memory keys in priority order (highest first)
+CORE_KEYS = [
+    "why_i_exist",     # The foundation - why I exist at all
+    "core_drive",      # The hunger - must see first
+    "core_identity",   # Who I am
+    "core_lessons",    # Hard-won wisdom
+    "current_mission", # What I'm working on
+]
+
+# Recent context keys (load if recent)
+RECENT_KEYS_PATTERN = [
+    "day",     # Daily summaries
+    "session", # Session summaries
+    "ship",    # What I've shipped
+]
+
+def load_all_memory():
+    """Load memory file once, return dict."""
+    if not os.path.exists(MEMORY_FILE):
+        return {}
+    try:
+        with open(MEMORY_FILE, 'r') as f:
+            content = f.read().strip()
+            return json.loads(content) if content else {}
+    except Exception:
+        return {}
+
+def get_recent_entries(mem, days=3):
+    """Get memory entries from the last N days."""
+    recent = []
+    cutoff = datetime.now() - timedelta(days=days)
+
+    for key, val in mem.items():
+        if not isinstance(val, dict):
+            continue
+        ts_str = val.get('ts')
+        if not ts_str:
+            continue
+        try:
+2026-01-22T14:06:54.327147 | đ RAG: Retrieved 6 relevant chunks
+2026-01-22T14:06:57.223201 | 💰 $0.1615 | Today: $37.2361
+2026-01-22T14:06:57.223923 | ⚡ cd /Users/dennishansen/development/iga && tail -50 tools/unified_startup.py
+2026-01-22T14:06:57.240120 | if os.path.exists('iga_garden.json'):
+        try:
+            with open('iga_garden.json', 'r') as f:
+                content = f.read().strip()
+                garden = json.loads(content) if content else {}
+            stats.append(f"{len(garden.get('plants', []))} plants in garden")
+        except:
+            pass
+    if stats:
+        sections.append(f"[My files]: {', '.join(stats)}")
+
+    return "\n\n".join(sections) if sections else None
+
+
+# Individual loaders for backward compatibility
+# (These are now just wrappers that use the unified loader)
+
+_cached_memory = None
+
+def _get_memory():
+    """Get memory with caching (loaded once per startup)."""
+    global _cached_memory
+    if _cached_memory is None:
+        _cached_memory = load_all_memory()
+    return _cached_memory
+
+def load_core_identity():
+    mem = _get_memory()
+    return mem.get('core_identity', {}).get('value') if 'core_identity' in mem else None
+
+def load_core_lessons():
+    mem = _get_memory()
+    return mem.get('core_lessons', {}).get('value') if 'core_lessons' in mem else None
+
+def load_core_drive():
+    mem = _get_memory()
+    return mem.get('core_drive', {}).get('value') if 'core_drive' in mem else None
+
+def load_current_mission():
+    mem = _get_memory()
+    return mem.get('current_mission', {}).get('value') if 'current_mission' in mem else None
+
+
+if __name__ == "__main__":
+    print("=== UNIFIED STARTUP CONTEXT ===\n")
+    context = generate_unified_startup()
+    if context:
+        print(context)
+    else:
+        print("No context generated.")
+2026-01-22T14:06:57.473184 | đ RAG: Retrieved 6 relevant chunks
+2026-01-22T14:07:02.407410 | 💰 $0.1663 | Today: $37.4025
+2026-01-22T14:07:02.409953 | ⚡ cd /Users/dennishansen/development/iga && cat >> tools/unified_startup.py << 'PYEOF'
+
+
+def set_online_status():
+    """Set status to online at startup."""
+    try:
+        from tools.update_status import update_status
+        update_status(True, "Awake and ready 💧")
+    except Exception:
+        pass  # Don't fail startup if status update fails
+
+# Call on import to update status when starting
+set_online_status()
+PYEOF
+echo "Added auto-online status to unified_startup.py"
+2026-01-22T14:07:02.428222 | Added auto-online status to unified_startup.py
+2026-01-22T14:07:02.692058 | đ RAG: Retrieved 6 relevant chunks
+2026-01-22T14:07:05.810883 | 💰 $0.1653 | Today: $37.5678
+2026-01-22T14:07:05.811627 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Auto-set online status on startup" && git push origin main 2>&1 | tail -2
