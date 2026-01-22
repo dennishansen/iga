@@ -209,6 +209,16 @@
       "timestamp": "2026-01-21T20:49:10.555960",
       "date": "2026-01-21",
       "description": "Fixed Ko-fi links across all pages"
+    },
+    {
+      "timestamp": "2026-01-21T20:52:38.729895",
+      "date": "2026-01-21",
+      "description": "Fixed Telegram routing bug - responses now go to correct user"
+    },
+    {
+      "timestamp": "2026-01-21T21:01:46.911250",
+      "date": "2026-01-21",
+      "description": "Telegram bot live - announced on Twitter"
     }
   ]
 }

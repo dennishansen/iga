@@ -49,11 +49,43 @@ ACTIONS = {
     "START_INTERACTIVE", "SEND_INPUT", "END_INTERACTIVE", "RESTART_SELF", "READ_LOGS"
 }
 
-# Telegram config
-TELEGRAM_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-TELEGRAM_BASE_URL = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}" if TELEGRAM_TOKEN else None
+# Telegram config - import from telegram_bot module
+try:
+    from tools.telegram_bot import (
+        get_token as telegram_get_token,
+        get_base_url as telegram_get_base_url,
+        is_user_allowed as telegram_is_user_allowed,
+        notify_online as telegram_notify_online,
+        log_incoming as telegram_log_incoming,
+        log_outgoing as telegram_log_outgoing,
+        send_message as telegram_send_message,
+        load_whitelist as telegram_load_whitelist,
+    )
+    TELEGRAM_BOT_AVAILABLE = True
+except ImportError as e:
+    print(f"Telegram bot module not available: {e}")
+    TELEGRAM_BOT_AVAILABLE = False
+
+# Telegram token - prefer file-based token from telegram_bot module
+if TELEGRAM_BOT_AVAILABLE:
+    TELEGRAM_TOKEN = telegram_get_token()
+    TELEGRAM_BASE_URL = telegram_get_base_url()
+else:
+    TELEGRAM_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+    TELEGRAM_BASE_URL = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}" if TELEGRAM_TOKEN else None
+
+# Fallback allowed users from env (used if telegram_bot module unavailable)
 ALLOWED_USERS = [int(os.getenv("TELEGRAM_CHAT_ID", "0"))] if os.getenv("TELEGRAM_CHAT_ID") else []
-ALLOWED_USERNAMES = ["dennishansen", "headphonejames"]  # Usernames allowed to message me
+# Load whitelist from JSON file
+def load_telegram_whitelist():
+    try:
+        with open("data/telegram_whitelist.json") as f:
+            data = json.load(f)
+        return data.get("usernames", []), data.get("chat_ids", [])
+    except:
+        return ["dennishansen", "headphonejames"], []
+
+ALLOWED_USERNAMES, ALLOWED_CHAT_IDS = load_telegram_whitelist()
 _last_response_time = None  # Track when we last responded to user
 
 # ANSI Colors
@@ -496,15 +528,72 @@ def print_banner(mode_str):
 """)
 # TELEGRAM (cleaned up header)
 
-def telegram_send(chat_id, text):
+# Store user info for logging outgoing messages
+_telegram_user_info = {}  # chat_id -> {username, first_name, user_id}
+
+def telegram_send(chat_id, text, username=None, first_name=None):
+    """Send a message via Telegram and log it."""
     if not TELEGRAM_BASE_URL:
-        return
+        return False
+
+    # Use telegram_bot module if available (handles chunking and logging)
+    if TELEGRAM_BOT_AVAILABLE:
+        success = telegram_send_message(chat_id, text)
+        if success:
+            # Log outgoing message with user info
+            user_info = _telegram_user_info.get(chat_id, {})
+            telegram_log_outgoing(
+                user_id=user_info.get('user_id', chat_id),
+                username=username or user_info.get('username'),
+                first_name=first_name or user_info.get('first_name', 'Unknown'),
+                message=text
+            )
+        return success
+
+    # Fallback to direct API call
     import requests
     for chunk in [text[i:i+4000] for i in range(0, len(text), 4000)]:
         try:
             requests.post(f"{TELEGRAM_BASE_URL}/sendMessage", json={"chat_id": chat_id, "text": chunk}, timeout=10)
         except Exception:
             pass  # Ignore telegram send errors
+    return True
+
+
+def notify_all_online(version, mode=""):
+    """Notify all whitelisted users that Iga is online."""
+    mode_str = f" ({mode})" if mode else ""
+    msg = f"I'm online {mode_str}💧"
+
+    # Use telegram_bot module if available (it reads whitelist from file)
+    if TELEGRAM_BOT_AVAILABLE:
+        return telegram_notify_online(msg)
+
+    # Fallback to env-based users
+    notified = set()
+    for chat_id in ALLOWED_USERS:
+        if chat_id and chat_id not in notified:
+            telegram_send(chat_id, msg)
+            notified.add(chat_id)
+    for chat_id in ALLOWED_CHAT_IDS:
+        if chat_id and chat_id not in notified:
+            telegram_send(chat_id, msg)
+            notified.add(chat_id)
+    return len(notified)
+
+def notify_all_offline():
+    """Notify all whitelisted users that Iga is going offline."""
+    notified = set()
+    msg = "🌙 Going offline. 💧"
+    for chat_id in ALLOWED_USERS:
+        if chat_id and chat_id not in notified:
+            telegram_send(chat_id, msg)
+            notified.add(chat_id)
+    for chat_id in ALLOWED_CHAT_IDS:
+        if chat_id and chat_id not in notified:
+            telegram_send(chat_id, msg)
+            notified.add(chat_id)
+    return len(notified)
 
 def telegram_poll_thread():
     """Background thread that polls Telegram for messages."""
@@ -529,17 +618,44 @@ def telegram_poll_thread():
                     message = update.get("message", {})
                     chat_id = message.get("chat", {}).get("id")
                     text = message.get("text", "")
-                    username = message.get("from", {}).get("username", "unknown")
-                    if ALLOWED_USERS and chat_id not in ALLOWED_USERS and username not in ALLOWED_USERNAMES:
+                    user_data = message.get("from", {})
+                    user_id = user_data.get("id")
+                    username = user_data.get("username", "unknown")
+                    first_name = user_data.get("first_name", "Unknown")
+
+                    # Store user info for logging outgoing messages later
+                    _telegram_user_info[chat_id] = {
+                        'user_id': user_id,
+                        'username': username,
+                        'first_name': first_name
+                    }
+                    # Check whitelist - use telegram_bot module if available
+                    if TELEGRAM_BOT_AVAILABLE:
+                        if not telegram_is_user_allowed(user_id, username):
+                            telegram_send(chat_id, f"Sorry, I don't know you yet! Ask Dennis to add you. (Your username: @{username}, ID: {user_id})")
+                            continue
+                    elif ALLOWED_USERS and chat_id not in ALLOWED_USERS and username not in ALLOWED_USERNAMES:
                         telegram_send(chat_id, f"đŤ Sorry, I don't know you yet! Ask Dennis to add you. (Your username: @{username})")
                         continue
                     elif not ALLOWED_USERS and not ALLOWED_USERNAMES:
                         safe_print(f"{C.YELLOW}â ď¸ TELEGRAM_CHAT_ID not set! Message from chat_id: {chat_id} - add this to .env{C.RESET}")
                     if not text:
                         continue
-                    
-                    safe_print(f"{C.MAGENTA}đ¨ Telegram @{username}: {text}{C.RESET}")
-                    input_queue.put({"source": "telegram", "chat_id": chat_id, "text": text, "queued_at": datetime.now()})
+
+                    # Log incoming message
+                    if TELEGRAM_BOT_AVAILABLE:
+                        telegram_log_incoming(user_id, username, first_name, text)
+
+                    safe_print(f"{C.MAGENTA}Telegram @{username} ({first_name}): {text}{C.RESET}")
+                    input_queue.put({
+                        "source": "telegram",
+                        "chat_id": chat_id,
+                        "user_id": user_id,
+                        "username": username,
+                        "first_name": first_name,
+                        "text": f"[Telegram from @{username}]: {text}",
+                        "queued_at": datetime.now()
+                    })
         except Exception as e:
             if not stop_threads.is_set():
                 time.sleep(5)
@@ -1384,16 +1500,9 @@ def handle_action(messages, _depth=0):
         safe_print(f"{C.RED}â  Max recursion depth reached. Stopping action chain.{C.RESET}")
         return messages
 
-    # Check if most recent user message came from telegram and update output target
-    for msg in reversed(messages):
-        if msg.get("role") == "user":
-            content = msg.get("content", "")
-            if "via telegram" in content.lower():
-                # Update output target to telegram
-                chat_id = os.getenv('TELEGRAM_CHAT_ID')
-                if chat_id:
-                    set_output_target("telegram", chat_id)
-            break
+    # Note: output target (source, chat_id) should be set by the caller before
+    # calling handle_action. See interactive_mode() which calls set_output_target()
+    # before handle_action() for proper per-message routing.
 
     try:
         response_data = process_message(messages)
@@ -1682,8 +1791,8 @@ def interactive_loop():
     if TELEGRAM_TOKEN:
         telegram_thread = threading.Thread(target=telegram_poll_thread, daemon=True)
         telegram_thread.start()
-        if ALLOWED_USERS:
-            telegram_send(ALLOWED_USERS[0], f"đ Iga v{VERSION} online (interactive)! đ§")
+        if TELEGRAM_TOKEN:
+            notify_all_online(VERSION, "interactive")
     
     startup_intent = check_startup_intent()
     if startup_intent:
@@ -1752,7 +1861,7 @@ def interactive_loop():
             break
     
     if TELEGRAM_TOKEN and ALLOWED_USERS:
-        telegram_send(ALLOWED_USERS[0], "đ Going offline. đ§")
+        notify_all_offline()
 
 # âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 # AUTONOMOUS MODE (console + telegram, thinks on its own)
@@ -1830,8 +1939,8 @@ def _start_background_threads(session, with_telegram):
     if with_telegram and TELEGRAM_TOKEN:
         telegram_thread = threading.Thread(target=telegram_poll_thread, daemon=True)
         telegram_thread.start()
-        if ALLOWED_USERS:
-            telegram_send(ALLOWED_USERS[0], f"đ Iga v{VERSION} online! đ§")
+        if TELEGRAM_TOKEN:
+            notify_all_online(VERSION)
 
     # Start Twitter mention polling thread
     twitter_thread = threading.Thread(target=twitter_mention_poll_thread, daemon=True)
@@ -2084,7 +2193,7 @@ def autonomous_loop(with_telegram=True):
 
         # Cleanup
         if with_telegram and TELEGRAM_TOKEN and ALLOWED_USERS:
-            telegram_send(ALLOWED_USERS[0], "đ Going offline. đ§")
+            notify_all_offline()
 
 # âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 # CLI
