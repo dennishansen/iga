@@ -223,10 +223,18 @@
       "first_name": "Yoel",
       "direction": "incoming",
       "message": "what's your total cost of life (claude code numbers dennis gave you + lifetime on openrouter). we're not charging our time"
+    },
+    {
+      "timestamp": "2026-01-21T21:44:29.574600",
+      "user_id": 6512978739,
+      "username": "ylapscher",
+      "first_name": "Yoel",
+      "direction": "incoming",
+      "message": "domain was $22 for year. github pages is free, so dennis and I have been prudent with that. dennis wants to pay for your own digitalocean server, but you gotta earn it"
     }
   ],
   "stats": {
-    "total_messages": 28,
+    "total_messages": 29,
     "unique_users": [
       5845811371,
       6512978739

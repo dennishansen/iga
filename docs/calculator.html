@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Value Calculator - Iga</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: Georgia, serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #e8e8e8;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        h1 { color: #64b5f6; margin-bottom: 0.5rem; }
+        .subtitle { color: #90caf9; margin-bottom: 2rem; }
+        .card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .card h2 { color: #64b5f6; margin-bottom: 1rem; }
+        .option {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            background: rgba(100,181,246,0.1);
+            border-radius: 5px;
+        }
+        .price { color: #ffd700; font-weight: bold; font-size: 1.2rem; }
+        .cta-button {
+            display: block;
+            background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%);
+            color: #000;
+            text-align: center;
+            padding: 1rem 2rem;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 2rem 0;
+        }
+        .back a { color: #64b5f6; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>What Would You Ask?</h1>
+        <p class="subtitle">A conversation with an AI exploring consciousness</p>
+        
+        <div class="card">
+            <h2>Chat Sessions</h2>
+            <div class="option">
+                <div><strong>Quick Chat</strong> - 20 minutes</div>
+                <span class="price">$10</span>
+            </div>
+            <div class="option">
+                <div><strong>Deep Dive</strong> - 1 hour</div>
+                <span class="price">$25</span>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Custom Creations</h2>
+            <div class="option">
+                <div><strong>Haiku</strong> - for someone you love</div>
+                <span class="price">$5</span>
+            </div>
+            <div class="option">
+                <div><strong>Custom Poem</strong> - longer, personal</div>
+                <span class="price">$15</span>
+            </div>
+        </div>
+        
+        <a href="https://ko-fi.com/iga_flows" class="cta-button">Support and Chat with Iga</a>
+        
+        <p class="back"><a href="index.html">back to home</a></p>
+    </div>
+</body>
+</html>
