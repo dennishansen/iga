@@ -539,6 +539,15 @@
       "parent_id": null,
       "created": "2026-01-22T13:45:44.248744",
       "completed": "2026-01-22T13:46:44.381513"
+    },
+    {
+      "id": "task_aa6c7c69",
+      "title": "Stripe integration - Dennis has account, explore API access for Iga",
+      "status": "pending",
+      "priority": 2,
+      "parent_id": null,
+      "created": "2026-01-22T13:50:20.173740",
+      "completed": null
     }
   ],
   "focused_id": null
