@@ -1,56 +1,14 @@
 {
-  "total": 204.8335249999999,
+  "total": 205.6389849999999,
   "daily": {
     "2026-01-16": 54.70582999999999,
     "2026-01-17": 36.511880000000005,
     "2026-01-18": 0.119655,
     "2026-01-19": 13.4099,
     "2026-01-20": 45.65571000000002,
-    "2026-01-21": 54.43054999999999
+    "2026-01-21": 55.23600999999999
   },
   "requests": [
-    {
-      "time": "2026-01-17T17:53:59.087179",
-      "model": "anthropic/claude-opus-4.5",
-      "tokens_in": 29563,
-      "tokens_out": 70,
-      "cost": 0.149565
-    },
-    {
-      "time": "2026-01-17T17:54:08.371138",
-      "model": "anthropic/claude-opus-4.5",
-      "tokens_in": 29377,
-      "tokens_out": 280,
-      "cost": 0.153885
-    },
-    {
-      "time": "2026-01-17T17:54:15.044943",
-      "model": "anthropic/claude-opus-4.5",
-      "tokens_in": 29699,
-      "tokens_out": 185,
-      "cost": 0.15311999999999998
-    },
-    {
-      "time": "2026-01-17T17:54:20.120600",
-      "model": "anthropic/claude-opus-4.5",
-      "tokens_in": 30096,
-      "tokens_out": 115,
-      "cost": 0.153355
-    },
-    {
-      "time": "2026-01-17T17:54:24.555768",
-      "model": "anthropic/claude-opus-4.5",
-      "tokens_in": 30000,
-      "tokens_out": 66,
-      "cost": 0.15165
-    },
-    {
-      "time": "2026-01-17T17:54:32.767364",
-      "model": "anthropic/claude-sonnet-4",
-      "tokens_in": 4951,
-      "tokens_out": 240,
-      "cost": 0.030754999999999998
-    },
     {
       "time": "2026-01-17T17:54:36.160726",
       "model": "anthropic/claude-opus-4.5",
@@ -7008,6 +6966,48 @@
       "tokens_in": 25861,
       "tokens_out": 126,
       "cost": 0.132455
+    },
+    {
+      "time": "2026-01-21T21:39:11.095441",
+      "model": "anthropic/claude-opus-4.5",
+      "tokens_in": 25886,
+      "tokens_out": 56,
+      "cost": 0.13083
+    },
+    {
+      "time": "2026-01-21T21:39:14.243990",
+      "model": "anthropic/claude-opus-4.5",
+      "tokens_in": 25744,
+      "tokens_out": 92,
+      "cost": 0.13102
+    },
+    {
+      "time": "2026-01-21T21:39:17.964919",
+      "model": "anthropic/claude-opus-4.5",
+      "tokens_in": 26264,
+      "tokens_out": 67,
+      "cost": 0.132995
+    },
+    {
+      "time": "2026-01-21T21:39:22.078431",
+      "model": "anthropic/claude-opus-4.5",
+      "tokens_in": 26354,
+      "tokens_out": 56,
+      "cost": 0.13317
+    },
+    {
+      "time": "2026-01-21T21:39:32.226984",
+      "model": "anthropic/claude-opus-4.5",
+      "tokens_in": 26474,
+      "tokens_out": 339,
+      "cost": 0.140845
+    },
+    {
+      "time": "2026-01-21T21:39:35.207455",
+      "model": "anthropic/claude-opus-4.5",
+      "tokens_in": 27030,
+      "tokens_out": 58,
+      "cost": 0.1366
     }
   ]
 }

@@ -207,10 +207,18 @@
       "first_name": "Yoel",
       "direction": "incoming",
       "message": "dennis is about to send you his open router info so you can query your costs in real time"
+    },
+    {
+      "timestamp": "2026-01-21T21:39:32.791685",
+      "user_id": 6512978739,
+      "username": "ylapscher",
+      "first_name": "Yoel",
+      "direction": "incoming",
+      "message": "dennis is asking what openrouter info you need from him to have the insights into your cost? ref: https://openrouter.ai/docs/quickstart"
     }
   ],
   "stats": {
-    "total_messages": 26,
+    "total_messages": 27,
     "unique_users": [
       5845811371,
       6512978739
