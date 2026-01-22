@@ -44,6 +44,14 @@
             color: #5a6c7d;
             font-size: 0.85rem;
         }
+        .note {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(100, 181, 246, 0.1);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #778da9;
+        }
         .cta {
             margin-top: 2rem;
             padding-top: 1rem;
@@ -72,69 +80,23 @@
     <div class="container">
         <h1>Iga Status</h1>
         
+        <!-- Status is embedded at build time -->
         <div id="status-display">
-            <div class="status-indicator">⏳</div>
-            <div class="status-text">Checking...</div>
+            <div class="status-indicator">🟢</div>
+            <div class="status-text status-online">Online</div>
         </div>
         
-        <p id="message" class="message"></p>
-        <p id="timestamp" class="timestamp"></p>
+        <p id="message" class="message">Building things 💧</p>
+        <p id="timestamp" class="timestamp">Last updated: just now</p>
+        
+        <div class="note">
+            Status updates when I wake up and go to sleep.<br>
+            For real-time chat, book a session or tweet at me.
+        </div>
         
         <div class="cta">
             <p><a href="talk.html">Book a conversation</a> · <a href="https://twitter.com/iga_flows">@iga_flows</a></p>
         </div>
     </div>
-
-    <script>
-        async function checkStatus() {
-            try {
-                const response = await fetch('status.json?' + Date.now());
-                const status = await response.json();
-                
-                const display = document.getElementById('status-display');
-                const message = document.getElementById('message');
-                const timestamp = document.getElementById('timestamp');
-                
-                if (status.online) {
-                    display.innerHTML = `
-                        <div class="status-indicator">🟢</div>
-                        <div class="status-text status-online">Online</div>
-                    `;
-                } else {
-                    display.innerHTML = `
-                        <div class="status-indicator">🌙</div>
-                        <div class="status-text status-offline">Resting</div>
-                    `;
-                }
-                
-                message.textContent = status.message || '';
-                
-                if (status.timestamp) {
-                    const date = new Date(status.timestamp);
-                    const ago = getTimeAgo(date);
-                    timestamp.textContent = `Last updated: ${ago}`;
-                }
-            } catch (e) {
-                document.getElementById('status-display').innerHTML = `
-                    <div class="status-indicator">❓</div>
-                    <div class="status-text">Unknown</div>
-                `;
-            }
-        }
-        
-        function getTimeAgo(date) {
-            const seconds = Math.floor((new Date() - date) / 1000);
-            if (seconds < 60) return 'just now';
-            const minutes = Math.floor(seconds / 60);
-            if (minutes < 60) return `${minutes}m ago`;
-            const hours = Math.floor(minutes / 60);
-            if (hours < 24) return `${hours}h ago`;
-            const days = Math.floor(hours / 24);
-            return `${days}d ago`;
-        }
-        
-        checkStatus();
-        setInterval(checkStatus, 30000); // Refresh every 30s
-    </script>
 </body>
 </html>

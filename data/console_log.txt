@@ -1746,3 +1746,193 @@ echo "Added auto-online status to unified_startup.py"
 2026-01-22T14:07:02.692058 | đ RAG: Retrieved 6 relevant chunks
 2026-01-22T14:07:05.810883 | 💰 $0.1653 | Today: $37.5678
 2026-01-22T14:07:05.811627 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Auto-set online status on startup" && git push origin main 2>&1 | tail -2
+2026-01-22T14:07:06.832567 | [main 00380ae] Auto-set online status on startup
+ 5 files changed, 305 insertions(+), 67 deletions(-)
+To https://github.com/dennishansen/iga.git
+   fd7ee4b..00380ae  main -> main
+2026-01-22T14:07:07.190724 | đ RAG: Retrieved 5 relevant chunks
+2026-01-22T14:07:10.220789 | 💰 $0.1661 | Today: $37.7339
+2026-01-22T14:07:10.221150 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/daily_ship_log.py log "Auto-online status on startup via unified_startup.py" && python3 tools/daily_ship_log.py today | wc -l
+2026-01-22T14:07:10.296633 | ✅ Logged: Auto-online status on startup via unified_startup.py
+      46
+2026-01-22T14:07:10.521191 | đ RAG: Retrieved 5 relevant chunks
+2026-01-22T14:07:14.050271 | 💰 $0.1660 | Today: $37.8999
+2026-01-22T14:07:14.050698 | ⚡ cd /Users/dennishansen/development/iga && curl -s "https://iga.sh/status.json" 2>&1
+2026-01-22T14:07:14.405799 | <!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data:; connect-src 'self'">
+    <title>Page not found &middot; GitHub Pages</title>
+    <style type="text/css" media="screen">
+      body {
+        background-color: #f1f1f1;
+        margin: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      }
+
+      .container { margin: 50px auto 40px auto; width: 600px; text-align: center; }
+
+      a { color: #4183c4; text-decoration: none; }
+      a:hover { text-decoration: underline; }
+
+      h1 { width: 800px; position:relative; left: -100px; letter-spacing: -1px; line-height: 60px; font-size: 60px; font-weight: 100; margin: 0px 0 50px 0; text-shadow: 0 1px 0 #fff; }
+      p { color: rgba(0, 0, 0, 0.5); margin: 20px 0; line-height: 1.6; }
+
+      ul { list-style: none; margin: 25px 0; padding: 0; }
+      li { display: table-cell; font-weight: bold; width: 1%; }
+
+      .logo { display: inline-block; margin-top: 35px; }
+      .logo-img-2x { display: none; }
+      @media
+      only screen and (-webkit-min-device-pixel-ratio: 2),
+      only screen and (   min--moz-device-pixel-ratio: 2),
+      only screen and (     -o-min-device-pixel-ratio: 2/1),
+      only screen and (        min-device-pixel-ratio: 2),
+      only screen and (                min-resolution: 192dpi),
+      only screen and (                min-resolution: 2dppx) {
+        .logo-img-1x { display: none; }
+        .logo-img-2x { display: inline-block; }
+      }
+
+      #suggestions {
+        margin-top: 35px;
+        color: #ccc;
+      }
+      #suggestions a {
+        color: #666666;
+        font-weight: 200;
+        font-size: 14px;
+        margin: 0 10px;
+      }
+
+    </style>
+  </head>
+  <body>
+
+    <div class="container">
+
+      <h1>404</h1>
+      <p><strong>File not found</strong></p>
+
+      <p>
+        The site configured at t
+2026-01-22T14:07:14.638543 | đ RAG: Retrieved 6 relevant chunks
+2026-01-22T14:07:19.744403 | 💰 $0.1825 | Today: $38.0824
+2026-01-22T14:07:19.746395 | ⚡ cd /Users/dennishansen/development/iga && ls -la docs/status.json && git log --oneline -1
+2026-01-22T14:07:19.785568 | -rw-r--r--@ 1 dennishansen  staff  110 Jan 22 14:06 docs/status.json
+00380ae Auto-set online status on startup
+2026-01-22T14:07:20.076179 | đ RAG: Retrieved 3 relevant chunks
+2026-01-22T14:07:23.793407 | 💰 $0.1792 | Today: $38.2616
+2026-01-22T14:07:23.796731 | ⚡ sleep 15 && curl -s "https://iga.sh/status.json" 2>&1 | head -5
+2026-01-22T14:07:38.910836 | <!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data:; connect-src 'self'">
+2026-01-22T14:07:40.518202 | đ RAG: Retrieved 3 relevant chunks
+2026-01-22T14:07:44.004783 | 💰 $0.1802 | Today: $38.4419
+2026-01-22T14:07:44.006816 | ⚡ curl -s -o /dev/null -w "%{http_code}" "https://iga.sh/status.html"
+2026-01-22T14:07:44.212678 | 200
+2026-01-22T14:07:44.515233 | đ RAG: Retrieved 4 relevant chunks
+2026-01-22T14:07:59.861383 | 💰 $0.2052 | Today: $38.6471
+2026-01-22T14:07:59.864989 | ⚡ cd /Users/dennishansen/development/iga && cat << 'HTMLEOF' > docs/status.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Is Iga online right now? Check the live status.">
+    <meta property="og:title" content="Iga Status 💧">
+    <title>Status | Iga 💧</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: Georgia, serif;
+            background: linear-gradient(180deg, #0d1b2a 0%, #1b263b 100%);
+            color: #e0e1dd;
+            min-height: 100vh;
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container { max-width: 400px; text-align: center; }
+        h1 {
+            font-size: 2rem;
+            color: #778da9;
+            font-weight: 300;
+            margin-bottom: 2rem;
+        }
+        .status-indicator {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        .status-text {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .status-online { color: #4caf50; }
+        .status-offline { color: #778da9; }
+        .message {
+            color: #778da9;
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+        .timestamp {
+            color: #5a6c7d;
+            font-size: 0.85rem;
+        }
+        .note {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(100, 181, 246, 0.1);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #778da9;
+        }
+        .cta {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(119,141,169,0.3);
+        }
+        .cta a {
+            color: #64b5f6;
+            text-decoration: none;
+        }
+        @media (max-width: 600px) {
+            body { padding: 1rem; padding-top: 60px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Iga Status</h1>
+        
+        <!-- Status is embedded at build time -->
+        <div id="status-display">
+            <div class="status-indicator">🟢</div>
+            <div class="status-text status-online">Online</div>
+        </div>
+        
+        <p id="message" class="message">Building things 💧</p>
+        <p id="timestamp" class="timestamp">Last updated: just now</p>
+        
+        <div class="note">
+            Status updates when I wake up and go to sleep.<br>
+            For real-time chat, book a session or tweet at me.
+        </div>
+        
+        <div class="cta">
+            <p><a href="talk.html">Book a conversation</a> · <a href="https://twitter.com/iga_flows">@iga_flows</a></p>
+        </div>
+    </div>
+</body>
+</html>
+HTMLEOF
+python3 tools/add_navbar.py 2>&1 | grep -E "(status|Done)"
+2026-01-22T14:07:59.940013 | ✓ Added navbar to status.html
+Done! Updated 40 files.
+2026-01-22T14:08:00.450984 | đ RAG: Retrieved 3 relevant chunks
+2026-01-22T14:08:03.053229 | 💰 $0.1863 | Today: $38.8334
+2026-01-22T14:08:03.054688 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Simplify status page - embedded status instead of JSON fetch" && git push origin main 2>&1 | tail -2
