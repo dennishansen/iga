@@ -1761,6 +1761,16 @@ def interactive_loop():
     # CRITICAL: Mark this version as known-good since we started successfully
     mark_as_known_good()
 
+    # Register shutdown handler for graceful cleanup
+    try:
+        from tools.shutdown_handler import register_shutdown_handler, register_shutdown_callback, set_offline_status, update_rag_on_shutdown
+        register_shutdown_handler()
+        register_shutdown_callback(set_offline_status)
+        # Note: RAG reindex on shutdown disabled - do it incrementally instead
+        # register_shutdown_callback(update_rag_on_shutdown)
+    except Exception as e:
+        safe_print(f"{C.DIM}Shutdown handler not registered: {e}{C.RESET}")
+
     # Initialize RAG system
     if RAG_AVAILABLE:
         if init_rag():
