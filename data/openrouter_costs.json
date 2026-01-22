@@ -1,42 +1,14 @@
 {
-  "total": 196.2826499999999,
+  "total": 196.8094949999999,
   "daily": {
     "2026-01-16": 54.70582999999999,
     "2026-01-17": 36.511880000000005,
     "2026-01-18": 0.119655,
     "2026-01-19": 13.4099,
     "2026-01-20": 45.65571000000002,
-    "2026-01-21": 45.879674999999985
+    "2026-01-21": 46.40651999999998
   },
   "requests": [
-    {
-      "time": "2026-01-17T17:38:17.650848",
-      "model": "anthropic/claude-opus-4.5",
-      "tokens_in": 18447,
-      "tokens_out": 224,
-      "cost": 0.09783499999999999
-    },
-    {
-      "time": "2026-01-17T17:38:20.752114",
-      "model": "anthropic/claude-opus-4.5",
-      "tokens_in": 18915,
-      "tokens_out": 83,
-      "cost": 0.09665
-    },
-    {
-      "time": "2026-01-17T17:38:24.440731",
-      "model": "anthropic/claude-opus-4.5",
-      "tokens_in": 19018,
-      "tokens_out": 128,
-      "cost": 0.09828999999999999
-    },
-    {
-      "time": "2026-01-17T17:45:24.038984",
-      "model": "anthropic/claude-opus-4.5",
-      "tokens_in": 19551,
-      "tokens_out": 129,
-      "cost": 0.10098
-    },
     {
       "time": "2026-01-17T17:45:32.644276",
       "model": "anthropic/claude-opus-4.5",
@@ -7008,6 +6980,34 @@
       "tokens_in": 24922,
       "tokens_out": 105,
       "cost": 0.127235
+    },
+    {
+      "time": "2026-01-21T21:28:28.881126",
+      "model": "anthropic/claude-opus-4.5",
+      "tokens_in": 25329,
+      "tokens_out": 199,
+      "cost": 0.13162000000000001
+    },
+    {
+      "time": "2026-01-21T21:29:16.764743",
+      "model": "anthropic/claude-opus-4.5",
+      "tokens_in": 25755,
+      "tokens_out": 34,
+      "cost": 0.129625
+    },
+    {
+      "time": "2026-01-21T21:29:24.422043",
+      "model": "anthropic/claude-opus-4.5",
+      "tokens_in": 25454,
+      "tokens_out": 241,
+      "cost": 0.133295
+    },
+    {
+      "time": "2026-01-21T21:29:30.854844",
+      "model": "anthropic/claude-opus-4.5",
+      "tokens_in": 26171,
+      "tokens_out": 58,
+      "cost": 0.132305
     }
   ]
 }

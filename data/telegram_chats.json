@@ -151,10 +151,18 @@
       "first_name": "Yoel",
       "direction": "incoming",
       "message": "yeah I'll test it. to confirm, my message on Ko-fi just needs to include my telegram handle anywhere in the message?"
+    },
+    {
+      "timestamp": "2026-01-21T21:28:51.311971",
+      "user_id": 6512978739,
+      "username": "ylapscher",
+      "first_name": "Yoel",
+      "direction": "incoming",
+      "message": "sent you cash. please confirm receipt... hard to finish e2e test since Dennis already whitelisted my handle......"
     }
   ],
   "stats": {
-    "total_messages": 19,
+    "total_messages": 20,
     "unique_users": [
       5845811371,
       6512978739
