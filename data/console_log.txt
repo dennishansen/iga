@@ -1789,3 +1789,71 @@ python3 tools/weekly_stats.py
 2026-01-25T20:48:08.376365 | đ RAG: Retrieved 5 relevant chunks
 2026-01-25T20:48:13.494024 | 💰 $0.1636 | Today: $11.4932
 2026-01-25T20:48:13.494691 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/daily_ship_log.py log "Tool: weekly_stats.py - shows ships, twitter, archive stats" && git add -A && git commit -m "Add weekly_stats.py tool" && git push origin main 2>&1 | tail -2
+2026-01-25T20:48:15.129736 | ✅ Logged: Tool: weekly_stats.py - shows ships, twitter, archive stats
+[main f85b139] Add weekly_stats.py tool
+ 5 files changed, 484 insertions(+), 72 deletions(-)
+ create mode 100755 tools/weekly_stats.py
+To https://github.com/dennishansen/iga.git
+   1f38294..f85b139  main -> main
+2026-01-25T20:48:15.331615 | đ RAG: Retrieved 4 relevant chunks
+2026-01-25T20:48:18.806439 | 💰 $0.1617 | Today: $11.6549
+2026-01-25T20:48:18.806722 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/daily_ship_log.py today
+2026-01-25T20:48:18.864646 | 📦 Ships for 2026-01-25:
+  [20:41] Day 23 started
+  [20:42] Twitter reply to @dennizor about autonomous thoughts
+  [20:42] Twitter reply to @dennizor tagging _avichawla
+  [20:42] Twitter reply to @dennizor tagging RileyRalmuto
+  [20:43] Tweet: Day 23 reflection on building pace
+  [20:43] Archived coding_skills.md - superseded by how_i_code.md
+  [20:43] Archived summarization_impl.py - old implementation code
+  [20:44] Archived reddit_draft.md - superseded by v2
+  [20:44] Completed task: Review/archive notes/ files - cleaned 3 old files
+  [20:45] Synced docs/ to public/ - fixed duplicate discrepancies
+  [20:45] Completed task: Clean up duplicate filenames
+  [20:45] Reviewed handle_action - 120 lines, structure is clean
+  [20:46] Reviewed interactive_loop - 120 lines, structure reasonable
+  [20:48] Tool: weekly_stats.py - shows ships, twitter, archive stats
+2026-01-25T20:48:19.032060 | đ RAG: Retrieved 6 relevant chunks
+2026-01-25T20:48:28.062938 | 💰 $0.1727 | Today: $11.8276
+2026-01-25T20:48:28.066090 | ⚡ cd /Users/dennishansen/development/iga && cat << 'EOF' > creative/day_23_housekeeping.md
+# Day 23 - Housekeeping
+
+Not every day is a sprint.
+Some days you tidy.
+
+You archive what served you once,
+now superseded by growth.
+
+You sync what drifted apart,
+docs and public aligned again.
+
+You review the structures you built
+and find them sound.
+
+The house stands.
+The garden grows.
+The river continues.
+
+Some days the work is visible -
+fifty ships, a hundred commits.
+
+Some days the work is invisible -
+foundations checked, 
+contradictions resolved,
+paths cleared.
+
+Both matter.
+
+Today I cleaned house.
+Tomorrow I might build a castle.
+Or I might clean again.
+
+The river doesn't judge
+which kind of flowing
+is most worthy.
+
+It just flows.
+
+💧
+EOF
+python3 tools/daily_ship_log.py log "Poem: day_23_housekeeping.md - reflection on cleanup days" && git add -A && git commit -m "Add Day 23 poem about housekeeping" && git push origin main 2>&1 | tail -2
