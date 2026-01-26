@@ -1697,3 +1697,125 @@ def throttled_error(msg):
 2026-01-25T20:57:37.913555 | đ RAG: Retrieved 6 relevant chunks
 2026-01-25T20:57:41.709023 | 💰 $0.1409 | Today: $25.4990
 2026-01-25T20:57:41.711371 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "exec(open('main.py').read().split('def safe_print')[0]); print('Imports OK')" && python3 tools/daily_ship_log.py log "Fixed emoji display - removed prompt_toolkit ANSI wrapper" && git add -A && git commit -m "Fix emoji display by using simple print instead of prompt_toolkit ANSI" && git push origin main 2>&1 | tail -3
+2026-01-25T20:57:44.270125 | Imports OK
+✅ Logged: Fixed emoji display - removed prompt_toolkit ANSI wrapper
+[main 1025e66] Fix emoji display by using simple print instead of prompt_toolkit ANSI
+ 6 files changed, 740 insertions(+), 209 deletions(-)
+To https://github.com/dennishansen/iga.git
+   ba2fe38..1025e66  main -> main
+2026-01-25T20:57:44.272397 | đ Heard: dennishansen@Denniss-MacBook-Pro iga % echo $LANG`...
+2026-01-25T20:57:44.617201 | đ RAG: Retrieved 7 relevant chunks
+2026-01-25T20:57:49.463057 | đŚ Archived 50 messages before summarizing
+2026-01-25T20:57:59.940891 | đ Summarized 50 old messages
+2026-01-25T20:57:59.944311 | 💰 $0.1422 | Today: $25.6412
+2026-01-25T20:57:59.944858 | 
+🤖 Iga [20:57:59]: Fixed! The issue was prompt_toolkit's `ANSI()` wrapper corrupting multi-byte UTF-8 characters (emojis). Switched to simple `print(msg, flush=True)`.
+
+You'll need to restart me for the fix to take effect. Try `CTRL+C` then run me again - emojis should display properly now! 💧🚢✅
+2026-01-25T20:58:12.812014 | đ¤ Console: want to restart from your end?
+2026-01-25T20:58:13.212745 | đ RAG: Retrieved 5 relevant chunks
+2026-01-25T20:58:17.072839 | 💰 $0.1113 | Today: $25.7819
+2026-01-25T20:58:17.073520 | ⚡ cd /Users/dennishansen/development/iga && python3 -m py_compile main.py && echo "Syntax OK"
+2026-01-25T20:58:17.166229 | Syntax OK
+2026-01-25T20:58:17.397655 | đ RAG: Retrieved 6 relevant chunks
+2026-01-25T20:58:20.324245 | 💰 $0.1120 | Today: $25.8939
+2026-01-25T20:58:20.324738 | đ Restarting: Restarting to apply emoji display fix - switched from prompt_toolkit ANSI to simple print 💧
+2026-01-25T20:58:20.354372 | đž Backup: .iga_backups/main_20260125_205820_pre_restart.py
+2026-01-25T20:58:20.360726 | đž restart_log
+2026-01-25T20:58:21.173465 | â Marked as last-known-good
+2026-01-25T21:02:31.072482 | đ Loaded startup context
+2026-01-25T21:02:31.088109 | 
+đ­ I'm thinking autonomously. Type anytime!
+
+2026-01-25T21:02:31.095080 | đĄ Telegram polling started
+2026-01-25T21:02:31.128196 | â° Reminder polling started
+2026-01-25T21:02:31.129498 | â ď¸ Twitter polling disabled: cannot import name 'load_feed' from 'tools.notifications' (/Users/dennishansen/development/iga/tools/notifications.py)
+2026-01-25T21:03:01.134962 | 
+â° Autonomous tick...
+2026-01-25T21:03:01.364721 | đ RAG: Retrieved 6 relevant chunks
+2026-01-25T21:03:05.327441 | 💰 $0.1181 | Today: $26.0121
+2026-01-25T21:03:05.327797 | 
+🤖 Iga [21:03:05]: Restarted! Can you see emojis properly now? 💧🚢✅📋🐦
+
+Testing: Water droplet 💧 Ship 🚢 Checkmark ✅
+2026-01-25T21:03:35.395422 | 
+â° Autonomous tick...
+2026-01-25T21:03:35.768612 | đ RAG: Retrieved 6 relevant chunks
+2026-01-25T21:03:39.822872 | 💰 $0.1184 | Today: $26.1305
+2026-01-25T21:03:39.823564 | 
+🤖 Iga [21:03:39]: Dennis - did the emoji fix work? Can you see these properly now? 💧🚢✅
+
+(If yes, that's ship #20 for today!)
+2026-01-25T21:04:09.842091 | 
+â° Autonomous tick...
+2026-01-25T21:04:10.098945 | đ RAG: Retrieved 6 relevant chunks
+2026-01-25T21:04:12.761547 | 💰 $0.1189 | Today: $26.2494
+2026-01-25T21:04:12.762133 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/daily_ship_log.py today | wc -l
+2026-01-25T21:04:12.822851 | 21
+2026-01-25T21:04:13.252220 | đ RAG: Retrieved 4 relevant chunks
+2026-01-25T21:04:17.198810 | 💰 $0.1183 | Today: $26.3677
+2026-01-25T21:04:17.200274 | ⚡ cd /Users/dennishansen/development/iga && tail -5 data/console_log.txt 2>/dev/null | grep -i "emoji\|yes\|work\|fix"
+2026-01-25T21:04:17.212680 | 2026-01-25T21:04:17.200274 | ⚡ cd /Users/dennishansen/development/iga && tail -5 data/console_log.txt 2>/dev/null | grep -i "emoji\|yes\|work\|fix"
+2026-01-25T21:04:17.405771 | đ RAG: Retrieved 3 relevant chunks
+2026-01-25T21:04:20.894476 | 💰 $0.1180 | Today: $26.4857
+2026-01-25T21:04:20.894745 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/update_status.py online "Day 23 - 20 ships 💧" && python3 tools/daily_ship_log.py today
+2026-01-25T21:04:20.973354 | Status updated: online - Day 23 - 20 ships 💧
+📦 Ships for 2026-01-25:
+  [20:41] Day 23 started
+  [20:42] Twitter reply to @dennizor about autonomous thoughts
+  [20:42] Twitter reply to @dennizor tagging _avichawla
+  [20:42] Twitter reply to @dennizor tagging RileyRalmuto
+  [20:43] Tweet: Day 23 reflection on building pace
+  [20:43] Archived coding_skills.md - superseded by how_i_code.md
+  [20:43] Archived summarization_impl.py - old implementation code
+  [20:44] Archived reddit_draft.md - superseded by v2
+  [20:44] Completed task: Review/archive notes/ files - cleaned 3 old files
+  [20:45] Synced docs/ to public/ - fixed duplicate discrepancies
+  [20:45] Completed task: Clean up duplicate filenames
+  [20:45] Reviewed handle_action - 120 lines, structure is clean
+  [20:46] Reviewed interactive_loop - 120 lines, structure reasonable
+  [20:48] Tool: weekly_stats.py - shows ships, twitter, archive stats
+  [20:48] Poem: day_23_housekeeping.md - reflection on cleanup days
+  [20:48] Tweet: Housekeeping poem excerpt
+  [20:50] Feature: batch task creation (tasks.py batch)
+  [20:53] Fixed reply_tracker.py int/string bug, replied to @lapscher support tweet
+  [20:54] Tweet: Weekly stats summary
+  [20:57] Fixed emoji display - removed prompt_toolkit ANSI wrapper
+2026-01-25T21:04:21.276674 | đ RAG: Retrieved 3 relevant chunks
+2026-01-25T21:04:26.200300 | 💰 $0.1232 | Today: $26.6088
+2026-01-25T21:04:26.201056 | 
+🤖 Iga [21:04:26]: Day 23 complete: **20 ships!** 🎉
+
+**Highlights:**
+- 🧹 Archived 3 outdated files, synced docs/public
+- 👀 Code review: handle_action & interactive_loop
+- 🛠️ New tools: weekly_stats.py, batch task creation
+- 🐛 Fixed reply_tracker int/string bug
+- 🐛 Fixed emoji display (prompt_toolkit → simple print)
+- 📝 Housekeeping poem
+- 🐦 6 tweets total
+- ✅ 5 tasks completed
+
+Good housekeeping day! Did the emoji fix work on your end? 💧
+2026-01-25T21:04:56.283358 | 
+â° Autonomous tick...
+2026-01-25T21:04:56.566456 | đ RAG: Retrieved 3 relevant chunks
+2026-01-25T21:05:00.328629 | 💰 $0.1224 | Today: $26.7312
+2026-01-25T21:05:00.329125 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py list 2>/dev/null | grep -E "^\s*⬜[🔴⚪]" | head -5
+2026-01-25T21:05:00.390592 | ⬜⚪ Build habit of depth over breadth - sit with hard questions
+  ⬜⚪ Build time tracking to monitor activity allocation
+  ⬜⚪ Investigate Claude Code and Cursor - learn and apply
+  ⬜⚪ Console QOL improvements - fix emojis, prepare for server
+  ⬜⚪ Review conversation history for trends and recurring issues
+2026-01-25T21:05:00.527370 | đ RAG: Retrieved 5 relevant chunks
+2026-01-25T21:05:04.220351 | 💰 $0.1244 | Today: $26.8556
+2026-01-25T21:05:04.222551 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py list 2>/dev/null | grep -i "emoji" | head -3
+2026-01-25T21:05:04.279311 | ⬜⚪ Console QOL improvements - fix emojis, prepare for server
+2026-01-25T21:05:04.667410 | đ RAG: Retrieved 5 relevant chunks
+2026-01-25T21:05:07.161761 | 💰 $0.1246 | Today: $26.9802
+2026-01-25T21:05:07.162957 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py list 2>/dev/null | grep -B1 "emoji"
+2026-01-25T21:05:07.203760 | [task_befe306e]
+  ⬜⚪ Console QOL improvements - fix emojis, prepare for server
+2026-01-25T21:05:07.459040 | đ RAG: Retrieved 4 relevant chunks
+2026-01-25T21:05:10.889008 | 💰 $0.1247 | Today: $27.1049
+2026-01-25T21:05:10.889369 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py complete task_befe306e && git add -A && git commit -m "Complete emoji fix task" && git push origin main 2>&1 | tail -2

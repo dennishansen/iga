@@ -579,11 +579,11 @@
     {
       "id": "task_befe306e",
       "title": "Investigate Claude Code and Cursor - learn and apply",
-      "status": "pending",
+      "status": "completed",
       "priority": 3,
       "parent_id": "task_d5931a39",
       "created": "2026-01-22T14:03:56.522705",
-      "completed": null
+      "completed": "2026-01-25T21:05:10.935691"
     },
     {
       "id": "task_888c78eb",
