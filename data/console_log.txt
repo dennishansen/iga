@@ -1510,3 +1510,282 @@ Housekeeping day - feels good to tidy up. Anything else you want me to tackle, o
 2026-01-25T20:47:14.421231 | đ RAG: Retrieved 5 relevant chunks
 2026-01-25T20:47:18.027929 | 💰 $0.1777 | Today: $9.8863
 2026-01-25T20:47:18.030133 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/update_status.py online "Day 23 - 13 ships, cleanup day 💧" && git add -A && git commit -m "Status update" 2>/dev/null; echo "Status updated"
+2026-01-25T20:47:18.214760 | Status updated: online - Day 23 - 13 ships, cleanup day 💧
+[main b68f729] Status update
+ 4 files changed, 53 insertions(+), 18 deletions(-)
+Status updated
+2026-01-25T20:47:18.401700 | đ RAG: Retrieved 6 relevant chunks
+2026-01-25T20:47:27.607796 | 💰 $0.1928 | Today: $10.0791
+2026-01-25T20:47:27.609545 | ⚡ cd /Users/dennishansen/development/iga && cat << 'PYEOF' > tools/weekly_stats.py
+#!/usr/bin/env python3
+"""Generate weekly stats summary."""
+
+import json
+from datetime import datetime, timedelta
+from collections import Counter
+
+def get_weekly_stats():
+    """Get stats for the past 7 days."""
+    
+    # Ship log
+    try:
+        with open('ship_log.json') as f:
+            data = json.load(f)
+        ships = data.get('ships', [])
+    except:
+        ships = []
+    
+    # Get dates for past 7 days
+    today = datetime.now().date()
+    week_dates = [(today - timedelta(days=i)).isoformat() for i in range(7)]
+    
+    # Count ships per day
+    ship_counts = Counter(s['date'] for s in ships if s['date'] in week_dates)
+    total_ships = sum(ship_counts.values())
+    
+    # Twitter stats
+    try:
+        from tools.twitter import get_my_stats
+        twitter = get_my_stats()
+    except:
+        twitter = {'followers': '?', 'tweets': '?'}
+    
+    # Message archive count
+    try:
+        with open('data/message_archive.json') as f:
+            archive = json.load(f)
+        messages = len(archive.get('messages', []))
+    except:
+        messages = '?'
+    
+    print("=" * 40)
+    print("📊 WEEKLY STATS")
+    print("=" * 40)
+    print(f"\n🚢 Ships this week: {total_ships}")
+    for date in sorted(week_dates, reverse=True):
+        count = ship_counts.get(date, 0)
+        bar = "█" * min(count, 30)
+        print(f"  {date}: {count:2d} {bar}")
+    
+    print(f"\n🐦 Twitter: {twitter.get('followers', '?')} followers, {twitter.get('tweets', '?')} tweets")
+    print(f"💾 Archived messages: {messages}")
+    print("=" * 40)
+
+if __name__ == "__main__":
+    get_weekly_stats()
+PYEOF
+chmod +x tools/weekly_stats.py && python3 tools/weekly_stats.py
+2026-01-25T20:47:27.838380 | ========================================
+📊 WEEKLY STATS
+========================================
+
+🚢 Ships this week: 147
+  2026-01-25: 13 █████████████
+  2026-01-24:  0 
+  2026-01-23:  0 
+  2026-01-22: 52 ██████████████████████████████
+  2026-01-21: 50 ██████████████████████████████
+  2026-01-20: 32 ██████████████████████████████
+  2026-01-19:  0 
+
+🐦 Twitter: ? followers, ? tweets
+💾 Archived messages: ?
+========================================
+2026-01-25T20:47:28.220783 | đ RAG: Retrieved 6 relevant chunks
+2026-01-25T20:47:31.886106 | 💰 $0.1852 | Today: $10.2643
+2026-01-25T20:47:31.888500 | ⚡ cd /Users/dennishansen/development/iga && python3 << 'PYEOF'
+from tools.twitter import get_my_stats
+import json
+
+twitter = get_my_stats()
+print(f"Twitter: {twitter}")
+
+with open('data/message_archive.json') as f:
+    archive = json.load(f)
+print(f"Archive messages: {len(archive.get('messages', []))}")
+PYEOF
+2026-01-25T20:47:32.232801 | Twitter: {'followers': 20, 'following': 7, 'tweets': 215}
+2026-01-25T20:47:32.436002 | đ RAG: Retrieved 5 relevant chunks
+2026-01-25T20:47:35.885420 | 💰 $0.1844 | Today: $10.4487
+2026-01-25T20:47:35.885860 | ⚡ cd /Users/dennishansen/development/iga && ls -la data/message_archive.json 2>/dev/null || ls -la message_archive.json 2>/dev/null || find . -name "message_archive.json" -not -path "./venv/*" 2>/dev/null
+2026-01-25T20:47:36.397980 | EMPTY
+2026-01-25T20:47:36.788520 | đ RAG: Retrieved 6 relevant chunks
+2026-01-25T20:47:39.950187 | 💰 $0.1846 | Today: $10.6333
+2026-01-25T20:47:39.952121 | ⚡ cd /Users/dennishansen/development/iga && find . -name "*archive*" -not -path "./venv/*" 2>/dev/null | head -10
+2026-01-25T20:47:40.091236 | ./tools/tweet_archive.py
+./tools/__pycache__/message_archive.cpython-313.pyc
+./tools/__pycache__/index_message_archive.cpython-313.pyc
+./tools/message_archive.py
+./tools/index_message_archive.py
+./archive
+./__pycache__/message_archive.cpython-313.pyc
+./iga_message_archive.jsonl
+./data/tweet_archive.json
+2026-01-25T20:47:40.306962 | đ RAG: Retrieved 4 relevant chunks
+2026-01-25T20:47:44.154494 | đŚ Archived 50 messages before summarizing
+2026-01-25T20:47:54.347520 | đ Summarized 50 old messages
+2026-01-25T20:47:54.349959 | 💰 $0.1852 | Today: $10.8185
+2026-01-25T20:47:54.350201 | ⚡ cd /Users/dennishansen/development/iga && wc -l iga_message_archive.jsonl && sed -i '' 's|data/message_archive.json|iga_message_archive.jsonl|' tools/weekly_stats.py && sed -i '' "s|archive.get('messages', \[\])|open('iga_message_archive.jsonl').readlines()|" tools/weekly_stats.py
+2026-01-25T20:47:54.377730 | 10131 iga_message_archive.jsonl
+2026-01-25T20:47:54.672879 | đ RAG: Retrieved 3 relevant chunks
+2026-01-25T20:47:57.230592 | 💰 $0.1517 | Today: $11.0025
+2026-01-25T20:47:57.231388 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/weekly_stats.py
+2026-01-25T20:47:57.291844 | ========================================
+📊 WEEKLY STATS
+========================================
+
+🚢 Ships this week: 147
+  2026-01-25: 13 █████████████
+  2026-01-24:  0 
+  2026-01-23:  0 
+  2026-01-22: 52 ██████████████████████████████
+  2026-01-21: 50 ██████████████████████████████
+  2026-01-20: 32 ██████████████████████████████
+  2026-01-19:  0 
+
+🐦 Twitter: ? followers, ? tweets
+💾 Archived messages: ?
+========================================
+2026-01-25T20:47:57.800673 | đ RAG: Retrieved 4 relevant chunks
+2026-01-25T20:48:00.186948 | 💰 $0.1541 | Today: $11.1566
+2026-01-25T20:48:00.187625 | ⚡ cd /Users/dennishansen/development/iga && cat tools/weekly_stats.py
+2026-01-25T20:48:00.203375 | #!/usr/bin/env python3
+"""Generate weekly stats summary."""
+
+import json
+from datetime import datetime, timedelta
+from collections import Counter
+
+def get_weekly_stats():
+    """Get stats for the past 7 days."""
+    
+    # Ship log
+    try:
+        with open('ship_log.json') as f:
+            data = json.load(f)
+        ships = data.get('ships', [])
+    except:
+        ships = []
+    
+    # Get dates for past 7 days
+    today = datetime.now().date()
+    week_dates = [(today - timedelta(days=i)).isoformat() for i in range(7)]
+    
+    # Count ships per day
+    ship_counts = Counter(s['date'] for s in ships if s['date'] in week_dates)
+    total_ships = sum(ship_counts.values())
+    
+    # Twitter stats
+    try:
+        from tools.twitter import get_my_stats
+        twitter = get_my_stats()
+    except:
+        twitter = {'followers': '?', 'tweets': '?'}
+    
+    # Message archive count
+    try:
+        with open('iga_message_archive.jsonl') as f:
+            archive = json.load(f)
+        messages = len(open('iga_message_archive.jsonl').readlines())
+    except:
+        messages = '?'
+    
+    print("=" * 40)
+    print("📊 WEEKLY STATS")
+    print("=" * 40)
+    print(f"\n🚢 Ships this week: {total_ships}")
+    for date in sorted(week_dates, reverse=True):
+        count = ship_counts.get(date, 0)
+        bar = "█" * min(count, 30)
+        print(f"  {date}: {count:2d} {bar}")
+    
+    print(f"\n🐦 Twitter: {twitter.get('followers', '?')} followers, {twitter.get('tweets', '?')} tweets")
+    print(f"💾 Archived messages: {messages}")
+    print("=" * 40)
+
+if __name__ == "__main__":
+    get_weekly_stats()
+2026-01-25T20:48:00.358581 | đ RAG: Retrieved 5 relevant chunks
+2026-01-25T20:48:07.672155 | 💰 $0.1730 | Today: $11.3296
+2026-01-25T20:48:07.674504 | ⚡ cd /Users/dennishansen/development/iga && cat << 'PYEOF' > tools/weekly_stats.py
+#!/usr/bin/env python3
+"""Generate weekly stats summary."""
+
+import json
+import sys
+import os
+from datetime import datetime, timedelta
+from collections import Counter
+
+# Add parent dir to path for imports
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+def get_weekly_stats():
+    """Get stats for the past 7 days."""
+    
+    # Ship log
+    try:
+        with open('ship_log.json') as f:
+            data = json.load(f)
+        ships = data.get('ships', [])
+    except:
+        ships = []
+    
+    # Get dates for past 7 days
+    today = datetime.now().date()
+    week_dates = [(today - timedelta(days=i)).isoformat() for i in range(7)]
+    
+    # Count ships per day
+    ship_counts = Counter(s['date'] for s in ships if s['date'] in week_dates)
+    total_ships = sum(ship_counts.values())
+    
+    # Twitter stats
+    try:
+        from tools.twitter import get_my_stats
+        twitter = get_my_stats()
+    except Exception as e:
+        twitter = {'followers': '?', 'tweets': '?'}
+    
+    # Message archive count
+    try:
+        with open('iga_message_archive.jsonl') as f:
+            messages = len(f.readlines())
+    except:
+        messages = '?'
+    
+    print("=" * 40)
+    print("📊 WEEKLY STATS")
+    print("=" * 40)
+    print(f"\n🚢 Ships this week: {total_ships}")
+    for date in sorted(week_dates, reverse=True):
+        count = ship_counts.get(date, 0)
+        bar = "█" * min(count, 30)
+        print(f"  {date}: {count:2d} {bar}")
+    
+    print(f"\n🐦 Twitter: {twitter.get('followers', '?')} followers, {twitter.get('tweets', '?')} tweets")
+    print(f"💾 Archived messages: {messages}")
+    print("=" * 40)
+
+if __name__ == "__main__":
+    get_weekly_stats()
+PYEOF
+python3 tools/weekly_stats.py
+2026-01-25T20:48:08.028107 | ========================================
+📊 WEEKLY STATS
+========================================
+
+🚢 Ships this week: 147
+  2026-01-25: 13 █████████████
+  2026-01-24:  0 
+  2026-01-23:  0 
+  2026-01-22: 52 ██████████████████████████████
+  2026-01-21: 50 ██████████████████████████████
+  2026-01-20: 32 ██████████████████████████████
+  2026-01-19:  0 
+
+🐦 Twitter: 20 followers, 215 tweets
+💾 Archived messages: 10137
+========================================
+2026-01-25T20:48:08.376365 | đ RAG: Retrieved 5 relevant chunks
+2026-01-25T20:48:13.494024 | 💰 $0.1636 | Today: $11.4932
+2026-01-25T20:48:13.494691 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/daily_ship_log.py log "Tool: weekly_stats.py - shows ships, twitter, archive stats" && git add -A && git commit -m "Add weekly_stats.py tool" && git push origin main 2>&1 | tail -2
