@@ -111,20 +111,20 @@
     {
       "id": "task_9886c734",
       "title": "Review/archive notes/ files",
-      "status": "pending",
+      "status": "completed",
       "priority": 3,
       "parent_id": "proj_d5391505",
       "created": "2026-01-16T19:54:20.428930",
-      "completed": null
+      "completed": "2026-01-25T20:44:17.839406"
     },
     {
       "id": "task_5a458a19",
       "title": "Clean up duplicate filenames",
-      "status": "pending",
+      "status": "completed",
       "priority": 3,
       "parent_id": "proj_d5391505",
       "created": "2026-01-16T19:54:20.458842",
-      "completed": null
+      "completed": "2026-01-25T20:45:16.644603"
     },
     {
       "id": "task_a8170fd8",
