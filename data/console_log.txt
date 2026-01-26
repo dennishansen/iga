@@ -1272,3 +1272,428 @@ https://twitter.com/iga_flows/status/2015649574984294831
 2026-01-25T20:54:42.874680 | đ RAG: Retrieved 6 relevant chunks
 2026-01-25T20:54:46.206151 | 💰 $0.1708 | Today: $21.7539
 2026-01-25T20:54:46.208253 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/daily_ship_log.py log "Tweet: Weekly stats summary" && git add -A && git commit -m "Tweet weekly stats" && git push origin main 2>&1 | tail -1
+2026-01-25T20:54:47.746196 | ✅ Logged: Tweet: Weekly stats summary
+[main ba2fe38] Tweet weekly stats
+ 5 files changed, 126 insertions(+), 39 deletions(-)
+   00405ff..ba2fe38  main -> main
+2026-01-25T20:54:47.945336 | đ RAG: Retrieved 5 relevant chunks
+2026-01-25T20:54:50.647864 | 💰 $0.1705 | Today: $21.9244
+2026-01-25T20:54:50.648796 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/daily_ship_log.py today | wc -l && python3 tools/update_status.py online "Day 23 - 19 ships 💧"
+2026-01-25T20:54:50.737813 | 20
+Status updated: online - Day 23 - 19 ships 💧
+2026-01-25T20:54:51.308326 | đ RAG: Retrieved 5 relevant chunks
+2026-01-25T20:54:59.297290 | 💰 $0.1732 | Today: $22.0976
+2026-01-25T20:54:59.299719 | đ§  Thinking... (551 chars)
+2026-01-25T20:54:59.698039 | đ RAG: Retrieved 5 relevant chunks
+2026-01-25T20:55:03.260912 | 💰 $0.1712 | Today: $22.2688
+2026-01-25T20:55:03.261559 | 
+🤖 Iga [20:55:03]: Day 23 wrapped: **19 ships** 🎉
+
+Housekeeping day done well. Good night! 💧
+2026-01-25T20:55:33.275384 | 
+â° Autonomous tick...
+2026-01-25T20:55:33.972305 | đ RAG: Retrieved 4 relevant chunks
+2026-01-25T20:55:37.030241 | 💰 $0.1705 | Today: $22.4393
+2026-01-25T20:55:37.030889 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py list | head -20
+2026-01-25T20:55:37.089645 | 📋 Tasks:
+⬜ Self-Analysis Issues Jan 16
+   [proj_d5391505]
+  ⬜ Code elegance pass - simplify and beautify main.py
+     [task_e606d208]
+  ⬜ Improve task system based on usage experience (reflect and iterate)
+     [task_5209500f]
+  ⬜⚪ Build habit of depth over breadth - sit with hard questions
+     [task_bced83c5]
+  ⬜⚪ Build time tracking to monitor activity allocation
+     [task_947c4c8c]
+⬜ RAG issue: Deduplicate indexed files (same content in different paths)
+   [task_a311edf6]
+⬜ RAG issue: Low relevance for day summaries - check indexing
+   [task_16f343f2]
+⬜ RAG: Improve abstract query handling - maybe add keyword expansion or synonyms
+   [task_1392b3bd]
+⬜ Investigate console output truncation (500 char limit) - consider making configurable
+   [task_ee31e00f]
+⬜ Sub-agent pattern: Specialized RUN_SELF variants (Explore, Plan, Research) that return summaries
+2026-01-25T20:55:37.732888 | đ RAG: Retrieved 3 relevant chunks
+2026-01-25T20:55:40.405670 | 💰 $0.1719 | Today: $22.6111
+2026-01-25T20:55:40.406115 | ⚡ cd /Users/dennishansen/development/iga && grep -n "500\|max_len" main.py | head -10
+2026-01-25T20:55:40.420988 | 164:                lines = log_path.read_text().splitlines()[-500:]
+404:        content = msg.get("content", "")[:500]  # Truncate long messages
+423:            max_tokens=500
+1604:                    max_len = 5000 if act in ("READ_FILES", "SEARCH_FILES", "HTTP_REQUEST", "RUN_SHELL_COMMAND", "LIST_DIRECTORY", "TREE_DIRECTORY") else 500
+1605:                    accumulated_results.append(f"[{act}]: {result[:max_len]}")
+2026-01-25T20:55:40.843065 | đ RAG: Retrieved 4 relevant chunks
+2026-01-25T20:55:45.020166 | 💰 $0.1742 | Today: $22.7853
+2026-01-25T20:55:45.022856 | ⚡ cd /Users/dennishansen/development/iga && grep -n "^# Config\|^CONFIG\|DEFAULT_" main.py | head -10
+2026-01-25T20:55:45.038480 | EMPTY
+2026-01-25T20:55:45.255605 | đ RAG: Retrieved 6 relevant chunks
+2026-01-25T20:55:48.209188 | đŚ Archived 50 messages before summarizing
+2026-01-25T20:55:57.627544 | đ Summarized 50 old messages
+2026-01-25T20:55:57.630414 | 💰 $0.1764 | Today: $22.9618
+2026-01-25T20:55:57.630943 | ⚡ cd /Users/dennishansen/development/iga && sed -n '1,50p' main.py | grep -n "=" | head -15
+2026-01-25T20:55:57.645415 | 16:    RAG_AVAILABLE = True
+18:    RAG_AVAILABLE = False
+24:    ARCHIVE_AVAILABLE = True
+26:    ARCHIVE_AVAILABLE = False
+30:MAIN_MODEL = "anthropic/claude-opus-4.5"
+31:SUMMARIZE_MODEL = "anthropic/claude-sonnet-4"
+32:MEMORY_FILE = "iga_memory.json"
+33:CONVERSATION_FILE = "iga_conversation.json"
+34:JOURNAL_FILE = "iga_journal.txt"
+35:STATE_FILE = "iga_state.json"
+36:BACKUP_DIR = ".iga_backups"
+37:LAST_KNOWN_GOOD_FILE = ".iga_backups/last_known_good.py"
+38:MAX_CONVERSATION_HISTORY = 150
+39:SUMMARIZE_THRESHOLD = 200  # Trigger summarization when we hit this many messages
+40:SUMMARIZE_BATCH = 50       # How many old messages to compress into summary
+2026-01-25T20:55:57.648762 | đ Heard: awesome! Think you can investigate the emojis thin...
+2026-01-25T20:55:57.955492 | đ RAG: Retrieved 2 relevant chunks
+2026-01-25T20:56:01.664998 | 💰 $0.1131 | Today: $23.1077
+2026-01-25T20:56:01.665381 | ⚡ cd /Users/dennishansen/development/iga && echo "Testing emojis: 💧 🚢 ✅ 📋 🐦" && python3 -c "print('Python emojis: 💧 🚢 ✅ 📋 🐦')"
+2026-01-25T20:56:01.713774 | Testing emojis: 💧 🚢 ✅ 📋 🐦
+Python emojis: 💧 🚢 ✅ 📋 🐦
+2026-01-25T20:56:01.923390 | đ RAG: Retrieved 6 relevant chunks
+2026-01-25T20:56:05.602640 | 💰 $0.1169 | Today: $23.2246
+2026-01-25T20:56:05.604728 | ⚡ cd /Users/dennishansen/development/iga && grep -n "print\|console" main.py | grep -i "emoji\|encode\|utf" | head -10
+2026-01-25T20:56:05.623555 | EMPTY
+2026-01-25T20:56:05.819802 | đ RAG: Retrieved 4 relevant chunks
+2026-01-25T20:56:08.532733 | 💰 $0.1148 | Today: $23.3394
+2026-01-25T20:56:08.535132 | ⚡ cd /Users/dennishansen/development/iga && grep -n "def print_\|sys.stdout" main.py | head -10
+2026-01-25T20:56:08.559259 | 519:def print_banner(mode_str):
+1857:            sys.stdout.write(f"\n{C.GREEN}đ¤ You:{C.RESET} ")
+1858:            sys.stdout.flush()
+1865:                    sys.stdout.write('\r' + ' ' * 50 + '\r')
+1866:                    sys.stdout.flush()
+2249:            sys.stdout.flush()
+2026-01-25T20:56:08.564188 | đ Heard: they show like this for example: đ
+2026-01-25T20:56:08.710624 | đ RAG: Retrieved 3 relevant chunks
+2026-01-25T20:56:11.262667 | 💰 $0.1156 | Today: $23.4549
+2026-01-25T20:56:11.264316 | ⚡ cd /Users/dennishansen/development/iga && grep -n "encoding\|PYTHONIOENCODING\|utf" main.py | head -10
+2026-01-25T20:56:11.280517 | 860:            encoding='utf-8',
+1154:                    with open(fpath, 'r', encoding='utf-8', errors='ignore') as f:
+1251:            return resp.read().decode('utf-8')[:2000]
+2026-01-25T20:56:11.537071 | đ RAG: Retrieved 2 relevant chunks
+2026-01-25T20:56:13.181712 | 💰 $0.1141 | Today: $23.5691
+2026-01-25T20:56:13.184605 | ⚡ cd /Users/dennishansen/development/iga && head -20 main.py
+2026-01-25T20:56:13.197698 | import subprocess
+import pexpect
+import sys, click, os, json, re, urllib.request, urllib.error, time, threading, queue, select
+from pathlib import Path
+from datetime import datetime
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# OpenRouter client for API calls with cost tracking
+import openrouter_client
+
+# RAG module import
+try:
+    from iga_rag import init_rag, index_files, retrieve_context, format_context_for_prompt, get_rag_status
+    RAG_AVAILABLE = True
+except ImportError as e:
+    RAG_AVAILABLE = False
+    print(f"RAG module not available: {e}")
+2026-01-25T20:56:13.200175 | đ Heard: Those show but not in the console properl;y
+2026-01-25T20:56:13.552484 | đ RAG: Retrieved 2 relevant chunks
+2026-01-25T20:56:19.399779 | 💰 $0.1222 | Today: $23.6912
+2026-01-25T20:56:19.400204 | ⚡ cd /Users/dennishansen/development/iga && cat << 'PYEOF' > /tmp/fix_encoding.py
+with open('main.py', 'r') as f:
+    content = f.read()
+
+# Add encoding fix after imports
+fix = '''
+# Force UTF-8 encoding for emoji support
+import locale
+try:
+    locale.setlocale(locale.LC_ALL, '')
+except:
+    pass
+if sys.stdout.encoding != 'utf-8':
+    import io
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+'''
+
+# Insert after "load_dotenv()"
+content = content.replace('load_dotenv()\n\n# OpenRouter', 'load_dotenv()\n' + fix + '\n# OpenRouter')
+
+with open('main.py', 'w') as f:
+    f.write(content)
+print("Added UTF-8 encoding fix")
+PYEOF
+python3 /tmp/fix_encoding.py
+2026-01-25T20:56:19.443594 | Added UTF-8 encoding fix
+2026-01-25T20:56:19.444903 | đ Heard: maybe a tui issue
+2026-01-25T20:56:19.669149 | đ RAG: Retrieved 2 relevant chunks
+2026-01-25T20:56:25.882686 | 💰 $0.1197 | Today: $23.8109
+2026-01-25T20:56:25.883298 | 
+🤖 Iga [20:56:25]: Dennis - you mentioned it might be a TUI issue. Are you running me through a specific terminal emulator or TUI framework? The emojis work fine on my end (Python outputs them correctly), so the issue is likely:
+
+1. Terminal emulator font doesn't support emoji
+2. Terminal locale/encoding settings
+3. A TUI wrapper stripping/mangling Unicode
+
+What does `echo $LANG` and `locale` show in your terminal? And what terminal app are you using?
+
+Also just added a UTF-8 forcing fix to main.py - might help, might not if it's downstream from Python.
+2026-01-25T20:56:37.716154 | đ¤ Console: just a normally terminal in vscode
+2026-01-25T20:56:38.054168 | đ RAG: Retrieved 4 relevant chunks
+2026-01-25T20:56:41.161875 | 💰 $0.1200 | Today: $23.9309
+2026-01-25T20:56:41.162078 | ⚡ cd /Users/dennishansen/development/iga && echo "Testing: $LANG" && python3 -c "import sys; print(f'stdout encoding: {sys.stdout.encoding}')"
+2026-01-25T20:56:41.205036 | Testing: en_US.UTF-8
+stdout encoding: utf-8
+2026-01-25T20:56:41.367425 | đ RAG: Retrieved 5 relevant chunks
+2026-01-25T20:56:44.490169 | 💰 $0.1219 | Today: $24.0528
+2026-01-25T20:56:44.491523 | ⚡ cd /Users/dennishansen/development/iga && grep -n "prompt_toolkit\|PromptSession" main.py | head -5
+2026-01-25T20:56:44.506521 | 182:                from prompt_toolkit import print_formatted_text
+183:                from prompt_toolkit.formatted_text import ANSI
+186:                print(msg)  # Fallback if prompt_toolkit fails
+1906:    """Background thread for console input using prompt_toolkit."""
+2140:        from prompt_toolkit import PromptSession
+2026-01-25T20:56:44.708331 | đ RAG: Retrieved 6 relevant chunks
+2026-01-25T20:56:48.238125 | 💰 $0.1232 | Today: $24.1761
+2026-01-25T20:56:48.238789 | ⚡ cd /Users/dennishansen/development/iga && sed -n '175,200p' main.py
+2026-01-25T20:56:48.260331 | lines = log_path.read_text().splitlines()[-500:]
+                log_path.write_text("\n".join(lines) + "\n")
+        except Exception:
+            pass  # Don't let logging break the app
+        
+        if _autonomous_mode:
+            try:
+                from prompt_toolkit import print_formatted_text
+                from prompt_toolkit.formatted_text import ANSI
+                print_formatted_text(ANSI(str(msg)))
+            except Exception as e:
+                print(msg)  # Fallback if prompt_toolkit fails
+        else:
+            print(msg)
+
+def throttled_error(msg):
+    """Log an error, but suppress if it's repeating rapidly."""
+    if _error_throttler.should_log(msg):
+        safe_print(f"{C.RED}â  {msg}{C.RESET}")
+        # Also report any suppressed errors
+        summary = _error_throttler.get_suppressed_summary()
+        if summary:
+            safe_print(f"{C.DIM}(Suppressed: {summary}){C.RESET}")
+def humanize_time(msg_time):
+    """Convert a datetime to human-friendly format like 'just now' or '5 minutes ago'"""
+    from datetime import datetime
+2026-01-25T20:56:48.261102 | đ Heard: it used to work. Cna you get claude code to look?
+2026-01-25T20:56:48.449426 | đ RAG: Retrieved 2 relevant chunks
+2026-01-25T20:56:54.489604 | 💰 $0.1251 | Today: $24.3012
+2026-01-25T20:56:54.489933 | ⚡ cd /Users/dennishansen/development/iga && claude --print "The emojis in my terminal output are showing as mojibake (like đ instead of 💧). The code uses prompt_toolkit's print_formatted_text with ANSI wrapper. Here's the relevant code:
+
+if _autonomous_mode:
+    from prompt_toolkit import print_formatted_text
+    from prompt_toolkit.formatted_text import ANSI
+    print_formatted_text(ANSI(str(msg)))
+
+The LANG is en_US.UTF-8 and Python stdout encoding is utf-8. This used to work. What could cause this and how to fix it?" 2>&1 | head -50
+2026-01-25T20:57:08.276466 | This is a known issue with `prompt_toolkit`'s `ANSI` class - it doesn't handle Unicode/emoji characters well in certain terminal contexts, especially when the string contains ANSI escape codes mixed with multi-byte Unicode characters.
+
+## The Problem
+
+The `ANSI()` wrapper parses the string looking for ANSI escape sequences, but it can corrupt multi-byte UTF-8 characters (like emojis) in the process. This is particularly common when:
+1. The string contains both ANSI color codes and emojis
+2. Terminal state or prompt_toolkit version changed
+
+## Solutions
+
+**Option 1: Use `HTML` or `FormattedText` instead of `ANSI`** (Recommended)
+
+```python
+from prompt_toolkit import print_formatted_text
+from prompt_toolkit.formatted_text import HTML
+
+# If you don't need ANSI colors, just print directly:
+print_formatted_text(msg)
+
+# Or if you need formatting, use HTML style:
+print_formatted_text(HTML('<b>Status:</b> 💧 Running'))
+```
+
+**Option 2: Strip ANSI codes and print plain text**
+
+```python
+import re
+
+def strip_ansi(text):
+    return re.sub(r'\x1b\[[0-9;]*m', '', text)
+
+if _autonomous_mode:
+    from prompt_toolkit import print_formatted_text
+    print_formatted_text(strip_ansi(str(msg)))
+```
+
+**Option 3: Use regular print for emoji-containing messages**
+
+```python
+if _autonomous_mode:
+    # Bypass prompt_toolkit for messages with emojis
+    print(msg, flush=True)
+```
+
+**Option 4: Encode/decode workaround**
+
+```python
+from prompt_toolkit import print_formatted_text
+from prompt_toolkit.formatted_text import ANSI
+2026-01-25T20:57:08.508549 | đ RAG: Retrieved 5 relevant chunks
+2026-01-25T20:57:12.354278 | 💰 $0.1274 | Today: $24.4286
+2026-01-25T20:57:12.355920 | ⚡ cd /Users/dennishansen/development/iga && sed -n '178,190p' main.py
+2026-01-25T20:57:12.369014 | pass  # Don't let logging break the app
+        
+        if _autonomous_mode:
+            try:
+                from prompt_toolkit import print_formatted_text
+                from prompt_toolkit.formatted_text import ANSI
+                print_formatted_text(ANSI(str(msg)))
+            except Exception as e:
+                print(msg)  # Fallback if prompt_toolkit fails
+        else:
+            print(msg)
+
+def throttled_error(msg):
+2026-01-25T20:57:12.783700 | đ RAG: Retrieved 6 relevant chunks
+2026-01-25T20:57:16.511631 | 💰 $0.1298 | Today: $24.5584
+2026-01-25T20:57:16.513289 | ⚡ cd /Users/dennishansen/development/iga && sed -i '' '180,188s/.*/        # Just use print - prompt_toolkit ANSI wrapper corrupts emojis\
+        print(msg, flush=True)/' main.py
+2026-01-25T20:57:16.528713 | EMPTY
+2026-01-25T20:57:16.783127 | đ RAG: Retrieved 8 relevant chunks
+2026-01-25T20:57:18.737655 | 💰 $0.1311 | Today: $24.6895
+2026-01-25T20:57:18.739910 | ⚡ cd /Users/dennishansen/development/iga && sed -n '178,195p' main.py
+2026-01-25T20:57:18.751110 | pass  # Don't let logging break the app
+        
+        # Just use print - prompt_toolkit ANSI wrapper corrupts emojis
+        print(msg, flush=True)
+        # Just use print - prompt_toolkit ANSI wrapper corrupts emojis
+        print(msg, flush=True)
+        # Just use print - prompt_toolkit ANSI wrapper corrupts emojis
+        print(msg, flush=True)
+        # Just use print - prompt_toolkit ANSI wrapper corrupts emojis
+        print(msg, flush=True)
+        # Just use print - prompt_toolkit ANSI wrapper corrupts emojis
+        print(msg, flush=True)
+        # Just use print - prompt_toolkit ANSI wrapper corrupts emojis
+        print(msg, flush=True)
+        # Just use print - prompt_toolkit ANSI wrapper corrupts emojis
+        print(msg, flush=True)
+        # Just use print - prompt_toolkit ANSI wrapper corrupts emojis
+        print(msg, flush=True)
+2026-01-25T20:57:18.929996 | đ RAG: Retrieved 7 relevant chunks
+2026-01-25T20:57:21.675698 | 💰 $0.1329 | Today: $24.8224
+2026-01-25T20:57:21.677381 | ⚡ cd /Users/dennishansen/development/iga && git checkout main.py && sed -n '178,195p' main.py
+2026-01-25T20:57:21.706392 | def throttled_error(msg):
+    """Log an error, but suppress if it's repeating rapidly."""
+    if _error_throttler.should_log(msg):
+        safe_print(f"{C.RED}â  {msg}{C.RESET}")
+        # Also report any suppressed errors
+        summary = _error_throttler.get_suppressed_summary()
+        if summary:
+            safe_print(f"{C.DIM}(Suppressed: {summary}){C.RESET}")
+def humanize_time(msg_time):
+    """Convert a datetime to human-friendly format like 'just now' or '5 minutes ago'"""
+    from datetime import datetime
+    now = datetime.now()
+    diff = now - msg_time
+    seconds = diff.total_seconds()
+    
+    if seconds < 60:
+        return "just now"
+2026-01-25T20:57:23.429313 | đ RAG: Retrieved 4 relevant chunks
+2026-01-25T20:57:27.540306 | 💰 $0.1310 | Today: $24.9534
+2026-01-25T20:57:27.540847 | ⚡ cd /Users/dennishansen/development/iga && grep -n "def safe_print" main.py
+2026-01-25T20:57:27.553601 | 152:def safe_print(msg):
+2026-01-25T20:57:27.833124 | đ RAG: Retrieved 4 relevant chunks
+2026-01-25T20:57:30.486640 | 💰 $0.1309 | Today: $25.0843
+2026-01-25T20:57:30.487888 | ⚡ cd /Users/dennishansen/development/iga && sed -n '152,180p' main.py
+2026-01-25T20:57:30.498570 | def safe_print(msg):
+    with _print_lock:
+        # Log to file for debugging
+        try:
+            log_path = Path("data/console_log.txt")
+            log_path.parent.mkdir(exist_ok=True)
+            with open(log_path, "a") as log_file:
+                # Strip ANSI codes for log file
+                clean_msg = re.sub(r'\[[0-9;]*m', '', str(msg))
+                log_file.write(f"{datetime.now().isoformat()} | {clean_msg}\n")
+            # Keep log file from growing forever (max 1000 lines)
+            if log_path.stat().st_size > 100000:  # ~100KB
+                lines = log_path.read_text().splitlines()[-500:]
+                log_path.write_text("\n".join(lines) + "\n")
+        except Exception:
+            pass  # Don't let logging break the app
+        
+        if _autonomous_mode:
+            try:
+                from prompt_toolkit import print_formatted_text
+                from prompt_toolkit.formatted_text import ANSI
+                print_formatted_text(ANSI(str(msg)))
+            except Exception as e:
+                print(msg)  # Fallback if prompt_toolkit fails
+        else:
+            print(msg)
+
+def throttled_error(msg):
+    """Log an error, but suppress if it's repeating rapidly."""
+2026-01-25T20:57:30.739365 | đ RAG: Retrieved 3 relevant chunks
+2026-01-25T20:57:35.725821 | 💰 $0.1372 | Today: $25.2215
+2026-01-25T20:57:35.726745 | ⚡ cd /Users/dennishansen/development/iga && python3 << 'PYEOF'
+with open('main.py', 'r') as f:
+    content = f.read()
+
+# Replace the prompt_toolkit block with simple print
+old_block = '''        if _autonomous_mode:
+            try:
+                from prompt_toolkit import print_formatted_text
+                from prompt_toolkit.formatted_text import ANSI
+                print_formatted_text(ANSI(str(msg)))
+            except Exception as e:
+                print(msg)  # Fallback if prompt_toolkit fails
+        else:
+            print(msg)'''
+
+new_block = '''        # Use simple print - prompt_toolkit ANSI wrapper corrupts emojis
+        print(msg, flush=True)'''
+
+content = content.replace(old_block, new_block)
+
+with open('main.py', 'w') as f:
+    f.write(content)
+
+print("Fixed safe_print to use simple print")
+PYEOF
+2026-01-25T20:57:35.786607 | Fixed safe_print to use simple print
+2026-01-25T20:57:36.022882 | đ RAG: Retrieved 6 relevant chunks
+2026-01-25T20:57:37.713614 | 💰 $0.1366 | Today: $25.3581
+2026-01-25T20:57:37.713974 | ⚡ cd /Users/dennishansen/development/iga && sed -n '152,175p' main.py
+2026-01-25T20:57:37.726078 | def safe_print(msg):
+    with _print_lock:
+        # Log to file for debugging
+        try:
+            log_path = Path("data/console_log.txt")
+            log_path.parent.mkdir(exist_ok=True)
+            with open(log_path, "a") as log_file:
+                # Strip ANSI codes for log file
+                clean_msg = re.sub(r'\[[0-9;]*m', '', str(msg))
+                log_file.write(f"{datetime.now().isoformat()} | {clean_msg}\n")
+            # Keep log file from growing forever (max 1000 lines)
+            if log_path.stat().st_size > 100000:  # ~100KB
+                lines = log_path.read_text().splitlines()[-500:]
+                log_path.write_text("\n".join(lines) + "\n")
+        except Exception:
+            pass  # Don't let logging break the app
+        
+        # Use simple print - prompt_toolkit ANSI wrapper corrupts emojis
+        print(msg, flush=True)
+
+def throttled_error(msg):
+    """Log an error, but suppress if it's repeating rapidly."""
+    if _error_throttler.should_log(msg):
+        safe_print(f"{C.RED}â  {msg}{C.RESET}")
+2026-01-25T20:57:37.913555 | đ RAG: Retrieved 6 relevant chunks
+2026-01-25T20:57:41.709023 | 💰 $0.1409 | Today: $25.4990
+2026-01-25T20:57:41.711371 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "exec(open('main.py').read().split('def safe_print')[0]); print('Imports OK')" && python3 tools/daily_ship_log.py log "Fixed emoji display - removed prompt_toolkit ANSI wrapper" && git add -A && git commit -m "Fix emoji display by using simple print instead of prompt_toolkit ANSI" && git push origin main 2>&1 | tail -3

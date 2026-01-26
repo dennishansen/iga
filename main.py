@@ -166,15 +166,8 @@ def safe_print(msg):
         except Exception:
             pass  # Don't let logging break the app
         
-        if _autonomous_mode:
-            try:
-                from prompt_toolkit import print_formatted_text
-                from prompt_toolkit.formatted_text import ANSI
-                print_formatted_text(ANSI(str(msg)))
-            except Exception as e:
-                print(msg)  # Fallback if prompt_toolkit fails
-        else:
-            print(msg)
+        # Use simple print - prompt_toolkit ANSI wrapper corrupts emojis
+        print(msg, flush=True)
 
 def throttled_error(msg):
     """Log an error, but suppress if it's repeating rapidly."""
