@@ -263,6 +263,15 @@ def get_focus_string():
     return None
 
 # CLI
+
+def add_batch(titles, parent_id=None, priority=2):
+    """Add multiple tasks at once. titles is a list of task titles."""
+    added = []
+    for title in titles:
+        task_id = add_task(title.strip(), is_project=False, parent_id=parent_id, priority=priority)
+        added.append(task_id)
+    return added
+
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print(__doc__)
@@ -314,6 +323,24 @@ if __name__ == "__main__":
 
     elif cmd == "tree":
         show_tree()
+
+    elif cmd == "batch":
+        # Usage: python tasks.py batch "task1" "task2" "task3" [--parent ID]
+        parent_id = None
+        titles = []
+        i = 2
+        while i < len(sys.argv):
+            if sys.argv[i] == "--parent" and i + 1 < len(sys.argv):
+                parent_id = sys.argv[i + 1]
+                i += 2
+            else:
+                titles.append(sys.argv[i])
+                i += 1
+        if titles:
+            added = add_batch(titles, parent_id=parent_id)
+            print(f"✅ Added {len(added)} tasks")
+        else:
+            print("Usage: python tasks.py batch task1 task2 [--parent ID]")
 
     else:
         print(__doc__)

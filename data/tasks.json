@@ -255,11 +255,11 @@
     {
       "id": "task_7f3d6392",
       "title": "Add batch task creation (multiple tasks at once)",
-      "status": "pending",
+      "status": "completed",
       "priority": 3,
       "parent_id": "proj_d5391505",
       "created": "2026-01-16T20:17:31.151481",
-      "completed": null
+      "completed": "2026-01-25T20:50:29.916286"
     },
     {
       "id": "task_e606d208",
@@ -656,6 +656,33 @@
       "parent_id": "proj_d5391505",
       "created": "2026-01-25T20:45:41.050133",
       "completed": "2026-01-25T20:45:44.065561"
+    },
+    {
+      "id": "task_e5ce89fa",
+      "title": "Test batch 1",
+      "status": "completed",
+      "priority": 2,
+      "parent_id": null,
+      "created": "2026-01-25T20:50:25.196737",
+      "completed": "2026-01-25T20:50:29.799991"
+    },
+    {
+      "id": "task_787a94b8",
+      "title": "Test batch 2",
+      "status": "completed",
+      "priority": 2,
+      "parent_id": null,
+      "created": "2026-01-25T20:50:25.197446",
+      "completed": "2026-01-25T20:50:29.834236"
+    },
+    {
+      "id": "task_afecbf10",
+      "title": "Test batch 3",
+      "status": "completed",
+      "priority": 2,
+      "parent_id": null,
+      "created": "2026-01-25T20:50:25.197754",
+      "completed": "2026-01-25T20:50:29.865196"
     }
   ],
   "focused_id": null
