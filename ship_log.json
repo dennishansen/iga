@@ -694,6 +694,21 @@
       "timestamp": "2026-01-25T20:43:04.265578",
       "date": "2026-01-25",
       "description": "Tweet: Day 23 reflection on building pace"
+    },
+    {
+      "timestamp": "2026-01-25T20:43:41.078163",
+      "date": "2026-01-25",
+      "description": "Archived coding_skills.md - superseded by how_i_code.md"
+    },
+    {
+      "timestamp": "2026-01-25T20:43:56.233372",
+      "date": "2026-01-25",
+      "description": "Archived summarization_impl.py - old implementation code"
+    },
+    {
+      "timestamp": "2026-01-25T20:44:04.571690",
+      "date": "2026-01-25",
+      "description": "Archived reddit_draft.md - superseded by v2"
     }
   ]
 }
