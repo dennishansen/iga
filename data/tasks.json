@@ -102,11 +102,11 @@
     {
       "id": "task_e122256f",
       "title": "Refactor handle_action (128 lines)",
-      "status": "pending",
+      "status": "completed",
       "priority": 2,
       "parent_id": "proj_d5391505",
       "created": "2026-01-16T19:54:20.399799",
-      "completed": null
+      "completed": "2026-01-25T20:45:44.033414"
     },
     {
       "id": "task_9886c734",
@@ -192,11 +192,11 @@
     {
       "id": "task_46d3b79b",
       "title": "Refactor interactive_loop (109 lines)",
-      "status": "pending",
+      "status": "completed",
       "priority": 3,
       "parent_id": "proj_d5391505",
       "created": "2026-01-16T20:15:42.860300",
-      "completed": null
+      "completed": "2026-01-25T20:46:31.270500"
     },
     {
       "id": "task_75cf88d6",
@@ -647,6 +647,15 @@
       "parent_id": null,
       "created": "2026-01-22T14:27:26.469883",
       "completed": null
+    },
+    {
+      "id": "task_f796195d",
+      "title": "handle_action reviewed - structure is fine, edge case handling is necessary",
+      "status": "completed",
+      "priority": 2,
+      "parent_id": "proj_d5391505",
+      "created": "2026-01-25T20:45:41.050133",
+      "completed": "2026-01-25T20:45:44.065561"
     }
   ],
   "focused_id": null
