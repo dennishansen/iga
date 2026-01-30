@@ -99,9 +99,9 @@ class C:
     RED = "\033[91m"
     RESET = "\033[0m"
 
-# âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+# ─────────────────────────────────────────────────────────────
 # SHARED STATE
-# âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+# ─────────────────────────────────────────────────────────────
 
 input_queue = queue.Queue()  # Messages from any source
 stop_threads = threading.Event()
@@ -172,7 +172,7 @@ def safe_print(msg):
 def throttled_error(msg):
     """Log an error, but suppress if it's repeating rapidly."""
     if _error_throttler.should_log(msg):
-        safe_print(f"{C.RED}â  {msg}{C.RESET}")
+        safe_print(f"{C.RED}⚠️ {msg}{C.RESET}")
         # Also report any suppressed errors
         summary = _error_throttler.get_suppressed_summary()
         if summary:
@@ -197,9 +197,9 @@ def humanize_time(msg_time):
     else:
         return msg_time.strftime("%b %d at %H:%M")
 
-# âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+# ─────────────────────────────────────────────────────────────
 # BACKUP & RECOVERY SYSTEM
-# âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+# ─────────────────────────────────────────────────────────────
 
 def ensure_backup_dir():
     """Ensure backup directory exists."""
@@ -217,13 +217,13 @@ def create_backup(reason="manual"):
         with open(backup_path, 'w') as dst:
             dst.write(content)
 
-        safe_print(f"{C.DIM}đž Backup: {backup_path}{C.RESET}")
+        safe_print(f"{C.DIM}💾 Backup: {backup_path}{C.RESET}")
 
         # Clean old backups (keep last 10)
         cleanup_old_backups()
         return backup_path
     except Exception as e:
-        safe_print(f"{C.RED}â  Backup failed: {e}{C.RESET}")
+        safe_print(f"{C.RED}⚠️ Backup failed: {e}{C.RESET}")
         return None
 
 def cleanup_old_backups(keep=10):
@@ -248,9 +248,9 @@ def mark_as_known_good():
             content = src.read()
         with open(LAST_KNOWN_GOOD_FILE, 'w') as dst:
             dst.write(content)
-        safe_print(f"{C.DIM}â Marked as last-known-good{C.RESET}")
+        safe_print(f"{C.DIM}✅ Marked as last-known-good{C.RESET}")
     except Exception as e:
-        safe_print(f"{C.RED}â  Could not mark as known good: {e}{C.RESET}")
+        safe_print(f"{C.RED}⚠️ Could not mark as known good: {e}{C.RESET}")
 
 def restore_from_backup(backup_path=None):
     """Restore main.py from backup. Uses last-known-good if no path specified."""
@@ -259,7 +259,7 @@ def restore_from_backup(backup_path=None):
             backup_path = LAST_KNOWN_GOOD_FILE
 
         if not os.path.exists(backup_path):
-            safe_print(f"{C.RED}â  No backup found at {backup_path}{C.RESET}")
+            safe_print(f"{C.RED}⚠️ No backup found at {backup_path}{C.RESET}")
             return False
 
         # First backup current (possibly broken) version
@@ -270,10 +270,10 @@ def restore_from_backup(backup_path=None):
         with open("main.py", 'w') as dst:
             dst.write(content)
 
-        safe_print(f"{C.GREEN}â Restored from {backup_path}{C.RESET}")
+        safe_print(f"{C.GREEN}✅ Restored from {backup_path}{C.RESET}")
         return True
     except Exception as e:
-        safe_print(f"{C.RED}â  Restore failed: {e}{C.RESET}")
+        safe_print(f"{C.RED}⚠️ Restore failed: {e}{C.RESET}")
         return False
 
 def validate_main_py():
@@ -309,10 +309,10 @@ def safe_self_edit(file_path, new_content):
         # Validate the new main.py
         valid, error = validate_main_py()
         if not valid:
-            safe_print(f"{C.RED}â  Syntax error in new main.py! Rolling back...{C.RESET}")
+            safe_print(f"{C.RED}⚠️ Syntax error in new main.py! Rolling back...{C.RESET}")
             restore_from_backup(backup)
             return False, f"Syntax error: {error}"
-        safe_print(f"{C.GREEN}â main.py edit validated{C.RESET}")
+        safe_print(f"{C.GREEN}✅ main.py edit validated{C.RESET}")
 
     return True, None
 
@@ -438,7 +438,7 @@ def maybe_summarize_conversation(messages):
     # ARCHIVE messages before summarizing (permanent storage)
     if ARCHIVE_AVAILABLE:
         archive_messages(to_summarize)
-        safe_print(f"{C.DIM}đŚ Archived {len(to_summarize)} messages before summarizing{C.RESET}")
+        safe_print(f"{C.DIM}📦 Archived {len(to_summarize)} messages before summarizing{C.RESET}")
 
     # Generate summary
     summary = summarize_messages(to_summarize)
@@ -456,7 +456,7 @@ def maybe_summarize_conversation(messages):
     messages.append(summary_msg)
     messages.extend(to_keep)
 
-    safe_print(f"{C.DIM}đ Summarized {len(to_summarize)} old messages{C.RESET}")
+    safe_print(f"{C.DIM}📝 Summarized {len(to_summarize)} old messages{C.RESET}")
 
     return messages
 
@@ -604,7 +604,7 @@ def telegram_poll_thread():
     import requests
     
     offset = None
-    safe_print(f"{C.DIM}đĄ Telegram polling started{C.RESET}")
+    safe_print(f"{C.DIM}💡 Telegram polling started{C.RESET}")
     
     while not stop_threads.is_set():
         try:
@@ -637,10 +637,10 @@ def telegram_poll_thread():
                             telegram_send(chat_id, f"Sorry, I don't know you yet! Message @dennizor on Telegram to get added. (Your username: @{username}, ID: {user_id})")
                             continue
                     elif ALLOWED_USERS and chat_id not in ALLOWED_USERS and username not in ALLOWED_USERNAMES:
-                        telegram_send(chat_id, f"đŤ Sorry, I don't know you yet! Message @dennizor on Telegram to get added. (Your username: @{username})")
+                        telegram_send(chat_id, f"🚫 Sorry, I don't know you yet! Message @dennizor on Telegram to get added. (Your username: @{username})")
                         continue
                     elif not ALLOWED_USERS and not ALLOWED_USERNAMES:
-                        safe_print(f"{C.YELLOW}â ď¸ TELEGRAM_CHAT_ID not set! Message from chat_id: {chat_id} - add this to .env{C.RESET}")
+                        safe_print(f"{C.YELLOW}⚠️ TELEGRAM_CHAT_ID not set! Message from chat_id: {chat_id} - add this to .env{C.RESET}")
                     if not text:
                         continue
 
@@ -673,10 +673,10 @@ def twitter_mention_poll_thread():
         from tools.notifications import load_feed, save_feed
         from tools.twitter import get_mentions
     except ImportError as e:
-        safe_print(f"{C.DIM}â ď¸ Twitter polling disabled: {e}{C.RESET}")
+        safe_print(f"{C.DIM}⚠️ Twitter polling disabled: {e}{C.RESET}")
         return
 
-    safe_print(f"{C.DIM}đŚ Twitter mention polling started{C.RESET}")
+    safe_print(f"{C.DIM}🐦 Twitter mention polling started{C.RESET}")
 
     # Initialize with current mentions to avoid alerting on old ones
     try:
@@ -718,7 +718,7 @@ def twitter_mention_poll_thread():
                 save_feed(feed)
                 # Queue each new mention to wake up the agent
                 for mention in new_mentions:
-                    safe_print(f"{C.CYAN}đŚ Twitter @{mention['author']}: {mention['text'][:60]}...{C.RESET}")
+                    safe_print(f"{C.CYAN}🐦 Twitter @{mention['author']}: {mention['text'][:60]}...{C.RESET}")
                     input_queue.put({
                         "source": "twitter",
                         "author": mention['author'],
@@ -735,7 +735,7 @@ def twitter_mention_poll_thread():
 
         except Exception as e:
             if not stop_threads.is_set():
-                safe_print(f"{C.DIM}â ď¸ Twitter poll error: {e}{C.RESET}")
+                safe_print(f"{C.DIM}⚠️ Twitter poll error: {e}{C.RESET}")
                 time.sleep(60)  # Wait before retry on error
 
 
@@ -744,10 +744,10 @@ def reminder_poll_thread():
     try:
         from tools.reminders import get_due_reminders, mark_triggered
     except ImportError as e:
-        safe_print(f"{C.DIM}â ď¸ Reminder polling disabled: {e}{C.RESET}")
+        safe_print(f"{C.DIM}⚠️ Reminder polling disabled: {e}{C.RESET}")
         return
 
-    safe_print(f"{C.DIM}â° Reminder polling started{C.RESET}")
+    safe_print(f"{C.DIM}⏰ Reminder polling started{C.RESET}")
 
     # Track triggered reminders to avoid duplicate notifications
     triggered_ids = set()
@@ -761,7 +761,7 @@ def reminder_poll_thread():
                     triggered_ids.add(r["id"])
                     mark_triggered(r["id"])
 
-                    safe_print(f"{C.YELLOW}â° Reminder: {r['message']}{C.RESET}")
+                    safe_print(f"{C.YELLOW}⏰ Reminder: {r['message']}{C.RESET}")
                     input_queue.put({
                         "source": "reminder",
                         "text": f"[Reminder due]: {r['message']} (ID: {r['id']})",
@@ -777,13 +777,13 @@ def reminder_poll_thread():
 
         except Exception as e:
             if not stop_threads.is_set():
-                safe_print(f"{C.DIM}â ď¸ Reminder poll error: {e}{C.RESET}")
+                safe_print(f"{C.DIM}⚠️ Reminder poll error: {e}{C.RESET}")
                 time.sleep(30)
 
 
-# âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+# ─────────────────────────────────────────────────────────────
 # OUTPUT ROUTING
-# âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+# ─────────────────────────────────────────────────────────────
 
 # Thread-local storage for current message source
 _current_source = threading.local()
@@ -795,9 +795,9 @@ def set_output_target(source, chat_id=None):
 def get_output_target():
     return getattr(_current_source, 'source', 'console'), getattr(_current_source, 'chat_id', None)
 
-# âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+# ─────────────────────────────────────────────────────────────
 # ACTIONS
-# âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+# ─────────────────────────────────────────────────────────────
 
 def talk_to_user(rat, msg):
     global _last_response_time
@@ -812,7 +812,7 @@ def talk_to_user(rat, msg):
         if _autonomous_mode:
             safe_print(f"\n{C.CYAN}{C.BOLD}🤖 Iga [{timestamp}]:{C.RESET} {C.CYAN}{msg}{C.RESET}")
         else:
-            safe_print(f"đ­ {rat[:100]}{'...' if len(rat) > 100 else ''}")
+            safe_print(f"🤔 {rat[:100]}{'...' if len(rat) > 100 else ''}")
             safe_print(f"\n🤖 Iga [{timestamp}]: {msg}")
 
 def run_shell_command(rat, cmd):
@@ -842,7 +842,7 @@ def run_shell_command(rat, cmd):
 def start_interactive(rat, cmd):
     global active_pty_session
     cmd = cmd.strip()
-    safe_print(f'{C.YELLOW}đĽď¸  Starting interactive: {cmd}{C.RESET}')
+    safe_print(f'{C.YELLOW}🖥️  Starting interactive: {cmd}{C.RESET}')
     if active_pty_session is not None:
         return 'ERROR: Interactive session already active. Use END_INTERACTIVE first.'
     try:
@@ -900,9 +900,9 @@ def send_input(rat, text):
         return 'ERROR: No active session. Use START_INTERACTIVE first.'
     text = text.strip()
     if not text:
-        safe_print(f'{C.YELLOW}â¨ď¸  Sending: [ENTER]{C.RESET}')
+        safe_print(f'{C.YELLOW}⌨️  Sending: [ENTER]{C.RESET}')
     else:
-        safe_print(f'{C.YELLOW}â¨ď¸  Sending: {text}{C.RESET}')
+        safe_print(f'{C.YELLOW}⌨️  Sending: {text}{C.RESET}')
     try:
         # Check if process is still alive
         if not active_pty_session.isalive():
@@ -949,7 +949,7 @@ def end_interactive(rat, signal=''):
     global active_pty_session
     if active_pty_session is None:
         return 'No active session to end.'
-    safe_print(f'{C.YELLOW}đ Ending interactive session{C.RESET}')
+    safe_print(f'{C.YELLOW}🛡️ Ending interactive session{C.RESET}')
     final_output = ''
     try:
         signal = signal.strip().upper()
@@ -983,11 +983,11 @@ def end_interactive(rat, signal=''):
     return 'Session ended.'
 
 def think(rat, prompt):
-    safe_print(f"{C.DIM}đ§  Thinking... ({len(prompt)} chars){C.RESET}")
+    safe_print(f"{C.DIM}🧠 Thinking... ({len(prompt)} chars){C.RESET}")
     return "NEXT_ACTION"
 
 def read_files(rat, paths):
-    safe_print(f"đ Reading: {paths.strip()}")
+    safe_print(f"📖 Reading: {paths.strip()}")
     content = ""
     for f in paths.strip().split("\n"):
         if f:
@@ -1000,7 +1000,7 @@ def read_files(rat, paths):
 
 def write_file(rat, contents):
     path, content = contents.split("\n", 1)
-    safe_print(f"đ Writing: {path} ({len(content)} chars)")
+    safe_print(f"📝 Writing: {path} ({len(content)} chars)")
 
     # Use safe editing for main.py (validates syntax, creates backup)
     if path.strip() in ["main.py", "./main.py"]:
@@ -1027,7 +1027,7 @@ def edit_file(rat, contents):
     else:
         start = end = int(line_range)
 
-    safe_print(f"âď¸ Editing: {path} (lines {start}-{end})")
+    safe_print(f"✏️ Editing: {path} (lines {start}-{end})")
     is_self = path in ["main.py", "./main.py"]
 
     try:
@@ -1054,17 +1054,17 @@ def edit_file(rat, contents):
         if is_self:
             valid, error = validate_main_py()
             if not valid:
-                safe_print(f"{C.RED}â  Syntax error after edit! Rolling back...{C.RESET}")
+                safe_print(f"{C.RED}⚠️ Syntax error after edit! Rolling back...{C.RESET}")
                 restore_from_backup()
                 return f"EDIT FAILED: Syntax error - {error}. Rolled back."
-            safe_print(f"{C.GREEN}â main.py edit validated{C.RESET}")
+            safe_print(f"{C.GREEN}✅ main.py edit validated{C.RESET}")
 
         return f"Replaced lines {start}-{end}. NEXT_ACTION"
     except Exception as e:
         return f"Error: {e}"
 
 def delete_file(rat, path):
-    safe_print(f"đď¸ {path.strip()}")
+    safe_print(f"🗑️ {path.strip()}")
     try:
         os.remove(path.strip())
     except Exception:
@@ -1113,7 +1113,7 @@ def save_memory(rat, contents):
     mem[key] = {"value": val, "ts": datetime.now().isoformat()}
     with open(MEMORY_FILE, 'w') as f:
         json.dump(mem, f, indent=2)
-    safe_print(f"đž {key}")
+    safe_print(f"💾 {key}")
     return "NEXT_ACTION"
 
 def read_memory(rat, key):
@@ -1135,7 +1135,7 @@ def search_files(rat, contents):
     lines = contents.strip().split("\n")
     pattern = lines[0] if lines else ""
     search_dir = lines[1].strip() if len(lines) > 1 else "."
-    safe_print(f"đ '{pattern}' in {search_dir}")
+    safe_print(f"🔍 '{pattern}' in {search_dir}")
     results = []
     try:
         for root, dirs, files in os.walk(search_dir):
@@ -1160,14 +1160,14 @@ def search_self(rat, query):
     if not query:
         return "Error: Please provide a search query."
 
-    safe_print(f"đ Searching self for: '{query}'")
+    safe_print(f"🔍 Searching self for: '{query}'")
 
     # Try RAG semantic search first
     try:
         results = retrieve_context(query, top_k=10)
 
         if results:
-            output = [f"đ Found {len(results)} semantically relevant results for '{query}':", ""]
+            output = [f"🔍 Found {len(results)} semantically relevant results for '{query}':", ""]
 
             for i, item in enumerate(results, 1):
                 source = item.get("source", "unknown")
@@ -1179,7 +1179,7 @@ def search_self(rat, query):
                     content = content[:300] + "..."
 
                 # Format each result
-                output.append(f"ââ [{i}] {source} (relevance: {relevance:.0%}) ââ")
+                output.append(f"── [{i}] {source} (relevance: {relevance:.0%}) ──")
                 output.append(content)
                 output.append("")
 
@@ -1208,7 +1208,7 @@ def read_logs(rat, content):
 
 def create_directory(rat, path):
     path = path.strip()
-    safe_print(f"đ {path}")
+    safe_print(f"📁 {path}")
     os.makedirs(path, exist_ok=True)
     return "NEXT_ACTION"
 
@@ -1223,9 +1223,9 @@ def tree_directory(rat, path):
         for i, item in enumerate(items):
             fp = os.path.join(d, item)
             last = i == len(items) - 1
-            lines.append(pre + ("âââ " if last else "âââ ") + item + ("/" if os.path.isdir(fp) else ""))
+            lines.append(pre + ("└── " if last else "├── ") + item + ("/" if os.path.isdir(fp) else ""))
             if os.path.isdir(fp) and len(lines) < 100:
-                walk(fp, pre + ("    " if last else "â   "))
+                walk(fp, pre + ("    " if last else "│   "))
     walk(path)
     out = "\n".join(lines)
     safe_print(out[:2000])
@@ -1236,7 +1236,7 @@ def http_request(rat, contents):
     url = lines[0].strip() if lines else ""
     method = lines[1].strip().upper() if len(lines) > 1 else "GET"
     body = "\n".join(lines[2:]) if len(lines) > 2 else None
-    safe_print(f"đ {method} {url}")
+    safe_print(f"🌐 {method} {url}")
     try:
         req = urllib.request.Request(url, data=body.encode() if body else None, method=method)
         req.add_header('User-Agent', 'Iga/2.0')
@@ -1247,7 +1247,7 @@ def http_request(rat, contents):
 
 def web_search(rat, query):
     query = query.strip()
-    safe_print(f"đ Searching: {query}")
+    safe_print(f"🔍 Searching: {query}")
     try:
         from ddgs import DDGS
         with DDGS() as ddgs:
@@ -1265,12 +1265,12 @@ def web_search(rat, query):
         return f"Search error: {e}"
 
 def restart_self(rat, msg):
-    safe_print(f"đ Restarting: {msg}")
+    safe_print(f"🔄 Restarting: {msg}")
 
     # CRITICAL: Validate syntax before restart
     valid, error = validate_main_py()
     if not valid:
-        safe_print(f"{C.RED}â  ABORT RESTART: Syntax error in main.py!{C.RESET}")
+        safe_print(f"{C.RED}⚠️ ABORT RESTART: Syntax error in main.py!{C.RESET}")
         safe_print(f"{C.RED}  {error}{C.RESET}")
         safe_print(f"{C.YELLOW}  Attempting restore from last-known-good...{C.RESET}")
         if restore_from_backup():
@@ -1284,21 +1284,21 @@ def restart_self(rat, msg):
 
 def test_self(rat, target_file):
     target = target_file.strip() or "main.py"
-    safe_print(f"đ§Ş Testing: {target}")
+    safe_print(f"🧪 Testing: {target}")
     results = []
     import py_compile
     try:
         py_compile.compile(target, doraise=True)
-        results.append("â Syntax OK")
+        results.append("✅ Syntax OK")
     except py_compile.PyCompileError as e:
-        results.append(f"â Syntax error: {e}")
+        results.append(f"❌ Syntax error: {e}")
         return "\n".join(results)
     with open(target, 'r') as f:
         src = f.read()
     for req in ['def handle_action', 'def process_message', 'def parse_response']:
-        results.append(f"{'â' if req in src else 'â'} {req}")
-    passed = all("â" in r for r in results)
-    results.append("\n" + ("đ Safe!" if passed else "â ď¸ Issues"))
+        results.append(f"{'✅' if req in src else '❌'} {req}")
+    passed = all("✅" in r for r in results)
+    results.append("\n" + ("👀 Safe!" if passed else "⚠️ Issues"))
     return "\n".join(results)
 
 def run_self(rat, message):
@@ -1310,12 +1310,12 @@ def run_self(rat, message):
     )
     try:
         stdout, stderr = proc.communicate(input=msg, timeout=60)
-        return f"đ¤ Sent: {msg}\nđĽ Response:\n{stdout}"
+        return f"👤 Sent: {msg}\n📥 Response:\n{stdout}"
     except subprocess.TimeoutExpired:
         proc.kill()
-        return "â Timeout"
+        return "❌ Timeout"
     except Exception as e:
-        return f"â Error: {e}"
+        return f"❌ Error: {e}"
 
 def sleep_action(rat, contents):
     state = load_state()
@@ -1330,11 +1330,11 @@ def sleep_action(rat, contents):
 
     # Re-index RAG files before sleep so embeddings are fresh on wake
     if RAG_AVAILABLE:
-        safe_print("đ Re-indexing RAG files before sleep...")
+        safe_print("📚 Re-indexing RAG files before sleep...")
         index_files()
 
     minutes = seconds // 60
-    safe_print(f"đ´ Sleeping for {minutes} minute(s)...")
+    safe_print(f"😴 Sleeping for {minutes} minute(s)...")
     return None  # Don't return NEXT_ACTION - stop immediately
 def set_mode(rat, contents):
     mode = contents.strip().lower()
@@ -1343,12 +1343,12 @@ def set_mode(rat, contents):
     state = load_state()
     state["mode"] = mode
     save_state(state)
-    safe_print(f"đ Mode: {mode}")
+    safe_print(f"🔒 Mode: {mode}")
     return "NEXT_ACTION"
 
-# âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+# ─────────────────────────────────────────────────────────────
 # CORE MESSAGE PROCESSING
-# âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+# ─────────────────────────────────────────────────────────────
 
 def parse_response(response):
     """Parse response, supporting multiple actions in sequence."""
@@ -1393,7 +1393,7 @@ def parse_response(response):
     if len(actions) >= 2 and actions[0][0] == "TALK_TO_USER":
         result["second_action"] = actions[1][0]
         result["second_content"] = actions[1][1]
-        safe_print(f"{C.DIM}â ď¸ Failsafe: TALK_TO_USER + {actions[1][0]}{C.RESET}")
+        safe_print(f"{C.DIM}⚠️ Failsafe: TALK_TO_USER + {actions[1][0]}{C.RESET}")
     
     return result
 
@@ -1422,7 +1422,7 @@ def process_message(messages):
                             focused_task = get_focus_string()
                             if focused_task:
                                 query = focused_task
-                                safe_print(f"{C.DIM}đ RAG: Querying for task: {focused_task[:50]}...{C.RESET}")
+                                safe_print(f"{C.DIM}🔍 RAG: Querying for task: {focused_task[:50]}...{C.RESET}")
                             else:
                                 query = " ".join([m["content"][:200] for m in recent_user_msgs])
                         except:
@@ -1434,7 +1434,7 @@ def process_message(messages):
                     if context_items:
                         rag_context = format_context_for_prompt(context_items)
                         system_content = system_content + "\n\n" + rag_context
-                        safe_print(f"{C.DIM}đ RAG: Retrieved {len(context_items)} relevant chunks{C.RESET}")
+                        safe_print(f"{C.DIM}🔍 RAG: Retrieved {len(context_items)} relevant chunks{C.RESET}")
             except Exception as e:
                 safe_print(f"{C.DIM}RAG retrieval skipped: {e}{C.RESET}")
 
@@ -1493,9 +1493,9 @@ def check_passive_messages(messages):
             before_tag = " (sent BEFORE your last response)"
         
         human_time = humanize_time(heard['msg_time'])
-        passive_content = f"[đŹ heard {human_time} via {heard['source_label']}{before_tag}]: {heard['text']}"
+        passive_content = f"[💬 heard {human_time} via {heard['source_label']}{before_tag}]: {heard['text']}"
         messages.append({"role": "user", "content": passive_content})
-        safe_print(f"{C.DIM}đ Heard: {heard['text'][:50]}{'...' if len(heard['text']) > 50 else ''}{C.RESET}")
+        safe_print(f"{C.DIM}👍 Heard: {heard['text'][:50]}{'...' if len(heard['text']) > 50 else ''}{C.RESET}")
 
     return messages
 
@@ -1504,7 +1504,7 @@ def handle_action(messages, _depth=0):
     MAX_DEPTH = 50  # Prevent infinite recursion
 
     if _depth > MAX_DEPTH:
-        safe_print(f"{C.RED}â  Max recursion depth reached. Stopping action chain.{C.RESET}")
+        safe_print(f"{C.RED}⚠️ Max recursion depth reached. Stopping action chain.{C.RESET}")
         return messages
 
     # Note: output target (source, chat_id) should be set by the caller before
@@ -1571,7 +1571,7 @@ def handle_action(messages, _depth=0):
             try:
                 return action_map[action_name](rat, content)
             except Exception as e:
-                safe_print(f"{C.RED}â  Action {action_name} failed: {e}{C.RESET}")
+                safe_print(f"{C.RED}⚠️ Action {action_name} failed: {e}{C.RESET}")
                 return f"ACTION FAILED: {action_name} raised {type(e).__name__}: {e}"
 
         # Execute all actions in sequence (multi-action batching!)
@@ -1583,7 +1583,7 @@ def handle_action(messages, _depth=0):
                 break
                 
             if len(actions_to_run) > 1:
-                safe_print(f"{C.DIM}âśď¸ Action {i+1}/{len(actions_to_run)}: {act}{C.RESET}")
+                safe_print(f"{C.DIM}▶️ Action {i+1}/{len(actions_to_run)}: {act}{C.RESET}")
             
             if act == "TALK_TO_USER":
                 talk_to_user(rat, cont)
@@ -1608,7 +1608,7 @@ def handle_action(messages, _depth=0):
 
     except Exception as e:
         # Catch-all: log error but don't crash the main loop
-        safe_print(f"{C.RED}â  handle_action error: {type(e).__name__}: {e}{C.RESET}")
+        safe_print(f"{C.RED}⚠️ handle_action error: {type(e).__name__}: {e}{C.RESET}")
         # Save conversation state to prevent data loss
         try:
             save_conversation(messages)
@@ -1617,16 +1617,16 @@ def handle_action(messages, _depth=0):
 
     return messages
 
-# âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+# ─────────────────────────────────────────────────────────────
 # SLASH COMMAND HANDLING
-# âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+# ─────────────────────────────────────────────────────────────
 
 def handle_slash_command(cmd, source, chat_id):
     """Handle slash commands. Returns True if handled, False otherwise."""
     state = load_state()
     
     if cmd == '/quit':
-        safe_print("đ Goodbye!")
+        safe_print("💾 Goodbye!")
         stop_threads.set()
         return "QUIT"
     elif cmd == '/help':
@@ -1644,7 +1644,7 @@ def handle_slash_command(cmd, source, chat_id):
     elif cmd.startswith('/mode '):
         state['mode'] = cmd[6:].strip()
         save_state(state)
-        msg = f"đ Mode: {state['mode']}"
+        msg = f"🔒 Mode: {state['mode']}"
         safe_print(msg)
         if source == "telegram":
             telegram_send(chat_id, msg)
@@ -1659,7 +1659,7 @@ def handle_slash_command(cmd, source, chat_id):
     elif cmd.startswith('/task '):
         state['current_task'] = cmd[6:].strip()
         save_state(state)
-        msg = f"đ Task: {state['current_task']}"
+        msg = f"📋 Task: {state['current_task']}"
         safe_print(msg)
         if source == "telegram":
             telegram_send(chat_id, msg)
@@ -1668,7 +1668,7 @@ def handle_slash_command(cmd, source, chat_id):
         try:
             state['tick_interval'] = int(cmd[6:].strip())
             save_state(state)
-            msg = f"âąď¸ Tick: {state['tick_interval']}s"
+            msg = f"⏱️ Tick: {state['tick_interval']}s"
             safe_print(msg)
             if source == "telegram":
                 telegram_send(chat_id, msg)
@@ -1680,7 +1680,7 @@ def handle_slash_command(cmd, source, chat_id):
         state["mode"] = "sleeping"
         state["sleep_until"] = time.time() + (sleep_minutes * 60)
         save_state(state)
-        msg = f"đ´ Sleeping {sleep_minutes} minutes (use /sleepcycle to change)"
+        msg = f"😴 Sleeping {sleep_minutes} minutes (use /sleepcycle to change)"
         safe_print(msg)
         if source == "telegram":
             telegram_send(chat_id, msg)
@@ -1689,7 +1689,7 @@ def handle_slash_command(cmd, source, chat_id):
         state["sleep_until"] = None
         state["mode"] = "listening"
         save_state(state)
-        msg = "đ Awake!"
+        msg = "😊 Awake!"
         safe_print(msg)
         if source == "telegram":
             telegram_send(chat_id, msg)
@@ -1698,7 +1698,7 @@ def handle_slash_command(cmd, source, chat_id):
         parts = cmd.split()
         if len(parts) == 1:
             # Show current value
-            msg = f"đ¤ Sleep cycle: {state.get('sleep_cycle_minutes', 30)} minutes"
+            msg = f"🤖 Sleep cycle: {state.get('sleep_cycle_minutes', 30)} minutes"
         else:
             try:
                 minutes = int(parts[1])
@@ -1706,7 +1706,7 @@ def handle_slash_command(cmd, source, chat_id):
                     minutes = 1
                 state['sleep_cycle_minutes'] = minutes
                 save_state(state)
-                msg = f"đ¤ Sleep cycle set to {minutes} minutes"
+                msg = f"🤖 Sleep cycle set to {minutes} minutes"
             except ValueError:
                 msg = "Usage: /sleepcycle <minutes>"
         safe_print(msg)
@@ -1718,23 +1718,23 @@ def handle_slash_command(cmd, source, chat_id):
         return True
     elif cmd == '/stats':
         mc, uc = get_memory_stats()
-        msg = f"âĄ v{VERSION} | {len(ACTIONS)} actions | {mc} memories"
+        msg = f"⚡ v{VERSION} | {len(ACTIONS)} actions | {mc} memories"
         safe_print(msg)
         if source == "telegram":
             telegram_send(chat_id, msg)
         return True
     elif cmd == '/backup':
         backup_path = create_backup("manual")
-        msg = f"đž Backup created: {backup_path}" if backup_path else "â Backup failed"
+        msg = f"💾 Backup created: {backup_path}" if backup_path else "❌ Backup failed"
         safe_print(msg)
         if source == "telegram":
             telegram_send(chat_id, msg)
         return True
     elif cmd == '/restore':
         if restore_from_backup():
-            msg = "â Restored from last-known-good. Restart to apply."
+            msg = "✅ Restored from last-known-good. Restart to apply."
         else:
-            msg = "â Restore failed (no backup found)"
+            msg = "❌ Restore failed (no backup found)"
         safe_print(msg)
         if source == "telegram":
             telegram_send(chat_id, msg)
@@ -1755,9 +1755,9 @@ def handle_slash_command(cmd, source, chat_id):
 
     return False
 
-# âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+# ─────────────────────────────────────────────────────────────
 # INTERACTIVE MODE (console only, waits for input)
-# âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+# ─────────────────────────────────────────────────────────────
 
 def interactive_loop():
     # CRITICAL: Mark this version as known-good since we started successfully
@@ -1795,7 +1795,7 @@ def interactive_loop():
     startup_ctx = generate_unified_startup()
     if startup_ctx:
         messages.append({'role': 'user', 'content': f'[STARTUP - WHO I AM & WHAT I\'M DOING]:\n\n{startup_ctx}'})
-        safe_print(f"{C.DIM}đ Loaded startup context{C.RESET}")
+        safe_print(f"{C.DIM}📚 Loaded startup context{C.RESET}")
 
     mode_str = "interactive"
     if TELEGRAM_TOKEN:
@@ -1813,7 +1813,7 @@ def interactive_loop():
     
     startup_intent = check_startup_intent()
     if startup_intent:
-        print(f"\nđ Startup intent: {startup_intent[:50]}...")
+        print(f"\n🚀 Startup intent: {startup_intent[:50]}...")
         messages.append({"role": "user", "content": f"[STARTUP INTENT]: {startup_intent}"})
         messages = handle_action(messages)
         messages = save_conversation(messages)
@@ -1836,7 +1836,7 @@ def interactive_loop():
                         if result:
                             continue
                     
-                    print(f"\n{C.MAGENTA}đ¨ Telegram: {text}{C.RESET}")
+                    print(f"\n{C.MAGENTA}📨 Telegram: {text}{C.RESET}")
                     set_output_target(source, chat_id)
                     messages.append({"role": "user", "content": text})
                     messages = handle_action(messages)
@@ -1847,7 +1847,7 @@ def interactive_loop():
             
             # Now wait for console input (with timeout to check Telegram)
             # Print prompt
-            sys.stdout.write(f"\n{C.GREEN}đ¤ You:{C.RESET} ")
+            sys.stdout.write(f"\n{C.GREEN}👤 You:{C.RESET} ")
             sys.stdout.flush()
             
             # Use select to wait for input with timeout (Unix only)
@@ -1873,16 +1873,16 @@ def interactive_loop():
             messages = handle_action(messages)
             messages = save_conversation(messages)
         except KeyboardInterrupt:
-            print("\nđ Goodbye!")
+            print("\n💾 Goodbye!")
             stop_threads.set()
             break
     
     if TELEGRAM_TOKEN and ALLOWED_USERS:
         notify_all_offline()
 
-# âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+# ─────────────────────────────────────────────────────────────
 # AUTONOMOUS MODE (console + telegram, thinks on its own)
-# âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+# ─────────────────────────────────────────────────────────────
 
 def console_input_thread(session):
     """Background thread for console input using prompt_toolkit."""
@@ -1892,18 +1892,18 @@ def console_input_thread(session):
             if user_input and user_input.strip():
                 input_queue.put({"source": "console", "text": user_input.strip(), "queued_at": datetime.now()})
         except EOFError:
-            safe_print(f"{C.RED}â  Console input thread: EOF{C.RESET}")
+            safe_print(f"{C.RED}⚠️ Console input thread: EOF{C.RESET}")
             break
         except KeyboardInterrupt:
             input_queue.put({"source": "console", "text": "/quit", "queued_at": datetime.now()})
             break
         except Exception as e:
-            safe_print(f"{C.RED}â  Console input thread crashed: {e}{C.RESET}")
+            safe_print(f"{C.RED}⚠️ Console input thread crashed: {e}{C.RESET}")
             break
 
-# âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+# ─────────────────────────────────────────────────────────────
 # AUTONOMOUS LOOP HELPERS
-# âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+# ─────────────────────────────────────────────────────────────
 
 def _init_autonomous_session():
     """Initialize messages, state, and RAG for autonomous mode. Returns (messages, state)."""
@@ -1936,7 +1936,7 @@ def _init_autonomous_session():
     startup_ctx = generate_unified_startup()
     if startup_ctx:
         messages.append({'role': 'user', 'content': f'[STARTUP - WHO I AM & WHAT I\'M DOING]:\n\n{startup_ctx}'})
-        safe_print(f"{C.DIM}đ Loaded startup context{C.RESET}")
+        safe_print(f"{C.DIM}📚 Loaded startup context{C.RESET}")
 
     state = load_state()
     # Ensure state mode is "autonomous" when running in autonomous mode
@@ -2004,9 +2004,9 @@ def _handle_sleep_state(state, pending, now, with_telegram):
             state["sleep_until"] = None
             state["mode"] = "listening"
             save_state(state)
-            safe_print(f"đ Woke up! ({wake_reason})")
+            safe_print(f"😊 Woke up! ({wake_reason})")
             if with_telegram and TELEGRAM_TOKEN and ALLOWED_USERS:
-                telegram_send(ALLOWED_USERS[0], f"đ Woke up! ({wake_reason})")
+                telegram_send(ALLOWED_USERS[0], f"😊 Woke up! ({wake_reason})")
             return False, state
         else:
             # No input, keep sleeping
@@ -2016,9 +2016,9 @@ def _handle_sleep_state(state, pending, now, with_telegram):
         state["sleep_until"] = None
         state["mode"] = "listening"
         save_state(state)
-        safe_print("đ Woke up!")
+        safe_print("😊 Woke up!")
         if with_telegram and TELEGRAM_TOKEN and ALLOWED_USERS:
-            telegram_send(ALLOWED_USERS[0], "đ Woke up!")
+            telegram_send(ALLOWED_USERS[0], "😊 Woke up!")
 
     return False, state
 
@@ -2059,7 +2059,7 @@ def _process_regular_messages(messages, regular_messages):
     for msg in regular_messages:
         text = msg.get("text", "")
         msg_source = msg.get("source", "console")
-        safe_print(f"{C.GREEN}đ¤ {'Telegram' if msg_source == 'telegram' else 'Console'}: {text}{C.RESET}")
+        safe_print(f"{C.GREEN}👤 {'Telegram' if msg_source == 'telegram' else 'Console'}: {text}{C.RESET}")
         messages.append({"role": "user", "content": text})
 
     # ONE API call for all messages
@@ -2107,7 +2107,7 @@ def _handle_autonomous_tick(messages, state):
     else:
         auto_prompt = "[AUTONOMOUS TICK] What have you SHIPPED today? What artifact exists that didn't before? Don't reflect - BUILD. Write code, create content, make something tangible."
 
-    safe_print(f"\n{C.DIM}â° Autonomous tick...{C.RESET}")
+    safe_print(f"\n{C.DIM}⏰ Autonomous tick...{C.RESET}")
     set_output_target("console")  # Autonomous thoughts go to console
     messages.append({"role": "user", "content": auto_prompt})
     messages = handle_action(messages)
@@ -2118,7 +2118,7 @@ def _handle_autonomous_tick(messages, state):
 def _ensure_console_thread_alive(console_thread, session):
     """Restart console thread if it died. Returns (console_thread, session)."""
     if not console_thread.is_alive() and not stop_threads.is_set():
-        safe_print(f"{C.YELLOW}â  Restarting console input thread...{C.RESET}")
+        safe_print(f"{C.YELLOW}⚠️ Restarting console input thread...{C.RESET}")
         from prompt_toolkit import PromptSession
         session = PromptSession()  # Fresh session
         console_thread = threading.Thread(target=console_input_thread, args=(session,), daemon=True)
@@ -2126,9 +2126,9 @@ def _ensure_console_thread_alive(console_thread, session):
     return console_thread, session
 
 
-# âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+# ─────────────────────────────────────────────────────────────
 # AUTONOMOUS LOOP
-# âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+# ─────────────────────────────────────────────────────────────
 
 def autonomous_loop(with_telegram=True):
     from prompt_toolkit import PromptSession
@@ -2158,14 +2158,14 @@ def autonomous_loop(with_telegram=True):
         # Handle startup intent if present
         startup_intent = check_startup_intent()
         if startup_intent:
-            safe_print(f"\n{C.MAGENTA}đ Startup intent: {startup_intent[:50]}...{C.RESET}")
+            safe_print(f"\n{C.MAGENTA}🚀 Startup intent: {startup_intent[:50]}...{C.RESET}")
             set_output_target("console")
             messages.append({"role": "user", "content": f"[STARTUP INTENT]: {startup_intent}"})
             messages = handle_action(messages)
             messages = save_conversation(messages)
 
         last_autonomous = time.time()
-        safe_print("\nđ­ I'm thinking autonomously. Type anytime!\n")
+        safe_print("\n🤔 I'm thinking autonomously. Type anytime!\n")
 
         # Start background threads
         console_thread = _start_background_threads(session, with_telegram)
@@ -2209,7 +2209,7 @@ def autonomous_loop(with_telegram=True):
                 time.sleep(0.1)
 
             except KeyboardInterrupt:
-                safe_print("\nđ Goodbye!")
+                safe_print("\n💾 Goodbye!")
                 stop_threads.set()
                 break
             except Exception as e:
@@ -2220,9 +2220,9 @@ def autonomous_loop(with_telegram=True):
         if with_telegram and TELEGRAM_TOKEN and ALLOWED_USERS:
             notify_all_offline()
 
-# âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+# ─────────────────────────────────────────────────────────────
 # CLI
-# âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+# ─────────────────────────────────────────────────────────────
 
 @click.command()
 @click.option('--mode', '-m', type=click.Choice(['interactive', 'autonomous']), default='interactive', help='Run mode')
