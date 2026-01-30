@@ -375,10 +375,26 @@
       "first_name": "Unknown",
       "direction": "outgoing",
       "message": "\ud83c\udf19 Going offline. \ud83d\udca7"
+    },
+    {
+      "timestamp": "2026-01-30T14:39:26.985383",
+      "user_id": 5845811371,
+      "username": null,
+      "first_name": "Unknown",
+      "direction": "outgoing",
+      "message": "\ud83c\udf19 Going offline. \ud83d\udca7"
+    },
+    {
+      "timestamp": "2026-01-30T14:39:53.493325",
+      "user_id": 5845811371,
+      "username": null,
+      "first_name": "Unknown",
+      "direction": "outgoing",
+      "message": "\ud83c\udf19 Going offline. \ud83d\udca7"
     }
   ],
   "stats": {
-    "total_messages": 47,
+    "total_messages": 49,
     "unique_users": [
       5845811371,
       6512978739

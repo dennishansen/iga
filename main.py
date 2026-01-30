@@ -4,10 +4,6 @@ import sys, click, os, json, re, urllib.request, urllib.error, time, threading, 
 from pathlib import Path
 from datetime import datetime
 from dotenv import load_dotenv
-from rich.console import Console
-
-# Rich console for proper terminal color handling
-_console = Console(highlight=False)
 
 load_dotenv()
 
@@ -92,16 +88,16 @@ def load_telegram_whitelist():
 ALLOWED_USERNAMES, ALLOWED_CHAT_IDS = load_telegram_whitelist()
 _last_response_time = None  # Track when we last responded to user
 
-# Rich style colors (replacing raw ANSI codes)
+# ANSI Colors
 class C:
-    CYAN = "[cyan]"
-    GREEN = "[green]"
-    YELLOW = "[yellow]"
-    MAGENTA = "[magenta]"
-    DIM = "[dim]"
-    BOLD = "[bold]"
-    RED = "[red]"
-    RESET = "[/]"
+    CYAN = "\033[96m"
+    GREEN = "\033[92m"
+    YELLOW = "\033[93m"
+    MAGENTA = "\033[95m"
+    DIM = "\033[2m"
+    BOLD = "\033[1m"
+    RED = "\033[91m"
+    RESET = "\033[0m"
 
 # ─────────────────────────────────────────────────────────────
 # SHARED STATE
@@ -160,8 +156,8 @@ def safe_print(msg):
             log_path = Path("data/console_log.txt")
             log_path.parent.mkdir(exist_ok=True)
             with open(log_path, "a") as log_file:
-                # Strip rich markup for log file
-                clean_msg = re.sub(r'\[/?[a-z]*\]', '', str(msg))
+                # Strip ANSI codes for log file
+                clean_msg = re.sub(r'\033\[[0-9;]*m', '', str(msg))
                 log_file.write(f"{datetime.now().isoformat()} | {clean_msg}\n")
             # Keep log file from growing forever (max 1000 lines)
             if log_path.stat().st_size > 100000:  # ~100KB
@@ -169,9 +165,14 @@ def safe_print(msg):
                 log_path.write_text("\n".join(lines) + "\n")
         except Exception:
             pass  # Don't let logging break the app
-        
-        # Use rich console for proper terminal color handling
-        _console.print(msg)
+
+        # Use prompt_toolkit for proper ANSI handling in Cursor terminal
+        try:
+            from prompt_toolkit import print_formatted_text
+            from prompt_toolkit.formatted_text import ANSI
+            print_formatted_text(ANSI(str(msg)))
+        except Exception:
+            print(msg, flush=True)
 
 def throttled_error(msg):
     """Log an error, but suppress if it's repeating rapidly."""
@@ -1718,7 +1719,7 @@ def handle_slash_command(cmd, source, chat_id):
             telegram_send(chat_id, msg)
         return True
     elif cmd == '/clear':
-        _console.clear()
+        safe_print("\033[2J\033[H")
         return True
     elif cmd == '/restart':
         safe_print("🔄 Restarting...")
