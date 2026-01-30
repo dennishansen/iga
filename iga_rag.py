@@ -31,6 +31,7 @@ COLLECTION_NAME = "iga_knowledge"
 EMBEDDING_MODEL = "text-embedding-3-small"
 CHUNK_SIZE = 1000  # characters per chunk
 CHUNK_OVERLAP = 200  # overlap between chunks
+RAG_STATE_FILE = ".iga_chroma/rag_state.json"
 
 # Global state
 _client = None
@@ -94,6 +95,82 @@ def _chunk_text(text, chunk_size=CHUNK_SIZE, overlap=CHUNK_OVERLAP):
 def _content_hash(content):
     """Generate hash of content for change detection."""
     return hashlib.md5(content.encode('utf-8')).hexdigest()
+
+
+def _get_git_head():
+    """Get current git HEAD commit hash."""
+    import subprocess
+    try:
+        result = subprocess.run(['git', 'rev-parse', 'HEAD'], capture_output=True, text=True)
+        return result.stdout.strip() if result.returncode == 0 else None
+    except:
+        return None
+
+
+def _get_archive_line_count():
+    """Get line count of message archive for change detection."""
+    archive_path = "iga_message_archive.jsonl"
+    try:
+        if os.path.exists(archive_path):
+            with open(archive_path, 'r') as f:
+                return sum(1 for _ in f)
+    except:
+        pass
+    return 0
+
+
+def _load_rag_state():
+    """Load saved RAG indexing state."""
+    try:
+        if os.path.exists(RAG_STATE_FILE):
+            with open(RAG_STATE_FILE, 'r') as f:
+                return json.load(f)
+    except:
+        pass
+    return {}
+
+
+def _save_rag_state(state):
+    """Save RAG indexing state."""
+    try:
+        os.makedirs(os.path.dirname(RAG_STATE_FILE), exist_ok=True)
+        with open(RAG_STATE_FILE, 'w') as f:
+            json.dump(state, f)
+    except Exception as e:
+        print(f"RAG: Could not save state: {e}")
+
+
+def needs_reindex():
+    """Check if reindexing is needed based on git commit and archive size."""
+    state = _load_rag_state()
+
+    current_head = _get_git_head()
+    current_archive_lines = _get_archive_line_count()
+
+    saved_head = state.get('git_head')
+    saved_archive_lines = state.get('archive_lines', 0)
+
+    # Need reindex if git changed or archive grew significantly (10+ new messages)
+    if current_head != saved_head:
+        print(f"RAG: Git changed ({saved_head[:8] if saved_head else 'none'}... -> {current_head[:8] if current_head else 'none'}...)")
+        return True
+
+    if current_archive_lines - saved_archive_lines >= 10:
+        print(f"RAG: Archive grew ({saved_archive_lines} -> {current_archive_lines} lines)")
+        return True
+
+    print(f"RAG: No changes detected, skipping reindex")
+    return False
+
+
+def mark_indexed():
+    """Mark current state as indexed."""
+    state = {
+        'git_head': _get_git_head(),
+        'archive_lines': _get_archive_line_count(),
+        'indexed_at': datetime.now().isoformat()
+    }
+    _save_rag_state(state)
 
 
 def _discover_all_files():
@@ -255,6 +332,7 @@ def index_files(force_reindex=False):
             print(f"RAG: Error indexing {filepath}: {e}")
 
     print(f"RAG: Indexing complete - {stats['indexed']} indexed, {stats['skipped']} skipped, {len(stats['errors'])} errors")
+    mark_indexed()
     return stats
 
 

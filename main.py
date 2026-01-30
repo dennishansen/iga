@@ -16,7 +16,7 @@ import openrouter_client
 
 # RAG module import
 try:
-    from iga_rag import init_rag, index_files, retrieve_context, format_context_for_prompt, get_rag_status
+    from iga_rag import init_rag, index_files, retrieve_context, format_context_for_prompt, get_rag_status, needs_reindex
     RAG_AVAILABLE = True
 except ImportError as e:
     RAG_AVAILABLE = False

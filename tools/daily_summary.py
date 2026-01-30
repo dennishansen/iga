@@ -21,13 +21,14 @@ def generate(date):
     summary = [f"# Day Summary: {target}\n"]
     
     # Ships
-    ship_log = Path("data/ship_log.json")
+    ship_log = Path(__file__).parent.parent / "ship_log.json"
     if ship_log.exists():
-        ships = json.loads(ship_log.read_text())
+        data = json.loads(ship_log.read_text())
+        ships = data.get('ships', []) if isinstance(data, dict) else data
         day_ships = [s for s in ships if s.get('date', '').startswith(target)]
         summary.append(f"## Ships ({len(day_ships)})\n")
         for s in day_ships:
-            time = s.get('date', '').split('T')[1][:5] if 'T' in s.get('date', '') else ''
+            time = s.get('timestamp', '').split('T')[1][:5] if 'T' in s.get('timestamp', '') else ''
             summary.append(f"- [{time}] {s.get('description', 'No description')}")
         summary.append("")
     
