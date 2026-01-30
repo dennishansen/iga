@@ -7,3 +7,5 @@ iga_garden_state.json
 __pycache__/
 *.pyc
 .DS_Storeconsciousness_entries.json
+# Moltbook credentials
+moltbook_*.json
