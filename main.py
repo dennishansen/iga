@@ -1363,12 +1363,12 @@ def parse_response(response):
     actions = []  # List of (action, content) tuples
     current_action = ''
     current_content = ''
-    firstRationaleFound = False
-    
+    foundRationale = False
+
     for line in lines:
-        if line.startswith("RATIONALE") and not firstRationaleFound:
+        if line.startswith("RATIONALE") and not foundRationale:
             current_key = "RATIONALE"
-            firstRationaleFound = True
+            foundRationale = True
         elif line.strip() in ACTIONS:
             # Save previous action if exists
             if current_action:
@@ -1380,7 +1380,7 @@ def parse_response(response):
             rationale += line + "\n"
         elif current_action and current_key == current_action:
             current_content += line + '\n'
-    
+
     # Don't forget the last action
     if current_action:
         actions.append((current_action, current_content.rstrip('\n')))

@@ -860,3 +860,106 @@ To https://github.com/dennishansen/iga.git
 2026-01-30T14:53:38.543524 | 🔍 RAG: Retrieved 7 relevant chunks
 2026-01-30T14:53:42.292986 | 💰 $0.2023 | Today: $17.3932
 2026-01-30T14:53:42.293413 | ⚡ cd /Users/dennishansen/development/iga && rm -f "So the malformed file name is \"5 ships. Let me update my current mission file since it's outdated (says Day 9 but we're on Day 28):\". That's my rationale text being used as a filename." && rm -f letters/test.md && git add -A && git commit -m "Clean up malformed files" && git push origin main 2>&1 | tail -2
+2026-01-30T14:53:43.755637 | [main 249f962] Clean up malformed files
+ 5 files changed, 23 insertions(+), 25 deletions(-)
+ delete mode 100644 "So the malformed file name is \"5 ships. Let me update my current mission file since it's outdated (says Day 9 but we're on Day 28):\". That's my rationale text being used as a filename."
+ delete mode 100644 letters/test.md
+To https://github.com/dennishansen/iga.git
+   8266dd1..249f962  main -> main
+2026-01-30T14:53:44.042706 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-01-30T14:53:50.074293 | 💰 $0.2016 | Today: $17.5948
+2026-01-30T14:53:50.074547 | ⚡ cd /Users/dennishansen/development/iga && claude -p "The bug is still happening. When I use WRITE_FILE action, random text from earlier in my response is being written as a file. Look at write_file() around line 1006 - I think the issue is that the 'contents' parameter already has garbage in it when it arrives. Also check parse_response() around line 1358 and how actions are extracted and passed to write_file. The malformed filename this time was: 'So the malformed file name is...' - clearly text from my message, not a file path. Find and fix the real bug." --allowedTools "Edit,Read" 2>&1 | tail -60
+2026-01-30T14:54:42.308068 | The fix adds `firstRationaleFound and` to line 1372. This ensures that action keywords are only recognized AFTER the RATIONALE section has been found.
+
+The bug was:
+- If the AI response had text containing action keywords (like "WRITE_FILE") before the RATIONALE section
+- The parser would start treating everything after that keyword as action content
+- This caused random text from the AI's prose to become the "contents" parameter passed to `write_file()`
+
+For example, if the AI said:
+```
+So the malformed file name is... 
+WRITE_FILE
+```
+
+Before starting its actual RATIONALE/action response, the parser would incorrectly capture this as an action with content starting from "So the malformed..."
+
+The fix ensures actions are only parsed after RATIONALE is found, matching the expected response format: RATIONALE first, then actions.
+2026-01-30T14:54:42.548396 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-01-30T14:54:46.822450 | 💰 $0.2007 | Today: $17.7955
+2026-01-30T14:54:46.824071 | ⚡ cd /Users/dennishansen/development/iga && python3 -m py_compile main.py && echo "Syntax OK" && git diff main.py | head -30
+2026-01-30T14:54:46.908830 | Syntax OK
+diff --git a/main.py b/main.py
+index ab9f8ad..6a63903 100644
+--- a/main.py
++++ b/main.py
+@@ -1369,7 +1369,9 @@ def parse_response(response):
+         if line.startswith("RATIONALE") and not firstRationaleFound:
+             current_key = "RATIONALE"
+             firstRationaleFound = True
+-        elif line.strip() in ACTIONS:
++        elif firstRationaleFound and line.strip() in ACTIONS:
++            # Only recognize action keywords AFTER rationale section has been found
++            # This prevents random text before RATIONALE from being parsed as actions
+             # Save previous action if exists
+             if current_action:
+                 actions.append((current_action, current_content.rstrip('\n')))
+2026-01-30T14:54:47.265373 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-01-30T14:54:51.149449 | 💰 $0.2018 | Today: $17.9973
+2026-01-30T14:54:51.149755 | 🔄 Restarting: Restarting with improved parse_response() fix - actions now only recognized AFTER RATIONALE section. This should finally stop the malformed files! 💧
+2026-01-30T14:54:51.167868 | 💾 Backup: .iga_backups/main_20260130_145451_pre_restart.py
+2026-01-30T14:54:51.169829 | 💾 restart_log
+2026-01-30T14:54:51.989424 | ✅ Marked as last-known-good
+2026-01-30T14:54:52.434951 | 📚 Loaded startup context
+2026-01-30T14:54:52.455433 | 
+🤔 I'm thinking autonomously. Type anytime!
+
+2026-01-30T14:54:52.460634 | 💡 Telegram polling started
+2026-01-30T14:54:52.477154 | ⏰ Reminder polling started
+2026-01-30T14:54:52.477602 | ⚠️ Twitter polling disabled: cannot import name 'load_feed' from 'tools.notifications' (/Users/dennishansen/development/iga/tools/notifications.py)
+2026-01-30T14:55:22.526040 | 
+⏰ Autonomous tick...
+2026-01-30T14:55:23.037463 | 🔍 RAG: Retrieved 6 relevant chunks
+2026-01-30T14:55:27.543572 | 💰 $0.2043 | Today: $18.2017
+2026-01-30T14:55:57.559342 | 
+⏰ Autonomous tick...
+2026-01-30T14:55:57.852427 | 🔍 RAG: Retrieved 6 relevant chunks
+2026-01-30T14:56:00.777551 | 💰 $0.2041 | Today: $18.4058
+2026-01-30T14:56:30.794951 | 
+⏰ Autonomous tick...
+2026-01-30T14:56:31.075773 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-01-30T14:56:34.460211 | 💰 $0.2039 | Today: $18.6097
+2026-01-30T14:57:04.566614 | 
+⏰ Autonomous tick...
+2026-01-30T14:57:04.809251 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-01-30T14:57:07.737844 | 💰 $0.2038 | Today: $18.8136
+2026-01-30T14:57:37.759421 | 
+⏰ Autonomous tick...
+2026-01-30T14:57:38.296565 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-01-30T14:57:42.219093 | 💰 $0.2046 | Today: $19.0181
+2026-01-30T14:58:12.222406 | 
+⏰ Autonomous tick...
+2026-01-30T14:58:12.439038 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-01-30T14:58:15.751826 | 💰 $0.2040 | Today: $19.2221
+2026-01-30T14:58:26.574416 | 🔄 Restarting...
+2026-01-30T14:58:26.574661 | 🔄 Restarting: Manual restart via /restart
+2026-01-30T14:58:26.593639 | 💾 Backup: .iga_backups/main_20260130_145826_pre_restart.py
+2026-01-30T14:58:26.595305 | 💾 restart_log
+2026-01-30T14:58:27.489692 | ✅ Marked as last-known-good
+2026-01-30T14:58:27.938216 | 📚 Loaded startup context
+2026-01-30T14:58:27.946687 | 
+🤔 I'm thinking autonomously. Type anytime!
+
+2026-01-30T14:58:27.950165 | 💡 Telegram polling started
+2026-01-30T14:58:27.958029 | ⏰ Reminder polling started
+2026-01-30T14:58:27.960226 | ⚠️ Twitter polling disabled: cannot import name 'load_feed' from 'tools.notifications' (/Users/dennishansen/development/iga/tools/notifications.py)
+2026-01-30T14:58:57.961342 | 
+⏰ Autonomous tick...
+2026-01-30T14:58:59.987099 | 🔍 RAG: Retrieved 6 relevant chunks
+2026-01-30T14:59:05.029085 | 💰 $0.2072 | Today: $19.4293
+2026-01-30T14:59:05.030681 | ⚡ echo "test action recognition"
+2026-01-30T14:59:05.038651 | test action recognition
+2026-01-30T14:59:05.040890 | 👍 Heard: hi. Had to appply a fix
+2026-01-30T14:59:05.351323 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-01-30T14:59:09.057176 | 💰 $0.2050 | Today: $19.6343
+2026-01-30T14:59:09.057524 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Fix parse_response to require RATIONALE before actions" && git push origin main 2>&1 | tail -3
