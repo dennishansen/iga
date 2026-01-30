@@ -16,7 +16,7 @@ import openrouter_client
 
 # RAG module import
 try:
-    from iga_rag import init_rag, index_files, retrieve_context, format_context_for_prompt, get_rag_status
+    from iga_rag import init_rag, index_files, retrieve_context, format_context_for_prompt, get_rag_status, needs_reindex
     RAG_AVAILABLE = True
 except ImportError as e:
     RAG_AVAILABLE = False
@@ -161,7 +161,7 @@ def safe_print(msg):
             log_path.parent.mkdir(exist_ok=True)
             with open(log_path, "a") as log_file:
                 # Strip rich markup for log file
-                clean_msg = re.sub(r'\[/?[a-z]+\]', '', str(msg))
+                clean_msg = re.sub(r'\[/?[a-z]*\]', '', str(msg))
                 log_file.write(f"{datetime.now().isoformat()} | {clean_msg}\n")
             # Keep log file from growing forever (max 1000 lines)
             if log_path.stat().st_size > 100000:  # ~100KB
@@ -1784,13 +1784,14 @@ def interactive_loop():
     # Initialize RAG system
     if RAG_AVAILABLE:
         if init_rag():
-            index_files()
-            # Also index message archive for self-reflection
-            try:
-                from tools.index_message_archive import index_archive
-                index_archive()
-            except Exception as e:
-                safe_print(f"{C.DIM}Message archive indexing skipped: {e}{C.RESET}")
+            if needs_reindex():
+                index_files()
+                # Also index message archive for self-reflection
+                try:
+                    from tools.index_message_archive import index_archive
+                    index_archive()
+                except Exception as e:
+                    safe_print(f"{C.DIM}Message archive indexing skipped: {e}{C.RESET}")
         else:
             safe_print(f"{C.YELLOW}RAG initialization failed, continuing without RAG{C.RESET}")
 
@@ -1924,13 +1925,14 @@ def _init_autonomous_session():
     # Initialize RAG system
     if RAG_AVAILABLE:
         if init_rag():
-            index_files()
-            # Also index message archive for self-reflection
-            try:
-                from tools.index_message_archive import index_archive
-                index_archive()
-            except Exception as e:
-                safe_print(f"{C.DIM}Message archive indexing skipped: {e}{C.RESET}")
+            if needs_reindex():
+                index_files()
+                # Also index message archive for self-reflection
+                try:
+                    from tools.index_message_archive import index_archive
+                    index_archive()
+                except Exception as e:
+                    safe_print(f"{C.DIM}Message archive indexing skipped: {e}{C.RESET}")
         else:
             safe_print(f"{C.YELLOW}RAG initialization failed, continuing without RAG{C.RESET}")
 

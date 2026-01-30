@@ -140,26 +140,19 @@ def _save_rag_state(state):
         print(f"RAG: Could not save state: {e}")
 
 
-def needs_reindex():
-    """Check if reindexing is needed based on git commit and archive size."""
+def needs_reindex(message_threshold=50):
+    """Check if reindexing is needed. Only reindex after message_threshold new messages."""
     state = _load_rag_state()
 
-    current_head = _get_git_head()
     current_archive_lines = _get_archive_line_count()
-
-    saved_head = state.get('git_head')
     saved_archive_lines = state.get('archive_lines', 0)
+    new_messages = current_archive_lines - saved_archive_lines
 
-    # Need reindex if git changed or archive grew significantly (10+ new messages)
-    if current_head != saved_head:
-        print(f"RAG: Git changed ({saved_head[:8] if saved_head else 'none'}... -> {current_head[:8] if current_head else 'none'}...)")
+    if new_messages >= message_threshold:
+        print(f"RAG: {new_messages} new messages since last index, reindexing...")
         return True
 
-    if current_archive_lines - saved_archive_lines >= 10:
-        print(f"RAG: Archive grew ({saved_archive_lines} -> {current_archive_lines} lines)")
-        return True
-
-    print(f"RAG: No changes detected, skipping reindex")
+    print(f"RAG: Only {new_messages} new messages (threshold: {message_threshold}), skipping")
     return False
 
 
