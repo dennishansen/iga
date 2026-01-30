@@ -161,7 +161,7 @@ def safe_print(msg):
             log_path.parent.mkdir(exist_ok=True)
             with open(log_path, "a") as log_file:
                 # Strip rich markup for log file
-                clean_msg = re.sub(r'\[/?[a-z]+\]', '', str(msg))
+                clean_msg = re.sub(r'\[/?[a-z]*\]', '', str(msg))
                 log_file.write(f"{datetime.now().isoformat()} | {clean_msg}\n")
             # Keep log file from growing forever (max 1000 lines)
             if log_path.stat().st_size > 100000:  # ~100KB
