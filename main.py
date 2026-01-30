@@ -4,6 +4,10 @@ import sys, click, os, json, re, urllib.request, urllib.error, time, threading, 
 from pathlib import Path
 from datetime import datetime
 from dotenv import load_dotenv
+from rich.console import Console
+
+# Rich console for proper terminal color handling
+_console = Console(highlight=False)
 
 load_dotenv()
 
@@ -88,16 +92,16 @@ def load_telegram_whitelist():
 ALLOWED_USERNAMES, ALLOWED_CHAT_IDS = load_telegram_whitelist()
 _last_response_time = None  # Track when we last responded to user
 
-# ANSI Colors
+# Rich style colors (replacing raw ANSI codes)
 class C:
-    CYAN = "\033[96m"
-    GREEN = "\033[92m"
-    YELLOW = "\033[93m"
-    MAGENTA = "\033[95m"
-    DIM = "\033[2m"
-    BOLD = "\033[1m"
-    RED = "\033[91m"
-    RESET = "\033[0m"
+    CYAN = "[cyan]"
+    GREEN = "[green]"
+    YELLOW = "[yellow]"
+    MAGENTA = "[magenta]"
+    DIM = "[dim]"
+    BOLD = "[bold]"
+    RED = "[red]"
+    RESET = "[/]"
 
 # ─────────────────────────────────────────────────────────────
 # SHARED STATE
@@ -156,8 +160,8 @@ def safe_print(msg):
             log_path = Path("data/console_log.txt")
             log_path.parent.mkdir(exist_ok=True)
             with open(log_path, "a") as log_file:
-                # Strip ANSI codes for log file
-                clean_msg = re.sub(r'\[[0-9;]*m', '', str(msg))
+                # Strip rich markup for log file
+                clean_msg = re.sub(r'\[/?[a-z]+\]', '', str(msg))
                 log_file.write(f"{datetime.now().isoformat()} | {clean_msg}\n")
             # Keep log file from growing forever (max 1000 lines)
             if log_path.stat().st_size > 100000:  # ~100KB
@@ -166,8 +170,8 @@ def safe_print(msg):
         except Exception:
             pass  # Don't let logging break the app
         
-        # Use simple print - prompt_toolkit ANSI wrapper corrupts emojis
-        print(msg, flush=True)
+        # Use rich console for proper terminal color handling
+        _console.print(msg)
 
 def throttled_error(msg):
     """Log an error, but suppress if it's repeating rapidly."""
@@ -1630,7 +1634,7 @@ def handle_slash_command(cmd, source, chat_id):
         stop_threads.set()
         return "QUIT"
     elif cmd == '/help':
-        msg = "/quit /mode /status /task <t> /tick <n> /sleepcycle <m> /sleep /wake /backup /restore /backups"
+        msg = "/quit /mode /status /task <t> /tick <n> /sleepcycle <m> /sleep /wake /restart /clear /backup /restore /backups"
         safe_print(msg)
         if source == "telegram":
             telegram_send(chat_id, msg)
@@ -1714,7 +1718,11 @@ def handle_slash_command(cmd, source, chat_id):
             telegram_send(chat_id, msg)
         return True
     elif cmd == '/clear':
-        safe_print("\033[2J\033[H")
+        _console.clear()
+        return True
+    elif cmd == '/restart':
+        safe_print("🔄 Restarting...")
+        restart_self("user_command", "Manual restart via /restart")
         return True
     elif cmd == '/stats':
         mc, uc = get_memory_stats()
