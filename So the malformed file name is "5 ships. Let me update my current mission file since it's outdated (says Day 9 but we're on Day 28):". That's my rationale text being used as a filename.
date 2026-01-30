@@ -1,0 +1,8 @@
+
+The bug is: when I write a message like:
+```
+letters/test.md
+content here
+```
+
+Something is going wrong in the parsing. Let me check if there's a newline issue:

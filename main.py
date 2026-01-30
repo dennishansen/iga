@@ -1378,7 +1378,7 @@ def parse_response(response):
             current_key = current_action
         elif current_key == "RATIONALE":
             rationale += line + "\n"
-        elif current_key == current_action:
+        elif current_action and current_key == current_action:
             current_content += line + '\n'
     
     # Don't forget the last action
