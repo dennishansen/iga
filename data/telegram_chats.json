@@ -391,10 +391,18 @@
       "first_name": "Unknown",
       "direction": "outgoing",
       "message": "\ud83c\udf19 Going offline. \ud83d\udca7"
+    },
+    {
+      "timestamp": "2026-01-30T15:22:30.102002",
+      "user_id": 5845811371,
+      "username": null,
+      "first_name": "Unknown",
+      "direction": "outgoing",
+      "message": "\ud83c\udf19 Going offline. \ud83d\udca7"
     }
   ],
   "stats": {
-    "total_messages": 49,
+    "total_messages": 50,
     "unique_users": [
       5845811371,
       6512978739
