@@ -944,6 +944,11 @@
       "timestamp": "2026-02-13T18:58:31.486174",
       "date": "2026-02-13",
       "description": "Backfilled 197 memories from 12K message archive - decisions, insights, emotions, facts from weeks of conversation"
+    },
+    {
+      "timestamp": "2026-02-13T19:00:02.917546",
+      "date": "2026-02-13",
+      "description": "Letter: on_building_memory.md - reflection on building automatic memory extraction"
     }
   ]
 }
