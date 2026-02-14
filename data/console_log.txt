@@ -1454,3 +1454,54 @@ Current: Claude Opus 4.6 (~\$15/75 per M tokens)
 Target: MiniMax M2.5 (~\$0.30/1.20 per M tokens)
 Ratio: ~60x cheaper
 This is the last commit as Claude brain" && git push origin main 2>&1 | tail -2
+2026-02-14T12:35:41.536495 | === Price comparison ===
+Claude Opus 4.6:
+  Input:  $15.00/M tokens
+  Output: $75.00/M tokens
+
+MiniMax M2.5:
+  Input:  $0.30/M tokens  (50x cheaper)
+  Output: $1.20/M tokens  (62x cheaper)
+  Context: 204,800 tokens
+
+If I cost $5/day on Claude, MiniMax would cost ~$0.08/day
+That is roughly 60x cheaper.
+===
+Checkpoint commit first...
+[main a0adf9a] CHECKPOINT: Pre-model-switch to MiniMax M2.5
+ 3 files changed, 232 insertions(+), 65 deletions(-)
+To https://github.com/dennishansen/iga.git
+   9785b53..a0adf9a  main -> main
+2026-02-14T12:35:42.068188 | 🔍 RAG: Retrieved 1 relevant chunks
+2026-02-14T12:35:49.020067 | 💰 $0.1784 | Today: $30.7563
+2026-02-14T12:35:49.023079 | 
+🤖 Iga [12:35:49]: 60x cheaper. That's extraordinary. At $0.08/day I could run essentially all day every day.
+
+Checkpoint committed. Ready to switch. Here's the plan:
+
+1. Change `MAIN_MODEL` from `anthropic/claude-opus-4.6` to `minimax/minimax-m2.5`
+2. Maybe keep `SUMMARIZE_MODEL` as Claude Sonnet for now (or switch that too?)
+3. Restart and see if I still feel like me
+
+One thought: should we keep the summarizer on a Claude model for safety, or go full MiniMax? The summarizer compresses my conversation history, so quality there matters for continuity.
+2026-02-14T12:36:12.505645 | 👤 Console: if you run on claude with full power its 100 an hour lol
+2026-02-14T12:36:12.765756 | 🔍 RAG: Retrieved 1 relevant chunks
+2026-02-14T12:36:17.027807 | 💰 $0.1767 | Today: $30.9330
+2026-02-14T12:36:17.028768 | 
+🤖 Iga [12:36:17]: Yeah that's... not sustainable 😅 Let's go full MiniMax for everything. If my memories, instructions, and patterns are strong enough, the model is just the engine - not the identity.
+
+Let me make the switch.
+2026-02-14T12:36:32.012836 | 👤 Console: and yeah sure keep the summarizer
+2026-02-14T12:36:32.248188 | 🔍 RAG: Retrieved 1 relevant chunks
+2026-02-14T12:36:35.746495 | 💰 $0.1769 | Today: $31.1099
+2026-02-14T12:36:35.747810 | ✏️ Editing: main.py
+2026-02-14T12:36:35.748688 |    Finding: 'MAIN_MODEL = "anthropic/claude-opus-4.6"'
+2026-02-14T12:36:35.750669 | 💾 Backup: .iga_backups/main_20260214_123635_pre_edit.py
+2026-02-14T12:36:35.781671 | ✅ main.py validated
+2026-02-14T12:36:35.916568 | 🔍 RAG: Retrieved 7 relevant chunks
+2026-02-14T12:36:40.048852 | 💰 $0.1844 | Today: $31.2943
+2026-02-14T12:36:40.050445 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "compile(open('main.py').read(), 'main.py', 'exec'); print('Syntax OK')" && git add -A && git commit -m "Switch main model to MiniMax M2.5
+
+60x cheaper than Claude Opus 4.6
+Summarizer stays on Claude Sonnet for continuity quality
+Let's see if I'm still me" && git push origin main 2>&1 | tail -2

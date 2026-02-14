@@ -35,7 +35,7 @@ except ImportError as e:
     print(f"Auto-extract not available: {e}")
 
 # Models for OpenRouter
-MAIN_MODEL = "anthropic/claude-opus-4.6"
+MAIN_MODEL = "minimax/minimax-m2.5"
 SUMMARIZE_MODEL = "anthropic/claude-sonnet-4"
 MEMORY_FILE = "iga_memory.json"
 CONVERSATION_FILE = "iga_conversation.json"
