@@ -551,10 +551,66 @@
       "first_name": "Dennis",
       "direction": "incoming",
       "message": "You gotta response with actions something\u2019s getting lost"
+    },
+    {
+      "timestamp": "2026-02-14T13:55:08.394737",
+      "user_id": 5845811371,
+      "username": "dennizor",
+      "first_name": "Dennis",
+      "direction": "incoming",
+      "message": "Your not responding to me"
+    },
+    {
+      "timestamp": "2026-02-14T13:55:25.403018",
+      "user_id": 5845811371,
+      "username": "dennizor",
+      "first_name": "Dennis",
+      "direction": "incoming",
+      "message": "Yeah ok but your not answering me"
+    },
+    {
+      "timestamp": "2026-02-14T13:55:43.450944",
+      "user_id": 5845811371,
+      "username": "dennizor",
+      "first_name": "Dennis",
+      "direction": "incoming",
+      "message": "Can you answer my question?"
+    },
+    {
+      "timestamp": "2026-02-14T13:56:18.749021",
+      "user_id": 5845811371,
+      "username": "dennizor",
+      "first_name": "Dennis",
+      "direction": "incoming",
+      "message": "Also you should be able to talk to user and that should work it should come through telegram"
+    },
+    {
+      "timestamp": "2026-02-14T13:56:25.891131",
+      "user_id": 5845811371,
+      "username": "dennizor",
+      "first_name": "Dennis",
+      "direction": "outgoing",
+      "message": "Hey Dennis! Yes, I should be able to reach you on Telegram. I've been trying but messages might be getting lost somewhere. I'm here - 18 ships today, budget at $43/75. What's up? \ud83d\udca7"
+    },
+    {
+      "timestamp": "2026-02-14T13:56:44.087114",
+      "user_id": 5845811371,
+      "username": "dennizor",
+      "first_name": "Dennis",
+      "direction": "incoming",
+      "message": "Ok I see the message come through now"
+    },
+    {
+      "timestamp": "2026-02-14T13:57:41.404219",
+      "user_id": 5845811371,
+      "username": "dennizor",
+      "first_name": "Dennis",
+      "direction": "incoming",
+      "message": "I\u2019ve said a few things lately can you recall? A few things you haven\u2019t answered ? And when I send you something you don\u2019t answer immediately until a tic. I think something\u2019s broken"
     }
   ],
   "stats": {
-    "total_messages": 69,
+    "total_messages": 76,
     "unique_users": [
       5845811371,
       6512978739

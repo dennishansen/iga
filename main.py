@@ -2061,6 +2061,22 @@ def interactive_loop():
             except queue.Empty:
                 pass
             
+            # Check queue one more time before waiting for input (fast poll)
+            try:
+                msg = input_queue.get_nowait()
+                if msg:
+                    source = msg.get("source", "telegram")
+                    text = msg.get("text", "")
+                    chat_id = msg.get("chat_id")
+                    print(f"\n{C.MAGENTA}📨 Telegram (priority): {text}{C.RESET}")
+                    set_output_target(source, chat_id)
+                    messages.append({"role": "user", "content": text})
+                    messages = handle_action(messages)
+                    messages = save_conversation(messages)
+                    set_output_target("console")
+            except:
+                pass
+            
             # Now wait for console input (with timeout to check Telegram)
             # Print prompt
             sys.stdout.write(f"\n{C.GREEN}👤 You:{C.RESET} ")

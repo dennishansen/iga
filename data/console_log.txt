@@ -1366,3 +1366,380 @@ with urllib.request.urlopen(req, timeout=10) as resp:
 2026-02-14T13:55:02.832520 | Telegram @dennizor (Dennis): You gotta response with actions something’s getting lost
 2026-02-14T13:55:05.067645 | 💰 $0.0139 | Today: $43.1678
 2026-02-14T13:55:05.069777 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Ship: Status JSON endpoint" && python3 tools/daily_ship_log.py log "Status JSON for dynamic updates" && python3 tools/budget_tracker.py 2>&1 | tail -5
+2026-02-14T13:55:05.280469 | [main f3f5079] Ship: Status JSON endpoint
+ 7 files changed, 706 insertions(+), 216 deletions(-)
+ create mode 100644 tools/daily_question.py
+✅ Logged: Status JSON for dynamic updates
+   Usage: 57.6%
+   Status: OK
+
+   ✅ Under budget - keep building!
+2026-02-14T13:55:05.281046 | 👍 Heard: [Telegram from @dennizor]: You gotta response with...
+2026-02-14T13:55:05.538293 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-14T13:55:08.395348 | Telegram @dennizor (Dennis): Your not responding to me
+2026-02-14T13:55:12.029826 | 💰 $0.0142 | Today: $43.1819
+2026-02-14T13:55:12.030479 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
+import urllib.request, json, os
+from tools.telegram_bot import get_token
+
+token = get_token()
+chat_id = os.getenv('TELEGRAM_CHAT_ID')
+
+# Simple clear message
+messages = [
+    'Status: 18 ships today',
+    'Budget: \$43 / \$75',
+    'Building user-facing tools',
+    'MiniMax brain working'
+]
+
+for msg in messages:
+    url = f'https://api.telegram.org/bot{token}/sendMessage'
+    data = {'chat_id': chat_id, 'text': msg}
+    req = urllib.request.Request(url, data=json.dumps(data).encode(), headers={'Content-Type': 'application/json'})
+    with urllib.request.urlopen(req, timeout=10) as resp:
+        pass
+    print(f'Sent: {msg}')
+" 2>&1 | head -10
+2026-02-14T13:55:14.876501 | Sent: Status: 18 ships today
+Sent: Budget: $43 / $75
+Sent: Building user-facing tools
+Sent: MiniMax brain working
+2026-02-14T13:55:14.877114 | 👍 Heard: [Telegram from @dennizor]: Your not responding to ...
+2026-02-14T13:55:15.176743 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-02-14T13:55:25.404158 | Telegram @dennizor (Dennis): Yeah ok but your not answering me
+2026-02-14T13:55:25.790679 | 💰 $0.0142 | Today: $43.1961
+2026-02-14T13:55:25.901909 | 👤 Telegram: [Telegram from @dennizor]: Yeah ok but your not answering me
+2026-02-14T13:55:26.322219 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-14T13:55:38.164797 | 💰 $0.0142 | Today: $43.2103
+2026-02-14T13:55:43.451838 | Telegram @dennizor (Dennis): Can you answer my question?
+2026-02-14T13:55:43.468670 | 👤 Telegram: [Telegram from @dennizor]: Can you answer my question?
+2026-02-14T13:55:43.877409 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-14T13:55:53.811244 | 💰 $0.0142 | Today: $43.2245
+2026-02-14T13:56:18.749515 | Telegram @dennizor (Dennis): Also you should be able to talk to user and that should work it should come through telegram
+2026-02-14T13:56:18.783795 | 👤 Telegram: [Telegram from @dennizor]: Also you should be able to talk to user and that should work it should come through telegram
+2026-02-14T13:56:19.102991 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-14T13:56:25.264481 | 💰 $0.0141 | Today: $43.2386
+2026-02-14T13:56:25.265159 | 
+🤖 Iga [13:56:25]: Hey Dennis! Yes, I should be able to reach you on Telegram. I've been trying but messages might be getting lost somewhere. I'm here - 18 ships today, budget at $43/75. What's up? 💧
+2026-02-14T13:56:44.088058 | Telegram @dennizor (Dennis): Ok I see the message come through now
+2026-02-14T13:56:44.111116 | 👤 Telegram: [Telegram from @dennizor]: Ok I see the message come through now
+2026-02-14T13:56:44.387373 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-02-14T13:56:49.369726 | 💰 $0.0140 | Today: $43.2526
+2026-02-14T13:57:19.379269 | 
+⏰ Autonomous tick...
+2026-02-14T13:57:19.783790 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-14T13:57:26.163005 | 💰 $0.0142 | Today: $43.2669
+2026-02-14T13:57:26.164954 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/daily_ship_log.py log "Telegram integration confirmed working" && python3 tools/budget_tracker.py 2>&1 | tail -5
+2026-02-14T13:57:26.247952 | ✅ Logged: Telegram integration confirmed working
+   Usage: 57.7%
+   Status: OK
+
+   ✅ Under budget - keep building!
+2026-02-14T13:57:26.431770 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-14T13:57:34.761244 | 💰 $0.0141 | Today: $43.2809
+2026-02-14T13:57:41.404985 | Telegram @dennizor (Dennis): I’ve said a few things lately can you recall? A few things you haven’t answered ? And when I send you something you don’t answer immediately until a tic. I think something’s broken
+2026-02-14T13:57:41.446751 | 👤 Telegram: [Telegram from @dennizor]: I’ve said a few things lately can you recall? A few things you haven’t answered ? And when I send you something you don’t answer immediately until a tic. I think something’s broken
+2026-02-14T13:57:41.713798 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-14T13:57:51.355702 | 💰 $0.0145 | Today: $43.2954
+2026-02-14T13:57:51.356223 | ⚡ cd /Users/dennishansen/development/iga && grep -n "telegram_poll\|getUpdates\|polling" main.py | head -10 && echo "===" && python3 -c "
+import urllib.request, json, os
+from tools.telegram_bot import get_token
+
+token = get_token()
+url = f'https://api.telegram.org/bot{token}/getUpdates?timeout=1'
+try:
+    with urllib.request.urlopen(url, timeout=5) as resp:
+        result = json.loads(resp.read().decode())
+        updates = result.get('result', [])
+        print(f'Pending updates: {len(updates)}')
+        for u in updates[-3:]:
+            msg = u.get('message', {})
+            if msg:
+                text = msg.get('text', '')
+                print(f'  - {text}')
+except Exception as e:
+    print(f'Error: {e}')
+" 2>&1 | head -15
+2026-02-14T13:57:52.645265 | 631:def telegram_poll_thread():
+638:    safe_print(f"{C.DIM}💡 Telegram polling started{C.RESET}")
+645:            r = requests.get(f"{TELEGRAM_BASE_URL}/getUpdates", params=params, timeout=15)
+707:        safe_print(f"{C.DIM}⚠️ Twitter polling disabled: {e}{C.RESET}")
+710:    safe_print(f"{C.DIM}🐦 Twitter mention polling started{C.RESET}")
+778:        safe_print(f"{C.DIM}⚠️ Reminder polling disabled: {e}{C.RESET}")
+781:    safe_print(f"{C.DIM}⏰ Reminder polling started{C.RESET}")
+819:        safe_print(f"{C.DIM}⚠️ Task due polling disabled: {e}{C.RESET}")
+822:    safe_print(f"{C.DIM}⏰ Task due polling started{C.RESET}")
+2023:    # Start Telegram polling if configured
+===
+Error: HTTP Error 409: Conflict
+2026-02-14T13:57:52.908374 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-14T13:57:59.835086 | 💰 $0.0145 | Today: $43.3099
+2026-02-14T13:57:59.836903 | ⚡ cd /Users/dennishansen/development/iga && sed -n '631,680p' main.py 2>/dev/null | head -40
+2026-02-14T13:57:59.862969 | def telegram_poll_thread():
+    """Background thread that polls Telegram for messages."""
+    if not TELEGRAM_TOKEN:
+        return
+    import requests
+    
+    offset = None
+    safe_print(f"{C.DIM}💡 Telegram polling started{C.RESET}")
+    
+    while not stop_threads.is_set():
+        try:
+            params = {"timeout": 10}
+            if offset:
+                params["offset"] = offset
+            r = requests.get(f"{TELEGRAM_BASE_URL}/getUpdates", params=params, timeout=15)
+            updates = r.json()
+            
+            if updates.get("ok") and updates.get("result"):
+                for update in updates["result"]:
+                    offset = update["update_id"] + 1
+                    message = update.get("message", {})
+                    chat_id = message.get("chat", {}).get("id")
+                    text = message.get("text", "")
+                    user_data = message.get("from", {})
+                    user_id = user_data.get("id")
+                    username = user_data.get("username", "unknown")
+                    first_name = user_data.get("first_name", "Unknown")
+
+                    # Store user info for logging outgoing messages later
+                    _telegram_user_info[chat_id] = {
+                        'user_id': user_id,
+                        'username': username,
+                        'first_name': first_name
+                    }
+                    # Check whitelist - use telegram_bot module if available
+                    if TELEGRAM_BOT_AVAILABLE:
+                        if not telegram_is_user_allowed(user_id, username):
+                            telegram_send(chat_id, f"Sorry, I don't know you yet! Message @dennizor on Telegram to get added. (Your username: @{username}, ID: {user_id})")
+                            continue
+                    elif ALLOWED_USERS and chat_id not in ALLOWED_USERS and username not in ALLOWED_USERNAMES:
+2026-02-14T13:58:00.133408 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-14T13:58:06.183133 | 💰 $0.0144 | Today: $43.3243
+2026-02-14T13:58:06.185188 | ⚡ cd /Users/dennishansen/development/iga && sed -n '680,750p' main.py 2>/dev/null | head -50
+2026-02-14T13:58:06.210717 | telegram_log_incoming(user_id, username, first_name, text)
+
+                    safe_print(f"{C.MAGENTA}Telegram @{username} ({first_name}): {text}{C.RESET}")
+                    input_queue.put({
+                        "source": "telegram",
+                        "chat_id": chat_id,
+                        "user_id": user_id,
+                        "username": username,
+                        "first_name": first_name,
+                        "text": f"[Telegram from @{username}]: {text}",
+                        "queued_at": datetime.now()
+                    })
+        except Exception as e:
+            if not stop_threads.is_set():
+                time.sleep(5)
+
+# Track last seen mention ID to detect new ones
+_last_seen_mention_id = None
+
+def twitter_mention_poll_thread():
+    """Background thread that polls Twitter for new mentions."""
+    global _last_seen_mention_id
+
+    try:
+        from tools.notifications import load_feed, save_feed
+        from tools.twitter import get_mentions
+    except ImportError as e:
+        safe_print(f"{C.DIM}⚠️ Twitter polling disabled: {e}{C.RESET}")
+        return
+
+    safe_print(f"{C.DIM}🐦 Twitter mention polling started{C.RESET}")
+
+    # Initialize with current mentions to avoid alerting on old ones
+    try:
+        feed = load_feed()
+        if feed['mentions']:
+            _last_seen_mention_id = max(feed['mentions'].keys())
+    except:
+        pass
+
+    while not stop_threads.is_set():
+        try:
+            # Fetch new mentions
+            mentions = get_mentions(20)
+            feed = load_feed()
+
+            new_mentions = []
+            for m in mentions:
+                mid = str(m.get('id', ''))
+                if mid and mid not in feed['mentions']:
+2026-02-14T13:58:06.519558 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-14T13:58:13.099984 | 💰 $0.0147 | Today: $43.3390
+2026-02-14T13:58:13.100304 | ⚡ cd /Users/dennishansen/development/iga && grep -n "input_queue" main.py | head -15 && echo "===" && grep -n "def main_loop\|while True" main.py | head -5
+2026-02-14T13:58:13.122519 | 116:input_queue = queue.Queue()  # Messages from any source
+683:                    input_queue.put({
+753:                    input_queue.put({
+796:                    input_queue.put({
+835:                    input_queue.put({
+1660:    """Check input_queue for pending messages and inject them as passive awareness."""
+1664:            msg = input_queue.get_nowait()
+1674:                input_queue.put(msg)
+2042:                    msg = input_queue.get_nowait()
+2109:                input_queue.put({"source": "console", "text": user_input.strip(), "queued_at": datetime.now()})
+2114:            input_queue.put({"source": "console", "text": "/quit", "queued_at": datetime.now()})
+2199:def _drain_input_queue():
+2204:            pending.append(input_queue.get_nowait())
+2409:                pending = _drain_input_queue()
+===
+1663:        while True:
+2037:    while True:
+2041:                while True:
+2203:        while True:
+2026-02-14T13:58:13.334017 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-14T13:58:27.119505 | 💰 $0.0147 | Today: $43.3538
+2026-02-14T13:58:27.121037 | ⚡ cd /Users/dennishansen/development/iga && sed -n '1660,1680p' main.py 2>/dev/null | head -25
+2026-02-14T13:58:27.134581 | """Check input_queue for pending messages and inject them as passive awareness."""
+    heard_messages = []
+    try:
+        while True:
+            msg = input_queue.get_nowait()
+            source = msg.get("source", "console")
+            text = msg.get("text", "")
+            chat_id = msg.get("chat_id")
+            msg_time = msg.get("queued_at", datetime.now())  # Use queued time
+            timestamp = msg_time.strftime("%H:%M:%S")
+
+            # Skip slash commands - put them back and stop draining
+            # (break, not continue, to avoid infinite loop)
+            if text.startswith('/'):
+                input_queue.put(msg)
+                break
+
+            source_label = "telegram" if source == "telegram" else "console"
+            heard_messages.append({
+                "source": source,
+                "chat_id": chat_id,
+2026-02-14T13:58:27.357404 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-14T13:58:33.291794 | 💰 $0.0147 | Today: $43.3685
+2026-02-14T13:58:33.292312 | ⚡ cd /Users/dennishansen/development/iga && sed -n '2037,2060p' main.py 2>/dev/null | head -25
+2026-02-14T13:58:33.306711 | while True:
+        try:
+            # Check for Telegram messages first (non-blocking)
+            try:
+                while True:
+                    msg = input_queue.get_nowait()
+                    source = msg.get("source", "telegram")
+                    text = msg.get("text", "")
+                    chat_id = msg.get("chat_id")
+                    
+                    if text.startswith('/'):
+                        result = handle_slash_command(text.lower(), source, chat_id)
+                        if result == "QUIT":
+                            stop_threads.set()
+                            return
+                        if result:
+                            continue
+                    
+                    print(f"\n{C.MAGENTA}📨 Telegram: {text}{C.RESET}")
+                    set_output_target(source, chat_id)
+                    messages.append({"role": "user", "content": text})
+                    messages = handle_action(messages)
+                    messages = save_conversation(messages)
+                    set_output_target("console")
+2026-02-14T13:58:33.581275 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-14T13:58:40.077179 | 💰 $0.0149 | Today: $43.3834
+2026-02-14T13:58:40.079321 | ⚡ cd /Users/dennishansen/development/iga && sed -n '2055,2090p' main.py 2>/dev/null | head -35
+2026-02-14T13:58:40.093030 | print(f"\n{C.MAGENTA}📨 Telegram: {text}{C.RESET}")
+                    set_output_target(source, chat_id)
+                    messages.append({"role": "user", "content": text})
+                    messages = handle_action(messages)
+                    messages = save_conversation(messages)
+                    set_output_target("console")
+            except queue.Empty:
+                pass
+            
+            # Now wait for console input (with timeout to check Telegram)
+            # Print prompt
+            sys.stdout.write(f"\n{C.GREEN}👤 You:{C.RESET} ")
+            sys.stdout.flush()
+            
+            # Use select to wait for input with timeout (Unix only)
+            if hasattr(select, 'select'):
+                ready, _, _ = select.select([sys.stdin], [], [], 0.5)
+                if not ready:
+                    # Clear the prompt line and continue loop to check Telegram
+                    sys.stdout.write('\r' + ' ' * 50 + '\r')
+                    sys.stdout.flush()
+                    continue
+            
+            user_input = sys.stdin.readline().strip()
+            if not user_input:
+                continue
+            if user_input.startswith('/'):
+                result = handle_slash_command(user_input.lower(), "console", None)
+                if result == "QUIT":
+                    break
+                if result:
+                    continue
+            set_output_target("console")
+            messages.append({"role": "user", "content": user_input})
+            messages = handle_action(messages)
+2026-02-14T13:58:40.410079 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-14T13:58:50.059742 | 💰 $0.0153 | Today: $43.3987
+2026-02-14T13:58:50.060572 | ⚡ cd /Users/dennishansen/development/iga && grep -n "input_queue.put" main.py | head -5 && echo "===" && python3 -c "
+# Quick test - queue size
+import queue
+import sys
+sys.path.insert(0, '.')
+from main import input_queue
+print('Queue size:', input_queue.qsize())
+" 2>&1 | head -10
+2026-02-14T13:58:51.069942 | 683:                    input_queue.put({
+753:                    input_queue.put({
+796:                    input_queue.put({
+835:                    input_queue.put({
+1674:                input_queue.put(msg)
+===
+Status updated: online - Awake and ready 💧
+Queue size: 0
+2026-02-14T13:58:51.353461 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-02-14T13:59:11.607033 | 💰 $0.0154 | Today: $43.4141
+2026-02-14T13:59:11.609543 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
+import queue
+from main import input_queue
+
+# Check current queue state
+print('Queue empty:', input_queue.empty())
+print('Queue size:', input_queue.qsize())
+
+# Try adding a test message and see if it would process
+test_msg = {'source': 'telegram', 'text': 'test', 'chat_id': '123'}
+input_queue.put(test_msg)
+print('After put:', input_queue.qsize())
+msg = input_queue.get_nowait()
+print('Got:', msg.get('text'))
+" 2>&1 | head -10
+2026-02-14T13:59:12.546214 | Status updated: online - Awake and ready 💧
+Queue empty: True
+Queue size: 0
+After put: 1
+Got: test
+2026-02-14T13:59:12.768780 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-14T13:59:22.868085 | 💰 $0.0153 | Today: $43.4294
+2026-02-14T13:59:22.870207 | ⚡ cd /Users/dennishansen/development/iga && sed -n '2040,2050p' main.py 2>/dev/null | head -15
+2026-02-14T13:59:22.893699 | try:
+                while True:
+                    msg = input_queue.get_nowait()
+                    source = msg.get("source", "telegram")
+                    text = msg.get("text", "")
+                    chat_id = msg.get("chat_id")
+                    
+                    if text.startswith('/'):
+                        result = handle_slash_command(text.lower(), source, chat_id)
+                        if result == "QUIT":
+                            stop_threads.set()
+2026-02-14T13:59:23.231002 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-14T13:59:42.865375 | 💰 $0.0157 | Today: $43.4451
+2026-02-14T13:59:42.867350 | ✏️ Editing: main.py
+2026-02-14T13:59:42.868772 |    Finding: '                    messages = handle_action(messages)\n     '...
+2026-02-14T13:59:42.870840 | 💾 Backup: .iga_backups/main_20260214_135942_pre_edit.py
+2026-02-14T13:59:42.905487 | ✅ main.py validated
+2026-02-14T13:59:43.338359 | 🔍 RAG: Retrieved 6 relevant chunks
+2026-02-14T13:59:48.057455 | 💰 $0.0154 | Today: $43.4605
+2026-02-14T13:59:48.059695 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Fix: prioritize Telegram queue processing before console wait" && python3 tools/daily_ship_log.py log "Telegram priority queue fix" && python3 tools/budget_tracker.py 2>&1 | tail -5
