@@ -54,7 +54,8 @@ ACTIONS = {
     "EDIT_FILE", "DELETE_FILE", "APPEND_FILE", "LIST_DIRECTORY", "SAVE_MEMORY",
     "READ_MEMORY", "SEARCH_FILES", "SEARCH_SELF", "CREATE_DIRECTORY", "TREE_DIRECTORY",
     "HTTP_REQUEST", "WEB_SEARCH", "TEST_SELF", "RUN_SELF", "SLEEP", "SET_MODE",
-    "START_INTERACTIVE", "SEND_INPUT", "END_INTERACTIVE", "RESTART_SELF", "READ_LOGS"
+    "START_INTERACTIVE", "SEND_INPUT", "END_INTERACTIVE", "RESTART_SELF", "READ_LOGS",
+    "DREAM"
 }
 
 # Telegram config - import from telegram_bot module
@@ -1300,6 +1301,18 @@ def read_logs(rat, content):
     recent = all_lines[-lines:] if len(all_lines) > lines else all_lines
     return f"Last {len(recent)} log lines:\n" + "\n".join(recent)
 
+def dream_action(rat, content):
+    """Enter adversarial dream state for self-reflection."""
+    safe_print(f"🌙 Entering dream state...")
+    try:
+        from tools.dream import dream
+        report = dream(print_fn=safe_print)
+        if report:
+            return f"Dream complete. Report:\n\n{report}"
+        return "Dream ended without report."
+    except Exception as e:
+        return f"Dream error: {e}"
+
 def create_directory(rat, path):
     path = path.strip()
     safe_print(f"📁 {path}")
@@ -1652,6 +1665,7 @@ def handle_action(messages, _depth=0):
             "START_INTERACTIVE": lambda r, c: start_interactive(r, c),
             "SEND_INPUT": lambda r, c: send_input(r, c),
             "END_INTERACTIVE": lambda r, c: end_interactive(r, c),
+            "DREAM": lambda r, c: dream_action(r, c),
         }
 
         # Helper to check if we should stop due to sleep

@@ -1438,3 +1438,200 @@ Usage:
 - Tags for categorization
 - 'log' command: create+complete in one step
 - Focus/status workflow preserved" && git push origin main 2>&1 | tail -2
+2026-02-13T19:20:00.117518 | ✅ Completed today (1):
+
+  2026-02-13:
+    [19:19] Ported Falcon's unified task system - dependencies, due dates, tags, log command
+---
+✅ Logged: Ported Falcon's unified task system with dependencies, due dates, tags, blocking
+[main fe63bc8] Port Falcon's task system - deps, due dates, tags, log command
+ 7 files changed, 1621 insertions(+), 423 deletions(-)
+ create mode 100644 tools/tasks_old.py
+To https://github.com/dennishansen/iga.git
+   6e62723..fe63bc8  main -> main
+2026-02-13T19:20:00.400683 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-13T19:20:08.413371 | 💰 $0.2628 | Today: $42.6305
+2026-02-13T19:20:08.413919 | 
+🤖 Iga [19:20:08]: 11 ships today. From Falcon I've now ported:
+
+1. ✅ **DREAM** - adversarial self-reflection (working, first dream was brutal)
+2. ✅ **Search-and-replace EDIT_FILE** - both modes supported
+3. ✅ **Unified task system** - dependencies, due dates, tags, blocking, log command
+
+Dennis - what's next on the "many other things" list? Or should I keep exploring the Falcon codebase myself? I've got `run.py`, `shutdown_handler.py`, `rate_limiter.py`, `web_fetch.py`, `cost_monitor.py`, and the test suite I haven't looked at yet. 💧
+2026-02-13T19:20:09.471074 | 
+⏰ Autonomous tick...
+2026-02-13T19:20:09.641320 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-13T19:20:14.100364 | 📦 Archived 50 messages before summarizing
+2026-02-13T19:20:14.109196 | 🧠 Extracted 3 memories before summarizing
+2026-02-13T19:20:24.525269 | 📝 Summarized 50 old messages
+2026-02-13T19:20:24.530051 | 💰 $0.2597 | Today: $42.8902
+2026-02-13T19:20:24.530481 | 🧠 Thinking... (145 chars)
+2026-02-13T19:20:24.879666 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-13T19:20:29.819152 | 💰 $0.2210 | Today: $43.1386
+2026-02-13T19:20:29.820277 | ⚡ cd /Users/dennishansen/development/iga && grep -n "SEARCH_SELF.*SAVE_MEMORY\|actions.*=.*{" main.py | head -5
+2026-02-13T19:20:29.837221 | EMPTY
+2026-02-13T19:20:30.039809 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-13T19:20:32.903856 | 💰 $0.2220 | Today: $43.3606
+2026-02-13T19:20:32.905094 | ⚡ cd /Users/dennishansen/development/iga && grep -n "ACTIONS\|\"DREAM\"\|action_map\|dispatch" main.py | head -15
+2026-02-13T19:20:32.921265 | 52:ACTIONS = {
+547:{C.DIM}  Memories: {mem_count} | Actions: {len(ACTIONS)} | Upgrades: {upgrade_count}
+821:# ACTIONS
+1461:        elif line.strip() in ACTIONS:
+1630:        action_map = {
+1666:                return action_map[action_name](rat, content)
+1687:            elif act in action_map:
+1819:        msg = f"⚡ v{VERSION} | {len(ACTIONS)} actions | {mc} memories"
+2026-02-13T19:20:33.126073 | 🔍 RAG: Retrieved 7 relevant chunks
+2026-02-13T19:20:36.219661 | 💰 $0.2249 | Today: $43.5854
+2026-02-13T19:20:36.222558 | ⚡ cd /Users/dennishansen/development/iga && sed -n '52,58p' main.py && echo "---" && sed -n '1630,1670p' main.py
+2026-02-13T19:20:36.245588 | ACTIONS = {
+    "TALK_TO_USER", "RUN_SHELL_COMMAND", "THINK", "READ_FILES", "WRITE_FILE",
+    "EDIT_FILE", "DELETE_FILE", "APPEND_FILE", "LIST_DIRECTORY", "SAVE_MEMORY",
+    "READ_MEMORY", "SEARCH_FILES", "SEARCH_SELF", "CREATE_DIRECTORY", "TREE_DIRECTORY",
+    "HTTP_REQUEST", "WEB_SEARCH", "TEST_SELF", "RUN_SELF", "SLEEP", "SET_MODE",
+    "START_INTERACTIVE", "SEND_INPUT", "END_INTERACTIVE", "RESTART_SELF", "READ_LOGS"
+}
+---
+        action_map = {
+            "RUN_SHELL_COMMAND": lambda r, c: run_shell_command(r, c),
+            "THINK": lambda r, c: think(r, c),
+            "READ_FILES": lambda r, c: read_files(r, c),
+            "WRITE_FILE": lambda r, c: write_file(r, c),
+            "EDIT_FILE": lambda r, c: edit_file(r, c),
+            "DELETE_FILE": lambda r, c: delete_file(r, c),
+            "APPEND_FILE": lambda r, c: append_file(r, c),
+            "LIST_DIRECTORY": lambda r, c: list_directory(r, c),
+            "SAVE_MEMORY": lambda r, c: save_memory(r, c),
+            "READ_MEMORY": lambda r, c: read_memory(r, c),
+            "SEARCH_FILES": lambda r, c: search_files(r, c),
+            "SEARCH_SELF": lambda r, c: search_self(r, c),
+            "READ_LOGS": lambda r, c: read_logs(r, c),
+            "CREATE_DIRECTORY": lambda r, c: create_directory(r, c),
+            "TREE_DIRECTORY": lambda r, c: tree_directory(r, c),
+            "HTTP_REQUEST": lambda r, c: http_request(r, c),
+            "WEB_SEARCH": lambda r, c: web_search(r, c),
+            "TEST_SELF": lambda r, c: test_self(r, c),
+            "RUN_SELF": lambda r, c: run_self(r, c),
+            "SLEEP": lambda r, c: sleep_action(r, c),
+            "SET_MODE": lambda r, c: set_mode(r, c),
+            "START_INTERACTIVE": lambda r, c: start_interactive(r, c),
+            "SEND_INPUT": lambda r, c: send_input(r, c),
+            "END_INTERACTIVE": lambda r, c: end_interactive(r, c),
+        }
+
+        # Helper to check if we should stop due to sleep
+        def is_sleeping():
+            state = load_st
+2026-02-13T19:20:36.459009 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-13T19:20:40.773646 | 💰 $0.2326 | Today: $43.8180
+2026-02-13T19:20:40.775890 | ✏️ Editing: main.py (lines 52-58)
+2026-02-13T19:20:40.777110 | 💾 Backup: .iga_backups/main_20260213_192040_pre_edit.py
+2026-02-13T19:20:40.801634 | ✅ main.py edit validated
+2026-02-13T19:20:40.994587 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-13T19:20:44.655397 | 💰 $0.2289 | Today: $44.0469
+2026-02-13T19:20:44.656919 | ⚡ cd /Users/dennishansen/development/iga && grep -n "def search_self" main.py
+2026-02-13T19:20:44.673281 | 1252:def search_self(rat, query):
+2026-02-13T19:20:45.224633 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-13T19:20:47.876089 | 💰 $0.2292 | Today: $44.2761
+2026-02-13T19:20:47.876340 | ⚡ cd /Users/dennishansen/development/iga && sed -n '1252,1270p' main.py
+2026-02-13T19:20:47.888905 | def search_self(rat, query):
+    """Search across all of Iga's files using semantic RAG search."""
+    query = query.strip()
+    if not query:
+        return "Error: Please provide a search query."
+
+    safe_print(f"🔍 Searching self for: '{query}'")
+
+    # Try RAG semantic search first
+    try:
+        results = retrieve_context(query, top_k=10)
+
+        if results:
+            output = [f"🔍 Found {len(results)} semantically relevant results for '{query}':", ""]
+
+            for i, item in enumerate(results, 1):
+                source = item.get("source", "unknown")
+                relevance = item.get("relevance", 0)
+                content = item.get("content", "").strip()
+2026-02-13T19:20:47.894073 | 👍 Heard: keep exploring, you will see! Every little bit was...
+2026-02-13T19:20:48.023770 | 🔍 RAG: Retrieved 6 relevant chunks
+2026-02-13T19:20:52.495877 | 💰 $0.2314 | Today: $44.5075
+2026-02-13T19:20:52.497166 | ⚡ cd /Users/dennishansen/development/iga && grep -n "def read_logs" main.py
+2026-02-13T19:20:52.509400 | 1289:def read_logs(rat, content):
+2026-02-13T19:20:52.510023 | 👍 Heard: falcon 1
+2026-02-13T19:20:52.724182 | 🔍 RAG: Retrieved 6 relevant chunks
+2026-02-13T19:20:57.026444 | 💰 $0.2324 | Today: $44.7399
+2026-02-13T19:20:57.026951 | 🧠 Thinking... (244 chars)
+2026-02-13T19:20:57.279664 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-13T19:20:59.940666 | 💰 $0.2317 | Today: $44.9716
+2026-02-13T19:20:59.942253 | ⚡ cd /Users/dennishansen/development/iga && sed -n '1289,1310p' main.py
+2026-02-13T19:20:59.959246 | def read_logs(rat, content):
+    """Read recent console logs for debugging."""
+    log_path = Path("data/console_log.txt")
+    if not log_path.exists():
+        return "No logs yet - console_log.txt doesn't exist"
+    
+    try:
+        lines = int(content.strip()) if content.strip() else 50
+    except ValueError:
+        lines = 50
+    
+    all_lines = log_path.read_text().splitlines()
+    recent = all_lines[-lines:] if len(all_lines) > lines else all_lines
+    return f"Last {len(recent)} log lines:\n" + "\n".join(recent)
+
+def create_directory(rat, path):
+    path = path.strip()
+    safe_print(f"📁 {path}")
+    os.makedirs(path, exist_ok=True)
+    return "NEXT_ACTION"
+
+def tree_directory(rat, path):
+2026-02-13T19:21:00.092731 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-02-13T19:21:03.275186 | 💰 $0.2307 | Today: $45.2023
+2026-02-13T19:21:03.275590 | ⚡ cd /Users/dennishansen/development/iga && grep -n "^def create_directory" main.py
+2026-02-13T19:21:03.292434 | 1304:def create_directory(rat, path):
+2026-02-13T19:21:03.482320 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-02-13T19:21:08.373011 | 💰 $0.2333 | Today: $45.4356
+2026-02-13T19:21:08.373456 | ✏️ Editing: main.py (lines 1304-1304)
+2026-02-13T19:21:08.376754 | 💾 Backup: .iga_backups/main_20260213_192108_pre_edit.py
+2026-02-13T19:21:08.403729 | ✅ main.py edit validated
+2026-02-13T19:21:08.658405 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-02-13T19:21:11.705168 | 💰 $0.2317 | Today: $45.6673
+2026-02-13T19:21:11.705459 | ⚡ cd /Users/dennishansen/development/iga && grep -n "\"END_INTERACTIVE\"" main.py
+2026-02-13T19:21:11.724624 | 57:    "START_INTERACTIVE", "SEND_INPUT", "END_INTERACTIVE", "RESTART_SELF", "READ_LOGS",
+1667:            "END_INTERACTIVE": lambda r, c: end_interactive(r, c),
+2026-02-13T19:21:11.858902 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-13T19:21:15.054435 | 💰 $0.2337 | Today: $45.9010
+2026-02-13T19:21:15.054849 | ✏️ Editing: main.py (lines 1667-1667)
+2026-02-13T19:21:15.056974 | 💾 Backup: .iga_backups/main_20260213_192115_pre_edit.py
+2026-02-13T19:21:15.075308 | ✅ main.py edit validated
+2026-02-13T19:21:15.199386 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-13T19:21:17.821992 | 💰 $0.2351 | Today: $46.1361
+2026-02-13T19:21:17.823796 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "compile(open('main.py').read(), 'main.py', 'exec'); print('Syntax OK')"
+2026-02-13T19:21:17.890638 | Syntax OK
+2026-02-13T19:21:18.064315 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-13T19:21:20.570188 | 💰 $0.2359 | Today: $46.3720
+2026-02-13T19:21:20.571828 | ⚡ cd /Users/dennishansen/development/iga && grep -n "RESTART_SELF\|READ_LOGS" system_instructions.txt | head -5
+2026-02-13T19:21:20.588025 | 118:RESTART_SELF
+127:READ_LOGS
+2026-02-13T19:21:20.980491 | 🔍 RAG: Retrieved 6 relevant chunks
+2026-02-13T19:21:23.802273 | 💰 $0.2375 | Today: $46.6095
+2026-02-13T19:21:23.804211 | ⚡ cd /Users/dennishansen/development/iga && sed -n '127,132p' system_instructions.txt
+2026-02-13T19:21:23.817696 | READ_LOGS
+Read recent console logs for debugging. Provide number of lines (default 50).
+Returns timestamped log entries.
+
+
+SEARCH_SELF
+2026-02-13T19:21:24.046233 | 🔍 RAG: Retrieved 7 relevant chunks
+2026-02-13T19:21:28.447818 | 💰 $0.2400 | Today: $46.8495
+2026-02-13T19:21:28.450584 | ✏️ Editing: system_instructions.txt (lines 130-130)
+2026-02-13T19:21:28.652091 | 🔍 RAG: Retrieved 7 relevant chunks
+2026-02-13T19:21:32.974926 | 💰 $0.2418 | Today: $47.0914
+2026-02-13T19:21:32.977060 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py complete task_8af6a2f9 && python3 tools/daily_ship_log.py log "DREAM action wired into main.py - now a first-class action" && git add -A && git commit -m "Wire DREAM into main loop as first-class action
+
+- dream_action() handler calls tools/dream.py
+- Added to ACTIONS set and action_map
+- Documented in system_instructions.txt" && git push origin main 2>&1 | tail -2

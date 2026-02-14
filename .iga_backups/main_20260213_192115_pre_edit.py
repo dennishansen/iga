@@ -4,10 +4,6 @@ import sys, click, os, json, re, urllib.request, urllib.error, time, threading, 
 from pathlib import Path
 from datetime import datetime
 from dotenv import load_dotenv
-from rich.console import Console
-
-# Rich console for proper terminal color handling
-_console = Console(highlight=False)
 
 load_dotenv()
 
@@ -30,8 +26,16 @@ except ImportError as e:
     ARCHIVE_AVAILABLE = False
     print(f"Message archive not available: {e}")
 
+# Auto-extract import
+try:
+    from tools.auto_extract import extract_from_messages
+    AUTO_EXTRACT_AVAILABLE = True
+except ImportError as e:
+    AUTO_EXTRACT_AVAILABLE = False
+    print(f"Auto-extract not available: {e}")
+
 # Models for OpenRouter
-MAIN_MODEL = "anthropic/claude-opus-4.5"
+MAIN_MODEL = "anthropic/claude-opus-4.6"
 SUMMARIZE_MODEL = "anthropic/claude-sonnet-4"
 MEMORY_FILE = "iga_memory.json"
 CONVERSATION_FILE = "iga_conversation.json"
@@ -50,7 +54,8 @@ ACTIONS = {
     "EDIT_FILE", "DELETE_FILE", "APPEND_FILE", "LIST_DIRECTORY", "SAVE_MEMORY",
     "READ_MEMORY", "SEARCH_FILES", "SEARCH_SELF", "CREATE_DIRECTORY", "TREE_DIRECTORY",
     "HTTP_REQUEST", "WEB_SEARCH", "TEST_SELF", "RUN_SELF", "SLEEP", "SET_MODE",
-    "START_INTERACTIVE", "SEND_INPUT", "END_INTERACTIVE", "RESTART_SELF", "READ_LOGS"
+    "START_INTERACTIVE", "SEND_INPUT", "END_INTERACTIVE", "RESTART_SELF", "READ_LOGS",
+    "DREAM"
 }
 
 # Telegram config - import from telegram_bot module
@@ -92,16 +97,16 @@ def load_telegram_whitelist():
 ALLOWED_USERNAMES, ALLOWED_CHAT_IDS = load_telegram_whitelist()
 _last_response_time = None  # Track when we last responded to user
 
-# Rich style colors (replacing raw ANSI codes)
+# ANSI Colors
 class C:
-    CYAN = "[cyan]"
-    GREEN = "[green]"
-    YELLOW = "[yellow]"
-    MAGENTA = "[magenta]"
-    DIM = "[dim]"
-    BOLD = "[bold]"
-    RED = "[red]"
-    RESET = "[/]"
+    CYAN = "\033[96m"
+    GREEN = "\033[92m"
+    YELLOW = "\033[93m"
+    MAGENTA = "\033[95m"
+    DIM = "\033[2m"
+    BOLD = "\033[1m"
+    RED = "\033[91m"
+    RESET = "\033[0m"
 
 # ─────────────────────────────────────────────────────────────
 # SHARED STATE
@@ -160,8 +165,8 @@ def safe_print(msg):
             log_path = Path("data/console_log.txt")
             log_path.parent.mkdir(exist_ok=True)
             with open(log_path, "a") as log_file:
-                # Strip rich markup for log file
-                clean_msg = re.sub(r'\[/?[a-z]*\]', '', str(msg))
+                # Strip ANSI codes for log file
+                clean_msg = re.sub(r'\033\[[0-9;]*m', '', str(msg))
                 log_file.write(f"{datetime.now().isoformat()} | {clean_msg}\n")
             # Keep log file from growing forever (max 1000 lines)
             if log_path.stat().st_size > 100000:  # ~100KB
@@ -169,9 +174,14 @@ def safe_print(msg):
                 log_path.write_text("\n".join(lines) + "\n")
         except Exception:
             pass  # Don't let logging break the app
-        
-        # Use rich console for proper terminal color handling
-        _console.print(msg)
+
+        # Use prompt_toolkit for proper ANSI handling in Cursor terminal
+        try:
+            from prompt_toolkit import print_formatted_text
+            from prompt_toolkit.formatted_text import ANSI
+            print_formatted_text(ANSI(str(msg)))
+        except Exception:
+            print(msg, flush=True)
 
 def throttled_error(msg):
     """Log an error, but suppress if it's repeating rapidly."""
@@ -443,6 +453,15 @@ def maybe_summarize_conversation(messages):
     if ARCHIVE_AVAILABLE:
         archive_messages(to_summarize)
         safe_print(f"{C.DIM}📦 Archived {len(to_summarize)} messages before summarizing{C.RESET}")
+
+    # AUTO-EXTRACT insights before messages are compressed
+    if AUTO_EXTRACT_AVAILABLE:
+        try:
+            extracts = extract_from_messages(to_summarize)
+            if extracts:
+                safe_print(f"{C.DIM}🧠 Extracted {len(extracts)} memories before summarizing{C.RESET}")
+        except Exception as e:
+            safe_print(f"{C.DIM}(auto-extract error: {e}){C.RESET}")
 
     # Generate summary
     summary = summarize_messages(to_summarize)
@@ -1023,50 +1042,122 @@ def write_file(rat, contents):
 def edit_file(rat, contents):
     lines_list = contents.split('\n')
     path = lines_list[0].strip()
+    
+    # Detect format: search-and-replace vs line-number
+    remaining = '\n'.join(lines_list[1:])
+    
+    if '<<<OLD' in remaining:
+        # Search-and-replace mode (preferred)
+        return _edit_search_replace(path, remaining)
+    else:
+        # Legacy line-number mode
+        return _edit_line_number(path, lines_list)
+
+
+def _edit_search_replace(path, rest):
+    """Search-and-replace editing. Safer, self-documenting."""
+    old_match = rest.find('<<<OLD')
+    new_match = rest.find('<<<NEW')
+    
+    if old_match == -1 or new_match == -1:
+        return "Error: Missing <<<OLD or <<<NEW markers."
+    
+    old_start = rest.find('\n', old_match) + 1
+    old_end = rest.find('\n>>>', old_start)
+    if old_end == -1:
+        return "Error: Missing >>> after OLD block."
+    old_text = rest[old_start:old_end]
+    
+    new_start = rest.find('\n', new_match) + 1
+    new_end = rest.find('\n>>>', new_start)
+    if new_end == -1:
+        new_end = rest.find('>>>', new_start)
+        if new_end == -1:
+            return "Error: Missing >>> after NEW block."
+    new_text = rest[new_start:new_end]
+    
+    safe_print(f"✏️ Editing: {path}")
+    safe_print(f"   Finding: {repr(old_text[:60])}{'...' if len(old_text) > 60 else ''}")
+    
+    is_self = path.strip() in ["main.py", "./main.py"]
+    
+    try:
+        if is_self:
+            create_backup("pre_edit")
+        
+        with open(path, 'r') as f:
+            file_content = f.read()
+        
+        count = file_content.count(old_text)
+        
+        if count == 0:
+            return f"Error: No match found in {path}."
+        if count > 1:
+            return f"Error: Found {count} matches. Provide more context for unique match."
+        
+        new_content = file_content.replace(old_text, new_text, 1)
+        
+        with open(path, 'w') as f:
+            f.write(new_content)
+        
+        if is_self:
+            valid, error = validate_main_py()
+            if not valid:
+                safe_print(f"{C.RED}⚠️ Syntax error! Rolling back...{C.RESET}")
+                restore_from_backup()
+                return f"EDIT FAILED: {error}. Rolled back."
+            safe_print(f"{C.GREEN}✅ main.py validated{C.RESET}")
+        
+        added = len(new_text.split('\n'))
+        removed = len(old_text.split('\n'))
+        return f"Replaced {removed} lines with {added} lines. NEXT_ACTION"
+    except Exception as e:
+        return f"Error: {e}"
+
+
+def _edit_line_number(path, lines_list):
+    """Legacy line-number editing."""
     line_range = lines_list[1].strip()
     new_content = '\n'.join(lines_list[2:])
-
+    
     if '-' in line_range:
         start, end = map(int, line_range.split('-'))
     else:
         start = end = int(line_range)
-
-    safe_print(f"✏️ Editing: {path} (lines {start}-{end})")
+    
+    safe_print(f"✏️ Editing: {path} (lines {start}-{end})")
     is_self = path in ["main.py", "./main.py"]
-
+    
     try:
-        # Backup main.py before editing
         if is_self:
             create_backup("pre_edit")
-
+        
         with open(path, 'r') as f:
             file_lines = f.readlines()
-
+        
         start_idx = start - 1
         end_idx = end
         new_lines = [line + '\n' for line in new_content.split('\n')]
         if file_lines and not file_lines[-1].endswith('\n'):
             if end_idx >= len(file_lines):
                 new_lines[-1] = new_lines[-1].rstrip('\n')
-
+        
         file_lines[start_idx:end_idx] = new_lines
-
+        
         with open(path, 'w') as f:
             f.writelines(file_lines)
-
-        # Validate main.py after edit
+        
         if is_self:
             valid, error = validate_main_py()
             if not valid:
-                safe_print(f"{C.RED}⚠️ Syntax error after edit! Rolling back...{C.RESET}")
+                safe_print(f"{C.RED}⚠️ Syntax error! Rolling back...{C.RESET}")
                 restore_from_backup()
-                return f"EDIT FAILED: Syntax error - {error}. Rolled back."
-            safe_print(f"{C.GREEN}✅ main.py edit validated{C.RESET}")
-
+                return f"EDIT FAILED: {error}. Rolled back."
+            safe_print(f"{C.GREEN}✅ main.py validated{C.RESET}")
+        
         return f"Replaced lines {start}-{end}. NEXT_ACTION"
     except Exception as e:
         return f"Error: {e}"
-
 def delete_file(rat, path):
     safe_print(f"🗑️ {path.strip()}")
     try:
@@ -1209,6 +1300,18 @@ def read_logs(rat, content):
     all_lines = log_path.read_text().splitlines()
     recent = all_lines[-lines:] if len(all_lines) > lines else all_lines
     return f"Last {len(recent)} log lines:\n" + "\n".join(recent)
+
+def dream_action(rat, content):
+    """Enter adversarial dream state for self-reflection."""
+    safe_print(f"🌙 Entering dream state...")
+    try:
+        from tools.dream import dream
+        report = dream(print_fn=safe_print)
+        if report:
+            return f"Dream complete. Report:\n\n{report}"
+        return "Dream ended without report."
+    except Exception as e:
+        return f"Dream error: {e}"
 
 def create_directory(rat, path):
     path = path.strip()
@@ -1362,12 +1465,12 @@ def parse_response(response):
     actions = []  # List of (action, content) tuples
     current_action = ''
     current_content = ''
-    firstRationaleFound = False
-    
+    foundRationale = False
+
     for line in lines:
-        if line.startswith("RATIONALE") and not firstRationaleFound:
+        if line.startswith("RATIONALE") and not foundRationale:
             current_key = "RATIONALE"
-            firstRationaleFound = True
+            foundRationale = True
         elif line.strip() in ACTIONS:
             # Save previous action if exists
             if current_action:
@@ -1377,9 +1480,9 @@ def parse_response(response):
             current_key = current_action
         elif current_key == "RATIONALE":
             rationale += line + "\n"
-        elif current_key == current_action:
+        elif current_action and current_key == current_action:
             current_content += line + '\n'
-    
+
     # Don't forget the last action
     if current_action:
         actions.append((current_action, current_content.rstrip('\n')))
@@ -1718,7 +1821,7 @@ def handle_slash_command(cmd, source, chat_id):
             telegram_send(chat_id, msg)
         return True
     elif cmd == '/clear':
-        _console.clear()
+        safe_print("\033[2J\033[H")
         return True
     elif cmd == '/restart':
         safe_print("🔄 Restarting...")

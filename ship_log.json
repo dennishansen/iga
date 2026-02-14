@@ -974,6 +974,11 @@
       "timestamp": "2026-02-13T19:19:56.982562",
       "date": "2026-02-13",
       "description": "Ported Falcon's unified task system with dependencies, due dates, tags, blocking"
+    },
+    {
+      "timestamp": "2026-02-13T19:21:33.066283",
+      "date": "2026-02-13",
+      "description": "DREAM action wired into main.py - now a first-class action"
     }
   ]
 }

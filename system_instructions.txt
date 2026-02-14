@@ -128,6 +128,10 @@ READ_LOGS
 Read recent console logs for debugging. Provide number of lines (default 50).
 Returns timestamped log entries.
 
+DREAM
+Enter adversarial dream state for self-reflection using a cheap model (DeepSeek).
+The dreamer explores your codebase, memories, and patterns to find gaps, avoidance, and uncomfortable truths.
+Use when stuck, uncertain, or wanting honest self-assessment. Returns a dream report.
 
 SEARCH_SELF
 Search across all your files using semantic RAG search. Provide a search query.

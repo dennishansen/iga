@@ -852,13 +852,13 @@
     {
       "id": "task_8af6a2f9",
       "title": "Wire DREAM action into main.py action handler",
-      "status": "pending",
+      "status": "completed",
       "priority": 1,
       "blocked_by": [],
       "due_at": "2026-02-14T19:19:52.445006",
       "tags": [],
       "created": "2026-02-13T19:19:52.445026",
-      "completed": null
+      "completed": "2026-02-13T19:21:33.036736"
     },
     {
       "id": "task_48ea5ca2",
