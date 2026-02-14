@@ -1015,3 +1015,426 @@ Delete a file at the given path.
 - Preferred mode: <<<OLD>>><<<NEW>>> blocks (unique match required)
 - Legacy mode: line-number ranges still supported
 - Safer, self-documenting, no line-number drift" && git push origin main 2>&1 | tail -2
+2026-02-13T19:19:04.940798 | ✅ Logged: Search-and-replace EDIT_FILE - ported from Falcon, supports both <<<OLD>>><<<NEW>>> and legacy line numbers
+[main 6e62723] Port search-and-replace EDIT_FILE from Falcon
+ 10 files changed, 957 insertions(+), 304 deletions(-)
+ rename .iga_backups/{main_20260122_141509_pre_restart.py => main_20260213_191842_pre_edit.py} (82%)
+To https://github.com/dennishansen/iga.git
+   d7211e3..6e62723  main -> main
+2026-02-13T19:19:04.942792 | 👍 Heard: task system
+2026-02-13T19:19:05.183997 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-13T19:19:08.391919 | 💰 $0.2153 | Today: $39.9064
+2026-02-13T19:19:08.394451 | ⚡ cd /Users/dennishansen/development/eagle_fork && cat tools/tasks.py
+2026-02-13T19:19:08.411830 | #!/usr/bin/env python3
+"""
+Unified Task System for Falcon.
+
+Flat tasks with dependencies, due dates, and logging.
+One system for: planning, focus, reminders, and logging.
+
+Usage:
+  python tasks.py add "Title" [--due TIME] [--blocked-by ID,ID] [--priority P] [--tag TAG]
+  python tasks.py log "What I did"              # Create + complete in one step
+  python tasks.py list [--all] [--tag TAG]      # Show tasks (default: actionable only)
+  python tasks.py focus [ID]                    # Set/show focused task
+  python tasks.py complete [ID]                 # Complete task (or focused if no ID)
+  python tasks.py status                        # What should I work on?
+  python tasks.py due                           # Show overdue tasks
+  python tasks.py today                         # What was completed today?
+  python tasks.py week                          # What was completed this week?
+
+Due time formats:
+  --due 2h          (2 hours from now)
+  --due 1d          (1 day from now)
+  --due 2026-01-31T14:00  (absolute ISO time)
+
+Examples:
+  python tasks.py add "Build unified task system" --priority 1
+  python tasks.py add "Review PR" --due 2h
+  python tasks.py add "Deploy" --blocked-by task_abc,task_def
+  python tasks.py log "Fixed the login bug"
+  python tasks.py focus task_xyz
+  python tasks.py complete
+"""
+
+import json
+import sys
+import re
+from datetime import datetime, timedelta
+from pathlib import Path
+import uuid
+
+TASKS_FILE = Path(__file__).parent.parent / "data" / "tasks.json"
+STATE_FILE = Path(__file__).parent.parent / "falcon_state.json"
+
+
+def generate_id():
+    return f"task_{uuid.uuid4().hex[:8]}"
+
+
+def load_tasks():
+    if TASKS_FILE.exists():
+        content = TASKS_FILE.read_text().strip()
+        if content:
+            data = json.loads(content)
+            # Migration: ensure all tasks have new fields
+            for t in data.get("tasks", []):
+                if "blocked_by" not in t:
+                    t["blocked_by"] = []
+                if "due_at" not
+2026-02-13T19:19:08.414836 | 👍 Heard: and many other things
+2026-02-13T19:19:08.616716 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-13T19:19:16.121401 | 💰 $0.2243 | Today: $40.1307
+2026-02-13T19:19:16.124574 | 🧠 Thinking... (597 chars)
+2026-02-13T19:19:16.476055 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-13T19:19:21.477072 | 💰 $0.2264 | Today: $40.3571
+2026-02-13T19:19:21.478394 | ⚡ cd /Users/dennishansen/development/eagle_fork && echo "=== FALCON STRUCTURE ===" && find . -name "*.py" -not -path "./.git/*" | sort && echo "" && echo "=== IGA STRUCTURE ===" && find /Users/dennishansen/development/iga -name "*.py" -not -path "*/.git/*" -not -path "*/eagle_fork/*" | sed 's|/Users/dennishansen/development/iga/||' | sort
+2026-02-13T19:19:21.880073 | === FALCON STRUCTURE ===
+./run.py
+./src/cost_monitor.py
+./src/deepseek_client.py
+./src/dream.py
+./src/gemini_client.py
+./src/main.py
+./src/message_archive.py
+./src/rate_limiter.py
+./src/shutdown_handler.py
+./src/web_fetch.py
+./tests/test_actions.py
+./tools/notifications.py
+./tools/read_logs.py
+./tools/search_self.py
+./tools/tasks.py
+./tools/telegram_bot.py
+./tools/twitter.py
+./tools/web_search.py
+
+=== IGA STRUCTURE ===
+.iga_backups/last_known_good.py
+.iga_backups/main_20260125_205820_pre_restart.py
+.iga_backups/main_20260130_143340_pre_restart.py
+.iga_backups/main_20260130_144903_pre_restart.py
+.iga_backups/main_20260130_145451_pre_restart.py
+.iga_backups/main_20260130_145826_pre_restart.py
+.iga_backups/main_20260213_183332_pre_restart.py
+.iga_backups/main_20260213_184120_pre_edit.py
+.iga_backups/main_20260213_184129_pre_edit.py
+.iga_backups/main_20260213_185124_pre_restart.py
+.iga_backups/main_20260213_191842_pre_edit.py
+archive/main_backup_before_multiaction.py
+archive/main_backup_v108.py
+archive/notes/summarization_impl.py
+docs/minimal_agent.py
+iga_rag.py
+main.py
+openrouter_client.py
+projects/adventure.py
+projects/consciousness_journal.py
+projects/fortune.py
+projects/haiku.py
+projects/iga_garden.py
+projects/morning_greeting.py
+projects/seed.py
+projects/tui_upgrade.py
+public/minimal_agent.py
+sibling/workspace/main.py
+tests/test_actions.py
+tools/add_mobile_css.py
+tools/add_navbar.py
+tools/add_seo.py
+tools/auto_extract.py
+tools/backfill_extracts.py
+tools/cost_monitor.py
+tools/daily_ship_log.py
+tools/daily_summary.py
+tools/dream.py
+tools/engagement_check.py
+tools/extract_loader.py
+tools/extract_to_markdown.py
+tools/generate_garden_html.py
+tools/index_message_archive.py
+tools/kofi_webhook.py
+tools/lesson_extractor.py
+tools/memory_consolidator.py
+tools/message_archive.py
+tools/moltbook_stats.py
+tools/moltbook.py
+tools/notifications.py
+tools/rate_limiter.py
+tools/reminders.py
+tools/reply_tracker.py
+tools/self_remember.py
+tools/seo_check.py
+tools/shutdown_handler.py
+tool
+2026-02-13T19:19:21.880883 | 👍 Heard: but if you get the task system working, getting th...
+2026-02-13T19:19:22.343114 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-13T19:19:26.293710 | 💰 $0.2355 | Today: $40.5925
+2026-02-13T19:19:26.297114 | ⚡ cd /Users/dennishansen/development/eagle_fork && wc -l tools/tasks.py && echo "---" && cat tools/tasks.py | tail -200
+2026-02-13T19:19:26.324265 | 559 tools/tasks.py
+---
+def show_status():
+    """Show what to work on next."""
+    data = load_tasks()
+
+    focused = get_task_by_id(data, data.get("focused_id"))
+    if focused:
+        print(f"🎯 FOCUSED: {focused['title']}")
+        print(f"   ID: {focused['id']}")
+        if is_blocked(data, focused):
+            print(f"   ⚠️  This task is BLOCKED!")
+            blockers = [get_task_by_id(data, bid) for bid in focused["blocked_by"]]
+            for b in blockers:
+                if b and b["status"] != "completed":
+                    print(f"      → {b['title']} [{b['id']}]")
+        return
+
+    # No focus - suggest what to work on
+    overdue = get_overdue_tasks(data)
+    if overdue:
+        print(f"⏰ OVERDUE ({len(overdue)}):")
+        for t in overdue[:3]:
+            print(f"   {t['title']} [{t['id']}]")
+        print()
+
+    actionable = get_actionable_tasks(data)
+    if actionable:
+        # Sort by priority then due date
+        actionable.sort(key=lambda t: (t["priority"], t.get("due_at") or "9999"))
+        print(f"📋 Suggested next ({len(actionable)} actionable):")
+        t = actionable[0]
+        print(f"   {t['title']} [{t['id']}]")
+        print(f"   Run: python tools/tasks.py focus {t['id']}")
+    else:
+        blocked = [t for t in data["tasks"] if t["status"] == "pending" and is_blocked(data, t)]
+        if blocked:
+            print(f"🔒 All {len(blocked)} pending tasks are blocked.")
+        else:
+            print("✅ All tasks completed!")
+
+
+def show_due():
+    """Show overdue tasks."""
+    data = load_tasks()
+    overdue = get_overdue_tasks(data)
+
+    if not overdue:
+        print("✅ No overdue tasks.")
+        return []
+
+    print(f"⏰ {len(overdue)} overdue task(s):\n")
+    for t in overdue:
+        due = datetime.fromisoformat(t["due_at"])
+        print(f"🔔 {t['title']}")
+        print(f"   [{t['id']}] - was due {due.strftime('%Y-%m-%d %H:%M')}")
+        print()
+
+    return overdue
+
+
+def show_completed(days=1):
+    """Show tasks completed in
+2026-02-13T19:19:26.516612 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-13T19:19:29.233732 | 💰 $0.2429 | Today: $40.8354
+2026-02-13T19:19:29.234025 | ⚡ cd /Users/dennishansen/development/eagle_fork && sed -n '200,360p' tools/tasks.py
+2026-02-13T19:19:29.247192 | if blocked_by:
+        print(f"   Blocked by: {', '.join(blocked_by)}")
+
+    return task
+
+
+def log_task(description):
+    """Create and immediately complete a task (for logging what was done)."""
+    data = load_tasks()
+
+    now = datetime.now().isoformat()
+    task = {
+        "id": generate_id(),
+        "title": description,
+        "status": "completed",
+        "priority": 2,
+        "blocked_by": [],
+        "due_at": None,
+        "tags": ["logged"],
+        "created": now,
+        "completed": now
+    }
+
+    data["tasks"].append(task)
+    save_tasks(data)
+
+    print(f"✅ Logged: {description}")
+    return task
+
+
+def complete_task(task_id=None):
+    """Complete a task (or the focused task if no ID given)."""
+    data = load_tasks()
+
+    if not task_id:
+        task_id = data.get("focused_id")
+        if not task_id:
+            print("❌ No task specified and no task focused")
+            return False
+
+    task = get_task_by_id(data, task_id)
+    if not task:
+        print(f"❌ Task '{task_id}' not found")
+        return False
+
+    task["status"] = "completed"
+    task["completed"] = datetime.now().isoformat()
+
+    # Clear focus if this was focused
+    if data.get("focused_id") == task_id:
+        data["focused_id"] = None
+
+    save_tasks(data)
+    sync_to_falcon_state(data)
+
+    print(f"✅ Completed: {task['title']}")
+
+    # Show what's now unblocked
+    newly_unblocked = [
+        t for t in data["tasks"]
+        if t["status"] == "pending"
+        and task_id in t.get("blocked_by", [])
+        and not is_blocked(data, t)
+    ]
+    if newly_unblocked:
+        print(f"   🔓 Unblocked: {', '.join(t['title'][:30] for t in newly_unblocked)}")
+
+    return True
+
+
+def focus_task(task_id=None):
+    """Set or show the focused task."""
+    data = load_tasks()
+
+    if task_id is None:
+        # Show current focus
+        focused = get_task_by_id(data, data.get("focused_id"))
+        if focused:
+            print(f"🎯 Focus: {focused['title']}")
+            print(f"   ID: {f
+2026-02-13T19:19:29.480939 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-13T19:19:34.241108 | 💰 $0.2501 | Today: $41.0855
+2026-02-13T19:19:34.243233 | ⚡ cd /Users/dennishansen/development/iga && wc -l tools/tasks.py && echo "---" && head -40 tools/tasks.py
+2026-02-13T19:19:34.259007 | 346 tools/tasks.py
+---
+#!/usr/bin/env python3
+"""
+Hierarchical Task System for IGA.
+
+Structure: Projects > Tasks > Subtasks
+Each item has: id, title, status, priority, parent_id, created, completed
+
+Usage:
+  python tasks.py add "Title" [--project] [--parent ID] [--priority P]
+  python tasks.py list [--all]
+  python tasks.py focus [ID]
+  python tasks.py complete ID
+  python tasks.py status
+  python tasks.py tree
+
+Examples:
+  python tasks.py add "Build task system" --project
+  python tasks.py add "Design data model" --parent proj_abc123
+  python tasks.py focus task_xyz789
+  python tasks.py complete task_xyz789
+"""
+
+import json
+import sys
+import os
+from datetime import datetime
+from pathlib import Path
+import uuid
+
+# Files
+TASKS_FILE = Path(__file__).parent.parent / "data" / "tasks.json"
+STATE_FILE = Path(__file__).parent.parent / "iga_state.json"
+
+def generate_id(prefix="task"):
+    return f"{prefix}_{uuid.uuid4().hex[:8]}"
+
+def load_tasks():
+    if TASKS_FILE.exists():
+        content = TASKS_FILE.read_text().strip()
+        return json.loads(content) if content else {"tasks": [], "focused_id": None}
+2026-02-13T19:19:34.455513 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-13T19:19:39.251627 | 💰 $0.2534 | Today: $41.3389
+2026-02-13T19:19:39.253342 | ⚡ cd /Users/dennishansen/development/iga && cp tools/tasks.py tools/tasks_old.py && cp /Users/dennishansen/development/eagle_fork/tools/tasks.py tools/tasks.py
+2026-02-13T19:19:39.288174 | EMPTY
+2026-02-13T19:19:39.551839 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-13T19:19:43.067845 | 💰 $0.2546 | Today: $41.5935
+2026-02-13T19:19:43.069745 | ⚡ cd /Users/dennishansen/development/iga && sed -i '' 's/falcon_state.json/iga_state.json/g; s/Falcon/Iga/g; s/falcon/iga/g' tools/tasks.py && python3 -c "compile(open('tools/tasks.py').read(), 'tasks.py', 'exec'); print('Syntax OK')" && echo "---" && head -10 tools/tasks.py
+2026-02-13T19:19:43.135156 | Syntax OK
+---
+#!/usr/bin/env python3
+"""
+Unified Task System for Iga.
+
+Flat tasks with dependencies, due dates, and logging.
+One system for: planning, focus, reminders, and logging.
+
+Usage:
+  python tasks.py add "Title" [--due TIME] [--blocked-by ID,ID] [--priority P] [--tag TAG]
+  python tasks.py log "What I did"              # Create + complete in one step
+2026-02-13T19:19:43.334914 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-13T19:19:45.758163 | 💰 $0.2540 | Today: $41.8475
+2026-02-13T19:19:45.758552 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py status && echo "---" && python3 tools/tasks.py list --all 2>&1 | head -30
+2026-02-13T19:19:45.862565 | 📋 Suggested next (23 actionable):
+   Self-Analysis Issues Jan 16 [proj_d5391505]
+   Run: python tools/tasks.py focus proj_d5391505
+---
+📋 Tasks:
+
+⬜ Self-Analysis Issues Jan 16
+   [proj_d5391505]
+
+⬜ Code elegance pass - simplify and beautify main.py
+   [task_e606d208]
+
+⬜ Improve task system based on usage experience (reflect and iterate)
+   [task_5209500f]
+
+⬜ RAG issue: Deduplicate indexed files (same content in different paths)
+   [task_a311edf6]
+
+⬜ RAG issue: Low relevance for day summaries - check indexing
+   [task_16f343f2]
+
+⬜ RAG: Improve abstract query handling - maybe add keyword expansion or synonyms
+   [task_1392b3bd]
+
+⬜ Investigate console output truncation (500 char limit) - consider making configurable
+   [task_ee31e00f]
+
+⬜ Sub-agent pattern: Specialized RUN_SELF variants (Explore, Plan, Research) that return summaries
+   [task_77d0cfb8]
+
+⬜ Investigate: Weird log artifacts with multiline commands
+   [task_83a806fa]
+
+⬜ Stripe integration - Dennis has account, explore API access for Iga
+2026-02-13T19:19:46.060909 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-13T19:19:52.364894 | 💰 $0.2593 | Today: $42.1068
+2026-02-13T19:19:52.365234 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py log "Ported Falcon's unified task system - dependencies, due dates, tags, log command" && echo "---" && python3 tools/tasks.py add "Wire DREAM action into main.py action handler" --due 1d --priority 1 && echo "---" && python3 tools/tasks.py add "Port more Falcon architecture improvements" --tag falcon-port --priority 2
+2026-02-13T19:19:52.481073 | ✅ Logged: Ported Falcon's unified task system - dependencies, due dates, tags, log command
+---
+✅ Added: task_8af6a2f9
+   'Wire DREAM action into main.py action handler'
+   Due: 2026-02-14T19:19:52.445006
+---
+✅ Added: task_48ea5ca2
+   'Port more Falcon architecture improvements'
+2026-02-13T19:19:52.683156 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-13T19:19:56.912307 | 💰 $0.2608 | Today: $42.3677
+2026-02-13T19:19:56.912636 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py today && echo "---" && python3 tools/daily_ship_log.py log "Ported Falcon's unified task system with dependencies, due dates, tags, blocking" && git add -A && git commit -m "Port Falcon's task system - deps, due dates, tags, log command
+
+- Dependencies with blocking detection
+- Due dates with overdue tracking  
+- Tags for categorization
+- 'log' command: create+complete in one step
+- Focus/status workflow preserved" && git push origin main 2>&1 | tail -2

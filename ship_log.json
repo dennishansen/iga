@@ -969,6 +969,11 @@
       "timestamp": "2026-02-13T19:19:03.139738",
       "date": "2026-02-13",
       "description": "Search-and-replace EDIT_FILE - ported from Falcon, supports both <<<OLD>>><<<NEW>>> and legacy line numbers"
+    },
+    {
+      "timestamp": "2026-02-13T19:19:56.982562",
+      "date": "2026-02-13",
+      "description": "Ported Falcon's unified task system with dependencies, due dates, tags, blocking"
     }
   ]
 }

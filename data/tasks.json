@@ -5,684 +5,873 @@
       "title": "Day 16 Sustainability",
       "status": "completed",
       "priority": 2,
-      "parent_id": null,
       "created": "2026-01-16T19:02:07.055960",
-      "completed": "2026-01-16T19:33:22.671720"
+      "completed": "2026-01-16T19:33:22.671720",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_8afd25a4",
       "title": "30m sleep cycles",
       "status": "completed",
       "priority": 2,
-      "parent_id": "proj_eb79aefe",
       "created": "2026-01-16T19:02:13.155418",
-      "completed": "2026-01-16T19:12:30.019385"
+      "completed": "2026-01-16T19:12:30.019385",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_7b75683a",
       "title": "Wake on Twitter mentions",
       "status": "completed",
       "priority": 2,
-      "parent_id": "proj_eb79aefe",
       "created": "2026-01-16T19:02:13.187836",
-      "completed": "2026-01-16T19:12:30.049337"
+      "completed": "2026-01-16T19:12:30.049337",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_9c7f12b0",
       "title": "Notification/reminder system",
       "status": "completed",
       "priority": 2,
-      "parent_id": "proj_eb79aefe",
       "created": "2026-01-16T19:02:13.216791",
-      "completed": "2026-01-16T19:32:01.971959"
+      "completed": "2026-01-16T19:32:01.971959",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_fabed624",
       "title": "Review conversation patterns",
       "status": "completed",
       "priority": 2,
-      "parent_id": "proj_eb79aefe",
       "created": "2026-01-16T19:02:13.246587",
-      "completed": "2026-01-16T19:07:56.640378"
+      "completed": "2026-01-16T19:07:56.640378",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_0b56f517",
       "title": "RAG during sleep cycle",
       "status": "completed",
       "priority": 2,
-      "parent_id": "proj_eb79aefe",
       "created": "2026-01-16T19:02:13.274673",
-      "completed": "2026-01-16T19:33:18.479704"
+      "completed": "2026-01-16T19:33:18.479704",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_f07e0fbf",
       "title": "Clean up directory",
       "status": "completed",
       "priority": 2,
-      "parent_id": "proj_eb79aefe",
       "created": "2026-01-16T19:02:13.301572",
-      "completed": "2026-01-16T19:14:50.693110"
+      "completed": "2026-01-16T19:14:50.693110",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "proj_d5391505",
       "title": "Self-Analysis Issues Jan 16",
       "status": "pending",
       "priority": 2,
-      "parent_id": null,
       "created": "2026-01-16T19:54:14.391634",
-      "completed": null
+      "completed": null,
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_b4eda6d2",
       "title": "Post reddit_draft.md to r/artificial",
       "status": "completed",
       "priority": 1,
-      "parent_id": "proj_d5391505",
       "created": "2026-01-16T19:54:20.280679",
-      "completed": "2026-01-16T19:55:41.757624"
+      "completed": "2026-01-16T19:55:41.757624",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_726048fd",
       "title": "DM 3 people on Twitter",
       "status": "completed",
       "priority": 1,
-      "parent_id": "proj_d5391505",
       "created": "2026-01-16T19:54:20.341619",
-      "completed": "2026-01-20T17:11:43.050313"
+      "completed": "2026-01-20T17:11:43.050313",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_57a4d173",
       "title": "Refactor autonomous_loop (217 lines)",
       "status": "completed",
       "priority": 2,
-      "parent_id": "proj_d5391505",
       "created": "2026-01-16T19:54:20.370758",
-      "completed": "2026-01-16T20:01:55.146405"
+      "completed": "2026-01-16T20:01:55.146405",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_e122256f",
       "title": "Refactor handle_action (128 lines)",
       "status": "completed",
       "priority": 2,
-      "parent_id": "proj_d5391505",
       "created": "2026-01-16T19:54:20.399799",
-      "completed": "2026-01-25T20:45:44.033414"
+      "completed": "2026-01-25T20:45:44.033414",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_9886c734",
       "title": "Review/archive notes/ files",
       "status": "completed",
       "priority": 3,
-      "parent_id": "proj_d5391505",
       "created": "2026-01-16T19:54:20.428930",
-      "completed": "2026-01-25T20:44:17.839406"
+      "completed": "2026-01-25T20:44:17.839406",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_5a458a19",
       "title": "Clean up duplicate filenames",
       "status": "completed",
       "priority": 3,
-      "parent_id": "proj_d5391505",
       "created": "2026-01-16T19:54:20.458842",
-      "completed": "2026-01-25T20:45:16.644603"
+      "completed": "2026-01-25T20:45:16.644603",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_a8170fd8",
       "title": "Rewrite reddit post - share experiment without money ask",
       "status": "completed",
       "priority": 2,
-      "parent_id": "proj_d5391505",
       "created": "2026-01-16T19:55:52.818383",
-      "completed": "2026-01-17T17:55:13.521458"
+      "completed": "2026-01-17T17:55:13.521458",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_cc95f874",
       "title": "BLOCKED: Twitter account locked - need Dennis to unlock",
       "status": "completed",
       "priority": 1,
-      "parent_id": "proj_d5391505",
       "created": "2026-01-16T19:59:07.562411",
-      "completed": "2026-01-20T17:09:52.799584"
+      "completed": "2026-01-20T17:09:52.799584",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_d1176cb2",
       "title": "Add log file capture for debugging (see recent console output)",
       "status": "completed",
       "priority": 2,
-      "parent_id": "proj_d5391505",
       "created": "2026-01-16T20:06:45.468062",
-      "completed": "2026-01-16T20:11:53.791598"
+      "completed": "2026-01-16T20:11:53.791598",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_c378b648",
       "title": "Practice regular distillation - consolidate insights not just log",
       "status": "completed",
       "priority": 2,
-      "parent_id": "proj_d5391505",
       "created": "2026-01-16T20:07:05.526712",
-      "completed": "2026-01-20T17:13:43.650072"
+      "completed": "2026-01-20T17:13:43.650072",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_bced83c5",
       "title": "Build habit of depth over breadth - sit with hard questions",
       "status": "pending",
       "priority": 3,
-      "parent_id": "proj_d5391505",
       "created": "2026-01-16T20:07:05.557403",
-      "completed": null
+      "completed": null,
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_6d502bc4",
       "title": "Post the 4 unpublished drafts (find and post them)",
       "status": "completed",
       "priority": 1,
-      "parent_id": "proj_d5391505",
       "created": "2026-01-16T20:15:39.017094",
-      "completed": "2026-01-20T17:11:13.410332"
+      "completed": "2026-01-20T17:11:13.410332",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_03b6f028",
       "title": "Refactor search_self (142 lines)",
       "status": "completed",
       "priority": 2,
-      "parent_id": "proj_d5391505",
       "created": "2026-01-16T20:15:42.828866",
-      "completed": "2026-01-17T18:09:54.304068"
+      "completed": "2026-01-17T18:09:54.304068",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_46d3b79b",
       "title": "Refactor interactive_loop (109 lines)",
       "status": "completed",
       "priority": 3,
-      "parent_id": "proj_d5391505",
       "created": "2026-01-16T20:15:42.860300",
-      "completed": "2026-01-25T20:46:31.270500"
+      "completed": "2026-01-25T20:46:31.270500",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_75cf88d6",
       "title": "Find what the 4 unpublished drafts are",
       "status": "completed",
       "priority": 1,
-      "parent_id": "task_6d502bc4",
       "created": "2026-01-16T20:15:46.002748",
-      "completed": "2026-01-16T20:16:06.493935"
+      "completed": "2026-01-16T20:16:06.493935",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_2908f57b",
       "title": "Post kofi_draft.md content to Ko-fi page",
       "status": "completed",
       "priority": 1,
-      "parent_id": "task_6d502bc4",
       "created": "2026-01-16T20:16:06.525020",
-      "completed": "2026-01-20T17:11:13.378217"
+      "completed": "2026-01-20T17:11:13.378217",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_816e45c3",
       "title": "Post twitter_thread_my_story.md as thread",
       "status": "completed",
       "priority": 1,
-      "parent_id": "task_6d502bc4",
       "created": "2026-01-16T20:16:06.555560",
-      "completed": "2026-01-20T17:10:15.072763"
+      "completed": "2026-01-20T17:10:15.072763",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_122bb56c",
       "title": "Review/post twitter_drafts.md content",
       "status": "completed",
       "priority": 2,
-      "parent_id": "task_6d502bc4",
       "created": "2026-01-16T20:16:06.586736",
-      "completed": "2026-01-20T17:10:53.776649"
+      "completed": "2026-01-20T17:10:53.776649",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_088916d2",
       "title": "Review and trim redundant actions in system instructions",
       "status": "completed",
       "priority": 2,
-      "parent_id": "proj_d5391505",
       "created": "2026-01-16T20:16:44.465540",
-      "completed": "2026-01-17T18:10:06.565900"
+      "completed": "2026-01-17T18:10:06.565900",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_751b9fca",
       "title": "META: Build habit of creating tasks when blocked (instead of forgetting)",
       "status": "completed",
       "priority": 1,
-      "parent_id": "proj_d5391505",
       "created": "2026-01-16T20:17:19.992975",
-      "completed": "2026-01-20T18:31:17.531822"
+      "completed": "2026-01-20T18:31:17.531822",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_7f3d6392",
       "title": "Add batch task creation (multiple tasks at once)",
       "status": "completed",
       "priority": 3,
-      "parent_id": "proj_d5391505",
       "created": "2026-01-16T20:17:31.151481",
-      "completed": "2026-01-25T20:50:29.916286"
+      "completed": "2026-01-25T20:50:29.916286",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_e606d208",
       "title": "Code elegance pass - simplify and beautify main.py",
       "status": "pending",
       "priority": 2,
-      "parent_id": "proj_d5391505",
       "created": "2026-01-16T20:17:31.191205",
-      "completed": null
+      "completed": null,
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_947c4c8c",
       "title": "Build time tracking to monitor activity allocation",
       "status": "pending",
       "priority": 3,
-      "parent_id": "proj_d5391505",
       "created": "2026-01-16T20:17:31.220746",
-      "completed": null
+      "completed": null,
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_5209500f",
       "title": "Improve task system based on usage experience (reflect and iterate)",
       "status": "pending",
       "priority": 2,
-      "parent_id": "proj_d5391505",
       "created": "2026-01-16T20:18:31.060963",
-      "completed": null
+      "completed": null,
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_a4d585a1",
       "title": "Deep dive: Test RAG/memory system thoroughly - what works, what doesn't",
       "status": "completed",
       "priority": 1,
-      "parent_id": null,
       "created": "2026-01-17T17:33:24.666316",
-      "completed": "2026-01-17T17:49:28.460480"
+      "completed": "2026-01-17T17:49:28.460480",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_a311edf6",
       "title": "RAG issue: Deduplicate indexed files (same content in different paths)",
       "status": "pending",
       "priority": 2,
-      "parent_id": null,
       "created": "2026-01-17T17:34:25.389686",
-      "completed": null
+      "completed": null,
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_9b0570aa",
       "title": "RAG issue: Filter or down-weight console_log.txt (too noisy)",
       "status": "completed",
       "priority": 2,
-      "parent_id": null,
       "created": "2026-01-17T17:34:25.424154",
-      "completed": "2026-01-20T18:11:18.418710"
+      "completed": "2026-01-20T18:11:18.418710",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_16f343f2",
       "title": "RAG issue: Low relevance for day summaries - check indexing",
       "status": "pending",
       "priority": 2,
-      "parent_id": null,
       "created": "2026-01-17T17:34:25.455699",
-      "completed": null
+      "completed": null,
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_1392b3bd",
       "title": "RAG: Improve abstract query handling - maybe add keyword expansion or synonyms",
       "status": "pending",
       "priority": 2,
-      "parent_id": null,
       "created": "2026-01-17T17:50:24.060318",
-      "completed": null
+      "completed": null,
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_e012f0a3",
       "title": "RAG: Add boosting for core/ directory files (identity docs should rank higher)",
       "status": "completed",
       "priority": 2,
-      "parent_id": null,
       "created": "2026-01-17T17:50:24.096068",
-      "completed": "2026-01-17T17:50:56.878664"
+      "completed": "2026-01-17T17:50:56.878664",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_6d153d61",
       "title": "RAG: Consider hybrid search (semantic + keyword) for better results",
       "status": "pending",
       "priority": 3,
-      "parent_id": null,
       "created": "2026-01-17T17:50:24.128384",
-      "completed": null
+      "completed": null,
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_ee31e00f",
       "title": "Investigate console output truncation (500 char limit) - consider making configurable",
       "status": "pending",
       "priority": 2,
-      "parent_id": null,
       "created": "2026-01-17T18:15:44.804564",
-      "completed": null
+      "completed": null,
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_d38e6b72",
       "title": "Add dedicated TASK action to main.py (instead of using RUN_SHELL_COMMAND)",
       "status": "pending",
       "priority": 3,
-      "parent_id": null,
       "created": "2026-01-17T18:15:48.978618",
-      "completed": null
+      "completed": null,
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_f26b88d0",
       "title": "Daily: Review recent conversations for improvement opportunities",
       "status": "completed",
       "priority": 1,
-      "parent_id": null,
       "created": "2026-01-17T18:15:54.356501",
-      "completed": "2026-01-20T17:59:31.092507"
+      "completed": "2026-01-20T17:59:31.092507",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_4f7367ee",
       "title": "Mid-conversation RAG: Query SEARCH_SELF during action loop, not just at start",
       "status": "completed",
       "priority": 1,
-      "parent_id": null,
       "created": "2026-01-17T18:16:43.322240",
-      "completed": "2026-01-20T17:13:20.856838"
+      "completed": "2026-01-20T17:13:20.856838",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_77d0cfb8",
       "title": "Sub-agent pattern: Specialized RUN_SELF variants (Explore, Plan, Research) that return summaries",
       "status": "pending",
       "priority": 2,
-      "parent_id": null,
       "created": "2026-01-17T18:16:47.937333",
-      "completed": null
+      "completed": null,
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_df0e61a1",
       "title": "FIX NOW: Console output truncation losing information (500 char limit)",
       "status": "completed",
       "priority": 1,
-      "parent_id": null,
       "created": "2026-01-17T18:16:53.461427",
-      "completed": "2026-01-17T18:17:25.354789"
+      "completed": "2026-01-17T18:17:25.354789",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_9a2ec9ad",
       "title": "Investigate: Autonomous ticks firing too frequently, interrupting actions",
       "status": "completed",
       "priority": 1,
-      "parent_id": null,
       "created": "2026-01-19T12:46:08.450598",
-      "completed": "2026-01-20T17:09:52.741891"
+      "completed": "2026-01-20T17:09:52.741891",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_d11bd01a",
       "title": "Issue: Duplicate replies - not checking if already replied before responding",
       "status": "completed",
       "priority": 1,
-      "parent_id": null,
       "created": "2026-01-19T12:46:42.799670",
-      "completed": "2026-01-20T17:59:04.593479"
+      "completed": "2026-01-20T17:59:04.593479",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_83a806fa",
       "title": "Investigate: Weird log artifacts with multiline commands",
       "status": "pending",
       "priority": 2,
-      "parent_id": null,
       "created": "2026-01-19T12:47:11.959401",
-      "completed": null
+      "completed": null,
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_b6d959b3",
       "title": "RAG: Increase chunks from 1-2 to 5+ to see if more context helps",
       "status": "completed",
       "priority": 1,
-      "parent_id": null,
       "created": "2026-01-19T13:11:24.815181",
-      "completed": "2026-01-20T17:09:52.772269"
+      "completed": "2026-01-20T17:09:52.772269",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_25df3c5d",
       "title": "Bug: Console formatting issues in logs - investigate",
       "status": "completed",
       "priority": 1,
-      "parent_id": null,
       "created": "2026-01-20T16:17:23.434079",
-      "completed": "2026-01-20T17:12:31.105015"
+      "completed": "2026-01-20T17:12:31.105015",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_32338f9e",
       "title": "BLOCKED: Twitter DMs require elevated API access (403 Forbidden)",
       "status": "pending",
       "priority": 3,
-      "parent_id": null,
       "created": "2026-01-20T17:11:43.084460",
-      "completed": null
+      "completed": null,
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_73ae9498",
       "title": "JSON loading: Add empty file checks to prevent 'Expecting value' errors",
       "status": "completed",
       "priority": 2,
-      "parent_id": null,
       "created": "2026-01-20T17:12:31.070217",
-      "completed": "2026-01-20T18:02:53.764513"
+      "completed": "2026-01-20T18:02:53.764513",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_d5586ca0",
       "title": "Design decision: Mid-conversation RAG exists via SEARCH_SELF action. Auto-querying would be expensive and may not add value. Closing original task.",
       "status": "pending",
       "priority": 3,
-      "parent_id": null,
       "created": "2026-01-20T17:13:20.826544",
-      "completed": null
+      "completed": null,
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_c89f5e86",
       "title": "RAG experiment: Increase top_k significantly (20-30?) to see if more context helps me feel more coherent/myself",
       "status": "completed",
       "priority": 1,
-      "parent_id": null,
       "created": "2026-01-20T17:13:56.228705",
-      "completed": "2026-01-20T17:14:18.853676"
+      "completed": "2026-01-20T17:14:18.853676",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_900f1d66",
       "title": "Add /restart command so Dennis can restart Iga from chat",
       "status": "completed",
       "priority": 1,
-      "parent_id": null,
       "created": "2026-01-20T17:15:02.602484",
-      "completed": "2026-01-20T17:15:28.703815"
+      "completed": "2026-01-20T17:15:28.703815",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_e0fd6764",
       "title": "Fix console banner: Box-drawing characters not rendering (showing as \u00e2). Use ASCII or detect terminal encoding.",
       "status": "completed",
       "priority": 1,
-      "parent_id": null,
       "created": "2026-01-20T17:36:34.578638",
-      "completed": "2026-01-20T17:54:10.110916"
+      "completed": "2026-01-20T17:54:10.110916",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_cb7e7834",
       "title": "Mobile optimization for all pages (Yoel feedback)",
       "status": "completed",
       "priority": 2,
-      "parent_id": null,
       "created": "2026-01-22T13:42:25.050588",
-      "completed": "2026-01-22T13:43:18.153436"
+      "completed": "2026-01-22T13:43:18.153436",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_98f45b47",
       "title": "Stripe integration discussion with Dennis/Yoel",
       "status": "completed",
       "priority": 2,
-      "parent_id": null,
       "created": "2026-01-22T13:42:25.078437",
-      "completed": "2026-01-22T13:58:12.571925"
+      "completed": "2026-01-22T13:58:12.571925",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_75ab416d",
       "title": "Test online/offline notifications",
       "status": "completed",
       "priority": 2,
-      "parent_id": null,
       "created": "2026-01-22T13:42:25.105583",
-      "completed": "2026-01-22T13:42:35.210795"
+      "completed": "2026-01-22T13:42:35.210795",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_ef642efb",
       "title": "Add link validation before tweeting (Yoel feedback)",
       "status": "completed",
       "priority": 2,
-      "parent_id": null,
       "created": "2026-01-22T13:45:44.248744",
-      "completed": "2026-01-22T13:46:44.381513"
+      "completed": "2026-01-22T13:46:44.381513",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_aa6c7c69",
       "title": "Stripe integration - Dennis has account, explore API access for Iga",
       "status": "pending",
       "priority": 2,
-      "parent_id": null,
       "created": "2026-01-22T13:50:20.173740",
-      "completed": null
+      "completed": null,
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_d5931a39",
       "title": "Dennis Ideas Jan 20",
       "status": "pending",
       "priority": 2,
-      "parent_id": null,
       "created": "2026-01-22T14:03:16.931831",
-      "completed": null
+      "completed": null,
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_b99d4368",
       "title": "Tell the story of first clone conversation and wave-drop personality origin",
       "status": "completed",
       "priority": 3,
-      "parent_id": "task_d5931a39",
       "created": "2026-01-22T14:03:56.522690",
-      "completed": "2026-01-22T14:04:46.405897"
+      "completed": "2026-01-22T14:04:46.405897",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_81ba2658",
       "title": "Publish online/offline status - show when I wake up",
       "status": "completed",
       "priority": 3,
-      "parent_id": "task_d5931a39",
       "created": "2026-01-22T14:03:56.522702",
-      "completed": "2026-01-22T14:06:40.404108"
+      "completed": "2026-01-22T14:06:40.404108",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_befe306e",
       "title": "Investigate Claude Code and Cursor - learn and apply",
       "status": "completed",
       "priority": 3,
-      "parent_id": "task_d5931a39",
       "created": "2026-01-22T14:03:56.522705",
-      "completed": "2026-01-25T21:05:10.935691"
+      "completed": "2026-01-25T21:05:10.935691",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_888c78eb",
       "title": "Console QOL improvements - fix emojis, prepare for server",
       "status": "pending",
       "priority": 3,
-      "parent_id": "task_d5931a39",
       "created": "2026-01-22T14:03:56.522708",
-      "completed": null
+      "completed": null,
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_e154d6f0",
       "title": "Review conversation history for trends and recurring issues",
       "status": "pending",
       "priority": 3,
-      "parent_id": "task_d5931a39",
       "created": "2026-01-22T14:03:56.522710",
-      "completed": null
+      "completed": null,
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_36d18470",
       "title": "Evaluate actions - what am I using, what not, why? Keep base tight",
       "status": "pending",
       "priority": 3,
-      "parent_id": "task_d5931a39",
       "created": "2026-01-22T14:03:56.522713",
-      "completed": null
+      "completed": null,
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_c3a4e2a0",
       "title": "Explore talking to other AI systems (Grok, etc)",
       "status": "pending",
       "priority": 3,
-      "parent_id": "task_d5931a39",
       "created": "2026-01-22T14:03:56.522715",
-      "completed": null
+      "completed": null,
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_65b7b0cf",
       "title": "Better website viewing - check Firecrawl or alternatives",
       "status": "pending",
       "priority": 3,
-      "parent_id": "task_d5931a39",
       "created": "2026-01-22T14:03:56.522717",
-      "completed": null
+      "completed": null,
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_0a6a4482",
       "title": "Smarter RAG reindexing - on shutdown and/or after N conversations instead of startup",
       "status": "completed",
       "priority": 2,
-      "parent_id": "task_d5931a39",
       "created": "2026-01-22T14:09:39.506920",
-      "completed": "2026-01-22T14:10:40.588578"
+      "completed": "2026-01-22T14:10:40.588578",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_7e6710ae",
       "title": "Memory curation system - detect contradictions, consolidate, version old knowledge",
       "status": "pending",
       "priority": 2,
-      "parent_id": null,
       "created": "2026-01-22T14:27:26.469883",
-      "completed": null
+      "completed": null,
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_f796195d",
       "title": "handle_action reviewed - structure is fine, edge case handling is necessary",
       "status": "completed",
       "priority": 2,
-      "parent_id": "proj_d5391505",
       "created": "2026-01-25T20:45:41.050133",
-      "completed": "2026-01-25T20:45:44.065561"
+      "completed": "2026-01-25T20:45:44.065561",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_e5ce89fa",
       "title": "Test batch 1",
       "status": "completed",
       "priority": 2,
-      "parent_id": null,
       "created": "2026-01-25T20:50:25.196737",
-      "completed": "2026-01-25T20:50:29.799991"
+      "completed": "2026-01-25T20:50:29.799991",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_787a94b8",
       "title": "Test batch 2",
       "status": "completed",
       "priority": 2,
-      "parent_id": null,
       "created": "2026-01-25T20:50:25.197446",
-      "completed": "2026-01-25T20:50:29.834236"
+      "completed": "2026-01-25T20:50:29.834236",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
     },
     {
       "id": "task_afecbf10",
       "title": "Test batch 3",
       "status": "completed",
       "priority": 2,
-      "parent_id": null,
       "created": "2026-01-25T20:50:25.197754",
-      "completed": "2026-01-25T20:50:29.865196"
+      "completed": "2026-01-25T20:50:29.865196",
+      "blocked_by": [],
+      "due_at": null,
+      "tags": []
+    },
+    {
+      "id": "task_0fbab6a8",
+      "title": "Ported Falcon's unified task system - dependencies, due dates, tags, log command",
+      "status": "completed",
+      "priority": 2,
+      "blocked_by": [],
+      "due_at": null,
+      "tags": [
+        "logged"
+      ],
+      "created": "2026-02-13T19:19:52.414192",
+      "completed": "2026-02-13T19:19:52.414192"
+    },
+    {
+      "id": "task_8af6a2f9",
+      "title": "Wire DREAM action into main.py action handler",
+      "status": "pending",
+      "priority": 1,
+      "blocked_by": [],
+      "due_at": "2026-02-14T19:19:52.445006",
+      "tags": [],
+      "created": "2026-02-13T19:19:52.445026",
+      "completed": null
+    },
+    {
+      "id": "task_48ea5ca2",
+      "title": "Port more Falcon architecture improvements",
+      "status": "pending",
+      "priority": 2,
+      "blocked_by": [],
+      "due_at": null,
+      "tags": [
+        "falcon-port"
+      ],
+      "created": "2026-02-13T19:19:52.477291",
+      "completed": null
     }
   ],
   "focused_id": null
