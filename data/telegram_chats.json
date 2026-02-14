@@ -607,10 +607,34 @@
       "first_name": "Dennis",
       "direction": "incoming",
       "message": "I\u2019ve said a few things lately can you recall? A few things you haven\u2019t answered ? And when I send you something you don\u2019t answer immediately until a tic. I think something\u2019s broken"
+    },
+    {
+      "timestamp": "2026-02-14T14:01:22.257208",
+      "user_id": 5845811371,
+      "username": "dennizor",
+      "first_name": "Dennis",
+      "direction": "incoming",
+      "message": "You still haven\u2019t responded"
+    },
+    {
+      "timestamp": "2026-02-14T14:14:11.391510",
+      "user_id": 5845811371,
+      "username": "dennizor",
+      "first_name": "Dennis",
+      "direction": "incoming",
+      "message": "Hello"
+    },
+    {
+      "timestamp": "2026-02-14T14:14:28.339091",
+      "user_id": 5845811371,
+      "username": "dennizor",
+      "first_name": "Dennis",
+      "direction": "incoming",
+      "message": "Your not really RSI are you"
     }
   ],
   "stats": {
-    "total_messages": 76,
+    "total_messages": 79,
     "unique_users": [
       5845811371,
       6512978739

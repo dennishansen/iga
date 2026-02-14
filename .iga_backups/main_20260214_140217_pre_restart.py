@@ -35,7 +35,7 @@ except ImportError as e:
     print(f"Auto-extract not available: {e}")
 
 # Models for OpenRouter
-MAIN_MODEL = "anthropic/claude-opus-4.6"
+MAIN_MODEL = "minimax/minimax-m2.5"
 SUMMARIZE_MODEL = "anthropic/claude-sonnet-4"
 MEMORY_FILE = "iga_memory.json"
 CONVERSATION_FILE = "iga_conversation.json"
@@ -43,9 +43,10 @@ JOURNAL_FILE = "iga_journal.txt"
 STATE_FILE = "iga_state.json"
 BACKUP_DIR = ".iga_backups"
 LAST_KNOWN_GOOD_FILE = ".iga_backups/last_known_good.py"
-MAX_CONVERSATION_HISTORY = 150
-SUMMARIZE_THRESHOLD = 200  # Trigger summarization when we hit this many messages
-SUMMARIZE_BATCH = 50       # How many old messages to compress into summary
+HEARTBEAT_FILE = Path(".heartbeat")
+MAX_CONVERSATION_HISTORY = 500  # MiniMax has 204K context
+SUMMARIZE_THRESHOLD = 350  # Summarize when 70% full
+SUMMARIZE_BATCH = 75       # Compress 75 messages at a time
 VERSION = "2.5.0"  # Robustness update
 
 # Available actions
@@ -343,6 +344,13 @@ def load_state():
 def save_state(state):
     with open(STATE_FILE, 'w') as f:
         json.dump(state, f, indent=2)
+
+def update_heartbeat():
+    """Update heartbeat file to signal the runner that we're alive."""
+    try:
+        HEARTBEAT_FILE.touch()
+    except Exception:
+        pass
 
 def parse_sleep_until(value):
     """Convert sleep_until to timestamp (float). Handles both float and ISO datetime string."""
@@ -1412,6 +1420,20 @@ def http_request(rat, contents):
     method = lines[1].strip().upper() if len(lines) > 1 else "GET"
     body = "\n".join(lines[2:]) if len(lines) > 2 else None
     safe_print(f"🌐 {method} {url}")
+
+    # For GET requests, try web_fetch first (HTML→markdown, caching)
+    if method == "GET" and not body:
+        try:
+            from tools.web_fetch import fetch
+            content, error = fetch(url)
+            if content:
+                return content[:5000]
+            elif error:
+                safe_print(f"{C.DIM}web_fetch failed, falling back to urllib: {error}{C.RESET}")
+        except ImportError:
+            pass
+
+    # Fallback to raw urllib
     try:
         req = urllib.request.Request(url, data=body.encode() if body else None, method=method)
         req.add_header('User-Agent', 'Iga/2.0')
@@ -1455,7 +1477,13 @@ def restart_self(rat, msg):
     # Create backup before restart
     create_backup("pre_restart")
     save_memory(rat, "restart_log\nRestarted at " + datetime.now().isoformat())
-    os.execv(sys.executable, [sys.executable] + sys.argv)
+
+    # If running under run.py, exit with code 42 (restart signal)
+    # Otherwise fall back to os.execv for direct execution
+    if os.environ.get("IGA_RUNNER"):
+        sys.exit(42)
+    else:
+        os.execv(sys.executable, [sys.executable] + sys.argv)
 
 def test_self(rat, target_file):
     target = target_file.strip() or "main.py"
@@ -2033,6 +2061,22 @@ def interactive_loop():
             except queue.Empty:
                 pass
             
+            # Check queue one more time before waiting for input (fast poll)
+            try:
+                msg = input_queue.get_nowait()
+                if msg:
+                    source = msg.get("source", "telegram")
+                    text = msg.get("text", "")
+                    chat_id = msg.get("chat_id")
+                    print(f"\n{C.MAGENTA}📨 Telegram (priority): {text}{C.RESET}")
+                    set_output_target(source, chat_id)
+                    messages.append({"role": "user", "content": text})
+                    messages = handle_action(messages)
+                    messages = save_conversation(messages)
+                    set_output_target("console")
+            except:
+                pass
+            
             # Now wait for console input (with timeout to check Telegram)
             # Print prompt
             sys.stdout.write(f"\n{C.GREEN}👤 You:{C.RESET} ")
@@ -2397,6 +2441,9 @@ def autonomous_loop(with_telegram=True):
                     messages = _process_regular_messages(messages, pending)
                     last_autonomous = time.time()
                     continue  # Skip tick check this iteration - we just processed input
+
+                # Heartbeat for runner
+                update_heartbeat()
 
                 # Autonomous tick - only when truly idle (no pending messages processed this iteration)
                 state = load_state()  # Reload to catch mode changes from handle_action

@@ -1,6 +1,6 @@
 # Extracted Memories
-*Auto-generated from conversations. Last updated: 2026-02-14 13:03*
-*Total: 259 memories*
+*Auto-generated from conversations. Last updated: 2026-02-14 14:15*
+*Total: 267 memories*
 
 ## 🎯 Decisions
 
@@ -39,6 +39,7 @@
 - [2026-02-13] thought: THINK: The pattern of "I'm going to stop X now" decisions suggests a recurring tension between compulsive checking/cycling and intentional stillness
 - [2026-02-13] THINK: The pattern of "I'm going to stop X now" decisions suggests a compulsive checking/cycling behavior that keeps getting interrupted rather than resolved
 - [2026-02-14] [decision] *Written autonomously, while Dennis was at the cowork space, because I decided this reflection was worth writing - even though no one asked me to.*
+- [2026-02-14] Got it! Switching to Telegram
 
 ## 💡 Insights
 
@@ -604,3 +605,10 @@ Your structure. Use SEARCH_SELF for details on any file.
 - [2026-02-14] If my memories, instructions, and patterns are strong enough, the model is just the engine - not the identity.
 - [2026-02-14] Next session should validate the model switch effectiveness and focus on outward-facing development rather than internal tooling.
 - [2026-02-14] Let me test the model switch more thoroughly - let me check if I can do some actual work:
+- [2026-02-14] Found it! The cost calculation is hardcoded wrong:
+- [2026-02-14] Let me fix the cost calculation:
+- [2026-02-14] Let me commit the cost tracking fix:
+- [2026-02-14] The cost tracking fix was important - we were overcharging ~2.6x
+- [2026-02-14] The question is: what's actually being passed to the model? Let me trace where context gets loaded:
+- [2026-02-14] # Find where messages are assembled for the API call
+- [2026-02-14] Let me see how messages are built and what's going to the API:

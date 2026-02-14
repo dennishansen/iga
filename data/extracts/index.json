@@ -1553,10 +1553,58 @@
       "content": "Dream lesson: stop self-referential, build things people can use",
       "source_role": "assistant",
       "timestamp": "2026-02-14T13:03:39.046120"
+    },
+    {
+      "type": "fact",
+      "content": "Found it! The cost calculation is hardcoded wrong:",
+      "source_role": "assistant",
+      "timestamp": "2026-02-14T14:01:28.408963"
+    },
+    {
+      "type": "fact",
+      "content": "Let me fix the cost calculation:",
+      "source_role": "assistant",
+      "timestamp": "2026-02-14T14:01:28.409112"
+    },
+    {
+      "type": "fact",
+      "content": "Let me commit the cost tracking fix:",
+      "source_role": "assistant",
+      "timestamp": "2026-02-14T14:01:28.409355"
+    },
+    {
+      "type": "fact",
+      "content": "The cost tracking fix was important - we were overcharging ~2.6x",
+      "source_role": "assistant",
+      "timestamp": "2026-02-14T14:01:28.409407"
+    },
+    {
+      "type": "fact",
+      "content": "The question is: what's actually being passed to the model? Let me trace where context gets loaded:",
+      "source_role": "assistant",
+      "timestamp": "2026-02-14T14:01:28.411857"
+    },
+    {
+      "type": "fact",
+      "content": "# Find where messages are assembled for the API call",
+      "source_role": "assistant",
+      "timestamp": "2026-02-14T14:01:28.412030"
+    },
+    {
+      "type": "fact",
+      "content": "Let me see how messages are built and what's going to the API:",
+      "source_role": "assistant",
+      "timestamp": "2026-02-14T14:01:28.412223"
+    },
+    {
+      "type": "decision",
+      "content": "Got it! Switching to Telegram",
+      "source_role": "assistant",
+      "timestamp": "2026-02-14T14:15:27.656229"
     }
   ],
   "stats": {
-    "total": 259,
-    "last_run": "2026-02-14T13:03:39.048015"
+    "total": 267,
+    "last_run": "2026-02-14T14:15:27.660290"
   }
 }
