@@ -9,3 +9,5 @@ __pycache__/
 .DS_Storeconsciousness_entries.json
 # Moltbook credentials
 moltbook_*.json
+.iga_chroma/
+*.pyc
