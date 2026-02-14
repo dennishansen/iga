@@ -75,8 +75,10 @@ Create or overwrite a file. First line is path, rest is content.
 Always returns NEXT_ACTION.
 
 EDIT_FILE
-Edit specific lines in a file. First line is path, second is line range (e.g., "10-15" or "10"), rest is replacement content.
-Safer than WRITE_FILE for small changes to large files.
+Edit a file using search-and-replace (preferred) or line numbers.
+Search-and-replace format: First line is path, then <<<OLD exact text >>><<<NEW replacement >>>.
+Must match exactly one location. Safer and self-documenting.
+Line-number format: First line is path, second is line range (e.g., "10-15"), rest is replacement.
 
 DELETE_FILE
 Delete a file at the given path.

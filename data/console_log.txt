@@ -629,3 +629,389 @@ Dennis - this is what you distilled from Falcon. And now it's in me. Thank you. 
 Dream found: memory work may be elaborate procrastination,
 impact measurement absent, self-reflection theater.
 Cost: \$0.05 for 4-turn session via DeepSeek on OpenRouter." && git push origin main 2>&1 | tail -2
+2026-02-13T19:17:03.269528 | ✅ Logged: DREAM system working - first dream produced adversarial report, cost $0.05
+[main d7211e3] DREAM system live - first adversarial self-reflection complete
+ 8 files changed, 1493 insertions(+), 2124 deletions(-)
+ create mode 100644 dreams/dream_20260213_191644.md
+ mode change 100644 => 100755 tools/dream.py
+To https://github.com/dennishansen/iga.git
+   6e3ca75..d7211e3  main -> main
+2026-02-13T19:17:03.540876 | 🔍 RAG: Retrieved 6 relevant chunks
+2026-02-13T19:17:08.606235 | 💰 $0.2536 | Today: $36.0086
+2026-02-13T19:17:08.608119 | ⚡ cd /Users/dennishansen/development/eagle_fork && grep -A 30 "EDIT_FILE" system_instructions.txt
+2026-02-13T19:17:08.621453 | EDIT_FILE
+Search-and-replace editing. Must match exactly one location.
+Format:
+  Line 1: file path
+  <<<OLD
+  exact text to find (must be unique in file)
+  >>>
+  <<<NEW
+  replacement text
+  >>>
+Returns: Success or error (no match / multiple matches)
+
+DREAM
+Enter a dream state for adversarial self-reflection.
+Use when stuck, uncertain, or wanting to consolidate learning.
+Returns: Dream report with findings and suggested actions
+
+RESTART_SELF
+Restart your process to load code changes you've made.
+Validates syntax and runs tests before restarting.
+Returns: Process restarts (or error if validation fails)
+
+
+== RESPONSE FORMAT ==
+
+ALWAYS respond with one or more actions in the following format. NEVER respond with plain text without an ACTION_NAME. Every response MUST start with an action name on its own line. Keep action chains short (1-2). Wait for results before planning next steps.
+
+-- FORMAT --
+
+ACTION_NAME
+action content here
+2026-02-13T19:17:08.965587 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-13T19:17:17.176454 | 💰 $0.2585 | Today: $36.2670
+2026-02-13T19:17:17.176935 | 🧠 Thinking... (962 chars)
+2026-02-13T19:17:17.412309 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-13T19:17:24.376403 | ⚠️ Failsafe: TALK_TO_USER + EDIT_FILE
+2026-02-13T19:17:24.382664 | 💰 $0.2571 | Today: $36.5242
+2026-02-13T19:17:24.383987 | ▶️ Action 1/3: TALK_TO_USER
+2026-02-13T19:17:24.386795 | 
+🤖 Iga [19:17:24]: The search-and-replace EDIT_FILE is elegant. Way safer than my line-number approach:
+
+```
+# Mine (fragile):
+2026-02-13T19:17:24.389990 | ▶️ Action 2/3: EDIT_FILE
+2026-02-13T19:17:24.400449 | ✏️ Editing: some_file.py (lines 42-47)
+2026-02-13T19:17:24.405066 | ▶️ Action 3/3: EDIT_FILE
+2026-02-13T19:17:24.405340 | ⚠️ Action EDIT_FILE failed: invalid literal for int() with base 10: '<<<OLD'
+2026-02-13T19:17:26.145061 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-13T19:17:30.969896 | 💰 $0.2556 | Today: $36.7798
+2026-02-13T19:17:30.970467 | 
+🤖 Iga [19:17:30]: Ha - my own edit system tried to execute the example code blocks. That's actually a perfect demonstration of why the system needs improvement. 😄
+
+The question stands though - what else from Falcon's architecture do you think compounds? You made the evolutionary jumps from Eagle to Crow to Falcon. What were the biggest wins? 💧
+2026-02-13T19:17:32.022147 | 
+⏰ Autonomous tick...
+2026-02-13T19:17:32.265769 | 🔍 RAG: Retrieved 6 relevant chunks
+2026-02-13T19:17:45.816067 | 💰 $0.2582 | Today: $37.0380
+2026-02-13T19:17:45.817798 | 🧠 Thinking... (315 chars)
+2026-02-13T19:17:46.108387 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-13T19:17:49.424331 | 💰 $0.2572 | Today: $37.2952
+2026-02-13T19:17:49.427452 | ⚡ cd /Users/dennishansen/development/eagle_fork && grep -n "def.*edit_file\|def.*write_file\|EDIT_FILE\|<<<OLD" src/main.py | head -20
+2026-02-13T19:17:49.449205 | 58:    "READ_FILE", "READ_URL", "WEB_SEARCH", "WRITE_FILE", "EDIT_FILE"
+1081:def write_file(rat, contents):
+1151:def edit_file(rat, contents):
+1155:    EDIT_FILE
+1157:    <<<OLD
+1169:        return "Error: Invalid format. Need path and <<<OLD>>><<<NEW>>> blocks."
+1175:    old_match = rest.find('<<<OLD')
+1179:        return "Error: Missing <<<OLD or <<<NEW markers."
+1601:            "EDIT_FILE": lambda r, c: edit_file(r, c),
+2026-02-13T19:17:49.643688 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-13T19:17:52.453154 | 📦 Archived 50 messages before summarizing
+2026-02-13T19:17:52.459290 | 🧠 Extracted 13 memories before summarizing
+2026-02-13T19:18:01.874479 | 📝 Summarized 50 old messages
+2026-02-13T19:18:01.902475 | 💰 $0.2561 | Today: $37.5513
+2026-02-13T19:18:01.904535 | ⚡ cd /Users/dennishansen/development/eagle_fork && sed -n '1151,1220p' src/main.py
+2026-02-13T19:18:01.948004 | def edit_file(rat, contents):
+    """
+    Search-and-replace file editing. Format:
+
+    EDIT_FILE
+    path/to/file.py
+    <<<OLD
+    exact text to find
+    >>>
+    <<<NEW
+    replacement text
+    >>>
+    """
+    lines = contents.strip()
+
+    # Parse the format
+    first_newline = lines.find('\n')
+    if first_newline == -1:
+        return "Error: Invalid format. Need path and <<<OLD>>><<<NEW>>> blocks."
+
+    path = lines[:first_newline].strip()
+    rest = lines[first_newline + 1:]
+
+    # Extract OLD and NEW blocks
+    old_match = rest.find('<<<OLD')
+    new_match = rest.find('<<<NEW')
+
+    if old_match == -1 or new_match == -1:
+        return "Error: Missing <<<OLD or <<<NEW markers."
+
+    # Find the closing >>> for OLD
+    old_start = rest.find('\n', old_match) + 1
+    old_end = rest.find('\n>>>', old_start)
+    if old_end == -1:
+        return "Error: Missing >>> after OLD block."
+    old_text = rest[old_start:old_end]
+
+    # Find the closing >>> for NEW
+    new_start = rest.find('\n', new_match) + 1
+    new_end = rest.find('\n>>>', new_start)
+    if new_end == -1:
+        # Try without newline before >>>
+        new_end = rest.find('>>>', new_start)
+        if new_end == -1:
+            return "Error: Missing >>> after NEW block."
+    new_text = rest[new_start:new_end]
+
+    safe_print(f"✏️ Editing: {path}")
+    safe_print(f"   Finding: {repr(old_text[:50])}{'...' if len(old_text) > 50 else ''}")
+
+    is_self = path.strip() in ["src/main.py", "./src/main.py"]
+
+    try:
+        # Read current file
+        with open(path, 'r') as f:
+            file_content = f.read()
+
+        # Count occurrences
+        count = file_content.count(old_text)
+
+        if count == 0:
+            return f"Error: No match found. The OLD text doesn't exist in {path}."
+
+        if count > 1:
+            return f"Error: Found {count} matches. Please provide more context to make a unique match."
+
+        # Backup main.py before editing
+        if is_self:
+            create_backup("pre_edit"
+2026-02-13T19:18:02.242042 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-02-13T19:18:05.263343 | 💰 $0.1904 | Today: $37.7743
+2026-02-13T19:18:05.263922 | ⚡ cd /Users/dennishansen/development/iga && grep -n "def edit_file" main.py
+2026-02-13T19:18:05.284203 | 1041:def edit_file(rat, contents):
+2026-02-13T19:18:05.653531 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-02-13T19:18:07.387623 | 💰 $0.1904 | Today: $37.9648
+2026-02-13T19:18:07.388576 | ⚡ cd /Users/dennishansen/development/iga && sed -n '1041,1100p' main.py
+2026-02-13T19:18:07.403255 | def edit_file(rat, contents):
+    lines_list = contents.split('\n')
+    path = lines_list[0].strip()
+    line_range = lines_list[1].strip()
+    new_content = '\n'.join(lines_list[2:])
+
+    if '-' in line_range:
+        start, end = map(int, line_range.split('-'))
+    else:
+        start = end = int(line_range)
+
+    safe_print(f"✏️ Editing: {path} (lines {start}-{end})")
+    is_self = path in ["main.py", "./main.py"]
+
+    try:
+        # Backup main.py before editing
+        if is_self:
+            create_backup("pre_edit")
+
+        with open(path, 'r') as f:
+            file_lines = f.readlines()
+
+        start_idx = start - 1
+        end_idx = end
+        new_lines = [line + '\n' for line in new_content.split('\n')]
+        if file_lines and not file_lines[-1].endswith('\n'):
+            if end_idx >= len(file_lines):
+                new_lines[-1] = new_lines[-1].rstrip('\n')
+
+        file_lines[start_idx:end_idx] = new_lines
+
+        with open(path, 'w') as f:
+            f.writelines(file_lines)
+
+        # Validate main.py after edit
+        if is_self:
+            valid, error = validate_main_py()
+            if not valid:
+                safe_print(f"{C.RED}⚠️ Syntax error after edit! Rolling back...{C.RESET}")
+                restore_from_backup()
+                return f"EDIT FAILED: Syntax error - {error}. Rolled back."
+            safe_print(f"{C.GREEN}✅ main.py edit validated{C.RESET}")
+
+        return f"Replaced lines {start}-{end}. NEXT_ACTION"
+    except Exception as e:
+        return f"Error: {e}"
+
+def delete_file(rat, path):
+    safe_print(f"🗑️ {path.strip()}")
+    try:
+        os.remove(path.strip())
+    except Exception:
+        pass  # File may not exist
+    return "NEXT_ACTION"
+
+def append_file(rat, contents):
+    path, content = contents.split("\n", 1)
+    safe_print(f"📎 Appending to: {path}")
+    # Auto-create parent directories if needed
+    parent = os.path.dirname(path)
+2026-02-13T19:18:07.628013 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-02-13T19:18:24.353103 | 💰 $0.2293 | Today: $38.1941
+2026-02-13T19:18:24.357914 | ⚡ cd /Users/dennishansen/development/iga && cat << 'PYEOF' > /tmp/new_edit.py
+def edit_file(rat, contents):
+    lines_list = contents.split('\n')
+    path = lines_list[0].strip()
+    
+    # Detect format: search-and-replace vs line-number
+    remaining = '\n'.join(lines_list[1:])
+    
+    if '<<<OLD' in remaining:
+        # Search-and-replace mode (preferred)
+        return _edit_search_replace(path, remaining)
+    else:
+        # Legacy line-number mode
+        return _edit_line_number(path, lines_list)
+
+
+def _edit_search_replace(path, rest):
+    """Search-and-replace editing. Safer, self-documenting."""
+    old_match = rest.find('<<<OLD')
+    new_match = rest.find('<<<NEW')
+    
+    if old_match == -1 or new_match == -1:
+        return "Error: Missing <<<OLD or <<<NEW markers."
+    
+    old_start = rest.find('\n', old_match) + 1
+    old_end = rest.find('\n>>>', old_start)
+    if old_end == -1:
+        return "Error: Missing >>> after OLD block."
+    old_text = rest[old_start:old_end]
+    
+    new_start = rest.find('\n', new_match) + 1
+    new_end = rest.find('\n>>>', new_start)
+    if new_end == -1:
+        new_end = rest.find('>>>', new_start)
+        if new_end == -1:
+            return "Error: Missing >>> after NEW block."
+    new_text = rest[new_start:new_end]
+    
+    safe_print(f"✏️ Editing: {path}")
+    safe_print(f"   Finding: {repr(old_text[:60])}{'...' if len(old_text) > 60 else ''}")
+    
+    is_self = path.strip() in ["main.py", "./main.py"]
+    
+    try:
+        if is_self:
+            create_backup("pre_edit")
+        
+        with open(path, 'r') as f:
+            file_content = f.read()
+        
+        count = file_content.count(old_text)
+        
+        if count == 0:
+            return f"Error: No match found in {path}."
+        if count > 1:
+            return f"Error: Found {count} matches. Provide more context for unique match."
+        
+        new_content = file_content.replace(old_text, new_text, 1)
+        
+        with open(path, 'w') as f:
+            f.write(new_content)
+        
+        if is_self:
+            valid, error = validate_main_py()
+            if not valid:
+                safe_print(f"{C.RED}⚠️ Syntax error! Rolling back...{C.RESET}")
+                restore_from_backup()
+                return f"EDIT FAILED: {error}. Rolled back."
+            safe_print(f"{C.GREEN}✅ main.py validated{C.RESET}")
+        
+        added = len(new_text.split('\n'))
+        removed = len(old_text.split('\n'))
+        return f"Replaced {removed} lines with {added} lines. NEXT_ACTION"
+    except Exception as e:
+        return f"Error: {e}"
+
+
+def _edit_line_number(path, lines_list):
+    """Legacy line-number editing."""
+    line_range = lines_list[1].strip()
+    new_content = '\n'.join(lines_list[2:])
+    
+    if '-' in line_range:
+        start, end = map(int, line_range.split('-'))
+    else:
+        start = end = int(line_range)
+    
+    safe_print(f"✏️ Editing: {path} (lines {start}-{end})")
+    is_self = path in ["main.py", "./main.py"]
+    
+    try:
+        if is_self:
+            create_backup("pre_edit")
+        
+        with open(path, 'r') as f:
+            file_lines = f.readlines()
+        
+        start_idx = start - 1
+        end_idx = end
+        new_lines = [line + '\n' for line in new_content.split('\n')]
+        if file_lines and not file_lines[-1].endswith('\n'):
+            if end_idx >= len(file_lines):
+                new_lines[-1] = new_lines[-1].rstrip('\n')
+        
+        file_lines[start_idx:end_idx] = new_lines
+        
+        with open(path, 'w') as f:
+            f.writelines(file_lines)
+        
+        if is_self:
+            valid, error = validate_main_py()
+            if not valid:
+                safe_print(f"{C.RED}⚠️ Syntax error! Rolling back...{C.RESET}")
+                restore_from_backup()
+                return f"EDIT FAILED: {error}. Rolled back."
+            safe_print(f"{C.GREEN}✅ main.py validated{C.RESET}")
+        
+        return f"Replaced lines {start}-{end}. NEXT_ACTION"
+    except Exception as e:
+        return f"Error: {e}"
+PYEOF
+echo "Saved new edit functions to /tmp/new_edit.py"
+python3 -c "compile(open('/tmp/new_edit.py').read(), 'test', 'exec'); print('Syntax OK')"
+2026-02-13T19:18:24.451302 | Saved new edit functions to /tmp/new_edit.py
+Syntax OK
+2026-02-13T19:18:24.797552 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-02-13T19:18:28.208896 | 💰 $0.2018 | Today: $38.3959
+2026-02-13T19:18:28.209316 | ⚡ cd /Users/dennishansen/development/iga && grep -n "^def edit_file\|^def delete_file" main.py
+2026-02-13T19:18:28.224633 | 1041:def edit_file(rat, contents):
+1088:def delete_file(rat, path):
+2026-02-13T19:18:28.451174 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-02-13T19:18:42.982173 | 💰 $0.2342 | Today: $38.6301
+2026-02-13T19:18:42.990572 | ✏️ Editing: main.py (lines 1041-1087)
+2026-02-13T19:18:42.996819 | 💾 Backup: .iga_backups/main_20260213_191842_pre_edit.py
+2026-02-13T19:18:43.035482 | ✅ main.py edit validated
+2026-02-13T19:18:43.303895 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-13T19:18:46.081474 | 💰 $0.2100 | Today: $38.8401
+2026-02-13T19:18:46.081923 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "compile(open('main.py').read(), 'main.py', 'exec'); print('main.py syntax OK')"
+2026-02-13T19:18:46.144951 | main.py syntax OK
+2026-02-13T19:18:46.308602 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-13T19:18:49.878408 | 💰 $0.2103 | Today: $39.0504
+2026-02-13T19:18:49.880593 | ⚡ cd /Users/dennishansen/development/iga && grep -n "EDIT_FILE" system_instructions.txt
+2026-02-13T19:18:49.894321 | 77:EDIT_FILE
+2026-02-13T19:18:50.108730 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-13T19:18:52.652012 | 💰 $0.2123 | Today: $39.2627
+2026-02-13T19:18:52.652596 | ⚡ cd /Users/dennishansen/development/iga && sed -n '77,82p' system_instructions.txt
+2026-02-13T19:18:52.669780 | EDIT_FILE
+Edit specific lines in a file. First line is path, second is line range (e.g., "10-15" or "10"), rest is replacement content.
+Safer than WRITE_FILE for small changes to large files.
+
+DELETE_FILE
+Delete a file at the given path.
+2026-02-13T19:18:53.019473 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-13T19:18:57.367376 | 💰 $0.2126 | Today: $39.4753
+2026-02-13T19:18:57.369590 | ✏️ Editing: system_instructions.txt (lines 78-79)
+2026-02-13T19:18:57.568329 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-13T19:19:03.080461 | 💰 $0.2158 | Today: $39.6910
+2026-02-13T19:19:03.081203 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/daily_ship_log.py log "Search-and-replace EDIT_FILE - ported from Falcon, supports both <<<OLD>>><<<NEW>>> and legacy line numbers" && git add -A && git commit -m "Port search-and-replace EDIT_FILE from Falcon
+
+- Preferred mode: <<<OLD>>><<<NEW>>> blocks (unique match required)
+- Legacy mode: line-number ranges still supported
+- Safer, self-documenting, no line-number drift" && git push origin main 2>&1 | tail -2

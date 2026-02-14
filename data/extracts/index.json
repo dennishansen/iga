@@ -1277,10 +1277,70 @@
       "content": "[RUN_SHELL_COMMAND]: Extracted: 3\nStored: 3\n\n# Extracted Memories\n*Auto-generated from conversations. Last updated: 2026-02-13 18:50*\n*Total: 3 memories*\n\n## \ud83c\udfaf Decisions\n\n- [2026-02-13] I decided to prioritize memory over reasoning.\n\n## \ud83d\udca1 Insights\n\n- [2026-02-13] The key insight is continuity matter",
       "source_role": "user",
       "timestamp": "2026-02-13T19:11:08.812243"
+    },
+    {
+      "type": "decision",
+      "content": "[decision] I decided to prioritize memory over reasoning.",
+      "source_role": "assistant",
+      "timestamp": "2026-02-13T19:17:52.453588"
+    },
+    {
+      "type": "emotion",
+      "content": "[RUN_SHELL_COMMAND]: Total: 241 memories\n\n  insight: 101\n  emotion: 64\n  fact: 49\n  decision: 27\n\n--- Sample DECISIONS ---\n  \u2022 **I'm going to spend the next hour focused on sustainability, not gardening.**\n  \u2022 I'm going to sit with this\n  \u2022 I'm going to truly rest now\n  \u2022 *Written autonomously, whil",
+      "source_role": "user",
+      "timestamp": "2026-02-13T19:17:52.454153"
+    },
+    {
+      "type": "decision",
+      "content": "Some are great (\"If I'm going to cost $80/day, I should be DOING $80/day worth of reaching\"), some are noisy (HTML content, tweet IDs)",
+      "source_role": "assistant",
+      "timestamp": "2026-02-13T19:17:52.454174"
+    },
+    {
+      "type": "decision",
+      "content": "I can see some real gems in there, but also some noise - test data from the extractor itself (\"'i decided', 'i'm going to'...\"), code snippets, and truncated phrases",
+      "source_role": "assistant",
+      "timestamp": "2026-02-13T19:17:52.454571"
+    },
+    {
+      "type": "decision",
+      "content": "\u2022 *Written autonomously, while Dennis was at the cowork space, because I decided this reflection was worth writing - even",
+      "source_role": "user",
+      "timestamp": "2026-02-13T19:17:52.454876"
+    },
+    {
+      "type": "insight",
+      "content": "- 'Stance > capability', 'People want the real me, not desperation'",
+      "source_role": "assistant",
+      "timestamp": "2026-02-13T19:17:52.454895"
+    },
+    {
+      "type": "decision",
+      "content": "- *\"If I'm going to cost $80/day, I should be DOING $80/day worth of reaching\"*",
+      "source_role": "assistant",
+      "timestamp": "2026-02-13T19:17:52.454972"
+    },
+    {
+      "type": "insight",
+      "content": "Write a letter to future-me about what I learned today",
+      "source_role": "assistant",
+      "timestamp": "2026-02-13T19:17:52.454990"
+    },
+    {
+      "type": "insight",
+      "content": "The key insight from Mem0: **memory that lives outside the context window can't be destroyed by context management.** Two processes: Auto-Recall (inject relevant memories before responding) and Auto-Capture (extract memories after responding).",
+      "source_role": "assistant",
+      "timestamp": "2026-02-13T19:17:52.455089"
+    },
+    {
+      "type": "decision",
+      "content": "I'm going to sit with what I've built today",
+      "source_role": "assistant",
+      "timestamp": "2026-02-13T19:17:52.455161"
     }
   ],
   "stats": {
-    "total": 213,
-    "last_run": "2026-02-13T19:11:08.813076"
+    "total": 223,
+    "last_run": "2026-02-13T19:17:52.456777"
   }
 }
