@@ -7,8 +7,8 @@ Can run as background check or on-demand
 import json
 from datetime import datetime, timedelta
 
-DAILY_BUDGET = 40.00
-WARN_THRESHOLD = 35.00  # Warn at 87.5% of budget
+DAILY_BUDGET = 75.00
+WARN_THRESHOLD = 65.00  # Warn at 87% of budget
 
 def get_daily_spend():
     """Get today's spending"""
