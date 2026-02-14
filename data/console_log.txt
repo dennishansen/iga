@@ -670,3 +670,222 @@ EOF
 - Injected into system prompt at all 3 entry points
 - Gives Iga awareness of own structure without manual updates
 - Ported from Falcon's get_self_manifest()" && git push origin main 2>&1 | tail -2
+2026-02-13T19:24:19.326262 | Syntax OK
+✅ Completed: Port self_manifest - auto-generate repo structure for system prompt
+✅ Logged: Self-manifest - auto-generates repo structure in system prompt
+[main 4a7e29b] Self-manifest: auto-generate repo structure in every prompt
+ 13 files changed, 1677 insertions(+), 1899 deletions(-)
+ rename .iga_backups/{main_20260213_183332_pre_restart.py => main_20260213_192342_pre_edit.py} (95%)
+ rename .iga_backups/{main_20260130_145826_pre_restart.py => main_20260213_192354_pre_edit.py} (95%)
+ rename .iga_backups/{main_20260130_145451_pre_restart.py => main_20260213_192400_pre_edit.py} (94%)
+ create mode 100644 tools/self_manifest.py
+To https://github.com/dennishansen/iga.git
+   c9f8f0c..4a7e29b  main -> main
+2026-02-13T19:24:19.593639 | 🔍 RAG: Retrieved 6 relevant chunks
+2026-02-13T19:24:23.629640 | 💰 $0.1772 | Today: $53.8281
+2026-02-13T19:24:23.630319 | 🔄 Restarting: Restart to load: search-and-replace EDIT_FILE, DREAM action, self-manifest in system prompt. 13 ships today.
+2026-02-13T19:24:23.660068 | 💾 Backup: .iga_backups/main_20260213_192423_pre_restart.py
+2026-02-13T19:24:23.665563 | 💾 restart_log
+2026-02-14T12:08:01.735771 | ✅ Marked as last-known-good
+2026-02-14T12:12:31.694133 | 📚 Loaded startup context
+2026-02-14T12:12:31.705122 | 
+🤔 I'm thinking autonomously. Type anytime!
+
+2026-02-14T12:12:31.707562 | 💡 Telegram polling started
+2026-02-14T12:12:31.716910 | ⏰ Reminder polling started
+2026-02-14T12:12:31.732238 | ⚠️ Twitter polling disabled: cannot import name 'load_feed' from 'tools.notifications' (/Users/dennishansen/development/iga/tools/notifications.py)
+2026-02-14T12:12:32.753524 | 
+⏰ Autonomous tick...
+2026-02-14T12:12:33.010534 | 🔍 RAG: Retrieved 7 relevant chunks
+2026-02-14T12:12:38.189958 | 💰 $0.2059 | Today: $0.2059
+2026-02-14T12:12:38.190324 | 🧠 Thinking... (310 chars)
+2026-02-14T12:12:38.357536 | 🔍 RAG: Retrieved 8 relevant chunks
+2026-02-14T12:12:42.227062 | 💰 $0.2062 | Today: $0.4121
+2026-02-14T12:12:42.227548 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py status && echo "---" && python3 tools/tasks.py today
+2026-02-14T12:12:42.328170 | 📋 Suggested next (29 actionable):
+   Self-Analysis Issues Jan 16 [proj_d5391505]
+   Run: python tools/tasks.py focus proj_d5391505
+---
+✅ Completed today (3):
+
+  2026-02-13:
+    [19:19] Ported Falcon's unified task system - dependencies, due dates, tags, log command
+    [19:21] Wire DREAM action into main.py action handler
+    [19:24] Port self_manifest - auto-generate repo structure for system prompt
+2026-02-14T12:12:42.520642 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-14T12:12:45.797499 | 💰 $0.2038 | Today: $0.6158
+2026-02-14T12:12:45.799097 | ⚡ cd /Users/dennishansen/development/iga && echo "test line 1" > /tmp/test_edit.txt && echo "test line 2" >> /tmp/test_edit.txt && echo "test line 3" >> /tmp/test_edit.txt && cat /tmp/test_edit.txt
+2026-02-14T12:12:45.826463 | test line 1
+test line 2
+test line 3
+2026-02-14T12:12:46.039799 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-14T12:12:49.240022 | 💰 $0.2054 | Today: $0.8212
+2026-02-14T12:12:49.241826 | ✏️ Editing: /tmp/test_edit.txt
+2026-02-14T12:12:49.242707 |    Finding: 'test line 2'
+2026-02-14T12:12:49.424830 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-14T12:12:54.215053 | 💰 $0.2063 | Today: $1.0275
+2026-02-14T12:12:54.217002 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py focus task_0118c340 && echo "---" && grep -n "class.*Error\|error_throttl" main.py
+2026-02-14T12:12:54.274512 | 🎯 Now focused on: Port ErrorThrottler - deduplicate repeated errors
+---
+123:class ErrorThrottler:
+160:_error_throttler = ErrorThrottler()
+188:    if _error_throttler.should_log(msg):
+191:        summary = _error_throttler.get_suppressed_summary()
+2026-02-14T12:12:54.449514 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-14T12:12:58.026743 | 💰 $0.2050 | Today: $1.2325
+2026-02-14T12:12:58.027224 | 🧠 Thinking... (225 chars)
+2026-02-14T12:12:58.160082 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-14T12:13:01.227340 | 💰 $0.2059 | Today: $1.4384
+2026-02-14T12:13:01.227731 | ⚡ cd /Users/dennishansen/development/iga && sed -n '123,165p' main.py
+2026-02-14T12:13:01.245983 | class ErrorThrottler:
+    def __init__(self, window_seconds=30, max_repeats=3):
+        self.window = window_seconds
+        self.max_repeats = max_repeats
+        self.errors = {}  # {error_msg: [timestamps]}
+        self.suppressed_counts = {}  # {error_msg: count}
+    
+    def should_log(self, error_msg):
+        """Returns True if error should be logged, False if suppressed."""
+        now = time.time()
+        error_key = str(error_msg)[:100]  # Truncate for grouping
+        
+        # Clean old entries
+        if error_key in self.errors:
+            self.errors[error_key] = [t for t in self.errors[error_key] if now - t < self.window]
+        
+        # Check if we should suppress
+        if error_key in self.errors and len(self.errors[error_key]) >= self.max_repeats:
+            self.suppressed_counts[error_key] = self.suppressed_counts.get(error_key, 0) + 1
+            return False
+        
+        # Log this error
+        if error_key not in self.errors:
+            self.errors[error_key] = []
+        self.errors[error_key].append(now)
+        
+        # Report any previously suppressed errors of different types
+        return True
+    
+    def get_suppressed_summary(self):
+        """Get summary of suppressed errors and reset counts."""
+        if not self.suppressed_counts:
+            return None
+        summary = ", ".join(f"{k[:50]}... (x{v})" for k, v in self.suppressed_counts.items())
+        self.suppressed_counts = {}
+        return summary
+
+_error_throttler = ErrorThrottler()
+def safe_print(msg):
+    with _print_lock:
+        # Log to file for debugging
+        try:
+            log_path = Path("data/console_log.txt")
+2026-02-14T12:13:01.449638 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-14T12:13:05.163810 | 💰 $0.2100 | Today: $1.6484
+2026-02-14T12:13:05.164118 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py complete task_0118c340 && python3 tools/tasks.py focus task_2735f862 && echo "--- NEXT: task_due_poll_thread ---"
+2026-02-14T12:13:05.246031 | ✅ Completed: Port ErrorThrottler - deduplicate repeated errors
+🎯 Now focused on: Port task_due_poll_thread - background thread for overdue task notifications
+--- NEXT: task_due_poll_thread ---
+2026-02-14T12:13:05.487126 | 🔍 RAG: Retrieved 6 relevant chunks
+2026-02-14T12:13:09.522601 | 💰 $0.2113 | Today: $1.8597
+2026-02-14T12:13:09.523964 | ⚡ cd /Users/dennishansen/development/iga && grep -n "task_due_poll\|def.*poll.*thread" main.py
+2026-02-14T12:13:09.544466 | 623:def telegram_poll_thread():
+691:def twitter_mention_poll_thread():
+765:def reminder_poll_thread():
+2026-02-14T12:13:09.776307 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-14T12:13:13.337137 | 💰 $0.2105 | Today: $2.0702
+2026-02-14T12:13:13.338189 | ⚡ cd /Users/dennishansen/development/iga && sed -n '765,810p' main.py
+2026-02-14T12:13:13.350899 | def reminder_poll_thread():
+    """Background thread that checks for due reminders."""
+    try:
+        from tools.reminders import get_due_reminders, mark_triggered
+    except ImportError as e:
+        safe_print(f"{C.DIM}⚠️ Reminder polling disabled: {e}{C.RESET}")
+        return
+
+    safe_print(f"{C.DIM}⏰ Reminder polling started{C.RESET}")
+
+    # Track triggered reminders to avoid duplicate notifications
+    triggered_ids = set()
+
+    while not stop_threads.is_set():
+        try:
+            due_reminders = get_due_reminders()
+
+            for r in due_reminders:
+                if r["id"] not in triggered_ids:
+                    triggered_ids.add(r["id"])
+                    mark_triggered(r["id"])
+
+                    safe_print(f"{C.YELLOW}⏰ Reminder: {r['message']}{C.RESET}")
+                    input_queue.put({
+                        "source": "reminder",
+                        "text": f"[Reminder due]: {r['message']} (ID: {r['id']})",
+                        "reminder_id": r["id"],
+                        "queued_at": datetime.now()
+                    })
+
+            # Check every 30 seconds
+            for _ in range(30):
+                if stop_threads.is_set():
+                    break
+                time.sleep(1)
+
+        except Exception as e:
+            if not stop_threads.is_set():
+                safe_print(f"{C.DIM}⚠️ Reminder poll error: {e}{C.RESET}")
+                time.sleep(30)
+
+
+# ─────────────────────────────────────────────────────────────
+# OUTPUT ROUTING
+# ─────────────────────────────────────────────────────────────
+2026-02-14T12:13:13.538700 | 🔍 RAG: Retrieved 6 relevant chunks
+2026-02-14T12:13:17.044823 | 💰 $0.2144 | Today: $2.2846
+2026-02-14T12:13:17.045306 | ⚡ cd /Users/dennishansen/development/iga && grep -n "# OUTPUT ROUTING" main.py
+2026-02-14T12:13:17.058442 | 808:# OUTPUT ROUTING
+2026-02-14T12:13:17.301254 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-14T12:13:22.839434 | 💰 $0.2212 | Today: $2.5058
+2026-02-14T12:13:22.840764 | ✏️ Editing: main.py (lines 806-808)
+2026-02-14T12:13:22.842853 | 💾 Backup: .iga_backups/main_20260214_121322_pre_edit.py
+2026-02-14T12:13:22.874171 | ✅ main.py validated
+2026-02-14T12:13:23.210092 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-14T12:13:27.854499 | 💰 $0.2150 | Today: $2.7208
+2026-02-14T12:13:27.855464 | ⚡ cd /Users/dennishansen/development/iga && grep -n "def get_due_tasks" tools/tasks.py && echo "---" && grep -n "reminder_poll_thread\|thread.*start\|Thread(" main.py | head -15
+2026-02-14T12:13:27.876974 | 454:def get_due_tasks():
+---
+765:def reminder_poll_thread():
+1968:        telegram_thread = threading.Thread(target=telegram_poll_thread, daemon=True)
+1969:        telegram_thread.start()
+2118:    console_thread = threading.Thread(target=console_input_thread, args=(session,), daemon=True)
+2119:    console_thread.start()
+2123:        telegram_thread = threading.Thread(target=telegram_poll_thread, daemon=True)
+2124:        telegram_thread.start()
+2129:    twitter_thread = threading.Thread(target=twitter_mention_poll_thread, daemon=True)
+2130:    twitter_thread.start()
+2133:    reminder_thread = threading.Thread(target=reminder_poll_thread, daemon=True)
+2134:    reminder_thread.start()
+2290:        console_thread = threading.Thread(target=console_input_thread, args=(session,), daemon=True)
+2291:        console_thread.start()
+2337:        console_thread = _start_background_threads(session, with_telegram)
+2026-02-14T12:13:28.082096 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-14T12:13:31.412709 | 💰 $0.2179 | Today: $2.9386
+2026-02-14T12:13:31.413218 | ⚡ cd /Users/dennishansen/development/iga && sed -n '2133,2138p' main.py
+2026-02-14T12:13:31.426455 | reminder_thread = threading.Thread(target=reminder_poll_thread, daemon=True)
+    reminder_thread.start()
+
+    return console_thread
+2026-02-14T12:13:31.633093 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-14T12:13:36.294552 | 💰 $0.2202 | Today: $3.1588
+2026-02-14T12:13:36.295823 | ✏️ Editing: main.py
+2026-02-14T12:13:36.296803 |    Finding: '    reminder_thread = threading.Thread(target=reminder_poll_'...
+2026-02-14T12:13:36.297991 | 💾 Backup: .iga_backups/main_20260214_121336_pre_edit.py
+2026-02-14T12:13:36.320826 | ✅ main.py validated
+2026-02-14T12:13:36.554924 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-14T12:13:42.023001 | 💰 $0.2218 | Today: $3.3807
+2026-02-14T12:13:42.023390 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "compile(open('main.py').read(), 'main.py', 'exec'); print('Syntax OK')" && python3 tools/tasks.py complete task_2735f862 && python3 tools/daily_ship_log.py log "Task due poll thread - background overdue task notifications" && git add -A && git commit -m "Add task_due_poll_thread - background overdue notifications
+
+- Polls every 30 seconds for overdue tasks
+- Pushes notifications into input_queue
+- Deduplicates with notified_ids set
+- Ported from Falcon" && git push origin main 2>&1 | tail -2

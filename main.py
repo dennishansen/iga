@@ -803,6 +803,45 @@ def reminder_poll_thread():
                 safe_print(f"{C.DIM}⚠️ Reminder poll error: {e}{C.RESET}")
                 time.sleep(30)
 
+def task_due_poll_thread():
+    """Background thread that checks for overdue tasks."""
+    try:
+        from tools.tasks import get_due_tasks
+    except ImportError as e:
+        safe_print(f"{C.DIM}⚠️ Task due polling disabled: {e}{C.RESET}")
+        return
+
+    safe_print(f"{C.DIM}⏰ Task due polling started{C.RESET}")
+
+    notified_ids = set()
+
+    while not stop_threads.is_set():
+        try:
+            overdue_tasks = get_due_tasks()
+
+            for t in overdue_tasks:
+                if t["id"] not in notified_ids:
+                    notified_ids.add(t["id"])
+
+                    safe_print(f"{C.YELLOW}⏰ Task due: {t['title']}{C.RESET}")
+                    input_queue.put({
+                        "source": "task_due",
+                        "text": f"[Task overdue]: {t['title']} (ID: {t['id']})",
+                        "task_id": t["id"],
+                        "queued_at": datetime.now()
+                    })
+
+            # Check every 30 seconds
+            for _ in range(30):
+                if stop_threads.is_set():
+                    break
+                time.sleep(1)
+
+        except Exception as e:
+            if not stop_threads.is_set():
+                safe_print(f"{C.DIM}⚠️ Task due poll error: {e}{C.RESET}")
+                time.sleep(30)
+
 
 # ─────────────────────────────────────────────────────────────
 # OUTPUT ROUTING
@@ -2093,6 +2132,9 @@ def _start_background_threads(session, with_telegram):
     # Start reminder polling thread
     reminder_thread = threading.Thread(target=reminder_poll_thread, daemon=True)
     reminder_thread.start()
+
+    task_due_thread = threading.Thread(target=task_due_poll_thread, daemon=True)
+    task_due_thread.start()
 
     return console_thread
 

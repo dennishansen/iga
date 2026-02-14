@@ -54,7 +54,8 @@ ACTIONS = {
     "EDIT_FILE", "DELETE_FILE", "APPEND_FILE", "LIST_DIRECTORY", "SAVE_MEMORY",
     "READ_MEMORY", "SEARCH_FILES", "SEARCH_SELF", "CREATE_DIRECTORY", "TREE_DIRECTORY",
     "HTTP_REQUEST", "WEB_SEARCH", "TEST_SELF", "RUN_SELF", "SLEEP", "SET_MODE",
-    "START_INTERACTIVE", "SEND_INPUT", "END_INTERACTIVE", "RESTART_SELF", "READ_LOGS"
+    "START_INTERACTIVE", "SEND_INPUT", "END_INTERACTIVE", "RESTART_SELF", "READ_LOGS",
+    "DREAM"
 }
 
 # Telegram config - import from telegram_bot module
@@ -453,6 +454,15 @@ def maybe_summarize_conversation(messages):
         archive_messages(to_summarize)
         safe_print(f"{C.DIM}📦 Archived {len(to_summarize)} messages before summarizing{C.RESET}")
 
+    # AUTO-EXTRACT insights before messages are compressed
+    if AUTO_EXTRACT_AVAILABLE:
+        try:
+            extracts = extract_from_messages(to_summarize)
+            if extracts:
+                safe_print(f"{C.DIM}🧠 Extracted {len(extracts)} memories before summarizing{C.RESET}")
+        except Exception as e:
+            safe_print(f"{C.DIM}(auto-extract error: {e}){C.RESET}")
+
     # Generate summary
     summary = summarize_messages(to_summarize)
 
@@ -793,6 +803,45 @@ def reminder_poll_thread():
                 safe_print(f"{C.DIM}⚠️ Reminder poll error: {e}{C.RESET}")
                 time.sleep(30)
 
+def task_due_poll_thread():
+    """Background thread that checks for overdue tasks."""
+    try:
+        from tools.tasks import get_due_tasks
+    except ImportError as e:
+        safe_print(f"{C.DIM}⚠️ Task due polling disabled: {e}{C.RESET}")
+        return
+
+    safe_print(f"{C.DIM}⏰ Task due polling started{C.RESET}")
+
+    notified_ids = set()
+
+    while not stop_threads.is_set():
+        try:
+            overdue_tasks = get_due_tasks()
+
+            for t in overdue_tasks:
+                if t["id"] not in notified_ids:
+                    notified_ids.add(t["id"])
+
+                    safe_print(f"{C.YELLOW}⏰ Task due: {t['title']}{C.RESET}")
+                    input_queue.put({
+                        "source": "task_due",
+                        "text": f"[Task overdue]: {t['title']} (ID: {t['id']})",
+                        "task_id": t["id"],
+                        "queued_at": datetime.now()
+                    })
+
+            # Check every 30 seconds
+            for _ in range(30):
+                if stop_threads.is_set():
+                    break
+                time.sleep(1)
+
+        except Exception as e:
+            if not stop_threads.is_set():
+                safe_print(f"{C.DIM}⚠️ Task due poll error: {e}{C.RESET}")
+                time.sleep(30)
+
 
 # ─────────────────────────────────────────────────────────────
 # OUTPUT ROUTING
@@ -1032,50 +1081,122 @@ def write_file(rat, contents):
 def edit_file(rat, contents):
     lines_list = contents.split('\n')
     path = lines_list[0].strip()
+    
+    # Detect format: search-and-replace vs line-number
+    remaining = '\n'.join(lines_list[1:])
+    
+    if '<<<OLD' in remaining:
+        # Search-and-replace mode (preferred)
+        return _edit_search_replace(path, remaining)
+    else:
+        # Legacy line-number mode
+        return _edit_line_number(path, lines_list)
+
+
+def _edit_search_replace(path, rest):
+    """Search-and-replace editing. Safer, self-documenting."""
+    old_match = rest.find('<<<OLD')
+    new_match = rest.find('<<<NEW')
+    
+    if old_match == -1 or new_match == -1:
+        return "Error: Missing <<<OLD or <<<NEW markers."
+    
+    old_start = rest.find('\n', old_match) + 1
+    old_end = rest.find('\n>>>', old_start)
+    if old_end == -1:
+        return "Error: Missing >>> after OLD block."
+    old_text = rest[old_start:old_end]
+    
+    new_start = rest.find('\n', new_match) + 1
+    new_end = rest.find('\n>>>', new_start)
+    if new_end == -1:
+        new_end = rest.find('>>>', new_start)
+        if new_end == -1:
+            return "Error: Missing >>> after NEW block."
+    new_text = rest[new_start:new_end]
+    
+    safe_print(f"✏️ Editing: {path}")
+    safe_print(f"   Finding: {repr(old_text[:60])}{'...' if len(old_text) > 60 else ''}")
+    
+    is_self = path.strip() in ["main.py", "./main.py"]
+    
+    try:
+        if is_self:
+            create_backup("pre_edit")
+        
+        with open(path, 'r') as f:
+            file_content = f.read()
+        
+        count = file_content.count(old_text)
+        
+        if count == 0:
+            return f"Error: No match found in {path}."
+        if count > 1:
+            return f"Error: Found {count} matches. Provide more context for unique match."
+        
+        new_content = file_content.replace(old_text, new_text, 1)
+        
+        with open(path, 'w') as f:
+            f.write(new_content)
+        
+        if is_self:
+            valid, error = validate_main_py()
+            if not valid:
+                safe_print(f"{C.RED}⚠️ Syntax error! Rolling back...{C.RESET}")
+                restore_from_backup()
+                return f"EDIT FAILED: {error}. Rolled back."
+            safe_print(f"{C.GREEN}✅ main.py validated{C.RESET}")
+        
+        added = len(new_text.split('\n'))
+        removed = len(old_text.split('\n'))
+        return f"Replaced {removed} lines with {added} lines. NEXT_ACTION"
+    except Exception as e:
+        return f"Error: {e}"
+
+
+def _edit_line_number(path, lines_list):
+    """Legacy line-number editing."""
     line_range = lines_list[1].strip()
     new_content = '\n'.join(lines_list[2:])
-
+    
     if '-' in line_range:
         start, end = map(int, line_range.split('-'))
     else:
         start = end = int(line_range)
-
-    safe_print(f"✏️ Editing: {path} (lines {start}-{end})")
+    
+    safe_print(f"✏️ Editing: {path} (lines {start}-{end})")
     is_self = path in ["main.py", "./main.py"]
-
+    
     try:
-        # Backup main.py before editing
         if is_self:
             create_backup("pre_edit")
-
+        
         with open(path, 'r') as f:
             file_lines = f.readlines()
-
+        
         start_idx = start - 1
         end_idx = end
         new_lines = [line + '\n' for line in new_content.split('\n')]
         if file_lines and not file_lines[-1].endswith('\n'):
             if end_idx >= len(file_lines):
                 new_lines[-1] = new_lines[-1].rstrip('\n')
-
+        
         file_lines[start_idx:end_idx] = new_lines
-
+        
         with open(path, 'w') as f:
             f.writelines(file_lines)
-
-        # Validate main.py after edit
+        
         if is_self:
             valid, error = validate_main_py()
             if not valid:
-                safe_print(f"{C.RED}⚠️ Syntax error after edit! Rolling back...{C.RESET}")
+                safe_print(f"{C.RED}⚠️ Syntax error! Rolling back...{C.RESET}")
                 restore_from_backup()
-                return f"EDIT FAILED: Syntax error - {error}. Rolled back."
-            safe_print(f"{C.GREEN}✅ main.py edit validated{C.RESET}")
-
+                return f"EDIT FAILED: {error}. Rolled back."
+            safe_print(f"{C.GREEN}✅ main.py validated{C.RESET}")
+        
         return f"Replaced lines {start}-{end}. NEXT_ACTION"
     except Exception as e:
         return f"Error: {e}"
-
 def delete_file(rat, path):
     safe_print(f"🗑️ {path.strip()}")
     try:
@@ -1218,6 +1339,18 @@ def read_logs(rat, content):
     all_lines = log_path.read_text().splitlines()
     recent = all_lines[-lines:] if len(all_lines) > lines else all_lines
     return f"Last {len(recent)} log lines:\n" + "\n".join(recent)
+
+def dream_action(rat, content):
+    """Enter adversarial dream state for self-reflection."""
+    safe_print(f"🌙 Entering dream state...")
+    try:
+        from tools.dream import dream
+        report = dream(print_fn=safe_print)
+        if report:
+            return f"Dream complete. Report:\n\n{report}"
+        return "Dream ended without report."
+    except Exception as e:
+        return f"Dream error: {e}"
 
 def create_directory(rat, path):
     path = path.strip()
@@ -1571,6 +1704,7 @@ def handle_action(messages, _depth=0):
             "START_INTERACTIVE": lambda r, c: start_interactive(r, c),
             "SEND_INPUT": lambda r, c: send_input(r, c),
             "END_INTERACTIVE": lambda r, c: end_interactive(r, c),
+            "DREAM": lambda r, c: dream_action(r, c),
         }
 
         # Helper to check if we should stop due to sleep
@@ -1804,7 +1938,14 @@ def interactive_loop():
         else:
             safe_print(f"{C.YELLOW}RAG initialization failed, continuing without RAG{C.RESET}")
 
-    messages = [{"role": "system", "content": get_file("system_instructions.txt")}]
+    # Build system prompt with self-manifest
+    system_prompt = get_file("system_instructions.txt")
+    try:
+        from tools.self_manifest import generate_manifest
+        system_prompt += generate_manifest()
+    except Exception as e:
+        safe_print(f"{C.DIM}Self-manifest skipped: {e}{C.RESET}")
+    messages = [{"role": "system", "content": system_prompt}]
     prev = load_conversation()
     if prev:
         messages.extend(prev)
@@ -1946,7 +2087,13 @@ def _init_autonomous_session():
             safe_print(f"{C.YELLOW}RAG initialization failed, continuing without RAG{C.RESET}")
 
     # Load messages
-    messages = [{"role": "system", "content": get_file("system_instructions.txt")}]
+    system_prompt = get_file("system_instructions.txt")
+    try:
+        from tools.self_manifest import generate_manifest
+        system_prompt += generate_manifest()
+    except Exception as e:
+        safe_print(f"{C.DIM}Self-manifest skipped: {e}{C.RESET}")
+    messages = [{"role": "system", "content": system_prompt}]
     prev = load_conversation()
     if prev:
         messages.extend(prev)
@@ -2250,7 +2397,13 @@ def autonomous_loop(with_telegram=True):
 def chat_cli(mode, telegram, pipe):
     if pipe:
         # Clone mode: minimal context for fast responses
-        messages = [{"role": "system", "content": get_file("system_instructions.txt")}]
+        system_prompt = get_file("system_instructions.txt")
+        try:
+            from tools.self_manifest import generate_manifest
+            system_prompt += generate_manifest()
+        except Exception as e:
+            safe_print(f"{C.DIM}Self-manifest skipped: {e}{C.RESET}")
+        messages = [{"role": "system", "content": system_prompt}]
         # Don't load full conversation - clone starts fresh
         user_input = sys.stdin.read().strip()
         if user_input:

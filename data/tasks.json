@@ -889,7 +889,7 @@
     {
       "id": "task_2735f862",
       "title": "Port task_due_poll_thread - background thread for overdue task notifications",
-      "status": "pending",
+      "status": "completed",
       "priority": 2,
       "blocked_by": [],
       "due_at": null,
@@ -897,12 +897,12 @@
         "falcon-port"
       ],
       "created": "2026-02-13T19:22:32.933516",
-      "completed": null
+      "completed": "2026-02-14T12:13:42.127154"
     },
     {
       "id": "task_0118c340",
       "title": "Port ErrorThrottler - deduplicate repeated errors",
-      "status": "pending",
+      "status": "completed",
       "priority": 2,
       "blocked_by": [],
       "due_at": null,
@@ -910,7 +910,7 @@
         "falcon-port"
       ],
       "created": "2026-02-13T19:22:32.965739",
-      "completed": null
+      "completed": "2026-02-14T12:13:05.210008"
     },
     {
       "id": "task_b078ab2d",
