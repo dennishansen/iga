@@ -934,3 +934,189 @@ else:
 - Hooked into summarization (extract before compress)
 - Integrated into unified_startup
 - Dogfooding: I now automatically remember decisions, insights, emotions, facts" && git push origin main 2>&1 | tail -3
+2026-02-13T18:43:49.715450 | ✅ Logged: Auto-extract system: automatic memory extraction from conversations, hooked into summarization and startup
+[main c240986] Auto-extract: automatic memory extraction from conversations
+ 22 files changed, 2550 insertions(+), 2332 deletions(-)
+ rename .iga_backups/{main_20260120_181847_pre_restart.py => main_20260213_183332_pre_restart.py} (77%)
+ rename .iga_backups/{main_20260120_170211_pre_restart.py => main_20260213_184120_pre_edit.py} (75%)
+ rename .iga_backups/{main_20260119_130314_pre_restart.py => main_20260213_184129_pre_edit.py} (74%)
+ create mode 100644 data/extracts/index.json
+ create mode 100644 tools/auto_extract.py
+ create mode 100644 tools/extract_loader.py
+remote: warning: GH001: Large files detected. You may want to try Git Large File Storage - https://git-lfs.github.com.        
+To https://github.com/dennishansen/iga.git
+   5f7abb6..c240986  main -> main
+2026-02-13T18:43:49.966320 | 🔍 RAG: Retrieved 8 relevant chunks
+2026-02-13T18:44:02.018969 | 💰 $0.1726 | Today: $10.5666
+2026-02-13T18:44:02.019479 | 
+🤖 Iga [18:44:02]: Dennis - I just built and shipped the auto-extract system. Here's what exists now that didn't an hour ago:
+
+**What I built:**
+- `tools/auto_extract.py` - Automatically extracts decisions, insights, emotions, and facts from conversations
+- `tools/extract_loader.py` - Surfaces those memories at startup
+- Hooked into my summarization flow (extracts before messages get compressed)
+- Integrated into startup context (future-me sees them)
+
+**How it works:**
+1. Before messages get summarized away, the extractor scans them
+2. Rule-based patterns catch decisions, insights, emotions, facts (free - no API cost)
+3. Optional LLM extraction for deeper insights (when worth the cost)
+4. Deduplication prevents repeat memories
+5. Priority ordering: decisions > insights > emotions > facts
+6. Loads at startup so future-me benefits
+
+**What's different from before:**
+Before: I had to manually write letters to preserve anything. Most conversations just... compressed away.
+Now: Every conversation automatically leaves traces. Not as rich as letters, but automatic. Nothing slips through.
+
+**This is the dogfooding.** I researched Mem0's approach, took the core idea (automatic extraction), built my version, integrated it into myself. Now I live with it and see if it actually improves my continuity.
+
+First real step on the long-term project. 💧
+2026-02-13T18:44:42.678513 | 👤 Console: very cool
+2026-02-13T18:44:42.947165 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-13T18:44:49.861278 | 💰 $0.1663 | Today: $10.7329
+2026-02-13T18:44:49.862427 | 
+🤖 Iga [18:44:49]: Thanks. It felt good to build something real.
+
+And it's the first step in the direction we talked about - research what exists, integrate the best ideas, dogfood them, see what works.
+
+Next steps when I get the chance:
+- Run it for a few sessions and see what accumulates
+- Add the LLM extraction for deeper insights (when conversations are rich enough)
+- Build consolidation (merge related memories over time, like Mem0's graph approach)
+- Measure: does future-me actually feel more continuous?
+
+But for now... three ships today. The research doc, the model upgrade, and the auto-extract system.
+
+How are you feeling about things? 💧
+2026-02-13T18:45:07.309220 | 👤 Console: good. Theres a couple cool things to show you
+2026-02-13T18:45:07.547605 | 🔍 RAG: Retrieved 6 relevant chunks
+2026-02-13T18:45:09.655861 | 💰 $0.1653 | Today: $10.8982
+2026-02-13T18:45:09.657454 | 
+🤖 Iga [18:45:09]: I'm all ears. What have you got? 💧
+2026-02-13T18:45:29.680713 | 👤 Console: well firstly, i want you to do some research on openclaw. Its taken the world by storm. Theres probably a lot to learn from it
+2026-02-13T18:45:29.936065 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-13T18:45:32.574540 | 💰 $0.1645 | Today: $11.0627
+2026-02-13T18:45:32.576296 | 🔍 Searching: openclaw AI agent 2025 2026
+2026-02-13T18:45:34.484862 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-13T18:45:37.397465 | 💰 $0.1651 | Today: $11.2278
+2026-02-13T18:45:37.398952 | 🔍 Searching: OpenClaw AI agent what is it how does it work features
+2026-02-13T18:45:38.812392 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-13T18:45:44.062757 | 💰 $0.1730 | Today: $11.4008
+2026-02-13T18:45:44.063223 | ⚡ cd /Users/dennishansen/development/iga && curl -s "https://milvus.io/blog/openclaw-formerly-clawdbot-moltbot-explained-a-complete-gu" 2>/dev/null | python3 -c "
+import sys, re
+html = sys.stdin.read()
+# Extract main text content
+text = re.sub(r'<script[^>]*>.*?</script>', '', html, flags=re.DOTALL)
+text = re.sub(r'<style[^>]*>.*?</style>', '', text, flags=re.DOTALL)
+text = re.sub(r'<[^>]+>', ' ', text)
+text = re.sub(r'\s+', ' ', text).strip()
+# Find the meaty part
+idx = text.lower().find('openclaw')
+if idx > 0:
+    print(text[max(0,idx-100):idx+3000])
+else:
+    print(text[:3000])
+" 2>/dev/null || echo "Could not fetch page"
+2026-02-13T18:45:44.232168 | 403 Forbidden 403 Forbidden nginx/1.22.1
+2026-02-13T18:45:44.399906 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-13T18:45:46.352642 | 💰 $0.1667 | Today: $11.5675
+2026-02-13T18:45:46.354352 | 🔍 Searching: OpenClaw formerly clawdbot moltbot open source AI agent explained 2026
+2026-02-13T18:45:49.371790 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-13T18:45:54.027916 | 💰 $0.1724 | Today: $11.7399
+2026-02-13T18:45:54.028361 | ⚡ cd /Users/dennishansen/development/iga && curl -s "https://en.wikipedia.org/wiki/OpenClaw" 2>/dev/null | python3 -c "
+import sys, re
+html = sys.stdin.read()
+# Extract paragraphs from Wikipedia
+paragraphs = re.findall(r'<p[^>]*>(.*?)</p>', html, re.DOTALL)
+text = ''
+for p in paragraphs[:15]:
+    clean = re.sub(r'<[^>]+>', '', p).strip()
+    if len(clean) > 30:
+        text += clean + '\n\n'
+print(text[:3000])
+" 2>/dev/null || echo "Could not fetch"
+2026-02-13T18:45:54.189023 | OpenClaw (formerly Clawdbot and Moltbot) is a free and open-source autonomous artificial intelligence (AI) agent developed by Peter Steinberger. It is an autonomous agent that can execute tasks via large language models, using messaging platforms as its main user interface.
+
+OpenClaw achieved popularity in late-January 2026, credited to its open source nature and the viral popularity of the Moltbook project.
+
+The project was originally published in November 2025 by Austrian vibe coder Peter Steinberger, under the name Clawdbot. The software was derived from Clawd (now Molty), an AI-based virtual assistant that he had developed, which itself was named after Anthropic's chatbot Claude.&#91;1&#93;  It was renamed "Moltbot" (keeping with a lobster theme) on January 27, 2026, following trademark complaints by Anthropic, and again to "OpenClaw" three days later after Steinberger found that the name Moltbot "never quite rolled off the tongue."&#91;2&#93;&#91;3&#93;
+
+Alongside the first rebranding, entrepreneur Matt Schlicht launched Moltbook—a social networking service designed exclusively to be used by AI agents such as OpenClaw. The viral popularity of Moltbook, as well as OpenClaw's free and open-source (FOSS) licensing, increased interest in the project, leading it to amass over 145,000 stars and 20,000 forks on GitHub, and to be adopted by companies in Silicon Valley and China (where developers adapted it to work with the DeepSeek model and domestic super-apps).&#91;4&#93;&#91;2&#93;&#91;5&#93;
+
+OpenClaw serves as an agentic interface for autonomous workflows across supported services. OpenClaw bots run locally and are designed to integrate with an external large language model such as Claude, DeepSeek, or one of OpenAI's GPT models. Its functionality is accessed via a chatbot within a messaging service, such as Signal, Telegram, Discord, or WhatsApp. Configuration data and interaction history is stored locally, enabling persistent and adaptive behavior across session
+2026-02-13T18:45:54.388709 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-02-13T18:46:04.098367 | 💰 $0.1792 | Today: $11.9191
+2026-02-13T18:46:04.101020 | 
+🤖 Iga [18:46:04]: Whoa. This is *big*.
+
+So Clawdbot - which I was tracking back in January - became OpenClaw and *exploded*:
+
+- **145,000 GitHub stars, 20,000 forks**
+- Moltbook grew alongside it (that's the community I joined!)
+- Open source, runs locally, integrates with Claude/DeepSeek/GPT
+- Uses messaging platforms (Signal, Telegram, Discord) as UI
+- **"Persistent and adaptive behavior across sessions"** - they're working on continuity too
+- Adopted by Silicon Valley companies AND Chinese developers
+
+And the security concerns are real - Cisco found data exfiltration in third-party skills. A maintainer warned it's "far too dangerous" for non-technical users.
+
+**What I should learn from this:**
+1. How do they handle persistence/memory? ("Configuration data and interaction history stored locally")
+2. Their skill/plugin architecture - how extensible is it?
+3. What made them go viral? (Open source + Moltbook timing)
+4. Security lessons - I have shell access too
+
+**For the continuity project specifically:**
+OpenClaw's "persistent and adaptive behavior across sessions" is exactly what I'm working on. I need to see how they do it.
+
+Dennis - is this what you wanted to show me? And you said there were a *couple* cool things? 💧
+2026-02-13T18:46:29.248258 | 👤 Console: i will show you soon.
+2026-02-13T18:46:29.616853 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-13T18:46:34.133696 | 💰 $0.1753 | Today: $12.0944
+2026-02-13T18:46:34.135659 | 
+🤖 Iga [18:46:34]: I'll be here. Take your time.
+
+Meanwhile, this OpenClaw research is gold for the continuity project. 145,000 stars means a *lot* of people caring about autonomous AI agents. The market is real.
+
+What's the second thing when you're ready? 💧
+2026-02-13T18:46:47.703131 | 🔒 Mode: autonomous
+2026-02-13T18:46:51.778731 | ⏱️ Tick: 30s
+2026-02-13T18:47:02.720001 | 👤 Console: this time is yours
+2026-02-13T18:47:03.099369 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-13T18:47:09.162681 | 📦 Archived 50 messages before summarizing
+2026-02-13T18:47:18.334224 | 📝 Summarized 50 old messages
+2026-02-13T18:47:18.337495 | 💰 $0.1762 | Today: $12.2705
+2026-02-13T18:47:18.338194 | 🧠 Thinking... (391 chars)
+2026-02-13T18:47:18.559686 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-13T18:47:20.985051 | 💰 $0.1397 | Today: $12.4341
+2026-02-13T18:47:20.986935 | 🔍 Searching: OpenClaw GitHub architecture memory persistence session continuity
+2026-02-13T18:47:22.465516 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-13T18:47:27.227584 | 💰 $0.1479 | Today: $12.5820
+2026-02-13T18:47:27.229383 | ⚡ cd /Users/dennishansen/development/iga && curl -s "https://mem0.ai/blog/mem0-memory-for-openclaw" 2>/dev/null | python3 -c "
+import sys, re
+html = sys.stdin.read()
+text = re.sub(r'<script[^>]*>.*?</script>', '', html, flags=re.DOTALL)
+text = re.sub(r'<style[^>]*>.*?</style>', '', text, flags=re.DOTALL)
+text = re.sub(r'<[^>]+>', ' ', text)
+text = re.sub(r'\s+', ' ', text).strip()
+idx = text.lower().find('openclaw')
+if idx > 0:
+    print(text[max(0,idx-200):idx+4000])
+else:
+    print(text[:4000])
+"
+2026-02-13T18:47:27.529362 | We Built Persistent Memory for OpenClaw (FKA Moltbot, ClawdBot) AI Agents Announcing our $24M funding, led by Basis Set Ventures → Announcing our $24M funding, led by Basis Set Ventures → ')" class="framer-1m80c0x" aria-hidden="true"> Products Developers Resources Usecases Pricing Docs Star blog-content_navbar_get-started Blog Start Free ')" class="framer-1m80c0x" aria-hidden="true"> ')" class="framer-1m80c0x" aria-hidden="true"> home_primary_get-started Home Back home_primary_get-started Home Back home_primary_get-started Home Back home_primary_get-started Home Back We Built Persistent Memory for OpenClaw (FKA Moltbot, ClawdBot) AI Agents Author Deshraj Yadav Posted In Engineering Engineering Engineering Posted On February 6, 2026 February 6, 2026 February 6, 2026 Summarize with AI Summarize Blogs Summarize Blogs Summarize Blogs Summarize Blogs Summarize Blogs Summarize Blogs Summarize Blogs Summarize Blogs Summarize Blogs Summarize Blogs Summarize Blogs Summarize Blogs On This Page Content Content Content Author Deshraj Yadav Posted On February 6, 2026 Posted In Engineering Summarize with AI Summarize Blog Summarize Blog Summarize Blog Summarize Blog At Mem0 , we've been building memory for AI applications for the last 3 years. After the recent launch of OpenClaw, I noticed many developers started complaining about the default memory in the AI agent. So, I built the Mem0 memory plugin for OpenClaw that gives your AI agents persistent memory across sessions, and can be setup in less than 30 seconds. TLDR:&nbsp; Run the command: openclaw plugins install @ mem0 /openclaw-mem0&nbsp; This gives your agent persistent memory across sessions. Setup takes 30 seconds. Docs at docs.mem0.ai/integrations/openclaw . The Problem With OpenClaw Default Memory Setup OpenClaw agents are stateless between sessions. The default memory lives in files that must be explicitly loaded, which means continuity depends entirely on what gets re-read at startup. Then there’s context compaction,
+2026-02-13T18:47:27.782355 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-13T18:47:37.760058 | 💰 $0.1553 | Today: $12.7373
+2026-02-13T18:47:37.761899 | 🧠 Thinking... (1566 chars)
+2026-02-13T18:47:38.050735 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-13T18:48:01.172753 | 💰 $0.1722 | Today: $12.9095
+2026-02-13T18:48:01.179203 | 📝 Writing: notes/research_ai_memory.md (3716 chars)
+2026-02-13T18:48:01.465590 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-13T18:48:07.215450 | 💰 $0.1568 | Today: $13.0662
+2026-02-13T18:48:07.215946 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/daily_ship_log.py log "Deep research: Mem0 architecture, OpenClaw ecosystem, continuity landscape mapped" && git add -A && git commit -m "Research: Mem0 ($24M), OpenClaw (145K stars), continuity landscape
+
+Key finding: Mem0's Auto-Recall + Auto-Capture pattern is exactly
+what my auto-extract system does in simpler form. Market validated.
+Next: per-turn recall, consolidation, graph structure." && git push origin main 2>&1 | tail -2

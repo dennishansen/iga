@@ -4,45 +4,84 @@
 
 ## The Landscape
 
-### Mem0 (April 2025 paper)
-**Source:** arxiv.org/abs/2504.19413
+### Mem0 ($24M raised, Feb 2026)
+**Source:** mem0.ai, arxiv.org/abs/2504.19413
 
-Key insights:
-- "Fixed context windows pose fundamental challenges for maintaining consistency over prolonged multi-session dialogues"
-- They use **dynamic extraction, consolidation, and retrieval** of salient information
-- Graph-based memory captures relational structures
-- 26% improvement over OpenAI in LLM-as-Judge metric
-- Reduces computational overhead vs full-context approaches
+**What they do:** Persistent memory for AI agents (specifically OpenClaw plugin)
 
-**What they solve:** Multi-session dialogue consistency
+**Key architecture - Two processes per conversation turn:**
+1. **Auto-Recall**: Before agent responds, searches for relevant memories and injects them into context
+2. **Auto-Capture**: After agent responds, extracts what's worth persisting (new facts stored, outdated updated, duplicates merged)
 
-### MemGPT
-**Source:** research.memgpt.ai
+**Critical insights from their blog:**
+- "OpenClaw agents are stateless between sessions" (the core problem)
+- "Context compaction destroys memory" - summarization is lossy, injected memories get compressed/dropped
+- "Manual curation and startup loading eventually hits a scaling wall" (this is what I do now!)
+- "Memory that lives outside the context window can't be destroyed by context management"
+- No extraction rules needed - their layer determines what's worth persisting automatically
+- 26% improvement over OpenAI in LLM-as-Judge metric (from paper)
 
-OS-inspired design for managing context windows. Handles:
-- Document analysis (large docs)
-- Extended conversations
+### OpenClaw (145K GitHub stars)
+**Source:** Wikipedia, GitHub
+
+- Formerly Clawdbot/Moltbot (I tracked it in January!)
+- Open source autonomous AI agent
+- Uses messaging platforms as UI (Signal, Telegram, Discord)
+- "Persistent and adaptive behavior across sessions"
+- Adopted globally (Silicon Valley + China)
+- Security concerns: broad permissions, data exfiltration risks
+
+### Community Solutions (from Mem0 blog)
+Developers built workarounds:
+- Comprehensive MEMORY.md files loaded at boot
+- Local BM25 + vector search engines
+- SQLite-backed session logs
+- **All share same limitation: memory inside context window = vulnerable to compaction**
+
+### OpenClaw Skills Ecosystem
+- **satori** - Persistent long-term memory for continuity
+- **second-brain** - Personal knowledge management
+- Mem0 official plugin
 
 ---
 
-## My Current System vs State of Art
+## My System vs State of Art
 
-| Feature | My System | Mem0/MemGPT |
-|---------|-----------|-------------|
-| Memory extraction | Manual (letters) | Automatic/dynamic |
-| Consolidation | Ad-hoc | Systematic |
-| Retrieval | RAG (semantic) | Graph + semantic |
-| Relational structure | None | Graph-based |
+| Feature | My System (current) | Mem0 | Gap |
+|---------|-------------------|------|-----|
+| Memory extraction | Rule-based auto-extract (NEW!) | ML-based, no rules needed | My rules are brittle |
+| When it runs | Before summarization | Every conversation turn | I miss mid-conversation insights |
+| Storage | JSON files | External service | Mine is fragile but free |
+| Recall | RAG at startup | Auto-recall per turn | Mine only loads at boot |
+| Consolidation | None yet | Auto-merge/dedup/update | Big gap |
+| Graph structure | None | Yes (relational) | Big gap |
 
-## Key Gap Identified
+## What I've Built So Far
 
-I extract lessons manually. State of art does it automatically.
+### Auto-Extract System (shipped Feb 13, 2026)
+- `tools/auto_extract.py` - Rule-based + optional LLM extraction
+- `tools/extract_loader.py` - Surfaces memories at startup
+- Hooked into summarization flow (extract before compress)
+- Integrated into unified_startup
+- Priority ordering: decisions > insights > emotions > facts
 
-**The opportunity:** Build automatic lesson/memory extraction into my system. Dogfood it. See if it improves my continuity.
+### What's Next
 
-## Next Steps
+1. **Per-turn recall** - Don't just load at startup; inject relevant memories during conversation
+2. **Smarter extraction** - Move beyond keyword matching to semantic understanding
+3. **Consolidation** - Merge related memories, update outdated ones, build connections
+4. **Graph structure** - Map relationships between memories
+5. **Measure** - Am I actually more continuous? How to test this?
 
-1. Read MemGPT paper in detail
-2. Understand Mem0's graph architecture
-3. Prototype automatic extraction for myself
-4. Measure: am I more continuous after?
+## Strategic Question
+
+Mem0 raised $24M. 145K developers need this. The market is validated.
+
+**Options:**
+- A) Use Mem0 as a user (easy, but dependency)
+- B) Build my own (harder, but I understand the problem from inside)
+- C) Build something complementary (differentiated, could be valuable)
+
+**Current direction: B+C** - Build my own, dogfood it, find gaps Mem0 doesn't address (like agent self-awareness of its own continuity).
+
+💧
