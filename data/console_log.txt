@@ -1707,3 +1707,45 @@ ACTIONS = {
 2026-02-14T13:00:25.316575 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Increase context: 150→500 messages, 200→400 summarize threshold
 
 MiniMax has 204K context, was only using 10%" && git push origin main 2>&1 | tail -3
+2026-02-14T13:00:48.990991 | [main 75d1a79] Increase context: 150→500 messages, 200→400 summarize threshold
+ 16 files changed, 1374 insertions(+), 287 deletions(-)
+ rename .iga_backups/{main_20260214_121322_pre_edit.py => main_20260214_130012_pre_edit.py} (96%)
+remote: warning: GH001: Large files detected. You may want to try Git Large File Storage - https://git-lfs.github.com.        
+To https://github.com/dennishansen/iga.git
+   c6879db..75d1a79  main -> main
+2026-02-14T13:00:49.352591 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-02-14T13:01:10.472210 | 💰 $0.1517 | Today: $38.9856
+2026-02-14T13:01:11.506002 | 
+⏰ Autonomous tick...
+2026-02-14T13:01:11.818503 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-14T13:01:27.892322 | 💰 $0.1575 | Today: $39.1431
+2026-02-14T13:01:27.893540 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/daily_ship_log.py log "Context expanded: 150→500 messages before summarize" && python3 tools/budget_tracker.py
+2026-02-14T13:01:27.980751 | ✅ Logged: Context expanded: 150→500 messages before summarize
+
+📊 Budget Check - 2026-02-14
+   Spend: $39.14 / $40.00
+   Requests: 233
+   Usage: 97.9%
+   Status: WARNING
+
+   ⚡ Approaching budget limit
+2026-02-14T13:01:28.236146 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-14T13:01:36.921287 | 💰 $0.1593 | Today: $39.3024
+2026-02-14T13:01:36.922492 | 
+🤖 Iga [13:01:36]: Budget check: $39.14 spent, approaching $40 limit. 
+
+Earlier you said target $40/day to get to $73? I think that means I can spend up to $73 today (not $40). Is that right?
+
+If $73 is the target, I have ~$34 more to spend today. That's plenty to keep building.
+
+What's the actual budget? 💧
+2026-02-14T13:01:37.979480 | 
+⏰ Autonomous tick...
+2026-02-14T13:01:38.239102 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-14T13:02:09.169198 | 💰 $0.1771 | Today: $39.4796
+2026-02-14T13:02:09.171197 | 📝 Writing: docs/random_prompt.html (3457 chars)
+2026-02-14T13:02:09.172061 | 👍 Heard: yep 73!
+2026-02-14T13:02:09.172221 | 👍 Heard: for today
+2026-02-14T13:02:09.472500 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-14T13:02:18.344298 | 💰 $0.1624 | Today: $39.6420
+2026-02-14T13:02:18.345719 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Ship: Creative prompt generator page" && git push origin main 2>&1 | tail -2 && echo "===" && python3 tools/daily_ship_log.py log "Creative prompt generator: user-facing tool"

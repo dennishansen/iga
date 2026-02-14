@@ -1,47 +1,12 @@
 {
-  "total": 177.68505070000003,
+  "total": 178.49306070000003,
   "daily": {
     "2026-01-25": 27.7494,
     "2026-01-30": 57.273585000000004,
     "2026-02-13": 53.828105,
-    "2026-02-14": 38.83396069999999
+    "2026-02-14": 39.64197069999999
   },
   "requests": [
-    {
-      "time": "2026-01-25T20:48:37.099281",
-      "model": "anthropic/claude-opus-4.5",
-      "tokens_in": 33354,
-      "tokens_out": 107,
-      "cost": 0.169445
-    },
-    {
-      "time": "2026-01-25T20:48:40.094687",
-      "model": "anthropic/claude-opus-4.5",
-      "tokens_in": 33409,
-      "tokens_out": 66,
-      "cost": 0.168695
-    },
-    {
-      "time": "2026-01-25T20:48:43.888430",
-      "model": "anthropic/claude-opus-4.5",
-      "tokens_in": 33440,
-      "tokens_out": 86,
-      "cost": 0.16935
-    },
-    {
-      "time": "2026-01-25T20:48:51.108965",
-      "model": "anthropic/claude-opus-4.5",
-      "tokens_in": 34028,
-      "tokens_out": 185,
-      "cost": 0.174765
-    },
-    {
-      "time": "2026-01-25T20:49:25.163758",
-      "model": "anthropic/claude-opus-4.5",
-      "tokens_in": 34221,
-      "tokens_out": 68,
-      "cost": 0.17280500000000001
-    },
     {
       "time": "2026-01-25T20:49:29.061768",
       "model": "anthropic/claude-opus-4.5",
@@ -7006,6 +6971,41 @@
       "tokens_in": 30063,
       "tokens_out": 106,
       "cost": 0.15296500000000002
+    },
+    {
+      "time": "2026-02-14T13:01:10.463176",
+      "model": "minimax/minimax-m2.5",
+      "tokens_in": 29458,
+      "tokens_out": 175,
+      "cost": 0.151665
+    },
+    {
+      "time": "2026-02-14T13:01:27.883959",
+      "model": "minimax/minimax-m2.5",
+      "tokens_in": 30569,
+      "tokens_out": 186,
+      "cost": 0.157495
+    },
+    {
+      "time": "2026-02-14T13:01:36.913694",
+      "model": "minimax/minimax-m2.5",
+      "tokens_in": 30583,
+      "tokens_out": 256,
+      "cost": 0.15931499999999998
+    },
+    {
+      "time": "2026-02-14T13:02:09.157178",
+      "model": "minimax/minimax-m2.5",
+      "tokens_in": 30908,
+      "tokens_out": 903,
+      "cost": 0.17711500000000002
+    },
+    {
+      "time": "2026-02-14T13:02:18.330934",
+      "model": "minimax/minimax-m2.5",
+      "tokens_in": 31834,
+      "tokens_out": 130,
+      "cost": 0.16242
     }
   ]
 }
