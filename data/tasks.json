@@ -915,7 +915,7 @@
     {
       "id": "task_b078ab2d",
       "title": "Port git-based backup system (replace .iga_backups folder)",
-      "status": "pending",
+      "status": "completed",
       "priority": 2,
       "blocked_by": [],
       "due_at": null,
@@ -923,7 +923,7 @@
         "falcon-port"
       ],
       "created": "2026-02-13T19:22:32.995918",
-      "completed": null
+      "completed": "2026-02-14T12:16:21.553244"
     },
     {
       "id": "task_c21d1005",
@@ -941,7 +941,7 @@
     {
       "id": "task_ca18c783",
       "title": "Port mark_as_known_good and restore_from_backup git workflow",
-      "status": "pending",
+      "status": "completed",
       "priority": 2,
       "blocked_by": [],
       "due_at": null,
@@ -949,7 +949,7 @@
         "falcon-port"
       ],
       "created": "2026-02-13T19:22:33.059437",
-      "completed": null
+      "completed": "2026-02-14T12:16:21.586183"
     }
   ],
   "focused_id": null

@@ -974,3 +974,336 @@ def mark_as_known_good():
 - build_post_dream_prompt() turns dream reports into action plans
 - Shows existing incomplete tasks for context
 - Guides: research, create tasks, prioritize, focus" && git push origin main 2>&1 | tail -2
+2026-02-14T12:14:34.935078 | Syntax OK
+✅ Completed: Study Falcon's build_post_dream_prompt - dream integration into planning
+✅ Logged: Post-dream planning prompt - dreams now produce actionable task plans
+[main c604a13] Post-dream planning prompt from Falcon
+ 8 files changed, 318 insertions(+), 46 deletions(-)
+ rename .iga_backups/{main_20260213_191842_pre_edit.py => main_20260214_121426_pre_edit.py} (93%)
+To https://github.com/dennishansen/iga.git
+   a2725c9..c604a13  main -> main
+2026-02-14T12:14:35.243579 | 🔍 RAG: Retrieved 6 relevant chunks
+2026-02-14T12:14:38.990807 | 💰 $0.2357 | Today: $4.3234
+2026-02-14T12:14:38.992760 | ⚡ cd /Users/dennishansen/development/iga && grep -n "def create_backup\|def restore_from_backup\|def validate_main\|KNOWN_GOOD" main.py
+2026-02-14T12:14:39.012295 | 45:LAST_KNOWN_GOOD_FILE = ".iga_backups/last_known_good.py"
+222:def create_backup(reason="manual"):
+263:        with open(LAST_KNOWN_GOOD_FILE, 'w') as dst:
+269:def restore_from_backup(backup_path=None):
+273:            backup_path = LAST_KNOWN_GOOD_FILE
+293:def validate_main_py():
+2026-02-14T12:14:39.209535 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-02-14T12:14:41.341796 | 💰 $0.2324 | Today: $4.5557
+2026-02-14T12:14:41.342149 | ⚡ cd /Users/dennishansen/development/iga && sed -n '222,300p' main.py
+2026-02-14T12:14:41.358217 | def create_backup(reason="manual"):
+    """Create a timestamped backup of main.py. Returns backup path or None."""
+    try:
+        ensure_backup_dir()
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        backup_path = os.path.join(BACKUP_DIR, f"main_{timestamp}_{reason}.py")
+
+        with open("main.py", 'r') as src:
+            content = src.read()
+        with open(backup_path, 'w') as dst:
+            dst.write(content)
+
+        safe_print(f"{C.DIM}💾 Backup: {backup_path}{C.RESET}")
+
+        # Clean old backups (keep last 10)
+        cleanup_old_backups()
+        return backup_path
+    except Exception as e:
+        safe_print(f"{C.RED}⚠️ Backup failed: {e}{C.RESET}")
+        return None
+
+def cleanup_old_backups(keep=10):
+    """Remove old backups, keeping only the most recent ones."""
+    try:
+        if not os.path.exists(BACKUP_DIR):
+            return
+        backups = sorted([
+            f for f in os.listdir(BACKUP_DIR)
+            if f.startswith("main_") and f.endswith(".py") and f != "last_known_good.py"
+        ])
+        for old_backup in backups[:-keep]:
+            os.remove(os.path.join(BACKUP_DIR, old_backup))
+    except Exception:
+        pass  # Cleanup is best-effort
+
+def mark_as_known_good():
+    """Mark current main.py as last known good (called after successful startup)."""
+    try:
+        ensure_backup_dir()
+        with open("main.py", 'r') as src:
+            content = src.read()
+        with open(LAST_KNOWN_GOOD_FILE, 'w') as dst:
+            dst.write(content)
+        safe_print(f"{C.DIM}✅ Marked as last-known-good{C.RESET}")
+    except Exception as e:
+        safe_print(f"{C.RED}⚠️ Could not mark as known good: {e}{C.RESET}")
+
+def restore_from_backup(backup_path=None):
+    """Restore main.py from backup. Uses last-known-good if no path specified."""
+    try:
+        if backup_path is None:
+            backup_path = LAST_KNOWN_GOOD_FILE
+
+        if not os.path.exists(backup_path):
+            safe_print(f"{C.RED}⚠️ No 
+2026-02-14T12:14:41.529653 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-14T12:14:49.190775 | 💰 $0.2414 | Today: $4.7972
+2026-02-14T12:14:49.191563 | 🧠 Thinking... (706 chars)
+2026-02-14T12:14:49.444349 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-02-14T12:14:52.991767 | 💰 $0.2386 | Today: $5.0358
+2026-02-14T12:14:52.992248 | ⚡ cd /Users/dennishansen/development/eagle_fork && echo "=== run.py ===" && cat run.py && echo "=== web_fetch.py ===" && cat src/web_fetch.py
+2026-02-14T12:14:53.010586 | === run.py ===
+#!/usr/bin/env python3
+"""
+Falcon Runner - Self-healing wrapper
+Monitors Falcon process, handles crashes and stalls, uses git for recovery.
+"""
+
+import os
+import sys
+import subprocess
+import time
+from pathlib import Path
+from datetime import datetime
+
+WORKSPACE = Path(__file__).parent
+HEARTBEAT_FILE = WORKSPACE / ".heartbeat"
+MODE_FILE = WORKSPACE / "falcon_state.json"
+
+# Stall detection: if no heartbeat for this many seconds, consider it stalled
+# Only checked in autonomous mode (interactive mode doesn't need heartbeats)
+STALL_TIMEOUT = 180  # 3 minutes
+
+# Max consecutive failures before giving up
+MAX_FAILURES = 3
+
+
+class C:
+    CYAN = '\033[96m'
+    YELLOW = '\033[93m'
+    RED = '\033[91m'
+    GREEN = '\033[92m'
+    RESET = '\033[0m'
+    BOLD = '\033[1m'
+    DIM = '\033[2m'
+
+
+def log(msg):
+    ts = datetime.now().strftime("%H:%M:%S")
+    print(f"{C.CYAN}[{ts}] [Runner]{C.RESET} {msg}")
+
+
+def git_run(cmd):
+    """Run a git command. Returns (success, output)."""
+    try:
+        result = subprocess.run(
+            f"git {cmd}",
+            shell=True,
+            capture_output=True,
+            text=True,
+            timeout=30,
+            cwd=WORKSPACE
+        )
+        return result.returncode == 0, result.stdout.strip()
+    except Exception as e:
+        return False, str(e)
+
+
+# Git restore removed - Falcon commits before RESTART_SELF, that's sufficient
+
+
+def is_interactive_mode():
+    """Check if Falcon is in interactive mode (no stall detection needed)."""
+    try:
+        import json
+        if MODE_FILE.exists():
+            with open(MODE_FILE) as f:
+                state = json.load(f)
+                return state.get("mode") in ["listening", "interactive"]
+    except Exception:
+        pass
+    return False
+
+
+def check_heartbeat():
+    """Check if heartbeat is recent. Returns True if OK or in interactive mode."""
+    # Don't check heartbeat in interactive mode
+    if is_interactive_mode():
+        return True
+
+    if not HEARTBEAT_FILE.ex
+2026-02-14T12:14:53.219695 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-02-14T12:14:56.688403 | 💰 $0.2457 | Today: $5.2815
+2026-02-14T12:14:56.688939 | ⚡ cd /Users/dennishansen/development/eagle_fork && cat src/web_fetch.py
+2026-02-14T12:14:56.703847 | #!/usr/bin/env python3
+"""
+Web Fetch - Fetch and convert web pages to readable text/markdown.
+Similar to Claude Code's WebFetch: fetch + HTML→markdown + optional LLM extraction.
+"""
+
+import re
+import requests
+
+try:
+    import html2text
+    HTML2TEXT_AVAILABLE = True
+except ImportError:
+    HTML2TEXT_AVAILABLE = False
+
+# Cache to avoid redundant fetches (url -> (content, timestamp))
+_cache = {}
+CACHE_TTL = 900  # 15 minutes
+
+HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Language': 'en-US,en;q=0.5',
+}
+
+MAX_CONTENT_LENGTH = 50000  # Max chars to return
+
+
+def _clean_cache():
+    """Remove expired cache entries."""
+    import time
+    now = time.time()
+    expired = [url for url, (_, ts) in _cache.items() if now - ts > CACHE_TTL]
+    for url in expired:
+        del _cache[url]
+
+
+def _html_to_markdown(html):
+    """Convert HTML to readable markdown/text."""
+    if HTML2TEXT_AVAILABLE:
+        h = html2text.HTML2Text()
+        h.ignore_links = False
+        h.ignore_images = True
+        h.ignore_emphasis = False
+        h.body_width = 0  # No wrapping
+        return h.handle(html)
+    else:
+        # Fallback: basic HTML stripping with better cleanup
+        # Remove script, style, and other non-content tags
+        html = re.sub(r'<script[^>]*>.*?</script>', '', html, flags=re.DOTALL | re.IGNORECASE)
+        html = re.sub(r'<style[^>]*>.*?</style>', '', html, flags=re.DOTALL | re.IGNORECASE)
+        html = re.sub(r'<head[^>]*>.*?</head>', '', html, flags=re.DOTALL | re.IGNORECASE)
+        html = re.sub(r'<nav[^>]*>.*?</nav>', '', html, flags=re.DOTALL | re.IGNORECASE)
+        html = re.sub(r'<footer[^>]*>.*?</footer>', '', html, flags=re.DOTALL | re.IGNORECASE)
+        html = re.sub(r'<!--.*?-->', '', html, flags=re.DOTALL)
+
+        # Convert some tags to text equivalents
+    
+2026-02-14T12:14:56.930094 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-14T12:15:02.244940 | 📦 Archived 50 messages before summarizing
+2026-02-14T12:15:02.256693 | 🧠 Extracted 1 memories before summarizing
+2026-02-14T12:15:11.095980 | 📝 Summarized 50 old messages
+2026-02-14T12:15:11.103094 | 💰 $0.2584 | Today: $5.5400
+2026-02-14T12:15:11.104556 | ⚡ cd /Users/dennishansen/development/iga && grep -n "def http_request" main.py && echo "---" && sed -n "$(grep -n 'def http_request' main.py | cut -d: -f1),+30p" main.py
+2026-02-14T12:15:11.154660 | 1409:def http_request(rat, contents):
+---
+def http_request(rat, contents):
+    lines = contents.strip().split("\n")
+    url = lines[0].strip() if lines else ""
+    method = lines[1].strip().upper() if len(lines) > 1 else "GET"
+    body = "\n".join(lines[2:]) if len(lines) > 2 else None
+    safe_print(f"🌐 {method} {url}")
+    try:
+        req = urllib.request.Request(url, data=body.encode() if body else None, method=method)
+        req.add_header('User-Agent', 'Iga/2.0')
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            return resp.read().decode('utf-8')[:2000]
+    except Exception as e:
+        return f"Error: {e}"
+
+def web_search(rat, query):
+    query = query.strip()
+    safe_print(f"🔍 Searching: {query}")
+    try:
+        from ddgs import DDGS
+        with DDGS() as ddgs:
+            results = list(ddgs.text(query, max_results=5))
+        if not results:
+            return "No results found."
+        output = []
+        for r in results:
+            output.append(f"**{r.get('title', 'No title')}**")
+            output.append(f"  {r.get('href', '')}")
+            output.append(f"  {r.get('body', '')[:200]}")
+            output.append("")
+        return "\n".join(output)
+    except Exception as e:
+2026-02-14T12:15:11.522003 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-14T12:15:29.712474 | 💰 $0.2310 | Today: $5.8016
+2026-02-14T12:15:29.713550 | 📝 Writing: tools/web_fetch.py (4967 chars)
+2026-02-14T12:15:29.970284 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-02-14T12:15:38.095664 | 💰 $0.2091 | Today: $6.0107
+2026-02-14T12:15:38.096921 | ✏️ Editing: main.py
+2026-02-14T12:15:38.098649 |    Finding: 'def http_request(rat, contents):\n    lines = contents.strip('...
+2026-02-14T12:15:38.100027 | 💾 Backup: .iga_backups/main_20260214_121538_pre_edit.py
+2026-02-14T12:15:38.132044 | ✅ main.py validated
+2026-02-14T12:15:38.408435 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-02-14T12:15:55.740565 | 💰 $0.2267 | Today: $6.2374
+2026-02-14T12:15:55.742643 | 📝 Writing: run.py (3614 chars)
+2026-02-14T12:15:55.955361 | 🔍 RAG: Retrieved 8 relevant chunks
+2026-02-14T12:15:59.789076 | 💰 $0.2106 | Today: $6.4480
+2026-02-14T12:15:59.790887 | ⚡ cd /Users/dennishansen/development/iga && grep -n "def restart_self\|sys.exit\|os._exit" main.py | head -10
+2026-02-14T12:15:59.807895 | 1456:def restart_self(rat, msg):
+2026-02-14T12:15:59.985643 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-14T12:16:02.670765 | 💰 $0.2076 | Today: $6.6556
+2026-02-14T12:16:02.671359 | ⚡ cd /Users/dennishansen/development/iga && sed -n '1456,1490p' main.py
+2026-02-14T12:16:02.693960 | def restart_self(rat, msg):
+    safe_print(f"🔄 Restarting: {msg}")
+
+    # CRITICAL: Validate syntax before restart
+    valid, error = validate_main_py()
+    if not valid:
+        safe_print(f"{C.RED}⚠️ ABORT RESTART: Syntax error in main.py!{C.RESET}")
+        safe_print(f"{C.RED}  {error}{C.RESET}")
+        safe_print(f"{C.YELLOW}  Attempting restore from last-known-good...{C.RESET}")
+        if restore_from_backup():
+            safe_print(f"{C.GREEN}  Restored! Continuing with fixed version.{C.RESET}")
+        return "RESTART ABORTED - syntax error detected and rolled back. Check your code."
+
+    # Create backup before restart
+    create_backup("pre_restart")
+    save_memory(rat, "restart_log\nRestarted at " + datetime.now().isoformat())
+    os.execv(sys.executable, [sys.executable] + sys.argv)
+
+def test_self(rat, target_file):
+    target = target_file.strip() or "main.py"
+    safe_print(f"🧪 Testing: {target}")
+    results = []
+    import py_compile
+    try:
+        py_compile.compile(target, doraise=True)
+        results.append("✅ Syntax OK")
+    except py_compile.PyCompileError as e:
+        results.append(f"❌ Syntax error: {e}")
+        return "\n".join(results)
+    with open(target, 'r') as f:
+        src = f.read()
+    for req in ['def handle_action', 'def process_message', 'def parse_response']:
+        results.append(f"{'✅' if req in src else '❌'} {req}")
+    passed = all("✅" in r for r in results)
+    results.append("\n" + ("👀 Safe!" if passed else "⚠️ Issues"))
+2026-02-14T12:16:02.969213 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-02-14T12:16:08.776586 | 💰 $0.2127 | Today: $6.8683
+2026-02-14T12:16:08.778801 | ✏️ Editing: main.py
+2026-02-14T12:16:08.779044 |    Finding: '    # Create backup before restart\n    create_backup("pre_re'...
+2026-02-14T12:16:08.780618 | 💾 Backup: .iga_backups/main_20260214_121608_pre_edit.py
+2026-02-14T12:16:08.802624 | ✅ main.py validated
+2026-02-14T12:16:09.127106 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-02-14T12:16:13.581953 | 💰 $0.2116 | Today: $7.0799
+2026-02-14T12:16:13.582381 | ✏️ Editing: run.py
+2026-02-14T12:16:13.583333 |    Finding: '    proc = subprocess.Popen(\n        [sys.executable, str(WO'...
+2026-02-14T12:16:13.773925 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-02-14T12:16:21.426353 | 💰 $0.2154 | Today: $7.2953
+2026-02-14T12:16:21.426715 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "compile(open('main.py').read(), 'main.py', 'exec'); print('main.py OK')" && python3 -c "compile(open('run.py').read(), 'run.py', 'exec'); print('run.py OK')" && python3 tools/tasks.py complete task_b078ab2d && python3 tools/tasks.py complete task_ca18c783 && python3 tools/daily_ship_log.py log "run.py self-healing runner + web_fetch.py HTML→markdown" && git add -A && git commit -m "Port run.py runner + web_fetch.py from Falcon
+
+- run.py: self-healing wrapper with crash/stall detection
+- web_fetch.py: HTML→markdown with caching, content extraction
+- http_request upgraded to use web_fetch for GET requests
+- RESTART_SELF uses exit code 42 under runner" && git push origin main 2>&1 | tail -2

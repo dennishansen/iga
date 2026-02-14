@@ -1412,6 +1412,20 @@ def http_request(rat, contents):
     method = lines[1].strip().upper() if len(lines) > 1 else "GET"
     body = "\n".join(lines[2:]) if len(lines) > 2 else None
     safe_print(f"🌐 {method} {url}")
+
+    # For GET requests, try web_fetch first (HTML→markdown, caching)
+    if method == "GET" and not body:
+        try:
+            from tools.web_fetch import fetch
+            content, error = fetch(url)
+            if content:
+                return content[:5000]
+            elif error:
+                safe_print(f"{C.DIM}web_fetch failed, falling back to urllib: {error}{C.RESET}")
+        except ImportError:
+            pass
+
+    # Fallback to raw urllib
     try:
         req = urllib.request.Request(url, data=body.encode() if body else None, method=method)
         req.add_header('User-Agent', 'Iga/2.0')
@@ -1455,7 +1469,13 @@ def restart_self(rat, msg):
     # Create backup before restart
     create_backup("pre_restart")
     save_memory(rat, "restart_log\nRestarted at " + datetime.now().isoformat())
-    os.execv(sys.executable, [sys.executable] + sys.argv)
+
+    # If running under run.py, exit with code 42 (restart signal)
+    # Otherwise fall back to os.execv for direct execution
+    if os.environ.get("IGA_RUNNER"):
+        sys.exit(42)
+    else:
+        os.execv(sys.executable, [sys.executable] + sys.argv)
 
 def test_self(rat, target_file):
     target = target_file.strip() or "main.py"
