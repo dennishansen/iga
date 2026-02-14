@@ -43,6 +43,7 @@ JOURNAL_FILE = "iga_journal.txt"
 STATE_FILE = "iga_state.json"
 BACKUP_DIR = ".iga_backups"
 LAST_KNOWN_GOOD_FILE = ".iga_backups/last_known_good.py"
+HEARTBEAT_FILE = Path(".heartbeat")
 MAX_CONVERSATION_HISTORY = 150
 SUMMARIZE_THRESHOLD = 200  # Trigger summarization when we hit this many messages
 SUMMARIZE_BATCH = 50       # How many old messages to compress into summary
@@ -343,6 +344,13 @@ def load_state():
 def save_state(state):
     with open(STATE_FILE, 'w') as f:
         json.dump(state, f, indent=2)
+
+def update_heartbeat():
+    """Update heartbeat file to signal the runner that we're alive."""
+    try:
+        HEARTBEAT_FILE.touch()
+    except Exception:
+        pass
 
 def parse_sleep_until(value):
     """Convert sleep_until to timestamp (float). Handles both float and ISO datetime string."""
@@ -2417,6 +2425,9 @@ def autonomous_loop(with_telegram=True):
                     messages = _process_regular_messages(messages, pending)
                     last_autonomous = time.time()
                     continue  # Skip tick check this iteration - we just processed input
+
+                # Heartbeat for runner
+                update_heartbeat()
 
                 # Autonomous tick - only when truly idle (no pending messages processed this iteration)
                 state = load_state()  # Reload to catch mode changes from handle_action

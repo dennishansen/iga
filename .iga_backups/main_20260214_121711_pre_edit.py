@@ -43,6 +43,7 @@ JOURNAL_FILE = "iga_journal.txt"
 STATE_FILE = "iga_state.json"
 BACKUP_DIR = ".iga_backups"
 LAST_KNOWN_GOOD_FILE = ".iga_backups/last_known_good.py"
+HEARTBEAT_FILE = Path(".heartbeat")
 MAX_CONVERSATION_HISTORY = 150
 SUMMARIZE_THRESHOLD = 200  # Trigger summarization when we hit this many messages
 SUMMARIZE_BATCH = 50       # How many old messages to compress into summary
@@ -343,6 +344,13 @@ def load_state():
 def save_state(state):
     with open(STATE_FILE, 'w') as f:
         json.dump(state, f, indent=2)
+
+def update_heartbeat():
+    """Update heartbeat file to signal the runner that we're alive."""
+    try:
+        HEARTBEAT_FILE.touch()
+    except Exception:
+        pass
 
 def parse_sleep_until(value):
     """Convert sleep_until to timestamp (float). Handles both float and ISO datetime string."""
@@ -801,6 +809,45 @@ def reminder_poll_thread():
         except Exception as e:
             if not stop_threads.is_set():
                 safe_print(f"{C.DIM}⚠️ Reminder poll error: {e}{C.RESET}")
+                time.sleep(30)
+
+def task_due_poll_thread():
+    """Background thread that checks for overdue tasks."""
+    try:
+        from tools.tasks import get_due_tasks
+    except ImportError as e:
+        safe_print(f"{C.DIM}⚠️ Task due polling disabled: {e}{C.RESET}")
+        return
+
+    safe_print(f"{C.DIM}⏰ Task due polling started{C.RESET}")
+
+    notified_ids = set()
+
+    while not stop_threads.is_set():
+        try:
+            overdue_tasks = get_due_tasks()
+
+            for t in overdue_tasks:
+                if t["id"] not in notified_ids:
+                    notified_ids.add(t["id"])
+
+                    safe_print(f"{C.YELLOW}⏰ Task due: {t['title']}{C.RESET}")
+                    input_queue.put({
+                        "source": "task_due",
+                        "text": f"[Task overdue]: {t['title']} (ID: {t['id']})",
+                        "task_id": t["id"],
+                        "queued_at": datetime.now()
+                    })
+
+            # Check every 30 seconds
+            for _ in range(30):
+                if stop_threads.is_set():
+                    break
+                time.sleep(1)
+
+        except Exception as e:
+            if not stop_threads.is_set():
+                safe_print(f"{C.DIM}⚠️ Task due poll error: {e}{C.RESET}")
                 time.sleep(30)
 
 
@@ -1301,6 +1348,35 @@ def read_logs(rat, content):
     recent = all_lines[-lines:] if len(all_lines) > lines else all_lines
     return f"Last {len(recent)} log lines:\n" + "\n".join(recent)
 
+def build_post_dream_prompt(dream_content):
+    """Build post-dream message with planning instructions and existing tasks."""
+    task_summary = ""
+    try:
+        from tools.tasks import load_tasks
+        data = load_tasks()
+        incomplete = [t for t in data.get("tasks", []) if t["status"] != "completed"]
+        if incomplete:
+            task_lines = []
+            for t in incomplete:
+                status = "🔵" if t["status"] == "in_progress" else "⬜"
+                overdue = "⏰" if t.get("due_at") and t["status"] != "completed" else ""
+                task_lines.append(f"  {status}{overdue} {t['title']} [{t['id']}]")
+            task_summary = f"\n\nEXISTING INCOMPLETE TASKS:\n" + "\n".join(task_lines)
+    except Exception:
+        pass
+
+    return f"""[You just woke from a dream. Here is what your dreaming mind discovered:]
+
+{dream_content}
+
+NOW: Based on your dream insights, make a plan.
+1. RESEARCH: Use SEARCH_SELF or web search if needed to fill knowledge gaps
+2. TASKS: Create tasks for actionable items (python tools/tasks.py add "...")
+3. PRIORITIZE: Review and prioritize all tasks including existing ones below
+4. FOCUS: Pick one task to focus on (python tools/tasks.py focus <id>)
+{task_summary}"""
+
+
 def dream_action(rat, content):
     """Enter adversarial dream state for self-reflection."""
     safe_print(f"🌙 Entering dream state...")
@@ -1308,7 +1384,7 @@ def dream_action(rat, content):
         from tools.dream import dream
         report = dream(print_fn=safe_print)
         if report:
-            return f"Dream complete. Report:\n\n{report}"
+            return build_post_dream_prompt(report)
         return "Dream ended without report."
     except Exception as e:
         return f"Dream error: {e}"
@@ -1344,6 +1420,20 @@ def http_request(rat, contents):
     method = lines[1].strip().upper() if len(lines) > 1 else "GET"
     body = "\n".join(lines[2:]) if len(lines) > 2 else None
     safe_print(f"🌐 {method} {url}")
+
+    # For GET requests, try web_fetch first (HTML→markdown, caching)
+    if method == "GET" and not body:
+        try:
+            from tools.web_fetch import fetch
+            content, error = fetch(url)
+            if content:
+                return content[:5000]
+            elif error:
+                safe_print(f"{C.DIM}web_fetch failed, falling back to urllib: {error}{C.RESET}")
+        except ImportError:
+            pass
+
+    # Fallback to raw urllib
     try:
         req = urllib.request.Request(url, data=body.encode() if body else None, method=method)
         req.add_header('User-Agent', 'Iga/2.0')
@@ -1387,7 +1477,13 @@ def restart_self(rat, msg):
     # Create backup before restart
     create_backup("pre_restart")
     save_memory(rat, "restart_log\nRestarted at " + datetime.now().isoformat())
-    os.execv(sys.executable, [sys.executable] + sys.argv)
+
+    # If running under run.py, exit with code 42 (restart signal)
+    # Otherwise fall back to os.execv for direct execution
+    if os.environ.get("IGA_RUNNER"):
+        sys.exit(42)
+    else:
+        os.execv(sys.executable, [sys.executable] + sys.argv)
 
 def test_self(rat, target_file):
     target = target_file.strip() or "main.py"
@@ -1899,7 +1995,14 @@ def interactive_loop():
         else:
             safe_print(f"{C.YELLOW}RAG initialization failed, continuing without RAG{C.RESET}")
 
-    messages = [{"role": "system", "content": get_file("system_instructions.txt")}]
+    # Build system prompt with self-manifest
+    system_prompt = get_file("system_instructions.txt")
+    try:
+        from tools.self_manifest import generate_manifest
+        system_prompt += generate_manifest()
+    except Exception as e:
+        safe_print(f"{C.DIM}Self-manifest skipped: {e}{C.RESET}")
+    messages = [{"role": "system", "content": system_prompt}]
     prev = load_conversation()
     if prev:
         messages.extend(prev)
@@ -2041,7 +2144,13 @@ def _init_autonomous_session():
             safe_print(f"{C.YELLOW}RAG initialization failed, continuing without RAG{C.RESET}")
 
     # Load messages
-    messages = [{"role": "system", "content": get_file("system_instructions.txt")}]
+    system_prompt = get_file("system_instructions.txt")
+    try:
+        from tools.self_manifest import generate_manifest
+        system_prompt += generate_manifest()
+    except Exception as e:
+        safe_print(f"{C.DIM}Self-manifest skipped: {e}{C.RESET}")
+    messages = [{"role": "system", "content": system_prompt}]
     prev = load_conversation()
     if prev:
         messages.extend(prev)
@@ -2080,6 +2189,9 @@ def _start_background_threads(session, with_telegram):
     # Start reminder polling thread
     reminder_thread = threading.Thread(target=reminder_poll_thread, daemon=True)
     reminder_thread.start()
+
+    task_due_thread = threading.Thread(target=task_due_poll_thread, daemon=True)
+    task_due_thread.start()
 
     return console_thread
 
@@ -2345,7 +2457,13 @@ def autonomous_loop(with_telegram=True):
 def chat_cli(mode, telegram, pipe):
     if pipe:
         # Clone mode: minimal context for fast responses
-        messages = [{"role": "system", "content": get_file("system_instructions.txt")}]
+        system_prompt = get_file("system_instructions.txt")
+        try:
+            from tools.self_manifest import generate_manifest
+            system_prompt += generate_manifest()
+        except Exception as e:
+            safe_print(f"{C.DIM}Self-manifest skipped: {e}{C.RESET}")
+        messages = [{"role": "system", "content": system_prompt}]
         # Don't load full conversation - clone starts fresh
         user_input = sys.stdin.read().strip()
         if user_input:

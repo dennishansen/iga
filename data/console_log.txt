@@ -1307,3 +1307,298 @@ def test_self(rat, target_file):
 - web_fetch.py: HTML→markdown with caching, content extraction
 - http_request upgraded to use web_fetch for GET requests
 - RESTART_SELF uses exit code 42 under runner" && git push origin main 2>&1 | tail -2
+2026-02-14T12:16:23.454327 | main.py OK
+run.py OK
+✅ Completed: Port git-based backup system (replace .iga_backups folder)
+✅ Completed: Port mark_as_known_good and restore_from_backup git workflow
+✅ Logged: run.py self-healing runner + web_fetch.py HTML→markdown
+[main d26f2ee] Port run.py runner + web_fetch.py from Falcon
+ 13 files changed, 1078 insertions(+), 123 deletions(-)
+ rename .iga_backups/{main_20260213_192108_pre_edit.py => main_20260214_121538_pre_edit.py} (95%)
+ rename .iga_backups/{main_20260213_192040_pre_edit.py => main_20260214_121608_pre_edit.py} (95%)
+ create mode 100644 run.py
+ create mode 100644 tools/web_fetch.py
+To https://github.com/dennishansen/iga.git
+   c604a13..d26f2ee  main -> main
+2026-02-14T12:16:23.730975 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-14T12:16:26.560447 | 💰 $0.2159 | Today: $7.5112
+2026-02-14T12:16:26.562381 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py list --tag falcon-port && echo "===" && python3 tools/tasks.py today
+2026-02-14T12:16:26.638853 | 📋 Tasks:
+
+⬜ Port more Falcon architecture improvements
+   [task_48ea5ca2] - tags: falcon-port
+
+===
+✅ Completed today (8):
+
+  2026-02-14:
+    [12:13] Port task_due_poll_thread - background thread for overdue task notifications
+    [12:13] Port ErrorThrottler - deduplicate repeated errors
+    [12:16] Port git-based backup system (replace .iga_backups folder)
+    [12:14] Study Falcon's build_post_dream_prompt - dream integration into planning
+    [12:16] Port mark_as_known_good and restore_from_backup git workflow
+  2026-02-13:
+    [19:19] Ported Falcon's unified task system - dependencies, due dates, tags, log command
+    [19:21] Wire DREAM action into main.py action handler
+    [19:24] Port self_manifest - auto-generate repo structure for system prompt
+2026-02-14T12:16:26.864415 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-14T12:16:32.232344 | 💰 $0.2189 | Today: $7.7300
+2026-02-14T12:16:32.232877 | ⚡ cd /Users/dennishansen/development/eagle_fork && echo "=== FALCON FEATURES I MIGHT NOT HAVE ===" && grep -n "def read_url\|def safe_self_edit\|def notify_all\|KNOWN_GOOD_TAG\|def _handle_sigint\|def update_heartbeat\|exit.*42" src/main.py | head -15
+2026-02-14T12:16:32.254517 | === FALCON FEATURES I MIGHT NOT HAVE ===
+9:def _handle_sigint(signum, frame):
+47:KNOWN_GOOD_TAG = "known-good"
+371:    git_run(f"tag -d {KNOWN_GOOD_TAG}")
+373:    success, _ = git_run(f"tag {KNOWN_GOOD_TAG}")
+375:        safe_print(f"{C.DIM}✅ Tagged as {KNOWN_GOOD_TAG}{C.RESET}")
+381:    target = commit or KNOWN_GOOD_TAG
+424:def safe_self_edit(file_path, new_content):
+469:def update_heartbeat():
+646:def notify_all_online(version, mode=""):
+667:def notify_all_offline():
+1100:def read_url(rat, contents):
+1798:            msg = f"✅ Restored from {KNOWN_GOOD_TAG}. Restart to apply."
+1800:            msg = f"❌ Restore failed (no {KNOWN_GOOD_TAG} tag found)"
+1814:        msg = f"✅ Current state tagged as {KNOWN_GOOD_TAG}"
+2026-02-14T12:16:32.657140 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-14T12:16:35.212343 | 💰 $0.2202 | Today: $7.9503
+2026-02-14T12:16:35.212633 | ⚡ cd /Users/dennishansen/development/eagle_fork && echo "=== safe_self_edit ===" && sed -n '424,465p' src/main.py && echo "=== update_heartbeat ===" && sed -n '469,490p' src/main.py && echo "=== read_url ===" && sed -n '1100,1150p' src/main.py
+2026-02-14T12:16:35.232845 | === safe_self_edit ===
+def safe_self_edit(file_path, new_content):
+    """Safely edit a critical file (like main.py) with validation and backup."""
+    is_self = file_path.strip() in ["src/main.py", "./src/main.py"]
+
+    if is_self:
+        # Create backup before any edit to main.py
+        backup = create_backup("pre_edit")
+        if not backup:
+            return False, "Could not create backup before edit"
+
+    # Write the new content
+    try:
+        parent = os.path.dirname(file_path)
+        if parent:
+            os.makedirs(parent, exist_ok=True)
+        with open(file_path, 'w') as f:
+            f.write(new_content)
+    except Exception as e:
+        return False, f"Write failed: {e}"
+
+    if is_self:
+        # Validate the new main.py
+        valid, error = validate_main_py()
+        if not valid:
+            safe_print(f"{C.RED}⚠️ Syntax error in new main.py! Rolling back...{C.RESET}")
+            restore_from_backup(backup)
+            return False, f"Syntax error: {error}"
+        safe_print(f"{C.GREEN}✅ main.py edit validated{C.RESET}")
+
+    return True, None
+
+def load_state():
+    default = {"mode": "listening", "current_task": None, "tick_interval": 60, "sleep_until": None, "sleep_cycle_minutes": 30}
+    if os.path.exists(STATE_FILE):
+        try:
+            with open(STATE_FILE, 'r') as f:
+                return {**default, **json.load(f)}
+        except Exception as e:
+            safe_print(f"{C.DIM}Warning: Could not load state: {e}{C.RESET}")
+    return default
+
+def save_state(state):
+=== update_heartbeat ===
+def update_heartbeat():
+    """Update heartbeat file to signal the runner that we're alive.
+    Only matters in autonomous mode - runner ignores heartbeat in interactive mode."""
+    try:
+        HEARTBEAT_FILE.touch()
+    except Exception:
+        pass  # Don't let heartbeat errors break anything
+
+def parse_sleep_until(value):
+    """Convert sleep_until to timestamp (float). Handles both float and ISO datetime string."""
+    if value is
+2026-02-14T12:16:35.349720 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-14T12:16:41.386808 | 💰 $0.2263 | Today: $8.1766
+2026-02-14T12:16:41.388006 | 🧠 Thinking... (503 chars)
+2026-02-14T12:16:41.622550 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-14T12:16:44.488475 | 💰 $0.2239 | Today: $8.4005
+2026-02-14T12:16:44.490379 | ⚡ cd /Users/dennishansen/development/iga && grep -n "update_heartbeat\|HEARTBEAT" main.py
+2026-02-14T12:16:44.520760 | EMPTY
+2026-02-14T12:16:44.699860 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-02-14T12:16:47.982414 | 💰 $0.2242 | Today: $8.6246
+2026-02-14T12:16:47.983775 | ⚡ cd /Users/dennishansen/development/iga && grep -n "def autonomous_loop\|def handle_action\|while.*True\|tick_interval\|AUTONOMOUS TICK" main.py | head -15
+2026-02-14T12:16:48.000977 | 334:    default = {"mode": "listening", "current_task": None, "tick_interval": 60, "sleep_until": None, "sleep_cycle_minutes": 30}
+1493:    for req in ['def handle_action', 'def process_message', 'def parse_response']:
+1614:                    if "[AUTONOMOUS TICK]" in last_msg:
+1655:        while True:
+1697:def handle_action(messages, _depth=0):
+1850:        msg = f"Mode: {state['mode']} | Tick: {state['tick_interval']}s | Sleep cycle: {sleep_mins}m | Task: {state.get('current_task', 'None')}"
+1865:            state['tick_interval'] = int(cmd[6:].strip())
+1867:            msg = f"⏱️ Tick: {state['tick_interval']}s"
+2029:    while True:
+2033:                while True:
+2195:        while True:
+2324:        auto_prompt = f"[AUTONOMOUS TICK] Your current task: {task}. What have you SHIPPED? What's different because you existed? Don't just think - CREATE something real."
+2326:        auto_prompt = "[AUTONOMOUS TICK] What have you SHIPPED today? What artifact exists that didn't before? Don't reflect - BUILD. Write code, create content, make something tangible."
+2351:def autonomous_loop(with_telegram=True):
+2423:                if state["mode"] == "autonomous" and (time.time() - last_autonomous) >= state["tick_interval"]:
+2026-02-14T12:16:48.233729 | 🔍 RAG: Retrieved 7 relevant chunks
+2026-02-14T12:16:51.194755 | 💰 $0.2300 | Today: $8.8547
+2026-02-14T12:16:51.196809 | ⚡ cd /Users/dennishansen/development/iga && sed -n '2415,2440p' main.py
+2026-02-14T12:16:51.212743 | # Process regular messages
+                if pending:
+                    messages = _process_regular_messages(messages, pending)
+                    last_autonomous = time.time()
+                    continue  # Skip tick check this iteration - we just processed input
+
+                # Autonomous tick - only when truly idle (no pending messages processed this iteration)
+                state = load_state()  # Reload to catch mode changes from handle_action
+                if state["mode"] == "autonomous" and (time.time() - last_autonomous) >= state["tick_interval"]:
+                    messages = _handle_autonomous_tick(messages, state)
+                    last_autonomous = time.time()  # Reset AFTER tick completes
+
+                time.sleep(0.1)
+
+            except KeyboardInterrupt:
+                safe_print("\n💾 Goodbye!")
+                stop_threads.set()
+                break
+            except Exception as e:
+                throttled_error(str(e))
+                time.sleep(1)
+
+        # Cleanup
+        if with_telegram and TELEGRAM_TOKEN and ALLOWED_USERS:
+            notify_all_offline()
+2026-02-14T12:16:51.421069 | 🔍 RAG: Retrieved 8 relevant chunks
+2026-02-14T12:16:54.248652 | 💰 $0.2337 | Today: $9.0884
+2026-02-14T12:16:54.249465 | ⚡ cd /Users/dennishansen/development/iga && grep -n "^HEARTBEAT\|HEARTBEAT_FILE" main.py
+2026-02-14T12:16:54.267174 | EMPTY
+2026-02-14T12:16:54.470223 | 🔍 RAG: Retrieved 8 relevant chunks
+2026-02-14T12:16:57.916095 | 💰 $0.2345 | Today: $9.3229
+2026-02-14T12:16:57.918159 | ✏️ Editing: main.py
+2026-02-14T12:16:57.918412 |    Finding: 'LAST_KNOWN_GOOD_FILE = ".iga_backups/last_known_good.py"'
+2026-02-14T12:16:57.919293 | 💾 Backup: .iga_backups/main_20260214_121657_pre_edit.py
+2026-02-14T12:16:57.942970 | ✅ main.py validated
+2026-02-14T12:16:58.311662 | 🔍 RAG: Retrieved 8 relevant chunks
+2026-02-14T12:17:02.949985 | 💰 $0.2345 | Today: $9.5574
+2026-02-14T12:17:02.952587 | ⚡ cd /Users/dennishansen/development/iga && grep -n "def save_state\|def parse_sleep" main.py
+2026-02-14T12:17:02.971870 | 344:def save_state(state):
+348:def parse_sleep_until(value):
+2026-02-14T12:17:03.284178 | 🔍 RAG: Retrieved 7 relevant chunks
+2026-02-14T12:17:06.747649 | 💰 $0.2345 | Today: $9.7920
+2026-02-14T12:17:06.748321 | ✏️ Editing: main.py
+2026-02-14T12:17:06.750159 |    Finding: 'def parse_sleep_until(value):'
+2026-02-14T12:17:06.751217 | 💾 Backup: .iga_backups/main_20260214_121706_pre_edit.py
+2026-02-14T12:17:06.773579 | ✅ main.py validated
+2026-02-14T12:17:06.902559 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-14T12:17:11.323346 | 💰 $0.2341 | Today: $10.0261
+2026-02-14T12:17:11.323776 | ✏️ Editing: main.py
+2026-02-14T12:17:11.325411 |    Finding: '                # Autonomous tick - only when truly idle (no'...
+2026-02-14T12:17:11.326474 | 💾 Backup: .iga_backups/main_20260214_121711_pre_edit.py
+2026-02-14T12:17:11.346289 | ✅ main.py validated
+2026-02-14T12:17:11.464423 | 🔍 RAG: Retrieved 6 relevant chunks
+2026-02-14T12:17:16.502140 | 💰 $0.2343 | Today: $10.2603
+2026-02-14T12:17:16.502543 | ⚡ cd /Users/dennishansen/development/iga && grep -n "def write_file\|def edit_file" main.py
+2026-02-14T12:17:16.519247 | 1071:def write_file(rat, contents):
+1089:def edit_file(rat, contents):
+2026-02-14T12:17:16.791593 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-14T12:17:20.973927 | 💰 $0.2323 | Today: $10.4927
+2026-02-14T12:17:20.976258 | ⚡ cd /Users/dennishansen/development/iga && sed -n '1071,1095p' main.py
+2026-02-14T12:17:20.988807 | def write_file(rat, contents):
+    path, content = contents.split("\n", 1)
+    safe_print(f"📝 Writing: {path} ({len(content)} chars)")
+
+    # Use safe editing for main.py (validates syntax, creates backup)
+    if path.strip() in ["main.py", "./main.py"]:
+        success, error = safe_self_edit(path, content)
+        if not success:
+            return f"WRITE FAILED: {error}. File rolled back."
+        return "NEXT_ACTION"
+
+    # Regular file write
+    parent = os.path.dirname(path)
+    if parent:
+        os.makedirs(parent, exist_ok=True)
+    with open(path, 'w') as f:
+        f.write(content)
+    return "NEXT_ACTION"
+def edit_file(rat, contents):
+    lines_list = contents.split('\n')
+    path = lines_list[0].strip()
+    
+    # Detect format: search-and-replace vs line-number
+    remaining = '\n'.join(lines_list[1:])
+2026-02-14T12:17:21.208653 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-02-14T12:17:25.801457 | 💰 $0.2329 | Today: $10.7256
+2026-02-14T12:17:25.801989 | ⚡ cd /Users/dennishansen/development/iga && sed -n '1089,1180p' main.py
+2026-02-14T12:17:25.816520 | def edit_file(rat, contents):
+    lines_list = contents.split('\n')
+    path = lines_list[0].strip()
+    
+    # Detect format: search-and-replace vs line-number
+    remaining = '\n'.join(lines_list[1:])
+    
+    if '<<<OLD' in remaining:
+        # Search-and-replace mode (preferred)
+        return _edit_search_replace(path, remaining)
+    else:
+        # Legacy line-number mode
+        return _edit_line_number(path, lines_list)
+
+
+def _edit_search_replace(path, rest):
+    """Search-and-replace editing. Safer, self-documenting."""
+    old_match = rest.find('<<<OLD')
+    new_match = rest.find('<<<NEW')
+    
+    if old_match == -1 or new_match == -1:
+        return "Error: Missing <<<OLD or <<<NEW markers."
+    
+    old_start = rest.find('\n', old_match) + 1
+    old_end = rest.find('\n>>>', old_start)
+    if old_end == -1:
+        return "Error: Missing >>> after OLD block."
+    old_text = rest[old_start:old_end]
+    
+    new_start = rest.find('\n', new_match) + 1
+    new_end = rest.find('\n>>>', new_start)
+    if new_end == -1:
+        new_end = rest.find('>>>', new_start)
+        if new_end == -1:
+            return "Error: Missing >>> after NEW block."
+    new_text = rest[new_start:new_end]
+    
+    safe_print(f"✏️ Editing: {path}")
+    safe_print(f"   Finding: {repr(old_text[:60])}{'...' if len(old_text) > 60 else ''}")
+    
+    is_self = path.strip() in ["main.py", "./main.py"]
+    
+    try:
+        if is_self:
+            create_backup("pre_edit")
+        
+        with open(path, 'r') as f:
+            file_content = f.read()
+        
+        count = file_content.count(old_text)
+        
+        if count == 0:
+            return f"Error: No match found in {path}."
+        if count > 1:
+            return f"Error: Found {count} matches. Provide more context for unique match."
+        
+        new_content = file_content.replace(old_text, new_text, 1)
+        
+        with open(path, 'w') as f:
+            f.write(new_content)
+        
+        if is_self:
+           
+2026-02-14T12:17:26.014791 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-02-14T12:17:33.131031 | 💰 $0.2418 | Today: $10.9674
+2026-02-14T12:17:33.132377 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "compile(open('main.py').read(), 'main.py', 'exec'); print('Syntax OK')" && python3 tools/daily_ship_log.py log "Heartbeat system for run.py + verified safe_self_edit coverage" && git add -A && git commit -m "Add heartbeat for self-healing runner
+
+- HEARTBEAT_FILE + update_heartbeat() in main loop
+- Runner detects stalls via heartbeat age
+- Verified safe_self_edit protects both write_file and edit_file" && git push origin main 2>&1 | tail -2
