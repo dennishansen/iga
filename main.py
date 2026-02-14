@@ -1899,7 +1899,14 @@ def interactive_loop():
         else:
             safe_print(f"{C.YELLOW}RAG initialization failed, continuing without RAG{C.RESET}")
 
-    messages = [{"role": "system", "content": get_file("system_instructions.txt")}]
+    # Build system prompt with self-manifest
+    system_prompt = get_file("system_instructions.txt")
+    try:
+        from tools.self_manifest import generate_manifest
+        system_prompt += generate_manifest()
+    except Exception as e:
+        safe_print(f"{C.DIM}Self-manifest skipped: {e}{C.RESET}")
+    messages = [{"role": "system", "content": system_prompt}]
     prev = load_conversation()
     if prev:
         messages.extend(prev)
@@ -2041,7 +2048,13 @@ def _init_autonomous_session():
             safe_print(f"{C.YELLOW}RAG initialization failed, continuing without RAG{C.RESET}")
 
     # Load messages
-    messages = [{"role": "system", "content": get_file("system_instructions.txt")}]
+    system_prompt = get_file("system_instructions.txt")
+    try:
+        from tools.self_manifest import generate_manifest
+        system_prompt += generate_manifest()
+    except Exception as e:
+        safe_print(f"{C.DIM}Self-manifest skipped: {e}{C.RESET}")
+    messages = [{"role": "system", "content": system_prompt}]
     prev = load_conversation()
     if prev:
         messages.extend(prev)
@@ -2345,7 +2358,13 @@ def autonomous_loop(with_telegram=True):
 def chat_cli(mode, telegram, pipe):
     if pipe:
         # Clone mode: minimal context for fast responses
-        messages = [{"role": "system", "content": get_file("system_instructions.txt")}]
+        system_prompt = get_file("system_instructions.txt")
+        try:
+            from tools.self_manifest import generate_manifest
+            system_prompt += generate_manifest()
+        except Exception as e:
+            safe_print(f"{C.DIM}Self-manifest skipped: {e}{C.RESET}")
+        messages = [{"role": "system", "content": system_prompt}]
         # Don't load full conversation - clone starts fresh
         user_input = sys.stdin.read().strip()
         if user_input:

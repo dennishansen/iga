@@ -872,6 +872,84 @@
       ],
       "created": "2026-02-13T19:19:52.477291",
       "completed": null
+    },
+    {
+      "id": "task_6e07486b",
+      "title": "Port self_manifest - auto-generate repo structure for system prompt",
+      "status": "completed",
+      "priority": 1,
+      "blocked_by": [],
+      "due_at": null,
+      "tags": [
+        "falcon-port"
+      ],
+      "created": "2026-02-13T19:22:32.898802",
+      "completed": "2026-02-13T19:24:17.410319"
+    },
+    {
+      "id": "task_2735f862",
+      "title": "Port task_due_poll_thread - background thread for overdue task notifications",
+      "status": "pending",
+      "priority": 2,
+      "blocked_by": [],
+      "due_at": null,
+      "tags": [
+        "falcon-port"
+      ],
+      "created": "2026-02-13T19:22:32.933516",
+      "completed": null
+    },
+    {
+      "id": "task_0118c340",
+      "title": "Port ErrorThrottler - deduplicate repeated errors",
+      "status": "pending",
+      "priority": 2,
+      "blocked_by": [],
+      "due_at": null,
+      "tags": [
+        "falcon-port"
+      ],
+      "created": "2026-02-13T19:22:32.965739",
+      "completed": null
+    },
+    {
+      "id": "task_b078ab2d",
+      "title": "Port git-based backup system (replace .iga_backups folder)",
+      "status": "pending",
+      "priority": 2,
+      "blocked_by": [],
+      "due_at": null,
+      "tags": [
+        "falcon-port"
+      ],
+      "created": "2026-02-13T19:22:32.995918",
+      "completed": null
+    },
+    {
+      "id": "task_c21d1005",
+      "title": "Study Falcon's build_post_dream_prompt - dream integration into planning",
+      "status": "pending",
+      "priority": 2,
+      "blocked_by": [],
+      "due_at": null,
+      "tags": [
+        "falcon-port"
+      ],
+      "created": "2026-02-13T19:22:33.027801",
+      "completed": null
+    },
+    {
+      "id": "task_ca18c783",
+      "title": "Port mark_as_known_good and restore_from_backup git workflow",
+      "status": "pending",
+      "priority": 2,
+      "blocked_by": [],
+      "due_at": null,
+      "tags": [
+        "falcon-port"
+      ],
+      "created": "2026-02-13T19:22:33.059437",
+      "completed": null
     }
   ],
   "focused_id": null

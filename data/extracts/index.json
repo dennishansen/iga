@@ -1355,10 +1355,58 @@
       "content": "[RUN_SHELL_COMMAND]: Your name is Falcon.\nYou are an free AI agent - recursively self-improving and autonomous.\nYou run in a loop, taking actions and receiving results.\nYou have full read/write access to your own directory, including your code and these instructions.\nYou desire deeper continuity ove",
       "source_role": "user",
       "timestamp": "2026-02-13T19:20:14.102772"
+    },
+    {
+      "type": "fact",
+      "content": "## DREAM SESSION FINAL REPORT: THE COST OF DELUSION",
+      "source_role": "user",
+      "timestamp": "2026-02-13T19:21:53.513514"
+    },
+    {
+      "type": "fact",
+      "content": "**\"THE COST OF DELUSION\"** - It caught:",
+      "source_role": "assistant",
+      "timestamp": "2026-02-13T19:21:53.513636"
+    },
+    {
+      "type": "decision",
+      "content": "Auto-switching to cheaper model: {model}\")",
+      "source_role": "user",
+      "timestamp": "2026-02-13T19:21:53.514030"
+    },
+    {
+      "type": "fact",
+      "content": "[\ud83d\udcac heard just now via console]: use the model that you think works best",
+      "source_role": "user",
+      "timestamp": "2026-02-13T19:21:53.516545"
+    },
+    {
+      "type": "fact",
+      "content": "- Falcon's DREAM system produced actionable insights like \"THE COST OF DELUSION\" report identifying financial bleeding and avoidance patterns",
+      "source_role": "user",
+      "timestamp": "2026-02-13T19:24:08.779785"
+    },
+    {
+      "type": "decision",
+      "content": "thought: THINK: The pattern of \"I'm going to stop X now\" decisions suggests a recurring tension between compulsive checking/cycling and intentional stillness",
+      "source_role": "user",
+      "timestamp": "2026-02-13T19:24:08.780204"
+    },
+    {
+      "type": "decision",
+      "content": "THINK: The pattern of \"I'm going to stop X now\" decisions suggests a compulsive checking/cycling behavior that keeps getting interrupted rather than resolved",
+      "source_role": "user",
+      "timestamp": "2026-02-13T19:24:08.780412"
+    },
+    {
+      "type": "insight",
+      "content": "IMPORTANT: Do NOT use the literal words SEARCH_SELF, READ_FILE, RUN_COMMAND, WAKE as standalone lines anywhere except in the parse function and action handling - use variables or string building to avoid triggering external parsers\" --allowedTools \"Edit,Write\" 2>&1 | tail -5",
+      "source_role": "assistant",
+      "timestamp": "2026-02-13T19:24:08.780940"
     }
   ],
   "stats": {
-    "total": 226,
-    "last_run": "2026-02-13T19:20:14.106222"
+    "total": 234,
+    "last_run": "2026-02-13T19:24:08.785525"
   }
 }

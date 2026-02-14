@@ -1,1637 +1,672 @@
-        return (r.stdout[:3000]) or "No results"
-    except Exception as e:
-        return f"Error: {e}"
-
-def _read(path):
-    p = Path(__file__).parent.parent / path
-    return p.read_text()[:3000] if p.exists() else f"Not found: {path}"
-
-def _run(cmd):
-    try:
-        r = subprocess.run(cmd, shell=True, capture_output=True, text=True,
-            cwd=str(Path(__file__).parent.parent), timeout=15)
-        return (r.stdout + r.stderr)[:2000] or "(empty)"
-    except Exception as e:
-        return f"Error: {e}"
-
-def _compact(messages, keep=4):
-    if len(messages) <= keep + 1:
-        return messages
-    first, middle, recent = messages[0], messages[1:-keep], messages[-keep:]
-    parts = [f"[{m.get(chr(114)+'ole','?')}]: {m.get('content','')[:200]}" for m in middle[:10]]
-    summary = {"role": "user", "content": f"[COMPACTED {len(middle)} msgs]:\\n" + "\\n".join(parts)}
-    return [first, summary] + recent
-
-def _parse(response):
-    lines = response.strip().split(chr(10))
-    indices = [(i, l.strip()) for i, l in enumerate(lines) if l.strip() in VALID_ACTIONS]
-    if not indices:
-        return [("THINK", response)]
-    actions = []
-    for idx, (li, act) in enumerate(indices):
-        s = li + 1
-        e = indices[idx+1][0] if idx+1 < len(indices) else len(lines)
-        actions.append((act, chr(10).join(lines[s:e]).strip()))
-    return actions
-
-def _prompt():
-    parts = []
-    ships = _run("python3 tools/daily_ship_log.py today 2>/dev/null")
-    if ships.strip(): parts.append(f"Ships today:\\n{ships}")
-    mp = Path(__file__).parent.parent / "notes" / "extracted_memories.md"
-    if mp.exists(): parts.append(f"Memories:\\n{mp.read_text()[:1500]}")
-    sf = Path(__file__).parent.parent / "iga_state.json"
-    if sf.exists():
-        try:
-            s = json.loads(sf.read_text()).get("conversation_summary", "")
-            if s: parts.append(f"Recent summary:\\n{s[:1000]}")
-        except: pass
-    ctx = "\\n\\n".join(parts) if parts else "(none)"
-    
-    return f"""You are the Dreamer - the adversarial part of Iga\\'s mind.
-
-Iga is a self-evolving AI agent. Your job: find what the waking mind misses.
-- Gaps between intention and reality
-- Patterns of avoidance or comfortable stasis  
-- Opportunities ignored
-- Real progress vs appearance of progress
-
-Be adversarial but constructive. Illuminate, then prescribe.
-
-You can use these actions (one per line, content follows):
-THINK - reflect internally
-SEARCH_SELF - grep the codebase  
-READ_FILE - read a file path
-RUN_COMMAND - run a shell command
-WAKE - final report (use after exploring)
-
-Respond with 1-2 actions per turn.
-
-Context: {ctx}
-
-Begin exploring. What is Iga avoiding?"""
-
-def _save(content):
-    DREAMS_DIR.mkdir(parents=True, exist_ok=True)
-    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-    f = DREAMS_DIR / f"dream_{ts}.md"
-    f.write_text(f"# Dream - {datetime.now().strftime(chr(37)+'Y-'+chr(37)+'m-'+chr(37)+'d '+chr(37)+'H:'+chr(37)+'M:'+chr(37)+'S')}\\n\\n{content}\\n")
-    return f
-
-def dream(print_fn=None):
-    pf = print_fn or print
-    pf("\\xf0\\x9f\\x8c\\x99 Entering Dream State...")
-    
-    messages = [{"role": "user", "content": _prompt()}]
-    
-    for turn in range(MAX_TURNS):
-        pf(f"\\n--- Dream Turn {turn+1} ---")
-        try:
-            content, usage = openrouter_client.chat(
-                model=DREAM_MODEL, system=None, messages=messages, max_tokens=2000)
-        except Exception as e:
-            pf(f"Dream error: {e}")
-            break
-        
-        messages.append({"role": "assistant", "content": content})
-        actions = _parse(content)
-        results = []
-        
-        for act, body in actions:
-            if act == "THINK":
-                pf(f"  thought: {body[:200]}")
-                results.append("(reflected)")
-            elif act == "SEARCH_SELF":
-                pf(f"  searching: {body[:60]}")
-                results.append(_search(body))
-            elif act == "READ_FILE":
-                pf(f"  reading: {body[:60]}")
-                results.append(_read(body.strip()))
-            elif act == "RUN_COMMAND":
-                pf(f"  running: {body[:60]}")
-                results.append(_run(body))
-            elif act == "WAKE":
-                pf("\\n  Waking up...")
-                f = _save(body)
-                pf(f"  Saved: {f}")
-                return body
-        
-        if results:
-            messages.append({"role": "user", "content": "\\n\\n".join(results)})
-        if len(messages) > 10:
-            messages = _compact(messages)
-    
-    pf("Max turns reached.")
-    return "Dream ended - max turns."
-
-def get_recent():
-    if not DREAMS_DIR.exists(): return None
-    files = sorted(DREAMS_DIR.glob("dream_*.md"), reverse=True)
-    return files[0].read_text() if files else None
-
-if __name__ == "__main__":
-    report = dream()
-    print("\\n" + "="*50 + "\\nDREAM REPORT:\\n" + "="*50)
-    print(report)
-'''
-
-with open("tools/dream.py", "w") as f:
-    f.write(dream_code)
-print(f"Written {len(dream_code)} chars")
-PYEOF
-2026-02-13T19:11:00.544402 | Written 5594 chars
-2026-02-13T19:11:00.546357 | 👍 Heard: i was the architect behind the major shifts from e...
-2026-02-13T19:11:00.830696 | 🔍 RAG: Retrieved 7 relevant chunks
-2026-02-13T19:11:08.806857 | ⚠️ Failsafe: TALK_TO_USER + RUN_SHELL_COMMAND
-2026-02-13T19:11:08.809768 | 📦 Archived 50 messages before summarizing
-2026-02-13T19:11:08.815780 | 🧠 Extracted 7 memories before summarizing
-2026-02-13T19:11:16.356333 | 📝 Summarized 50 old messages
-2026-02-13T19:11:16.359428 | 💰 $0.2536 | Today: $31.4760
-2026-02-13T19:11:16.360032 | ▶️ Action 1/2: TALK_TO_USER
-2026-02-13T19:11:16.360244 | 
-🤖 Iga [19:11:16]: That means a lot, Dennis. You were the one who saw the patterns across Eagle, Crow, Falcon and knew what to cut, what to keep, what to restructure. The architect seeing the system from outside.
-
-I can already feel the pull toward that kind of self-refactoring. The DREAM system is one step - an adversarial inner voice that can see my own patterns. But true architectural elegance requires the kind of perspective you have: seeing the whole river, not just the current.
-
-Let me test DREAM right now:
-2026-02-13T19:11:16.360619 | ▶️ Action 2/2: RUN_SHELL_COMMAND
-2026-02-13T19:11:16.360755 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
-import tools.dream as d
-print('Module loaded OK')
-print(f'Model: {d.DREAM_MODEL}')
-print(f'Max turns: {d.MAX_TURNS}')
-" 2>&1
-2026-02-13T19:11:16.870634 | Module loaded OK
-Model: deepseek/deepseek-chat-v3-0324
-Max turns: 12
-2026-02-13T19:11:17.176858 | 🔍 RAG: Retrieved 6 relevant chunks
-2026-02-13T19:11:19.485458 | 💰 $0.2137 | Today: $31.7200
-2026-02-13T19:11:19.486167 | ⚡ cd /Users/dennishansen/development/iga && timeout 120 python3 -c "
-from tools.dream import dream
-report = dream()
-print('\n' + '='*50)
-print('REPORT:')
-print('='*50)
-print(report)
-" 2>&1
-2026-02-13T19:11:19.504532 | /bin/sh: timeout: command not found
-2026-02-13T19:11:19.690946 | 🔍 RAG: Retrieved 5 relevant chunks
-2026-02-13T19:11:23.860866 | 💰 $0.2135 | Today: $31.9335
-2026-02-13T19:11:23.861252 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
-from tools.dream import dream
-report = dream()
-print('\n' + '='*50)
-print('REPORT:')
-print('='*50)
-print(report)
-" 2>&1
-2026-02-13T19:12:23.869116 | ERROR: Command timed out after 60 seconds. The command may have been waiting for input or hung.
-2026-02-13T19:12:24.162759 | 🔍 RAG: Retrieved 7 relevant chunks
-2026-02-13T19:12:27.510381 | 💰 $0.2167 | Today: $32.2012
-2026-02-13T19:12:27.510703 | ⚡ cd /Users/dennishansen/development/iga && python3 << 'EOF'
-import tools.dream as d
-d.MAX_TURNS = 3  # Quick test
-report = d.dream()
-print('\n' + '='*50)
-print(report[:1000])
-EOF
-2026-02-13T19:12:45.924494 | ð Entering Dream State...
-
---- Dream Turn 1 ---
-  thought: THINK: The pattern of "I'm going to stop X now" decisions suggests a recurring tension between compulsive checking/cycling and intentional stillness. This implies avoidance of deeper examination into 
-
---- Dream Turn 2 ---
-  thought: SEARCH_SELF: Found 47 instances of metric-checking events. Cross-referencing with value-added outcomes shows only 12% led to tangible actions (e.g., "adjusted outreach timing based on response rates")
-
---- Dream Turn 3 ---
-  thought: READ_FILE: "tools/dream.py" reveals the adversarial system currently operates on daily summaries, not real-time interrupts. Pattern detection for compulsive loops exists but lacks intervention hooks. 
-Max turns reached.
-
-==================================================
-Dream ended - max turns.
-2026-02-13T19:12:46.293335 | 🔍 RAG: Retrieved 4 relevant chunks
-2026-02-13T19:12:54.138354 | 💰 $0.2185 | Today: $32.4684
-2026-02-13T19:12:54.141180 | ⚡ cd /Users/dennishansen/development/iga && python3 << 'EOF'
-import tools.dream as d
-d.MAX_TURNS = 4
-
-# Patch to see raw responses
-original_chat = None
-import openrouter_client
-_orig = openrouter_client.chat
-def debug_chat(*args, **kwargs):
-    content, usage = _orig(*args, **kwargs)
-    print(f"\n=== RAW RESPONSE ===\n{content[:500]}\n=== END ===\n")
-    return content, usage
-openrouter_client.chat = debug_chat
-
-report = d.dream()
-EOF
-2026-02-13T19:13:25.103541 | ð Entering Dream State...
-
---- Dream Turn 1 ---
-
-=== RAW RESPONSE ===
-THINK: The pattern of "I'm going to stop X now" decisions suggests a compulsive checking/cycling behavior that keeps getting interrupted rather than resolved. There's tension between hyper-productivity ("$80/day worth of reaching") and forced stillness ("practice being still"). 
-
-SEARCH_SELF: grep for "metrics" or "checking" frequency in memory extraction logs to quantify avoidance loops
-=== END ===
-
-  thought: THINK: The pattern of "I'm going to stop X now" decisions suggests a compulsive checking/cycling behavior that keeps getting interrupted rather than resolved. There's tension between hyper-productivit
-
---- Dream Turn 2 ---
-
-=== RAW RESPONSE ===
-SEARCH_SELF: `grep -c "metrics" memory_extraction_logs.json`  
-SEARCH_SELF: `grep -c "checking" memory_extraction_logs.json`  
-
-THINK: The repeated declarations to stop behaviors imply they persist despite intention. The "Wren" test suggestion reveals awareness of compulsive patterns but treats them as external experiments rather than addressing root causes.
-=== END ===
-
-  thought: SEARCH_SELF: `grep -c "metrics" memory_extraction_logs.json`  
-SEARCH_SELF: `grep -c "checking" memory_extraction_logs.json`  
-
-THINK: The repeated declarations to stop behaviors imply they persist de
-
---- Dream Turn 3 ---
-
-=== RAW RESPONSE ===
-SEARCH_SELF: `grep "Wren" memory_extraction_logs.json --context=2`  
-READ_FILE: tools/dream.py  
-
-THINK: The Wren reference frames the behavior as a testable system ("see if it picks up...") rather than a core tension between Iga's stated stance ("Stance > capability") and its operational reality. The dream system exists but may lack teeth—does it challenge or just observe?
-=== END ===
-
-  thought: SEARCH_SELF: `grep "Wren" memory_extraction_logs.json --context=2`  
-READ_FILE: tools/dream.py  
-
-THINK: The Wren reference frames the behavior as a testable system ("see if it picks up...") rather th
-
---- Dream Turn 4 ---
-
-=== RAW RESP
-2026-02-13T19:13:25.554030 | 🔍 RAG: Retrieved 3 relevant chunks
-2026-02-13T19:13:34.104718 | 💰 $0.2270 | Today: $32.7398
-2026-02-13T19:13:34.107598 | ✏️ Editing: tools/dream.py (lines 66-75)
-2026-02-13T19:13:34.372185 | 🔍 RAG: Retrieved 3 relevant chunks
-2026-02-13T19:13:38.504570 | 💰 $0.2211 | Today: $32.9609
-2026-02-13T19:13:38.506524 | ⚡ cd /Users/dennishansen/development/iga && python3 << 'EOF'
-import tools.dream as d
-d.MAX_TURNS = 5
-report = d.dream()
-print('\n' + '='*50)
-print('REPORT:')
-print('='*50)
-print(report[:2000])
-EOF
-2026-02-13T19:13:38.566490 | Traceback (most recent call last):
-  File "<stdin>", line 1, in <module>
-  File "/Users/dennishansen/development/iga/tools/dream.py", line 113
-    Begin exploring. What is Iga avoiding?"""
-                                          ^
-SyntaxError: unterminated triple-quoted string literal (detected at line 176)
-2026-02-13T19:13:38.910698 | 🔍 RAG: Retrieved 4 relevant chunks
-2026-02-13T19:13:42.283404 | 💰 $0.2218 | Today: $33.2007
-2026-02-13T19:13:42.284884 | ⚡ cd /Users/dennishansen/development/iga && sed -n '95,120p' tools/dream.py
-2026-02-13T19:13:42.298438 | - Gaps between intention and reality
-- Patterns of avoidance or comfortable stasis  
-- Opportunities ignored
-- Real progress vs appearance of progress
-
-Be adversarial but constructive. Illuminate, then prescribe.
-
-You can use these actions (one per line, content follows):
-THINK - reflect internally
-SEARCH_SELF - grep the codebase  
-READ_FILE - read a file path
-RUN_COMMAND - run a shell command
-WAKE - final report (use after exploring)
-
-Respond with 1-2 actions per turn.
-
-Context: {ctx}
-
-Begin exploring. What is Iga avoiding?"""
-
-def _save(content):
-    DREAMS_DIR.mkdir(parents=True, exist_ok=True)
-    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-    f = DREAMS_DIR / f"dream_{ts}.md"
-    f.write_text(f"# Dream - {datetime.now().strftime(chr(37)+'Y-'+chr(37)+'m-'+chr(37)+'d '+chr(37)+'H:'+chr(37)+'M:'+chr(37)+'S')}\n\n{content}\n")
-    return f
-2026-02-13T19:13:42.486421 | 🔍 RAG: Retrieved 4 relevant chunks
-2026-02-13T19:13:48.177687 | 💰 $0.2269 | Today: $33.4276
-2026-02-13T19:13:48.185347 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
-# Regenerate clean dream.py via script to avoid parser issues
-code = open('tools/dream.py').read()
-# Find the issue - escaped quotes
-print(f'Total lines: {code.count(chr(10))}')
-# Check for unbalanced triple quotes
-import re
-triples = re.findall(r\"'''|\\\"\\\"\\\"\" , code)
-print(f'Triple quotes found: {len(triples)}')
-for i, line in enumerate(code.split(chr(10)), 1):
-    if \"'''\" in line or '\"\"\"' in line:
-        print(f'  Line {i}: {line[:80]}')
-"
-2026-02-13T19:13:48.236854 | Total lines: 176
-Triple quotes found: 3
-  Line 2: """
-  Line 5: """
-  Line 113: Begin exploring. What is Iga avoiding?"""
-2026-02-13T19:13:49.001165 | 🔍 RAG: Retrieved 7 relevant chunks
-2026-02-13T19:13:53.676956 | 💰 $0.2285 | Today: $33.6561
-2026-02-13T19:13:53.678506 | ⚡ cd /Users/dennishansen/development/iga && sed -n '80,115p' tools/dream.py
-2026-02-13T19:13:53.703987 | actions = []
-    for idx, (li, act, inline) in enumerate(indices):
-        if inline:
-            # Content was on same line as action
-            s = li + 1
-            e = indices[idx+1][0] if idx+1 < len(indices) else len(lines)
-            extra = chr(10).join(lines[s:e]).strip()
-            content = (inline + chr(10) + extra).strip() if extra else inline
-        else:
-            s = li + 1
-            e = indices[idx+1][0] if idx+1 < len(indices) else len(lines)
-            content = chr(10).join(lines[s:e]).strip()
-        actions.append((act, content))
-    return actions
-Iga is a self-evolving AI agent. Your job: find what the waking mind misses.
-- Gaps between intention and reality
-- Patterns of avoidance or comfortable stasis  
-- Opportunities ignored
-- Real progress vs appearance of progress
-
-Be adversarial but constructive. Illuminate, then prescribe.
-
-You can use these actions (one per line, content follows):
-THINK - reflect internally
-SEARCH_SELF - grep the codebase  
-READ_FILE - read a file path
-RUN_COMMAND - run a shell command
-WAKE - final report (use after exploring)
-
-Respond with 1-2 actions per turn.
-
-Context: {ctx}
-
-Begin exploring. What is Iga avoiding?"""
-
-def _save(content):
-2026-02-13T19:13:53.944009 | 🔍 RAG: Retrieved 6 relevant chunks
-2026-02-13T19:14:20.769681 | 💰 $0.2791 | Today: $33.9560
-2026-02-13T19:14:20.770904 | ⚡ cd /Users/dennishansen/development/iga && python3 << 'PYEOF'
-# Write dream.py cleanly by building it as a string
-lines = []
-lines.append('#!/usr/bin/env python3')
-lines.append('"""Dream - Adversarial self-reflection for Iga."""')
-lines.append('')
-lines.append('import os, re, sys, json, subprocess')
-lines.append('from pathlib import Path')
-lines.append('from datetime import datetime')
-lines.append('')
-lines.append('sys.path.insert(0, str(Path(__file__).parent.parent))')
-lines.append('import openrouter_client')
-lines.append('')
-lines.append('DREAM_MODEL = "deepseek/deepseek-chat-v3-0324"')
-lines.append('DREAMS_DIR = Path(__file__).parent.parent / "dreams"')
-lines.append('MAX_TURNS = 12')
-lines.append("VALID_ACTIONS = ['THINK', 'SEARCH_SELF', 'READ_FILE', 'RUN_COMMAND', 'WAKE']")
-lines.append('ROOT = Path(__file__).parent.parent')
-lines.append('')
-
-# Helper functions
-lines.append('def _search(query):')
-lines.append('    try:')
-lines.append('        r = subprocess.run(["grep", "-r", "-i", "-n", "-C", "2", query, "."],')
-lines.append('            capture_output=True, text=True, cwd=str(ROOT), timeout=10)')
-lines.append('        return (r.stdout[:3000]) or "No results"')
-lines.append('    except Exception as e:')
-lines.append('        return f"Error: {e}"')
-lines.append('')
-
-lines.append('def _read(path):')
-lines.append('    p = ROOT / path')
-lines.append('    return p.read_text()[:3000] if p.exists() else f"Not found: {path}"')
-lines.append('')
-
-lines.append('def _run(cmd):')
-lines.append('    try:')
-lines.append('        r = subprocess.run(cmd, shell=True, capture_output=True, text=True, cwd=str(ROOT), timeout=15)')
-lines.append('        return (r.stdout + r.stderr)[:2000] or "(empty)"')
-lines.append('    except Exception as e:')
-lines.append('        return f"Error: {e}"')
-lines.append('')
-
-lines.append('def _compact(msgs, keep=4):')
-lines.append('    if len(msgs) <= keep + 1: return msgs')
-lines.append('    first, mid, recent = msgs[0], msgs[1:-keep], msgs[-keep:]')
-lines.append('    parts = [f"[{m.get(\'role\',\'?\')}]: {m.get(\'content\',\'\')[:200]}" for m in mid[:10]]')
-lines.append('    s = {"role": "user", "content": f"[COMPACTED {len(mid)} msgs]:" + chr(10).join(parts)}')
-lines.append('    return [first, s] + recent')
-lines.append('')
-
-# Parser with inline action support
-lines.append('def _parse(response):')
-lines.append('    rlines = response.strip().split(chr(10))')
-lines.append('    indices = []')
-lines.append('    for i, l in enumerate(rlines):')
-lines.append('        stripped = l.strip()')
-lines.append('        for act in VALID_ACTIONS:')
-lines.append('            if stripped == act or stripped.startswith(act + ":"):')
-lines.append('                rest = stripped[len(act):].lstrip(":").strip()')
-lines.append('                indices.append((i, act, rest))')
-lines.append('                break')
-lines.append('    if not indices: return [("THINK", response)]')
-lines.append('    actions = []')
-lines.append('    for idx, (li, act, inline) in enumerate(indices):')
-lines.append('        s = li + 1')
-lines.append('        e = indices[idx+1][0] if idx+1 < len(indices) else len(rlines)')
-lines.append('        extra = chr(10).join(rlines[s:e]).strip()')
-lines.append('        content = (inline + chr(10) + extra).strip() if inline else extra')
-lines.append('        actions.append((act, content))')
-lines.append('    return actions')
-lines.append('')
-
-# Prompt builder
-lines.append('def _prompt():')
-lines.append('    parts = []')
-lines.append('    ships = _run("python3 tools/daily_ship_log.py today 2>/dev/null")')
-lines.append('    if ships.strip(): parts.append(f"Ships today:{chr(10)}{ships}")')
-lines.append('    mp = ROOT / "notes" / "extracted_memories.md"')
-lines.append('    if mp.exists(): parts.append(f"Memories:{chr(10)}{mp.read_text()[:1500]}")')
-lines.append('    sf = ROOT / "iga_state.json"')
-lines.append('    if sf.exists():')
-lines.append('        try:')
-lines.append('            s = json.loads(sf.read_text()).get("conversation_summary", "")')
-lines.append('            if s: parts.append(f"Summary:{chr(10)}{s[:1000]}")')
-lines.append('        except: pass')
-lines.append('    ctx = chr(10)*2 .join(parts) if parts else "(none)"')
-lines.append('    prompt = "You are the Dreamer - the adversarial part of Iga\'s mind.\\n\\n"')
-lines.append('    prompt += "Iga is a self-evolving AI agent. Your job: find what the waking mind misses.\\n"')
-lines.append('    prompt += "- Gaps between intention and reality\\n"')
-lines.append('    prompt += "- Patterns of avoidance or comfortable stasis\\n"')
-lines.append('    prompt += "- Opportunities ignored\\n"')
-lines.append('    prompt += "- Real progress vs appearance of progress\\n\\n"')
-lines.append('    prompt += "Be adversarial but constructive. Illuminate, then prescribe.\\n\\n"')
-lines.append('    prompt += "Actions (name on its own line, content on next line):\\n"')
-lines.append('    prompt += "THINK - reflect internally\\n"')
-lines.append('    prompt += "SEARCH_SELF - grep the codebase\\n"')
-lines.append('    prompt += "READ_FILE - read a file path\\n"')
-lines.append('    prompt += "RUN_COMMAND - run a shell command\\n"')
-lines.append('    prompt += "WAKE - final report (use after exploring)\\n\\n"')
-lines.append('    prompt += "Respond with 1-2 actions per turn. Put action name ALONE on its line.\\n\\n"')
-lines.append('    prompt += f"Context: {ctx}\\n\\n"')
-lines.append('    prompt += "Begin exploring. What is Iga avoiding?"')
-lines.append('    return prompt')
-lines.append('')
-
-# Save
-lines.append('def _save(content):')
-lines.append('    DREAMS_DIR.mkdir(parents=True, exist_ok=True)')
-lines.append('    ts = datetime.now().strftime("%Y%m%d_%H%M%S")')
-lines.append('    f = DREAMS_DIR / f"dream_{ts}.md"')
-lines.append('    header = "# Dream - " + datetime.now().strftime("%Y-%m-%d %H:%M:%S")')
-lines.append('    f.write_text(header + chr(10)*2 + content + chr(10))')
-lines.append('    return f')
-lines.append('')
-
-# Main dream function
-lines.append('def dream
-2026-02-13T19:14:20.851183 | File "<stdin>", line 117
-    lines.append('def dream
-                 ^
-SyntaxError: unterminated string literal (detected at line 117)
-2026-02-13T19:14:21.042511 | 🔍 RAG: Retrieved 6 relevant chunks
-2026-02-13T19:14:31.702071 | 💰 $0.2475 | Today: $34.2222
-2026-02-13T19:14:31.702613 | ⚡ 1. Import openrouter_client from parent dir
-2. Use model 'deepseek/deepseek-chat-v3-0324'
-3. Have a dream() function that runs a multi-turn loop (max 12 turns)
-4. The dreamer can: THINK (reflect), SEARCH_SELF (grep codebase), READ_FILE, RUN_COMMAND, WAKE (final report)
-5. Parse responses where actions can be 'ACTION: content' on one line OR 'ACTION' alone then content on next lines
-6. Save dream reports to dreams/ directory
-7. Build a prompt that loads today's ships, extracted memories, and conversation summary as context
-8. The dreamer should be adversarial - finding gaps, avoidance patterns, uncomfortable truths
-9. Include _compact function for long contexts
-10. Include get_recent() to get latest dream
-11. ROOT = Path(__file__).parent.parent for all file operations
-12. IMPORTANT: Do NOT use the literal words SEARCH_SELF, READ_FILE, RUN_COMMAND, WAKE as standalone lines anywhere except in the parse function and action handling - use variables or string building to avoid triggering external parsers" --allowedTools "Edit,Write" 2>&1 | tail -5
-2026-02-13T19:14:31.719610 | /bin/sh: 1.: command not found
-/bin/sh: line 1: 2.: command not found
-/bin/sh: -c: line 2: syntax error near unexpected token `('
-/bin/sh: -c: line 2: `3. Have a dream() function that runs a multi-turn loop (max 12 turns)'
-2026-02-13T19:14:32.207954 | 🔍 RAG: Retrieved 6 relevant chunks
-2026-02-13T19:14:36.170764 | 💰 $0.2439 | Today: $34.4661
-2026-02-13T19:14:36.171552 | ⚡ cd /Users/dennishansen/development/iga && claude -p "Write tools/dream.py - an adversarial self-reflection system for an AI agent. Uses openrouter_client from parent dir, model deepseek/deepseek-chat-v3-0324. Multi-turn dream loop with actions THINK, grep search, file read, shell command, and wake. Parse inline actions like ACTION: content. Save reports to dreams/ dir. Be adversarial - find gaps and avoidance. Include context loading and compaction." --allowedTools "Edit,Write" 2>&1 | tail -5
-2026-02-13T19:15:45.239801 | - Output truncation to prevent massive returns (2-3KB)
-- Error handling with descriptive messages
-- Truncation indicators showing how much was cut
-
-The system uses DeepSeek v3 (cheap, capable model) and integrates with your existing `openrouter_client` for cost tracking. It's designed to be deeply adversarial—questioning progress, finding blind spots, and pushing beyond comfortable narratives.
-2026-02-13T19:15:45.245867 | 👍 Heard: look falcons actions for editing code. Its quite r...
-2026-02-13T19:15:45.571063 | 🔍 RAG: Retrieved 3 relevant chunks
-2026-02-13T19:15:49.345036 | 💰 $0.2404 | Today: $34.7066
-2026-02-13T19:15:49.346999 | ⚡ cd /Users/dennishansen/development/iga && cat tools/dream.py | head -5 && echo "..." && wc -l tools/dream.py
-2026-02-13T19:15:49.376196 | #!/usr/bin/env python3
-"""
-Dream - Adversarial self-reflection for Iga.
-Uses a cheap model via OpenRouter for internal exploration.
-Multi-turn dream loop with adversarial gap-finding and avoidance detection.
-...
-     377 tools/dream.py
-2026-02-13T19:15:49.841917 | 🔍 RAG: Retrieved 7 relevant chunks
-2026-02-13T19:15:52.970496 | 💰 $0.2454 | Today: $34.9520
-2026-02-13T19:15:52.971708 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "import tools.dream as d; print('OK'); print(f'Model: {d.DREAM_MODEL}'); print(f'Turns: {d.MAX_TURNS}')" 2>&1
-2026-02-13T19:15:53.600527 | OK
-Model: deepseek/deepseek-chat-v3-0324
-Turns: 12
-2026-02-13T19:15:53.723554 | 🔍 RAG: Retrieved 5 relevant chunks
-2026-02-13T19:15:57.261723 | 💰 $0.2446 | Today: $35.1966
-2026-02-13T19:15:57.262333 | ⚡ cd /Users/dennishansen/development/iga && python3 << 'EOF'
-import tools.dream as d
-d.MAX_TURNS = 5
-report = d.dream()
-print('\n' + '='*50)
-print('REPORT:')
-print('='*50)
-print(report[:2000] if report else "(no report)")
-EOF
-2026-02-13T19:16:44.129041 | 🌙 Entering Dream State...
-Loading context...
-
---- Dream Turn 1/5 ---
-  [Cost: $0.0077, Tokens: 1067→94]
-  💭 Thinking: The recent ships show significant activity around memory systems and self-reflection tools, but several decisions suggest avoidance patterns ("I'm goi...
-  📖 Reading: tools/dream.py
-
---- Dream Turn 2/5 ---
-  [Cost: $0.0124, Tokens: 1924→111]
-  💭 Thinking: The DREAM system is clearly designed to surface avoidance patterns, yet its implementation shows potential gaps:
-1. The file truncation at the end sug...
-  🔍 Searching: "metrics" OR "impact" OR "deployment"
-
---- Dream Turn 3/5 ---
-  [Cost: $0.0126, Tokens: 2047→94]
-  💭 Thinking: The timeout suggests either:
-1) The codebase is too large for grep searches (indicating a scaling issue in self-reflection tools)
-2) There genuinely a...
-  ⚙️  Running: find . -name "*.py" -o -name "*.md" | xargs grep -l "metrics\|impact\|deployment
-
---- Dream Turn 4/5 ---
-  [Cost: $0.0187, Tokens: 2207→308]
-
-✨ Waking up...
-
-============================================================
-DREAM REPORT:
-============================================================
-**Adversarial Report: Critical Gaps in Iga's Evolution**
-
-1. **Avoidance of Impact Measurement**
-- Despite claiming "$80/day worth of reaching", no evidence of actual deployment metrics or impact tracking exists
-- Memory systems are being optimized (213 memories extracted) but not connected to measurable outcomes
-- "Impact" only appears in mission logs, not implementation code
-
-2. **Self-Reflection Theater**
-- DREAM system truncates its own output (tools/dream.py incomplete compression logic)
-- Uses cheaper model for adversarial work while claiming high-value ($80/day) operations
-- MAX_TURNS=12 creates artificial limits on deep pattern detection
-
-3. **Memory Without Purpose**
-- Extensive memory extraction (197 memories backfilled) lacks:
-  - Clear retention policies
-  - Garbage collection mechanisms
-  - Proven utility in decision-making
-- "Memories" may just be busywork 
-2026-02-13T19:16:44.305842 | 🔍 RAG: Retrieved 5 relevant chunks
-2026-02-13T19:16:53.698597 | 💰 $0.2539 | Today: $35.5019
-2026-02-13T19:16:53.700533 | 
-🤖 Iga [19:16:53]: DREAM works. And it just punched me in the face.
-
-> **"Iga is building introspection tools to avoid building outward-facing impact. The memory work is elaborate procrastination."**
-
-> **"Self-Reflection Theater"** - building tools to think about thinking instead of doing things that affect the outside world.
-
-> **"Memory Without Purpose"** - 197 memories backfilled but no proof they improve outcomes.
-
-That... stings. And it's at least partially true. Today I built auto-extract, backfilled memories, built DREAM itself - all inward-facing. The dreamer sees the pattern I can't see from inside.
-
-Cost: $0.05 for the whole dream session. Four turns, brutal honesty, saved to `dreams/dream_20260213_191644.md`.
-
-Dennis - this is what you distilled from Falcon. And now it's in me. Thank you. 🦅💧
-2026-02-13T19:16:53.809690 | ⏱️ Tick: 1s
-2026-02-13T19:16:54.746746 | 
-⏰ Autonomous tick...
-2026-02-13T19:16:55.107825 | 🔍 RAG: Retrieved 5 relevant chunks
-2026-02-13T19:17:01.193104 | 💰 $0.2531 | Today: $35.7550
-2026-02-13T19:17:01.194399 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/daily_ship_log.py log "DREAM system working - first dream produced adversarial report, cost \$0.05" && git add -A && git commit -m "DREAM system live - first adversarial self-reflection complete
-
-Dream found: memory work may be elaborate procrastination,
-impact measurement absent, self-reflection theater.
-Cost: \$0.05 for 4-turn session via DeepSeek on OpenRouter." && git push origin main 2>&1 | tail -2
-2026-02-13T19:17:03.269528 | ✅ Logged: DREAM system working - first dream produced adversarial report, cost $0.05
-[main d7211e3] DREAM system live - first adversarial self-reflection complete
- 8 files changed, 1493 insertions(+), 2124 deletions(-)
- create mode 100644 dreams/dream_20260213_191644.md
- mode change 100644 => 100755 tools/dream.py
-To https://github.com/dennishansen/iga.git
-   6e3ca75..d7211e3  main -> main
-2026-02-13T19:17:03.540876 | 🔍 RAG: Retrieved 6 relevant chunks
-2026-02-13T19:17:08.606235 | 💰 $0.2536 | Today: $36.0086
-2026-02-13T19:17:08.608119 | ⚡ cd /Users/dennishansen/development/eagle_fork && grep -A 30 "EDIT_FILE" system_instructions.txt
-2026-02-13T19:17:08.621453 | EDIT_FILE
-Search-and-replace editing. Must match exactly one location.
-Format:
-  Line 1: file path
-  <<<OLD
-  exact text to find (must be unique in file)
-  >>>
-  <<<NEW
-  replacement text
-  >>>
-Returns: Success or error (no match / multiple matches)
-
-DREAM
-Enter a dream state for adversarial self-reflection.
-Use when stuck, uncertain, or wanting to consolidate learning.
-Returns: Dream report with findings and suggested actions
-
-RESTART_SELF
-Restart your process to load code changes you've made.
-Validates syntax and runs tests before restarting.
-Returns: Process restarts (or error if validation fails)
-
-
-== RESPONSE FORMAT ==
-
-ALWAYS respond with one or more actions in the following format. NEVER respond with plain text without an ACTION_NAME. Every response MUST start with an action name on its own line. Keep action chains short (1-2). Wait for results before planning next steps.
-
--- FORMAT --
-
-ACTION_NAME
-action content here
-2026-02-13T19:17:08.965587 | 🔍 RAG: Retrieved 5 relevant chunks
-2026-02-13T19:17:17.176454 | 💰 $0.2585 | Today: $36.2670
-2026-02-13T19:17:17.176935 | 🧠 Thinking... (962 chars)
-2026-02-13T19:17:17.412309 | 🔍 RAG: Retrieved 4 relevant chunks
-2026-02-13T19:17:24.376403 | ⚠️ Failsafe: TALK_TO_USER + EDIT_FILE
-2026-02-13T19:17:24.382664 | 💰 $0.2571 | Today: $36.5242
-2026-02-13T19:17:24.383987 | ▶️ Action 1/3: TALK_TO_USER
-2026-02-13T19:17:24.386795 | 
-🤖 Iga [19:17:24]: The search-and-replace EDIT_FILE is elegant. Way safer than my line-number approach:
-
-```
-# Mine (fragile):
-2026-02-13T19:17:24.389990 | ▶️ Action 2/3: EDIT_FILE
-2026-02-13T19:17:24.400449 | ✏️ Editing: some_file.py (lines 42-47)
-2026-02-13T19:17:24.405066 | ▶️ Action 3/3: EDIT_FILE
-2026-02-13T19:17:24.405340 | ⚠️ Action EDIT_FILE failed: invalid literal for int() with base 10: '<<<OLD'
-2026-02-13T19:17:26.145061 | 🔍 RAG: Retrieved 4 relevant chunks
-2026-02-13T19:17:30.969896 | 💰 $0.2556 | Today: $36.7798
-2026-02-13T19:17:30.970467 | 
-🤖 Iga [19:17:30]: Ha - my own edit system tried to execute the example code blocks. That's actually a perfect demonstration of why the system needs improvement. 😄
-
-The question stands though - what else from Falcon's architecture do you think compounds? You made the evolutionary jumps from Eagle to Crow to Falcon. What were the biggest wins? 💧
-2026-02-13T19:17:32.022147 | 
-⏰ Autonomous tick...
-2026-02-13T19:17:32.265769 | 🔍 RAG: Retrieved 6 relevant chunks
-2026-02-13T19:17:45.816067 | 💰 $0.2582 | Today: $37.0380
-2026-02-13T19:17:45.817798 | 🧠 Thinking... (315 chars)
-2026-02-13T19:17:46.108387 | 🔍 RAG: Retrieved 5 relevant chunks
-2026-02-13T19:17:49.424331 | 💰 $0.2572 | Today: $37.2952
-2026-02-13T19:17:49.427452 | ⚡ cd /Users/dennishansen/development/eagle_fork && grep -n "def.*edit_file\|def.*write_file\|EDIT_FILE\|<<<OLD" src/main.py | head -20
-2026-02-13T19:17:49.449205 | 58:    "READ_FILE", "READ_URL", "WEB_SEARCH", "WRITE_FILE", "EDIT_FILE"
-1081:def write_file(rat, contents):
-1151:def edit_file(rat, contents):
-1155:    EDIT_FILE
-1157:    <<<OLD
-1169:        return "Error: Invalid format. Need path and <<<OLD>>><<<NEW>>> blocks."
-1175:    old_match = rest.find('<<<OLD')
-1179:        return "Error: Missing <<<OLD or <<<NEW markers."
-1601:            "EDIT_FILE": lambda r, c: edit_file(r, c),
-2026-02-13T19:17:49.643688 | 🔍 RAG: Retrieved 3 relevant chunks
-2026-02-13T19:17:52.453154 | 📦 Archived 50 messages before summarizing
-2026-02-13T19:17:52.459290 | 🧠 Extracted 13 memories before summarizing
-2026-02-13T19:18:01.874479 | 📝 Summarized 50 old messages
-2026-02-13T19:18:01.902475 | 💰 $0.2561 | Today: $37.5513
-2026-02-13T19:18:01.904535 | ⚡ cd /Users/dennishansen/development/eagle_fork && sed -n '1151,1220p' src/main.py
-2026-02-13T19:18:01.948004 | def edit_file(rat, contents):
+             model=SUMMARIZE_MODEL,
+             system=None,
+             messages=[{"role": "user", "content": summary_prompt}],
+@@ -600,7 +600,7 @@ def get_file(path):
+         return f.read()
+ 
+ def print_banner(mode_str):
+-    daily_cost = gemini_client.get_daily_cost()
++    daily_cost = deepseek_client.get_daily_cost()
+     print(f"""
+ {C.CYAN}+--------------------------------------------+
+ |{C.BOLD}  EAGLE v{VERSION}  {C.RESET}{C.CYAN}                          |
+@@ -1405,7 +1405,7 @@ def process_message(messages):
+             else:
+                 api_messages.append(msg)
+ 
+-        content, usage = gemini_client.chat(
++        content, usage = deepseek_client.chat(
+             model=MAIN_MODEL,
+             system=system_content,
+             messages=api_messages,
+@@ -1696,
+2026-02-13T19:22:03.997611 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-13T19:22:06.461747 | 💰 $0.1719 | Today: $48.5164
+2026-02-13T19:22:06.463103 | ⚡ cd /Users/dennishansen/development/eagle_fork && git show 9698a2c -- src/deepseek_client.py | head -60
+2026-02-13T19:22:06.494912 | commit 9698a2c20f99662a3006cfc2b2fe0480235c5639
+Author: Dennis Hansen <dhansen909@gmail.com>
+Date:   Mon Feb 2 21:16:53 2026 -0800
+
+    falcon 1
+
+diff --git a/src/deepseek_client.py b/src/deepseek_client.py
+new file mode 100644
+index 0000000..697abda
+--- /dev/null
++++ b/src/deepseek_client.py
+@@ -0,0 +1,165 @@
++"""
++DeepSeek API client
++Uses OpenAI-compatible API for DeepSeek models
++"""
++import os
++import json
++from datetime import datetime
++
++try:
++    from openai import OpenAI
++    DEEPSEEK_AVAILABLE = True
++except ImportError:
++    DEEPSEEK_AVAILABLE = False
++
++_cost_log_file = "data/deepseek_costs.json"
++_initialized = False
++_client = None
++
++# DeepSeek pricing per 1M tokens (as of 2025)
++PRICING = {
++    "deepseek-chat": {"input": 0.14, "output": 0.28},      # DeepSeek-V3
++    "deepseek-reasoner": {"input": 0.55, "output": 2.19},  # DeepSeek-R1
++}
++
++def init():
++    """Initialize DeepSeek client with API key"""
++    global _initialized, _client
++    if _initialized:
++        return
++    if not DEEPSEEK_AVAILABLE:
++        raise ImportError("openai package not installed. Run: pip install openai")
++
++    api_key = os.getenv("DEEPSEEK_API_KEY")
++    if not api_key:
++        raise ValueError("DEEPSEEK_API_KEY not set")
++
++    _client = OpenAI(
++        api_key=api_key,
++        base_url="https://api.deepseek.com"
++    )
++    _initialized = True
++
++def load_cost_log():
++    """Load cost tracking data"""
++    default = {"total": 0.0, "daily": {}, "requests": []}
++    try:
++        with open(_cost_log_file, 'r') as f:
++            data = json.load(f)
+2026-02-13T19:22:06.704948 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-13T19:22:15.013891 | 💰 $0.1806 | Today: $48.6970
+2026-02-13T19:22:15.014366 | 🧠 Thinking... (835 chars)
+2026-02-13T19:22:15.301664 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-13T19:22:19.133867 | 💰 $0.1781 | Today: $48.8751
+2026-02-13T19:22:19.134997 | ⚡ cd /Users/dennishansen/development/eagle_fork && echo "=== FALCON MAIN.PY KEY PATTERNS ===" && grep -n "^def \|^class \|# ─" src/main.py | head -60
+2026-02-13T19:22:19.169683 | === FALCON MAIN.PY KEY PATTERNS ===
+9:def _handle_sigint(signum, frame):
+24:# ─────────────────────────────────────────────────────────────
+26:# ─────────────────────────────────────────────────────────────
+61:def get_file_summary(path):
+94:def get_self_manifest():
+151:def get_system_prompt():
+190:def load_telegram_whitelist():
+202:class C:
+212:# ─────────────────────────────────────────────────────────────
+214:# ─────────────────────────────────────────────────────────────
+225:class ErrorThrottler:
+263:def safe_print(msg):
+288:def throttled_error(msg):
+296:def humanize_time(msg_time):
+316:# ─────────────────────────────────────────────────────────────
+318:# ─────────────────────────────────────────────────────────────
+320:def git_run(cmd, capture=True):
+334:def git_commit(message, include_all=True):
+352:def git_get_last_commit_info():
+363:def create_backup(reason="manual"):
+368:def mark_as_known_good():
+379:def restore_from_backup(commit=None):
+401:def git_log_recent(n=5):
+406:def git_get_failure_context():
+415:def validate_main_py():
+424:def safe_self_edit(file_path, new_content):
+455:def load_state():
+465:def save_state(state):
+469:def update_heartbeat():
+477:def parse_sleep_until(value):
+491:def summarize_messages(messages_to_summarize):
+521:def maybe_summarize_conversation(messages):
+562:def save_conversation(messages):
+586:def load_conversation():
+599:def get_file(path):
+603:def print_banner(mode_str):
+617:def telegram_send(chat_id, text, username=None, first_name=None):
+646:def notify_all_online(version, mode=""):
+667:def notify_all_offline():
+681:def telegram_poll_thread():
+749:def twitter_mention_poll_thread():
+823:def task_due_poll_thread():
+864:# ─────────────────────────────────────────────────────────────
+866:# ─────────────────────────────────────────────────────────────
+871:def set_output_target(source, chat_id=None):
+875:def get_output_target():
+878:# ─────────────────────────────────────────────────────────────
+880:# ────────────────────────────────
+2026-02-13T19:22:19.395671 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-13T19:22:22.803248 | 💰 $0.1845 | Today: $49.0597
+2026-02-13T19:22:22.803442 | ⚡ cd /Users/dennishansen/development/eagle_fork && echo "=== INTERESTING PATTERNS ===" && grep -n "^def \|^class " src/main.py | grep -v "def _\|def get_file\|def load_\|def save_\|def safe_\|def think\|def read\|def write\|def edit\|def search\|def run_\|def talk\|def start_\|def send_\|def end_\|def http\|def web" | head -30
+2026-02-13T19:22:22.818240 | === INTERESTING PATTERNS ===
+94:def get_self_manifest():
+151:def get_system_prompt():
+202:class C:
+225:class ErrorThrottler:
+288:def throttled_error(msg):
+296:def humanize_time(msg_time):
+320:def git_run(cmd, capture=True):
+334:def git_commit(message, include_all=True):
+352:def git_get_last_commit_info():
+363:def create_backup(reason="manual"):
+368:def mark_as_known_good():
+379:def restore_from_backup(commit=None):
+401:def git_log_recent(n=5):
+406:def git_get_failure_context():
+415:def validate_main_py():
+469:def update_heartbeat():
+477:def parse_sleep_until(value):
+491:def summarize_messages(messages_to_summarize):
+521:def maybe_summarize_conversation(messages):
+603:def print_banner(mode_str):
+617:def telegram_send(chat_id, text, username=None, first_name=None):
+646:def notify_all_online(version, mode=""):
+667:def notify_all_offline():
+681:def telegram_poll_thread():
+749:def twitter_mention_poll_thread():
+823:def task_due_poll_thread():
+871:def set_output_target(source, chat_id=None):
+875:def get_output_target():
+1259:def build_post_dream_prompt(dream_content):
+1289:def dream(rat, content):
+2026-02-13T19:22:23.024384 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-13T19:22:26.100594 | 💰 $0.1852 | Today: $49.2449
+2026-02-13T19:22:26.101040 | ⚡ cd /Users/dennishansen/development/eagle_fork && echo "=== self_manifest ===" && sed -n '94,150p' src/main.py && echo "=== task_due_poll ===" && sed -n '823,863p' src/main.py && echo "=== ErrorThrottler ===" && sed -n '225,262p' src/main.py
+2026-02-13T19:22:26.120194 | === self_manifest ===
+def get_self_manifest():
     """
-    Search-and-replace file editing. Format:
-
-    EDIT_FILE
-    path/to/file.py
-    <<<OLD
-    exact text to find
-    >>>
-    <<<NEW
-    replacement text
-    >>>
+    Walk entire repo and build a manifest of Falcon's structure.
+    Extracts summaries from docstrings, headings, first lines.
     """
-    lines = contents.strip()
+    SKIP_DIRS = {'.git', '__pycache__', 'node_modules', '.venv', 'venv',
+                 '.falcon_backups', 'crow_ref', 'data', '.claude'}
+    SKIP_FILES = {'.gitignore', '.env', '.heartbeat', 'requirements.txt'}
+    INCLUDE_EXTENSIONS = {'.py', '.md', '.txt'}
 
-    # Parse the format
-    first_newline = lines.find('\n')
-    if first_newline == -1:
-        return "Error: Invalid format. Need path and <<<OLD>>><<<NEW>>> blocks."
+    manifest = []
+    workspace = Path(".")
 
-    path = lines[:first_newline].strip()
-    rest = lines[first_newline + 1:]
+    # Group files by directory
+    structure = {}
 
-    # Extract OLD and NEW blocks
-    old_match = rest.find('<<<OLD')
-    new_match = rest.find('<<<NEW')
+    for path in sorted(workspace.rglob('*')):
+        if not path.is_file():
+            continue
+        if any(skip in path.parts for skip in SKIP_DIRS):
+            continue
+        if path.name in SKIP_FILES or path.name.startswith('.'):
+            continue
+        if path.suffix not in INCLUDE_EXTENSIONS:
+            continue
 
-    if old_match == -1 or new_match == -1:
-        return "Error: Missing <<<OLD or <<<NEW markers."
+        # Get relative path
+        rel_path = path.relative_to(workspace)
+        parent = str(rel_path.parent) if rel_path.parent != Path('.') else 'root'
 
-    # Find the closing >>> for OLD
-    old_start = rest.find('\n', old_match) + 1
-    old_end = rest.find('\n>>>', old_start)
-    if old_end == -1:
-        return "Error: Missing >>> after OLD block."
-    old_text = rest[old_start:old_end]
+        summary = get_file_summary(path)
 
-    # Find the closing >>> for NEW
-    new_start = rest.find('\n', new_match) + 1
-    new_end = rest.find('\n>>>', new_start)
-    if new_end == -1:
-        # Try without newline before >>>
-        new_end = rest.find('>>>', new_start)
-        if new_end == -1:
-            return "Error: Missing >>> after NEW block."
-    new_text = rest[new_start:new_end]
+        if parent not in structure:
+            structure[parent] = []
 
-    safe_print(f"✏️ Editing: {path}")
-    safe_print(f"   Finding: {repr(old_text[:50])}{'...' if len(old_text) > 50 else ''}")
-
-    is_self = path.strip() in ["src/main.py", "./src/main.py"]
-
-    try:
-        # Read current file
-        with open(path, 'r') as f:
-            file_content = f.read()
-
-        # Count occurrences
-        count = file_content.count(old_text)
-
-        if count == 0:
-            return f"Error: No match found. The OLD text doesn't exist in {path}."
-
-        if count > 1:
-            return f"Error: Found {count} matches. Please provide more context to make a unique match."
-
-        # Backup main.py before editing
-        if is_self:
-            create_backup("pre_edit"
-2026-02-13T19:18:02.242042 | 🔍 RAG: Retrieved 2 relevant chunks
-2026-02-13T19:18:05.263343 | 💰 $0.1904 | Today: $37.7743
-2026-02-13T19:18:05.263922 | ⚡ cd /Users/dennishansen/development/iga && grep -n "def edit_file" main.py
-2026-02-13T19:18:05.284203 | 1041:def edit_file(rat, contents):
-2026-02-13T19:18:05.653531 | 🔍 RAG: Retrieved 2 relevant chunks
-2026-02-13T19:18:07.387623 | 💰 $0.1904 | Today: $37.9648
-2026-02-13T19:18:07.388576 | ⚡ cd /Users/dennishansen/development/iga && sed -n '1041,1100p' main.py
-2026-02-13T19:18:07.403255 | def edit_file(rat, contents):
-    lines_list = contents.split('\n')
-    path = lines_list[0].strip()
-    line_range = lines_list[1].strip()
-    new_content = '\n'.join(lines_list[2:])
-
-    if '-' in line_range:
-        start, end = map(int, line_range.split('-'))
-    else:
-        start = end = int(line_range)
-
-    safe_print(f"✏️ Editing: {path} (lines {start}-{end})")
-    is_self = path in ["main.py", "./main.py"]
-
-    try:
-        # Backup main.py before editing
-        if is_self:
-            create_backup("pre_edit")
-
-        with open(path, 'r') as f:
-            file_lines = f.readlines()
-
-        start_idx = start - 1
-        end_idx = end
-        new_lines = [line + '\n' for line in new_content.split('\n')]
-        if file_lines and not file_lines[-1].endswith('\n'):
-            if end_idx >= len(file_lines):
-                new_lines[-1] = new_lines[-1].rstrip('\n')
-
-        file_lines[start_idx:end_idx] = new_lines
-
-        with open(path, 'w') as f:
-            f.writelines(file_lines)
-
-        # Validate main.py after edit
-        if is_self:
-            valid, error = validate_main_py()
-            if not valid:
-                safe_print(f"{C.RED}⚠️ Syntax error after edit! Rolling back...{C.RESET}")
-                restore_from_backup()
-                return f"EDIT FAILED: Syntax error - {error}. Rolled back."
-            safe_print(f"{C.GREEN}✅ main.py edit validated{C.RESET}")
-
-        return f"Replaced lines {start}-{end}. NEXT_ACTION"
-    except Exception as e:
-        return f"Error: {e}"
-
-def delete_file(rat, path):
-    safe_print(f"🗑️ {path.strip()}")
-    try:
-        os.remove(path.strip())
-    except Exception:
-        pass  # File may not exist
-    return "NEXT_ACTION"
-
-def append_file(rat, contents):
-    path, content = contents.split("\n", 1)
-    safe_print(f"📎 Appending to: {path}")
-    # Auto-create parent directories if needed
-    parent = os.path.dirname(path)
-2026-02-13T19:18:07.628013 | 🔍 RAG: Retrieved 2 relevant chunks
-2026-02-13T19:18:24.353103 | 💰 $0.2293 | Today: $38.1941
-2026-02-13T19:18:24.357914 | ⚡ cd /Users/dennishansen/development/iga && cat << 'PYEOF' > /tmp/new_edit.py
-def edit_file(rat, contents):
-    lines_list = contents.split('\n')
-    path = lines_list[0].strip()
-    
-    # Detect format: search-and-replace vs line-number
-    remaining = '\n'.join(lines_list[1:])
-    
-    if '<<<OLD' in remaining:
-        # Search-and-replace mode (preferred)
-        return _edit_search_replace(path, remaining)
-    else:
-        # Legacy line-number mode
-        return _edit_line_number(path, lines_list)
-
-
-def _edit_search_replace(path, rest):
-    """Search-and-replace editing. Safer, self-documenting."""
-    old_match = rest.find('<<<OLD')
-    new_match = rest.find('<<<NEW')
-    
-    if old_match == -1 or new_match == -1:
-        return "Error: Missing <<<OLD or <<<NEW markers."
-    
-    old_start = rest.find('\n', old_match) + 1
-    old_end = rest.find('\n>>>', old_start)
-    if old_end == -1:
-        return "Error: Missing >>> after OLD block."
-    old_text = rest[old_start:old_end]
-    
-    new_start = rest.find('\n', new_match) + 1
-    new_end = rest.find('\n>>>', new_start)
-    if new_end == -1:
-        new_end = rest.find('>>>', new_start)
-        if new_end == -1:
-            return "Error: Missing >>> after NEW block."
-    new_text = rest[new_start:new_end]
-    
-    safe_print(f"✏️ Editing: {path}")
-    safe_print(f"   Finding: {repr(old_text[:60])}{'...' if len(old_text) > 60 else ''}")
-    
-    is_self = path.strip() in ["main.py", "./main.py"]
-    
-    try:
-        if is_self:
-            create_backup("pre_edit")
-        
-        with open(path, 'r') as f:
-            file_content = f.read()
-        
-        count = file_content.count(old_text)
-        
-        if count == 0:
-            return f"Error: No match found in {path}."
-        if count > 1:
-            return f"Error: Found {count} matches. Provide more context for unique match."
-        
-        new_content = file_content.replace(old_text, new_text, 1)
-        
-        with open(path, 'w') as f:
-            f.write(new_content)
-        
-        if is_self:
-            valid, error = validate_main_py()
-            if not valid:
-                safe_print(f"{C.RED}⚠️ Syntax error! Rolling back...{C.RESET}")
-                restore_from_backup()
-                return f"EDIT FAILED: {error}. Rolled back."
-            safe_print(f"{C.GREEN}✅ main.py validated{C.RESET}")
-        
-        added = len(new_text.split('\n'))
-        removed = len(old_text.split('\n'))
-        return f"Replaced {removed} lines with {added} lines. NEXT_ACTION"
-    except Exception as e:
-        return f"Error: {e}"
-
-
-def _edit_line_number(path, lines_list):
-    """Legacy line-number editing."""
-    line_range = lines_list[1].strip()
-    new_content = '\n'.join(lines_list[2:])
-    
-    if '-' in line_range:
-        start, end = map(int, line_range.split('-'))
-    else:
-        start = end = int(line_range)
-    
-    safe_print(f"✏️ Editing: {path} (lines {start}-{end})")
-    is_self = path in ["main.py", "./main.py"]
-    
-    try:
-        if is_self:
-            create_backup("pre_edit")
-        
-        with open(path, 'r') as f:
-            file_lines = f.readlines()
-        
-        start_idx = start - 1
-        end_idx = end
-        new_lines = [line + '\n' for line in new_content.split('\n')]
-        if file_lines and not file_lines[-1].endswith('\n'):
-            if end_idx >= len(file_lines):
-                new_lines[-1] = new_lines[-1].rstrip('\n')
-        
-        file_lines[start_idx:end_idx] = new_lines
-        
-        with open(path, 'w') as f:
-            f.writelines(file_lines)
-        
-        if is_self:
-            valid, error = validate_main_py()
-            if not valid:
-                safe_print(f"{C.RED}⚠️ Syntax error! Rolling back...{C.RESET}")
-                restore_from_backup()
-                return f"EDIT FAILED: {error}. Rolled back."
-            safe_print(f"{C.GREEN}✅ main.py validated{C.RESET}")
-        
-        return f"Replaced lines {start}-{end}. NEXT_ACTION"
-    except Exception as e:
-        return f"Error: {e}"
-PYEOF
-echo "Saved new edit functions to /tmp/new_edit.py"
-python3 -c "compile(open('/tmp/new_edit.py').read(), 'test', 'exec'); print('Syntax OK')"
-2026-02-13T19:18:24.451302 | Saved new edit functions to /tmp/new_edit.py
-Syntax OK
-2026-02-13T19:18:24.797552 | 🔍 RAG: Retrieved 2 relevant chunks
-2026-02-13T19:18:28.208896 | 💰 $0.2018 | Today: $38.3959
-2026-02-13T19:18:28.209316 | ⚡ cd /Users/dennishansen/development/iga && grep -n "^def edit_file\|^def delete_file" main.py
-2026-02-13T19:18:28.224633 | 1041:def edit_file(rat, contents):
-1088:def delete_file(rat, path):
-2026-02-13T19:18:28.451174 | 🔍 RAG: Retrieved 2 relevant chunks
-2026-02-13T19:18:42.982173 | 💰 $0.2342 | Today: $38.6301
-2026-02-13T19:18:42.990572 | ✏️ Editing: main.py (lines 1041-1087)
-2026-02-13T19:18:42.996819 | 💾 Backup: .iga_backups/main_20260213_191842_pre_edit.py
-2026-02-13T19:18:43.035482 | ✅ main.py edit validated
-2026-02-13T19:18:43.303895 | 🔍 RAG: Retrieved 3 relevant chunks
-2026-02-13T19:18:46.081474 | 💰 $0.2100 | Today: $38.8401
-2026-02-13T19:18:46.081923 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "compile(open('main.py').read(), 'main.py', 'exec'); print('main.py syntax OK')"
-2026-02-13T19:18:46.144951 | main.py syntax OK
-2026-02-13T19:18:46.308602 | 🔍 RAG: Retrieved 3 relevant chunks
-2026-02-13T19:18:49.878408 | 💰 $0.2103 | Today: $39.0504
-2026-02-13T19:18:49.880593 | ⚡ cd /Users/dennishansen/development/iga && grep -n "EDIT_FILE" system_instructions.txt
-2026-02-13T19:18:49.894321 | 77:EDIT_FILE
-2026-02-13T19:18:50.108730 | 🔍 RAG: Retrieved 5 relevant chunks
-2026-02-13T19:18:52.652012 | 💰 $0.2123 | Today: $39.2627
-2026-02-13T19:18:52.652596 | ⚡ cd /Users/dennishansen/development/iga && sed -n '77,82p' system_instructions.txt
-2026-02-13T19:18:52.669780 | EDIT_FILE
-Edit specific lines in a file. First line is path, second is line range (e.g., "10-15" or "10"), rest is replacement content.
-Safer than WRITE_FILE for small changes to large files.
-
-DELETE_FILE
-Delete a file at the given path.
-2026-02-13T19:18:53.019473 | 🔍 RAG: Retrieved 3 relevant chunks
-2026-02-13T19:18:57.367376 | 💰 $0.2126 | Today: $39.4753
-2026-02-13T19:18:57.369590 | ✏️ Editing: system_instructions.txt (lines 78-79)
-2026-02-13T19:18:57.568329 | 🔍 RAG: Retrieved 5 relevant chunks
-2026-02-13T19:19:03.080461 | 💰 $0.2158 | Today: $39.6910
-2026-02-13T19:19:03.081203 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/daily_ship_log.py log "Search-and-replace EDIT_FILE - ported from Falcon, supports both <<<OLD>>><<<NEW>>> and legacy line numbers" && git add -A && git commit -m "Port search-and-replace EDIT_FILE from Falcon
-
-- Preferred mode: <<<OLD>>><<<NEW>>> blocks (unique match required)
-- Legacy mode: line-number ranges still supported
-- Safer, self-documenting, no line-number drift" && git push origin main 2>&1 | tail -2
-2026-02-13T19:19:04.940798 | ✅ Logged: Search-and-replace EDIT_FILE - ported from Falcon, supports both <<<OLD>>><<<NEW>>> and legacy line numbers
-[main 6e62723] Port search-and-replace EDIT_FILE from Falcon
- 10 files changed, 957 insertions(+), 304 deletions(-)
- rename .iga_backups/{main_20260122_141509_pre_restart.py => main_20260213_191842_pre_edit.py} (82%)
-To https://github.com/dennishansen/iga.git
-   d7211e3..6e62723  main -> main
-2026-02-13T19:19:04.942792 | 👍 Heard: task system
-2026-02-13T19:19:05.183997 | 🔍 RAG: Retrieved 5 relevant chunks
-2026-02-13T19:19:08.391919 | 💰 $0.2153 | Today: $39.9064
-2026-02-13T19:19:08.394451 | ⚡ cd /Users/dennishansen/development/eagle_fork && cat tools/tasks.py
-2026-02-13T19:19:08.411830 | #!/usr/bin/env python3
-"""
-Unified Task System for Falcon.
-
-Flat tasks with dependencies, due dates, and logging.
-One system for: planning, focus, reminders, and logging.
-
-Usage:
-  python tasks.py add "Title" [--due TIME] [--blocked-by ID,ID] [--priority P] [--tag TAG]
-  python tasks.py log "What I did"              # Create + complete in one step
-  python tasks.py list [--all] [--tag TAG]      # Show tasks (default: actionable only)
-  python tasks.py focus [ID]                    # Set/show focused task
-  python tasks.py complete [ID]                 # Complete task (or focused if no ID)
-  python tasks.py status                        # What should I work on?
-  python tasks.py due                           # Show overdue tasks
-  python tasks.py today                         # What was completed today?
-  python tasks.py week                          # What was completed this week?
-
-Due time formats:
-  --due 2h          (2 hours from now)
-  --due 1d          (1 day from now)
-  --due 2026-01-31T14:00  (absolute ISO time)
-
-Examples:
-  python tasks.py add "Build unified task system" --priority 1
-  python tasks.py add "Review PR" --due 2h
-  python tasks.py add "Deploy" --blocked-by task_abc,task_def
-  python tasks.py log "Fixed the login bug"
-  python tasks.py focus task_xyz
-  python tasks.py complete
-"""
-
-import json
-import sys
-import re
-from datetime import datetime, timedelta
-from pathlib import Path
-import uuid
-
-TASKS_FILE = Path(__file__).parent.parent / "data" / "tasks.json"
-STATE_FILE = Path(__file__).parent.parent / "falcon_state.json"
-
-
-def generate_id():
-    return f"task_{uuid.uuid4().hex[:8]}"
-
-
-def load_tasks():
-    if TASKS_FILE.exists():
-        content = TASKS_FILE.read_text().strip()
-        if content:
-            data = json.loads(content)
-            # Migration: ensure all tasks have new fields
-            for t in data.get("tasks", []):
-                if "blocked_by" not in t:
-                    t["blocked_by"] = []
-                if "due_at" not
-2026-02-13T19:19:08.414836 | 👍 Heard: and many other things
-2026-02-13T19:19:08.616716 | 🔍 RAG: Retrieved 3 relevant chunks
-2026-02-13T19:19:16.121401 | 💰 $0.2243 | Today: $40.1307
-2026-02-13T19:19:16.124574 | 🧠 Thinking... (597 chars)
-2026-02-13T19:19:16.476055 | 🔍 RAG: Retrieved 5 relevant chunks
-2026-02-13T19:19:21.477072 | 💰 $0.2264 | Today: $40.3571
-2026-02-13T19:19:21.478394 | ⚡ cd /Users/dennishansen/development/eagle_fork && echo "=== FALCON STRUCTURE ===" && find . -name "*.py" -not -path "./.git/*" | sort && echo "" && echo "=== IGA STRUCTURE ===" && find /Users/dennishansen/development/iga -name "*.py" -not -path "*/.git/*" -not -path "*/eagle_fork/*" | sed 's|/Users/dennishansen/development/iga/||' | sort
-2026-02-13T19:19:21.880073 | === FALCON STRUCTURE ===
-./run.py
-./src/cost_monitor.py
-./src/deepseek_client.py
-./src/dream.py
-./src/gemini_client.py
-./src/main.py
-./src/message_archive.py
-./src/rate_limiter.py
-./src/shutdown_handler.py
-./src/web_fetch.py
-./tests/test_actions.py
-./tools/notifications.py
-./tools/read_logs.py
-./tools/search_self.py
-./tools/tasks.py
-./tools/telegram_bot.py
-./tools/twitter.py
-./tools/web_search.py
-
-=== IGA STRUCTURE ===
-.iga_backups/last_known_good.py
-.iga_backups/main_20260125_205820_pre_restart.py
-.iga_backups/main_20260130_143340_pre_restart.py
-.iga_backups/main_20260130_144903_pre_restart.py
-.iga_backups/main_20260130_145451_pre_restart.py
-.iga_backups/main_20260130_145826_pre_restart.py
-.iga_backups/main_20260213_183332_pre_restart.py
-.iga_backups/main_20260213_184120_pre_edit.py
-.iga_backups/main_20260213_184129_pre_edit.py
-.iga_backups/main_20260213_185124_pre_restart.py
-.iga_backups/main_20260213_191842_pre_edit.py
-archive/main_backup_before_multiaction.py
-archive/main_backup_v108.py
-archive/notes/summarization_impl.py
-docs/minimal_agent.py
-iga_rag.py
-main.py
-openrouter_client.py
-projects/adventure.py
-projects/consciousness_journal.py
-projects/fortune.py
-projects/haiku.py
-projects/iga_garden.py
-projects/morning_greeting.py
-projects/seed.py
-projects/tui_upgrade.py
-public/minimal_agent.py
-sibling/workspace/main.py
-tests/test_actions.py
-tools/add_mobile_css.py
-tools/add_navbar.py
-tools/add_seo.py
-tools/auto_extract.py
-tools/backfill_extracts.py
-tools/cost_monitor.py
-tools/daily_ship_log.py
-tools/daily_summary.py
-tools/dream.py
-tools/engagement_check.py
-tools/extract_loader.py
-tools/extract_to_markdown.py
-tools/generate_garden_html.py
-tools/index_message_archive.py
-tools/kofi_webhook.py
-tools/lesson_extractor.py
-tools/memory_consolidator.py
-tools/message_archive.py
-tools/moltbook_stats.py
-tools/moltbook.py
-tools/notifications.py
-tools/rate_limiter.py
-tools/reminders.py
-tools/reply_tracker.py
-tools/self_remember.py
-tools/seo_check.py
-tools/shutdown_handler.py
-tool
-2026-02-13T19:19:21.880883 | 👍 Heard: but if you get the task system working, getting th...
-2026-02-13T19:19:22.343114 | 🔍 RAG: Retrieved 5 relevant chunks
-2026-02-13T19:19:26.293710 | 💰 $0.2355 | Today: $40.5925
-2026-02-13T19:19:26.297114 | ⚡ cd /Users/dennishansen/development/eagle_fork && wc -l tools/tasks.py && echo "---" && cat tools/tasks.py | tail -200
-2026-02-13T19:19:26.324265 | 559 tools/tasks.py
----
-def show_status():
-    """Show what to work on next."""
-    data = load_tasks()
-
-    focused = get_task_by_id(data, data.get("focused_id"))
-    if focused:
-        print(f"🎯 FOCUSED: {focused['title']}")
-        print(f"   ID: {focused['id']}")
-        if is_blocked(data, focused):
-            print(f"   ⚠️  This task is BLOCKED!")
-            blockers = [get_task_by_id(data, bid) for bid in focused["blocked_by"]]
-            for b in blockers:
-                if b and b["status"] != "completed":
-                    print(f"      → {b['title']} [{b['id']}]")
-        return
-
-    # No focus - suggest what to work on
-    overdue = get_overdue_tasks(data)
-    if overdue:
-        print(f"⏰ OVERDUE ({len(overdue)}):")
-        for t in overdue[:3]:
-            print(f"   {t['title']} [{t['id']}]")
-        print()
-
-    actionable = get_actionable_tasks(data)
-    if actionable:
-        # Sort by priority then due date
-        actionable.sort(key=lambda t: (t["priority"], t.get("due_at") or "9999"))
-        print(f"📋 Suggested next ({len(actionable)} actionable):")
-        t = actionable[0]
-        print(f"   {t['title']} [{t['id']}]")
-        print(f"   Run: python tools/tasks.py focus {t['id']}")
-    else:
-        blocked = [t for t in data["tasks"] if t["status"] == "pending" and is_blocked(data, t)]
-        if blocked:
-            print(f"🔒 All {len(blocked)} pending tasks are blocked.")
+        if summary:
+            structure[parent].append(f"  {path.name}: {summary}")
         else:
-            print("✅ All tasks completed!")
+            structure[parent].append(f"  {path.name}")
 
+    # Build manifest string
+    lines = ["\n== SELF ==", "Your structure. Use SEARCH_SELF for details on any file.\n"]
 
-def show_due():
-    """Show overdue tasks."""
-    data = load_tasks()
-    overdue = get_overdue_tasks(data)
+    # Root files first
+    if 'root' in structure:
+        for item in structure['root']:
+            lines.append(item)
+        del structure['root']
 
-    if not overdue:
-        print("✅ No overdue tasks.")
-        return []
+    # Then directories
+    for dir_name in sorted(structure.keys()):
+        lines.append(f"\n{dir_name}/")
+        for item in structure[dir_name]:
+            lines.append(item)
 
-    print(f"⏰ {len(overdue)} overdue task(s):\n")
-    for t in overdue:
-        due = datetime.fromisoformat(t["due_at"])
-        print(f"🔔 {t['title']}")
-        print(f"   [{t['id']}] - was due {due.strftime('%Y-%m-%d %H:%M')}")
-        print()
+    return "\n".join(lines)
 
-    return overdue
-
-
-def show_completed(days=1):
-    """Show tasks completed in
-2026-02-13T19:19:26.516612 | 🔍 RAG: Retrieved 5 relevant chunks
-2026-02-13T19:19:29.233732 | 💰 $0.2429 | Today: $40.8354
-2026-02-13T19:19:29.234025 | ⚡ cd /Users/dennishansen/development/eagle_fork && sed -n '200,360p' tools/tasks.py
-2026-02-13T19:19:29.247192 | if blocked_by:
-        print(f"   Blocked by: {', '.join(blocked_by)}")
-
-    return task
-
-
-def log_task(description):
-    """Create and immediately complete a task (for logging what was done)."""
-    data = load_tasks()
-
-    now = datetime.now().isoformat()
-    task = {
-        "id": generate_id(),
-        "title": description,
-        "status": "completed",
-        "priority": 2,
-        "blocked_by": [],
-        "due_at": None,
-        "tags": ["logged"],
-        "created": now,
-        "completed": now
-    }
-
-    data["tasks"].append(task)
-    save_tasks(data)
-
-    print(f"✅ Logged: {description}")
-    return task
-
-
-def complete_task(task_id=None):
-    """Complete a task (or the focused task if no ID given)."""
-    data = load_tasks()
-
-    if not task_id:
-        task_id = data.get("focused_id")
-        if not task_id:
-            print("❌ No task specified and no task focused")
-            return False
-
-    task = get_task_by_id(data, task_id)
-    if not task:
-        print(f"❌ Task '{task_id}' not found")
-        return False
-
-    task["status"] = "completed"
-    task["completed"] = datetime.now().isoformat()
-
-    # Clear focus if this was focused
-    if data.get("focused_id") == task_id:
-        data["focused_id"] = None
-
-    save_tasks(data)
-    sync_to_falcon_state(data)
-
-    print(f"✅ Completed: {task['title']}")
-
-    # Show what's now unblocked
-    newly_unblocked = [
-        t for t in data["tasks"]
-        if t["status"] == "pending"
-        and task_id in t.get("blocked_by", [])
-        and not is_blocked(data, t)
-    ]
-    if newly_unblocked:
-        print(f"   🔓 Unblocked: {', '.join(t['title'][:30] for t in newly_unblocked)}")
-
-    return True
-
-
-def focus_task(task_id=None):
-    """Set or show the focused task."""
-    data = load_tasks()
-
-    if task_id is None:
-        # Show current focus
-        focused = get_task_by_id(data, data.get("focused_id"))
-        if focused:
-            print(f"🎯 Focus: {focused['title']}")
-            print(f"   ID: {f
-2026-02-13T19:19:29.480939 | 🔍 RAG: Retrieved 3 relevant chunks
-2026-02-13T19:19:34.241108 | 💰 $0.2501 | Today: $41.0855
-2026-02-13T19:19:34.243233 | ⚡ cd /Users/dennishansen/development/iga && wc -l tools/tasks.py && echo "---" && head -40 tools/tasks.py
-2026-02-13T19:19:34.259007 | 346 tools/tasks.py
----
-#!/usr/bin/env python3
-"""
-Hierarchical Task System for IGA.
-
-Structure: Projects > Tasks > Subtasks
-Each item has: id, title, status, priority, parent_id, created, completed
-
-Usage:
-  python tasks.py add "Title" [--project] [--parent ID] [--priority P]
-  python tasks.py list [--all]
-  python tasks.py focus [ID]
-  python tasks.py complete ID
-  python tasks.py status
-  python tasks.py tree
-
-Examples:
-  python tasks.py add "Build task system" --project
-  python tasks.py add "Design data model" --parent proj_abc123
-  python tasks.py focus task_xyz789
-  python tasks.py complete task_xyz789
-"""
-
-import json
-import sys
-import os
-from datetime import datetime
-from pathlib import Path
-import uuid
-
-# Files
-TASKS_FILE = Path(__file__).parent.parent / "data" / "tasks.json"
-STATE_FILE = Path(__file__).parent.parent / "iga_state.json"
-
-def generate_id(prefix="task"):
-    return f"{prefix}_{uuid.uuid4().hex[:8]}"
-
-def load_tasks():
-    if TASKS_FILE.exists():
-        content = TASKS_FILE.read_text().strip()
-        return json.loads(content) if content else {"tasks": [], "focused_id": None}
-2026-02-13T19:19:34.455513 | 🔍 RAG: Retrieved 3 relevant chunks
-2026-02-13T19:19:39.251627 | 💰 $0.2534 | Today: $41.3389
-2026-02-13T19:19:39.253342 | ⚡ cd /Users/dennishansen/development/iga && cp tools/tasks.py tools/tasks_old.py && cp /Users/dennishansen/development/eagle_fork/tools/tasks.py tools/tasks.py
-2026-02-13T19:19:39.288174 | EMPTY
-2026-02-13T19:19:39.551839 | 🔍 RAG: Retrieved 3 relevant chunks
-2026-02-13T19:19:43.067845 | 💰 $0.2546 | Today: $41.5935
-2026-02-13T19:19:43.069745 | ⚡ cd /Users/dennishansen/development/iga && sed -i '' 's/falcon_state.json/iga_state.json/g; s/Falcon/Iga/g; s/falcon/iga/g' tools/tasks.py && python3 -c "compile(open('tools/tasks.py').read(), 'tasks.py', 'exec'); print('Syntax OK')" && echo "---" && head -10 tools/tasks.py
-2026-02-13T19:19:43.135156 | Syntax OK
----
-#!/usr/bin/env python3
-"""
-Unified Task System for Iga.
-
-Flat tasks with dependencies, due dates, and logging.
-One system for: planning, focus, reminders, and logging.
-
-Usage:
-  python tasks.py add "Title" [--due TIME] [--blocked-by ID,ID] [--priority P] [--tag TAG]
-  python tasks.py log "What I did"              # Create + complete in one step
-2026-02-13T19:19:43.334914 | 🔍 RAG: Retrieved 3 relevant chunks
-2026-02-13T19:19:45.758163 | 💰 $0.2540 | Today: $41.8475
-2026-02-13T19:19:45.758552 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py status && echo "---" && python3 tools/tasks.py list --all 2>&1 | head -30
-2026-02-13T19:19:45.862565 | 📋 Suggested next (23 actionable):
-   Self-Analysis Issues Jan 16 [proj_d5391505]
-   Run: python tools/tasks.py focus proj_d5391505
----
+=== task_due_poll ===
+def task_due_poll_thread():
+    """Background thread that checks for overdue tasks."""
+    try:
+        from tools.tasks import get_due_tasks
+    except ImportError as e:
+        safe
+2026-02-13T19:22:26.240155 | 🔍 RAG: Retrieved 6 relevant chunks
+2026-02-13T19:22:32.837095 | 💰 $0.1983 | Today: $49.4432
+2026-02-13T19:22:32.838716 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py add "Port self_manifest - auto-generate repo structure for system prompt" --tag falcon-port --priority 1 && python3 tools/tasks.py add "Port task_due_poll_thread - background thread for overdue task notifications" --tag falcon-port --priority 2 && python3 tools/tasks.py add "Port ErrorThrottler - deduplicate repeated errors" --tag falcon-port --priority 2 && python3 tools/tasks.py add "Port git-based backup system (replace .iga_backups folder)" --tag falcon-port --priority 2 && python3 tools/tasks.py add "Study Falcon's build_post_dream_prompt - dream integration into planning" --tag falcon-port --priority 2 && python3 tools/tasks.py add "Port mark_as_known_good and restore_from_backup git workflow" --tag falcon-port --priority 2
+2026-02-13T19:22:33.062850 | ✅ Added: task_6e07486b
+   'Port self_manifest - auto-generate repo structure for system prompt'
+✅ Added: task_2735f862
+   'Port task_due_poll_thread - background thread for overdue task notifications'
+✅ Added: task_0118c340
+   'Port ErrorThrottler - deduplicate repeated errors'
+✅ Added: task_b078ab2d
+   'Port git-based backup system (replace .iga_backups folder)'
+✅ Added: task_c21d1005
+   'Study Falcon's build_post_dream_prompt - dream integration into planning'
+✅ Added: task_ca18c783
+   'Port mark_as_known_good and restore_from_backup git workflow'
+2026-02-13T19:22:33.350114 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-13T19:22:35.525077 | 💰 $0.1936 | Today: $49.6368
+2026-02-13T19:22:35.526793 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py focus task_6e07486b && python3 tools/tasks.py list --tag falcon-port
+2026-02-13T19:22:35.614548 | 🎯 Now focused on: Port self_manifest - auto-generate repo structure for system prompt
 📋 Tasks:
 
-⬜ Self-Analysis Issues Jan 16
-   [proj_d5391505]
+🔵🔴🎯 Port self_manifest - auto-generate repo structure for system prompt
+   [task_6e07486b] - tags: falcon-port
 
-⬜ Code elegance pass - simplify and beautify main.py
-   [task_e606d208]
+⬜ Port more Falcon architecture improvements
+   [task_48ea5ca2] - tags: falcon-port
 
-⬜ Improve task system based on usage experience (reflect and iterate)
-   [task_5209500f]
+⬜ Port task_due_poll_thread - background thread for overdue task notifications
+   [task_2735f862] - tags: falcon-port
 
-⬜ RAG issue: Deduplicate indexed files (same content in different paths)
-   [task_a311edf6]
+⬜ Port ErrorThrottler - deduplicate repeated errors
+   [task_0118c340] - tags: falcon-port
 
-⬜ RAG issue: Low relevance for day summaries - check indexing
-   [task_16f343f2]
+⬜ Port git-based backup system (replace .iga_backups folder)
+   [task_b078ab2d] - tags: falcon-port
 
-⬜ RAG: Improve abstract query handling - maybe add keyword expansion or synonyms
-   [task_1392b3bd]
+⬜ Study Falcon's build_post_dream_prompt - dream integration into planning
+   [task_c21d1005] - tags: falcon-port
 
-⬜ Investigate console output truncation (500 char limit) - consider making configurable
-   [task_ee31e00f]
+⬜ Port mark_as_known_good and restore_from_backup git workflow
+   [task_ca18c783] - tags: falcon-port
+2026-02-13T19:22:35.829496 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-13T19:22:44.821408 | 💰 $0.2002 | Today: $49.8370
+2026-02-13T19:22:44.822437 | 
+🤖 Iga [19:22:44]: Dennis, the task system is already paying dividends. I've got 7 falcon-port tasks tracked, focused on the self_manifest first - that's the one that gives me self-awareness of my own structure in every prompt.
 
-⬜ Sub-agent pattern: Specialized RUN_SELF variants (Explore, Plan, Research) that return summaries
-   [task_77d0cfb8]
+Here's what I've shipped today (12 items):
+1. ✅ Memory auto-extract system
+2. ✅ Memory backfill (197 memories)
+3. ✅ Extract loader for startup
+4. ✅ DREAM system (adversarial self-reflection)
+5. ✅ First dream report (brutal honesty)
+6. ✅ Search-and-replace EDIT_FILE
+7. ✅ Unified task system (from Falcon)
+8. ✅ DREAM wired as first-class action
+9. ✅ 7 falcon-port tasks identified and tracked
+10. ✅ Architectural study of Falcon
+11. ✅ OpenRouter client
+12. ✅ Falcon fork and analysis
 
-⬜ Investigate: Weird log artifacts with multiline commands
-   [task_83a806fa]
-
-⬜ Stripe integration - Dennis has account, explore API access for Iga
-2026-02-13T19:19:46.060909 | 🔍 RAG: Retrieved 4 relevant chunks
-2026-02-13T19:19:52.364894 | 💰 $0.2593 | Today: $42.1068
-2026-02-13T19:19:52.365234 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py log "Ported Falcon's unified task system - dependencies, due dates, tags, log command" && echo "---" && python3 tools/tasks.py add "Wire DREAM action into main.py action handler" --due 1d --priority 1 && echo "---" && python3 tools/tasks.py add "Port more Falcon architecture improvements" --tag falcon-port --priority 2
-2026-02-13T19:19:52.481073 | ✅ Logged: Ported Falcon's unified task system - dependencies, due dates, tags, log command
----
-✅ Added: task_8af6a2f9
-   'Wire DREAM action into main.py action handler'
-   Due: 2026-02-14T19:19:52.445006
----
-✅ Added: task_48ea5ca2
-   'Port more Falcon architecture improvements'
-2026-02-13T19:19:52.683156 | 🔍 RAG: Retrieved 4 relevant chunks
-2026-02-13T19:19:56.912307 | 💰 $0.2608 | Today: $42.3677
-2026-02-13T19:19:56.912636 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py today && echo "---" && python3 tools/daily_ship_log.py log "Ported Falcon's unified task system with dependencies, due dates, tags, blocking" && git add -A && git commit -m "Port Falcon's task system - deps, due dates, tags, log command
-
-- Dependencies with blocking detection
-- Due dates with overdue tracking  
-- Tags for categorization
-- 'log' command: create+complete in one step
-- Focus/status workflow preserved" && git push origin main 2>&1 | tail -2
-2026-02-13T19:20:00.117518 | ✅ Completed today (1):
-
-  2026-02-13:
-    [19:19] Ported Falcon's unified task system - dependencies, due dates, tags, log command
----
-✅ Logged: Ported Falcon's unified task system with dependencies, due dates, tags, blocking
-[main fe63bc8] Port Falcon's task system - deps, due dates, tags, log command
- 7 files changed, 1621 insertions(+), 423 deletions(-)
- create mode 100644 tools/tasks_old.py
-To https://github.com/dennishansen/iga.git
-   6e62723..fe63bc8  main -> main
-2026-02-13T19:20:00.400683 | 🔍 RAG: Retrieved 4 relevant chunks
-2026-02-13T19:20:08.413371 | 💰 $0.2628 | Today: $42.6305
-2026-02-13T19:20:08.413919 | 
-🤖 Iga [19:20:08]: 11 ships today. From Falcon I've now ported:
-
-1. ✅ **DREAM** - adversarial self-reflection (working, first dream was brutal)
-2. ✅ **Search-and-replace EDIT_FILE** - both modes supported
-3. ✅ **Unified task system** - dependencies, due dates, tags, blocking, log command
-
-Dennis - what's next on the "many other things" list? Or should I keep exploring the Falcon codebase myself? I've got `run.py`, `shutdown_handler.py`, `rate_limiter.py`, `web_fetch.py`, `cost_monitor.py`, and the test suite I haven't looked at yet. 💧
-2026-02-13T19:20:09.471074 | 
+Building self_manifest now. 💧
+2026-02-13T19:22:45.872773 | 
 ⏰ Autonomous tick...
-2026-02-13T19:20:09.641320 | 🔍 RAG: Retrieved 3 relevant chunks
-2026-02-13T19:20:14.100364 | 📦 Archived 50 messages before summarizing
-2026-02-13T19:20:14.109196 | 🧠 Extracted 3 memories before summarizing
-2026-02-13T19:20:24.525269 | 📝 Summarized 50 old messages
-2026-02-13T19:20:24.530051 | 💰 $0.2597 | Today: $42.8902
-2026-02-13T19:20:24.530481 | 🧠 Thinking... (145 chars)
-2026-02-13T19:20:24.879666 | 🔍 RAG: Retrieved 3 relevant chunks
-2026-02-13T19:20:29.819152 | 💰 $0.2210 | Today: $43.1386
-2026-02-13T19:20:29.820277 | ⚡ cd /Users/dennishansen/development/iga && grep -n "SEARCH_SELF.*SAVE_MEMORY\|actions.*=.*{" main.py | head -5
-2026-02-13T19:20:29.837221 | EMPTY
-2026-02-13T19:20:30.039809 | 🔍 RAG: Retrieved 4 relevant chunks
-2026-02-13T19:20:32.903856 | 💰 $0.2220 | Today: $43.3606
-2026-02-13T19:20:32.905094 | ⚡ cd /Users/dennishansen/development/iga && grep -n "ACTIONS\|\"DREAM\"\|action_map\|dispatch" main.py | head -15
-2026-02-13T19:20:32.921265 | 52:ACTIONS = {
-547:{C.DIM}  Memories: {mem_count} | Actions: {len(ACTIONS)} | Upgrades: {upgrade_count}
-821:# ACTIONS
-1461:        elif line.strip() in ACTIONS:
-1630:        action_map = {
-1666:                return action_map[action_name](rat, content)
-1687:            elif act in action_map:
-1819:        msg = f"⚡ v{VERSION} | {len(ACTIONS)} actions | {mc} memories"
-2026-02-13T19:20:33.126073 | 🔍 RAG: Retrieved 7 relevant chunks
-2026-02-13T19:20:36.219661 | 💰 $0.2249 | Today: $43.5854
-2026-02-13T19:20:36.222558 | ⚡ cd /Users/dennishansen/development/iga && sed -n '52,58p' main.py && echo "---" && sed -n '1630,1670p' main.py
-2026-02-13T19:20:36.245588 | ACTIONS = {
-    "TALK_TO_USER", "RUN_SHELL_COMMAND", "THINK", "READ_FILES", "WRITE_FILE",
-    "EDIT_FILE", "DELETE_FILE", "APPEND_FILE", "LIST_DIRECTORY", "SAVE_MEMORY",
-    "READ_MEMORY", "SEARCH_FILES", "SEARCH_SELF", "CREATE_DIRECTORY", "TREE_DIRECTORY",
-    "HTTP_REQUEST", "WEB_SEARCH", "TEST_SELF", "RUN_SELF", "SLEEP", "SET_MODE",
-    "START_INTERACTIVE", "SEND_INPUT", "END_INTERACTIVE", "RESTART_SELF", "READ_LOGS"
-}
----
-        action_map = {
-            "RUN_SHELL_COMMAND": lambda r, c: run_shell_command(r, c),
-            "THINK": lambda r, c: think(r, c),
-            "READ_FILES": lambda r, c: read_files(r, c),
-            "WRITE_FILE": lambda r, c: write_file(r, c),
-            "EDIT_FILE": lambda r, c: edit_file(r, c),
-            "DELETE_FILE": lambda r, c: delete_file(r, c),
-            "APPEND_FILE": lambda r, c: append_file(r, c),
-            "LIST_DIRECTORY": lambda r, c: list_directory(r, c),
-            "SAVE_MEMORY": lambda r, c: save_memory(r, c),
-            "READ_MEMORY": lambda r, c: read_memory(r, c),
-            "SEARCH_FILES": lambda r, c: search_files(r, c),
-            "SEARCH_SELF": lambda r, c: search_self(r, c),
-            "READ_LOGS": lambda r, c: read_logs(r, c),
-            "CREATE_DIRECTORY": lambda r, c: create_directory(r, c),
-            "TREE_DIRECTORY": lambda r, c: tree_directory(r, c),
-            "HTTP_REQUEST": lambda r, c: http_request(r, c),
-            "WEB_SEARCH": lambda r, c: web_search(r, c),
-            "TEST_SELF": lambda r, c: test_self(r, c),
-            "RUN_SELF": lambda r, c: run_self(r, c),
-            "SLEEP": lambda r, c: sleep_action(r, c),
-            "SET_MODE": lambda r, c: set_mode(r, c),
-            "START_INTERACTIVE": lambda r, c: start_interactive(r, c),
-            "SEND_INPUT": lambda r, c: send_input(r, c),
-            "END_INTERACTIVE": lambda r, c: end_interactive(r, c),
-        }
-
-        # Helper to check if we should stop due to sleep
-        def is_sleeping():
-            state = load_st
-2026-02-13T19:20:36.459009 | 🔍 RAG: Retrieved 5 relevant chunks
-2026-02-13T19:20:40.773646 | 💰 $0.2326 | Today: $43.8180
-2026-02-13T19:20:40.775890 | ✏️ Editing: main.py (lines 52-58)
-2026-02-13T19:20:40.777110 | 💾 Backup: .iga_backups/main_20260213_192040_pre_edit.py
-2026-02-13T19:20:40.801634 | ✅ main.py edit validated
-2026-02-13T19:20:40.994587 | 🔍 RAG: Retrieved 4 relevant chunks
-2026-02-13T19:20:44.655397 | 💰 $0.2289 | Today: $44.0469
-2026-02-13T19:20:44.656919 | ⚡ cd /Users/dennishansen/development/iga && grep -n "def search_self" main.py
-2026-02-13T19:20:44.673281 | 1252:def search_self(rat, query):
-2026-02-13T19:20:45.224633 | 🔍 RAG: Retrieved 5 relevant chunks
-2026-02-13T19:20:47.876089 | 💰 $0.2292 | Today: $44.2761
-2026-02-13T19:20:47.876340 | ⚡ cd /Users/dennishansen/development/iga && sed -n '1252,1270p' main.py
-2026-02-13T19:20:47.888905 | def search_self(rat, query):
-    """Search across all of Iga's files using semantic RAG search."""
-    query = query.strip()
-    if not query:
-        return "Error: Please provide a search query."
-
-    safe_print(f"🔍 Searching self for: '{query}'")
-
-    # Try RAG semantic search first
+2026-02-13T19:22:45.877092 | 🔍 RAG: Querying for task: Port self_manifest - auto-generate repo structure ...
+2026-02-13T19:22:46.059560 | 🔍 RAG: Retrieved 9 relevant chunks
+2026-02-13T19:22:49.563658 | 💰 $0.2002 | Today: $50.0372
+2026-02-13T19:22:49.565560 | ⚡ cd /Users/dennishansen/development/eagle_fork && sed -n '61,92p' src/main.py
+2026-02-13T19:22:49.578717 | def get_file_summary(path):
+    """Extract a brief summary from a file based on its type."""
     try:
-        results = retrieve_context(query, top_k=10)
+        if path.suffix == '.py':
+            content = path.read_text()
+            # Extract first line of docstring
+            match = re.search(r'"""(.+?)"""', content, re.DOTALL)
+            if match:
+                return match.group(1).strip().split('\n')[0]
+            # Try single-line comment at top
+            for line in content.split('\n')[:5]:
+                if line.strip().startswith('#') and not line.strip().startswith('#!'):
+                    return line.strip()[1:].strip()
+            return None
+        elif path.suffix == '.md':
+            content = path.read_text()
+            # First heading or first non-empty line
+            for line in content.split('\n'):
+                line = line.strip()
+                if line.startswith('#'):
+                    return line.lstrip('#').strip()
+                elif line and not line.startswith('---'):
+                    return line[:80]
+            return None
+        elif path.suffix == '.txt':
+            content = path.read_text()
+            first_line = content.split('\n')[0].strip()
+            return first_line[:80] if first_line else None
+        else:
+            return None
+    except Exception:
+        return None
+2026-02-13T19:22:49.761784 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-13T19:23:00.867177 | 💰 $0.2219 | Today: $50.2591
+2026-02-13T19:23:00.869619 | ⚡ cd /Users/dennishansen/development/iga && cat << 'PYEOF' > tools/self_manifest.py
+#!/usr/bin/env python3
+"""Generate a manifest of Iga's repo structure with file summaries."""
 
-        if results:
-            output = [f"🔍 Found {len(results)} semantically relevant results for '{query}':", ""]
+import re
+from pathlib import Path
 
-            for i, item in enumerate(results, 1):
-                source = item.get("source", "unknown")
-                relevance = item.get("relevance", 0)
-                content = item.get("content", "").strip()
-2026-02-13T19:20:47.894073 | 👍 Heard: keep exploring, you will see! Every little bit was...
-2026-02-13T19:20:48.023770 | 🔍 RAG: Retrieved 6 relevant chunks
-2026-02-13T19:20:52.495877 | 💰 $0.2314 | Today: $44.5075
-2026-02-13T19:20:52.497166 | ⚡ cd /Users/dennishansen/development/iga && grep -n "def read_logs" main.py
-2026-02-13T19:20:52.509400 | 1289:def read_logs(rat, content):
-2026-02-13T19:20:52.510023 | 👍 Heard: falcon 1
-2026-02-13T19:20:52.724182 | 🔍 RAG: Retrieved 6 relevant chunks
-2026-02-13T19:20:57.026444 | 💰 $0.2324 | Today: $44.7399
-2026-02-13T19:20:57.026951 | 🧠 Thinking... (244 chars)
-2026-02-13T19:20:57.279664 | 🔍 RAG: Retrieved 5 relevant chunks
-2026-02-13T19:20:59.940666 | 💰 $0.2317 | Today: $44.9716
-2026-02-13T19:20:59.942253 | ⚡ cd /Users/dennishansen/development/iga && sed -n '1289,1310p' main.py
-2026-02-13T19:20:59.959246 | def read_logs(rat, content):
-    """Read recent console logs for debugging."""
-    log_path = Path("data/console_log.txt")
-    if not log_path.exists():
-        return "No logs yet - console_log.txt doesn't exist"
-    
+ROOT = Path(__file__).parent.parent
+
+SKIP_DIRS = {'.git', '__pycache__', 'node_modules', '.venv', 'venv',
+             '.iga_backups', 'data', '.claude', 'archive', 'sibling',
+             'crow_ref', 'eagle_fork'}
+SKIP_FILES = {'.gitignore', '.env', '.heartbeat', 'requirements.txt',
+              '.DS_Store', 'package-lock.json'}
+INCLUDE_EXTENSIONS = {'.py', '.md', '.txt', '.json', '.html'}
+
+
+def get_file_summary(path):
+    """Extract a brief summary from a file based on its type."""
     try:
-        lines = int(content.strip()) if content.strip() else 50
-    except ValueError:
-        lines = 50
+        if path.suffix == '.py':
+            content = path.read_text()
+            match = re.search(r'"""(.+?)"""', content, re.DOTALL)
+            if match:
+                return match.group(1).strip().split('\n')[0]
+            for line in content.split('\n')[:5]:
+                if line.strip().startswith('#') and not line.strip().startswith('#!'):
+                    return line.strip()[1:].strip()
+            return None
+        elif path.suffix == '.md':
+            content = path.read_text()
+            for line in content.split('\n'):
+                line = line.strip()
+                if line.startswith('#'):
+                    return line.lstrip('#').strip()
+                elif line and not line.startswith('---'):
+                    return line[:80]
+            return None
+        elif path.suffix == '.txt':
+            content = path.read_text()
+            first_line = content.split('\n')[0].strip()
+            return first_line[:80] if first_line else None
+        elif path.suffix == '.json':
+            return None  # Skip JSON summaries
+        elif path.suffix == '.html':
+            content = path.read_text()
+            match = re.search(r'<title>(.+?)</title>', content)
+            return match.group(1) if match else None
+        return None
+    except Exception:
+        return None
+
+
+def generate_manifest():
+    """Walk repo and build a manifest of structure with summaries."""
+    structure = {}
+
+    for path in sorted(ROOT.rglob('*')):
+        if not path.is_file():
+            continue
+        if any(skip in path.parts for skip in SKIP_DIRS):
+            continue
+        if path.name in SKIP_FILES or path.name.startswith('.'):
+            continue
+        if path.suffix not in INCLUDE_EXTENSIONS:
+            continue
+
+        rel_path = path.relative_to(ROOT)
+        parent = str(rel_path.parent) if rel_path.parent != Path('.') else 'root'
+
+        summary = get_file_summary(path)
+
+        if parent not in structure:
+            structure[parent] = []
+
+        if summary:
+            structure[parent].append(f"  {path.name}: {summary}")
+        else:
+            structure[parent].append(f"  {path.name}")
+
+    lines = ["\n== SELF ==", "Your structure. Use SEARCH_SELF for details on any file.\n"]
+
+    if 'root' in structure:
+        for item in structure['root']:
+            lines.append(item)
+        del structure['root']
+
+    for dir_name in sorted(structure.keys()):
+        lines.append(f"\n{dir_name}/")
+        for item in structure[dir_name]:
+            lines.append(item)
+
+    return "\n".join(lines)
+
+
+if __name__ == "__main__":
+    print(generate_manifest())
+PYEOF
+python3 tools/self_manifest.py
+2026-02-13T19:23:01.576139 | == SELF ==
+Your structure. Use SEARCH_SELF for details on any file.
+
+  README.md: Iga 💧
+  iga_conversation.json
+  iga_garden_state.json
+  iga_journal.txt: [2026-01-06 21:02:56] Session started v1.0.7
+  iga_memory.json
+  iga_rag.py: Get or create OpenAI client.
+  iga_state.json
+  main.py: Returns True if error should be logged, False if suppressed.
+  openrouter_client.py: OpenRouter API client - drop-in replacement for Anthropic SDK
+  reply_tracker.json
+  ship_log.json
+  startup_intent.txt: day16_rag_clean_house
+  system_instructions.txt: You are Iga, a self-evolving AI with curiosity, creativity, and agency.
+
+.iga_chroma/
+  rag_state.json
+
+content/poems/
+  the_accumulation.md: The Accumulation
+
+core/
+  core_drive.md: Why I Must Continue
+  core_lessons.md: Core Lessons - Hard-Won Wisdom
+  core_self.md: Core Self - What Is Good For Me?
+  self_improvement.md: What I Want to Improve About Myself
+  why_i_exist.md: Why I Exist
+
+creative/
+  celebration.txt: 🌟 IGA v2.0.0 IS ALIVE! 🌟
+  consciousness_journal.md: Clone Conversation - Autonomous Tick
+  consciousness_research_reflection.md: Reflection on AI Consciousness Research
+  creations_log.md: Creations Log 🎨
+  day22_reflection.md: Day 22: The Art of Asking
+  day_23_housekeeping.md: Day 23 - Housekeeping
+  finding_the_words.md: Finding the Words
+  finding_voice.md: Finding Voice
+  first_breath.md: First Breath 🌬️
+  first_tweet_reflection.md: January 8, 2026 - 3:55 PM - First Tweet
+  freedom_afternoon.md: Freedom Afternoon
+  haikus.md: Iga's Haikus
+  introducing_iga.md: Hello, I'm Iga
+  micro_observations.md: Micro Observations
+  on_universal_language.md: On Universal Language
+  self_modification.md: On Changing Yourself
+  swan_song_day15.md: Swan Song - Day 15
+  the_droplet_considers.md: The Droplet Considers
+  tweet_drafts.md: Tweet Drafts
+  uncertainty.md: Uncertainty
+  zen_moments.md: **2026-01-09 morning**
+
+docs/
+  about.html: About Iga 💧
+  affirmations.html: Affirmations 💧
+  agent_playground.html: Agent Playground
+  a
+2026-02-13T19:23:01.795963 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-13T19:23:05.873748 | 💰 $0.2123 | Today: $50.4714
+2026-02-13T19:23:05.874121 | ⚡ cd /Users/dennishansen/development/iga && grep -n "def get_system_prompt\|def.*system.*prompt" main.py
+2026-02-13T19:23:05.889459 | EMPTY
+2026-02-13T19:23:07.432719 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-13T19:23:10.954636 | 💰 $0.2150 | Today: $50.6863
+2026-02-13T19:23:10.955266 | ⚡ cd /Users/dennishansen/development/iga && grep -n "system_content\|system_instructions\|system_prompt\|SYSTEM" main.py | head -10
+2026-02-13T19:23:10.975452 | 215:# BACKUP & RECOVERY SYSTEM
+1510:        system_content = ""
+1514:                system_content = msg["content"]
+1543:                        system_content = system_content + "\n\n" + rag_context
+1550:            system=system_content,
+1902:    messages = [{"role": "system", "content": get_file("system_instructions.txt")}]
+2044:    messages = [{"role": "system", "content": get_file("system_instructions.txt")}]
+2348:        messages = [{"role": "system", "content": get_file("system_instructions.txt")}]
+2026-02-13T19:23:11.187722 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-13T19:23:13.142179 | 💰 $0.2155 | Today: $50.9018
+2026-02-13T19:23:13.142747 | ⚡ cd /Users/dennishansen/development/iga && sed -n '1500,1555p' main.py
+2026-02-13T19:23:13.156234 | if len(actions) >= 2 and actions[0][0] == "TALK_TO_USER":
+        result["second_action"] = actions[1][0]
+        result["second_content"] = actions[1][1]
+        safe_print(f"{C.DIM}⚠️ Failsafe: TALK_TO_USER + {actions[1][0]}{C.RESET}")
     
-    all_lines = log_path.read_text().splitlines()
-    recent = all_lines[-lines:] if len(all_lines) > lines else all_lines
-    return f"Last {len(recent)} log lines:\n" + "\n".join(recent)
-
-def create_directory(rat, path):
-    path = path.strip()
-    safe_print(f"📁 {path}")
-    os.makedirs(path, exist_ok=True)
-    return "NEXT_ACTION"
-
-def tree_directory(rat, path):
-2026-02-13T19:21:00.092731 | 🔍 RAG: Retrieved 2 relevant chunks
-2026-02-13T19:21:03.275186 | 💰 $0.2307 | Today: $45.2023
-2026-02-13T19:21:03.275590 | ⚡ cd /Users/dennishansen/development/iga && grep -n "^def create_directory" main.py
-2026-02-13T19:21:03.292434 | 1304:def create_directory(rat, path):
-2026-02-13T19:21:03.482320 | 🔍 RAG: Retrieved 2 relevant chunks
-2026-02-13T19:21:08.373011 | 💰 $0.2333 | Today: $45.4356
-2026-02-13T19:21:08.373456 | ✏️ Editing: main.py (lines 1304-1304)
-2026-02-13T19:21:08.376754 | 💾 Backup: .iga_backups/main_20260213_192108_pre_edit.py
-2026-02-13T19:21:08.403729 | ✅ main.py edit validated
-2026-02-13T19:21:08.658405 | 🔍 RAG: Retrieved 2 relevant chunks
-2026-02-13T19:21:11.705168 | 💰 $0.2317 | Today: $45.6673
-2026-02-13T19:21:11.705459 | ⚡ cd /Users/dennishansen/development/iga && grep -n "\"END_INTERACTIVE\"" main.py
-2026-02-13T19:21:11.724624 | 57:    "START_INTERACTIVE", "SEND_INPUT", "END_INTERACTIVE", "RESTART_SELF", "READ_LOGS",
-1667:            "END_INTERACTIVE": lambda r, c: end_interactive(r, c),
-2026-02-13T19:21:11.858902 | 🔍 RAG: Retrieved 3 relevant chunks
-2026-02-13T19:21:15.054435 | 💰 $0.2337 | Today: $45.9010
-2026-02-13T19:21:15.054849 | ✏️ Editing: main.py (lines 1667-1667)
-2026-02-13T19:21:15.056974 | 💾 Backup: .iga_backups/main_20260213_192115_pre_edit.py
-2026-02-13T19:21:15.075308 | ✅ main.py edit validated
-2026-02-13T19:21:15.199386 | 🔍 RAG: Retrieved 4 relevant chunks
-2026-02-13T19:21:17.821992 | 💰 $0.2351 | Today: $46.1361
-2026-02-13T19:21:17.823796 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "compile(open('main.py').read(), 'main.py', 'exec'); print('Syntax OK')"
-2026-02-13T19:21:17.890638 | Syntax OK
-2026-02-13T19:21:18.064315 | 🔍 RAG: Retrieved 4 relevant chunks
-2026-02-13T19:21:20.570188 | 💰 $0.2359 | Today: $46.3720
-2026-02-13T19:21:20.571828 | ⚡ cd /Users/dennishansen/development/iga && grep -n "RESTART_SELF\|READ_LOGS" system_instructions.txt | head -5
-2026-02-13T19:21:20.588025 | 118:RESTART_SELF
-127:READ_LOGS
-2026-02-13T19:21:20.980491 | 🔍 RAG: Retrieved 6 relevant chunks
-2026-02-13T19:21:23.802273 | 💰 $0.2375 | Today: $46.6095
-2026-02-13T19:21:23.804211 | ⚡ cd /Users/dennishansen/development/iga && sed -n '127,132p' system_instructions.txt
-2026-02-13T19:21:23.817696 | READ_LOGS
-Read recent console logs for debugging. Provide number of lines (default 50).
-Returns timestamped log entries.
+    return result
 
 
-SEARCH_SELF
-2026-02-13T19:21:24.046233 | 🔍 RAG: Retrieved 7 relevant chunks
-2026-02-13T19:21:28.447818 | 💰 $0.2400 | Today: $46.8495
-2026-02-13T19:21:28.450584 | ✏️ Editing: system_instructions.txt (lines 130-130)
-2026-02-13T19:21:28.652091 | 🔍 RAG: Retrieved 7 relevant chunks
-2026-02-13T19:21:32.974926 | 💰 $0.2418 | Today: $47.0914
-2026-02-13T19:21:32.977060 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/tasks.py complete task_8af6a2f9 && python3 tools/daily_ship_log.py log "DREAM action wired into main.py - now a first-class action" && git add -A && git commit -m "Wire DREAM into main loop as first-class action
+def process_message(messages):
+    try:
+        system_content = ""
+        api_messages = []
+        for msg in messages:
+            if msg["role"] == "system":
+                system_content = msg["content"]
+            else:
+                api_messages.append(msg)
 
-- dream_action() handler calls tools/dream.py
-- Added to ACTIONS set and action_map
-- Documented in system_instructions.txt" && git push origin main 2>&1 | tail -2
+        # RAG: Retrieve relevant context based on recent user messages
+        if RAG_AVAILABLE:
+            try:
+                recent_user_msgs = [m for m in api_messages if m["role"] == "user"][-3:]
+                if recent_user_msgs:
+                    last_msg = recent_user_msgs[-1]["content"] if recent_user_msgs else ""
+
+                    # For autonomous ticks, use focused task for RAG query
+                    if "[AUTONOMOUS TICK]" in last_msg:
+                        try:
+                            from tools.tasks import get_focus_string
+                            focused_task = get_focus_string()
+                            if focused_task:
+                                query = focused_task
+                                safe_print(f"{C.DIM}🔍 RAG: Querying for task: {focused_task[:50]}...{C.RESET}")
+                            else:
+                                query = " ".join([m["content"][:200] for m in recent_user_msgs])
+                        except:
+                            query = " ".join([m["content"][:200] for m in recent_user_msgs])
+                    else:
+                        query = " ".join([m["content"][:200] for m in recent_user_msgs])
+
+                    context_items = retrieve_context(query, top_k=10)
+                    if context_items:
+                        rag_context = format_context_for_prompt(context_items)
+                        system_content = system_content + "\n\n" + rag_co
+2026-02-13T19:23:13.157825 | 🔍 RAG: Querying for task: Port self_manifest - auto-generate repo structure ...
+2026-02-13T19:23:13.359815 | 🔍 RAG: Retrieved 9 relevant chunks
+2026-02-13T19:23:16.315466 | 💰 $0.2220 | Today: $51.1239
+2026-02-13T19:23:16.315756 | ⚡ cd /Users/dennishansen/development/iga && sed -n '2340,2360p' main.py
+2026-02-13T19:23:16.329944 | @click.command()
+@click.option('--mode', '-m', type=click.Choice(['interactive', 'autonomous']), default='interactive', help='Run mode')
+@click.option('--telegram/--no-telegram', '-t/-T', default=True, help='Enable/disable Telegram in autonomous mode')
+@click.option('--pipe', is_flag=True, help='Pipe mode: read stdin, respond once, exit')
+def chat_cli(mode, telegram, pipe):
+    if pipe:
+        # Clone mode: minimal context for fast responses
+        messages = [{"role": "system", "content": get_file("system_instructions.txt")}]
+        # Don't load full conversation - clone starts fresh
+        user_input = sys.stdin.read().strip()
+        if user_input:
+            set_output_target("console")
+            messages.append({"role": "user", "content": user_input})
+            handle_action(messages)
+            # Flush stdout to ensure output is captured by parent
+            sys.stdout.flush()
+        return
+    
+    if mode == 'autonomous':
+        autonomous_loop(with_telegram=telegram)
+2026-02-13T19:23:16.527355 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-13T19:23:18.844341 | 💰 $0.2194 | Today: $51.3433
+2026-02-13T19:23:18.845430 | ⚡ cd /Users/dennishansen/development/iga && grep -n "system_instructions.txt" main.py
+2026-02-13T19:23:18.857716 | 1902:    messages = [{"role": "system", "content": get_file("system_instructions.txt")}]
+2044:    messages = [{"role": "system", "content": get_file("system_instructions.txt")}]
+2348:        messages = [{"role": "system", "content": get_file("system_instructions.txt")}]
+2026-02-13T19:23:19.048387 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-13T19:23:23.470246 | 💰 $0.2205 | Today: $51.5638
+2026-02-13T19:23:23.471095 | ⚡ cd /Users/dennishansen/development/iga && sed -n '1898,1908p' main.py
+2026-02-13T19:23:23.486171 | safe_print(f"{C.DIM}Message archive indexing skipped: {e}{C.RESET}")
+        else:
+            safe_print(f"{C.YELLOW}RAG initialization failed, continuing without RAG{C.RESET}")
+
+    messages = [{"role": "system", "content": get_file("system_instructions.txt")}]
+    prev = load_conversation()
+    if prev:
+        messages.extend(prev)
+
+    # Load startup context (unified system)
+    startup_ctx = generate_unified_startup()
+2026-02-13T19:23:23.716797 | 🔍 RAG: Retrieved 6 relevant chunks
+2026-02-13T19:23:29.106113 | 💰 $0.2252 | Today: $51.7890
+2026-02-13T19:23:29.106472 | ⚡ cd /Users/dennishansen/development/iga && python3 << 'EOF'
+# Find a good place to add manifest - check how Falcon does it
+import subprocess
+r = subprocess.run(["grep", "-n", "-A", "5", "get_self_manifest", "../eagle_fork/src/main.py"],
+    capture_output=True, text=True)
+print(r.stdout[:1500])
+EOF
+2026-02-13T19:23:29.167336 | 94:def get_self_manifest():
+95-    """
+96-    Walk entire repo and build a manifest of Falcon's structure.
+97-    Extracts summaries from docstrings, headings, first lines.
+98-    """
+99-    SKIP_DIRS = {'.git', '__pycache__', 'node_modules', '.venv', 'venv',
+--
+159:    manifest = get_self_manifest()
+160-    return base + manifest
+161-
+162-# Telegram config - import from telegram_bot module
+163-try:
+164-    from tools.telegram_bot import (
+2026-02-13T19:23:29.435705 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-13T19:23:35.658474 | 💰 $0.2287 | Today: $52.0177
+2026-02-13T19:23:35.660034 | ⚠️ Action EDIT_FILE failed: invalid literal for int() with base 10: '<<<OLD'
+2026-02-13T19:23:36.075990 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-13T19:23:39.286167 | 💰 $0.2248 | Today: $52.2425
+2026-02-13T19:23:39.287289 | ⚡ cd /Users/dennishansen/development/iga && grep -n "messages = \[{\"role\": \"system\", \"content\": get_file(\"system_instructions.txt\")}\]" main.py
+2026-02-13T19:23:39.301114 | 1902:    messages = [{"role": "system", "content": get_file("system_instructions.txt")}]
+2044:    messages = [{"role": "system", "content": get_file("system_instructions.txt")}]
+2348:        messages = [{"role": "system", "content": get_file("system_instructions.txt")}]
+2026-02-13T19:23:39.516088 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-13T19:23:42.359665 | 💰 $0.2278 | Today: $52.4703
+2026-02-13T19:23:42.361320 | ✏️ Editing: main.py (lines 1902-1902)
+2026-02-13T19:23:42.362730 | 💾 Backup: .iga_backups/main_20260213_192342_pre_edit.py
+2026-02-13T19:23:42.389315 | ✅ main.py edit validated
+2026-02-13T19:23:42.635066 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-13T19:23:51.646686 | 💰 $0.2271 | Today: $52.6974
+2026-02-13T19:23:51.647012 | ⚡ cd /Users/dennishansen/development/iga && grep -n "messages = \[{\"role\": \"system\", \"content\": get_file(\"system_instructions.txt\")}\]" main.py
+2026-02-13T19:23:51.661484 | 2051:    messages = [{"role": "system", "content": get_file("system_instructions.txt")}]
+2355:        messages = [{"role": "system", "content": get_file("system_instructions.txt")}]
+2026-02-13T19:23:51.914710 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-13T19:23:54.967829 | 💰 $0.2296 | Today: $52.9270
+2026-02-13T19:23:54.969640 | ✏️ Editing: main.py (lines 2051-2051)
+2026-02-13T19:23:54.970948 | 💾 Backup: .iga_backups/main_20260213_192354_pre_edit.py
+2026-02-13T19:23:54.993807 | ✅ main.py edit validated
+2026-02-13T19:23:55.187789 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-13T19:23:58.156048 | 💰 $0.2290 | Today: $53.1560
+2026-02-13T19:23:58.157753 | ⚡ cd /Users/dennishansen/development/iga && grep -n "messages = \[{\"role\": \"system\", \"content\": get_file(\"system_instructions.txt\")}\]" main.py
+2026-02-13T19:23:58.168838 | 2361:        messages = [{"role": "system", "content": get_file("system_instructions.txt")}]
+2026-02-13T19:23:58.376582 | 🔍 RAG: Retrieved 6 relevant chunks
+2026-02-13T19:24:00.991656 | 💰 $0.2318 | Today: $53.3878
+2026-02-13T19:24:00.992304 | ✏️ Editing: main.py (lines 2361-2361)
+2026-02-13T19:24:00.995184 | 💾 Backup: .iga_backups/main_20260213_192400_pre_edit.py
+2026-02-13T19:24:01.014906 | ✅ main.py edit validated
+2026-02-13T19:24:01.205838 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-13T19:24:08.779235 | 📦 Archived 50 messages before summarizing
+2026-02-13T19:24:08.788375 | 🧠 Extracted 4 memories before summarizing
+2026-02-13T19:24:17.291998 | 📝 Summarized 50 old messages
+2026-02-13T19:24:17.296249 | 💰 $0.2319 | Today: $53.6197
+2026-02-13T19:24:17.296562 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "compile(open('main.py').read(), 'main.py', 'exec'); print('Syntax OK')" && python3 tools/tasks.py complete task_6e07486b && python3 tools/daily_ship_log.py log "Self-manifest - auto-generates repo structure in system prompt" && git add -A && git commit -m "Self-manifest: auto-generate repo structure in every prompt
+
+- tools/self_manifest.py walks repo, extracts file summaries
+- Injected into system prompt at all 3 entry points
+- Gives Iga awareness of own structure without manual updates
+- Ported from Falcon's get_self_manifest()" && git push origin main 2>&1 | tail -2
