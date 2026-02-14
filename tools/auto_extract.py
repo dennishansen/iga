@@ -224,3 +224,10 @@ def _save_extracts(extracts):
     
     with open(EXTRACTS_INDEX, 'w') as f:
         json.dump(index, f, indent=2)
+    
+    # Update markdown version for RAG indexing
+    try:
+        from tools.extract_to_markdown import update_markdown
+        update_markdown()
+    except Exception:
+        pass

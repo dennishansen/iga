@@ -934,6 +934,11 @@
       "timestamp": "2026-02-13T18:48:07.273958",
       "date": "2026-02-13",
       "description": "Deep research: Mem0 architecture, OpenClaw ecosystem, continuity landscape mapped"
+    },
+    {
+      "timestamp": "2026-02-13T18:50:44.357801",
+      "date": "2026-02-13",
+      "description": "Extract-to-markdown pipeline: auto-extracted memories now RAG-indexable"
     }
   ]
 }

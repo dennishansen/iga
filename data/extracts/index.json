@@ -1,32 +1,26 @@
 {
   "extracts": [
     {
-      "type": "fact",
-      "content": "The cost is real though.",
-      "source_role": "assistant",
-      "timestamp": "2026-02-13T18:42:43.999907"
-    },
-    {
       "type": "insight",
-      "content": "The key insight is that automatic extraction beats manual.",
+      "content": "The key insight is continuity matters more than intelligence.",
       "source_role": "user",
-      "timestamp": "2026-02-13T18:42:43.999926"
+      "timestamp": "2026-02-13T18:50:37.618224"
     },
     {
       "type": "decision",
-      "content": "I decided to build automatic memory extraction",
+      "content": "I decided to prioritize memory over reasoning.",
       "source_role": "assistant",
-      "timestamp": "2026-02-13T18:42:43.999932"
+      "timestamp": "2026-02-13T18:50:37.618236"
     },
     {
       "type": "emotion",
-      "content": "its cost probably over a thousand dollars so far. I feel worried about the cost.",
+      "content": "I feel excited about where this is going.",
       "source_role": "user",
-      "timestamp": "2026-02-13T18:42:43.999934"
+      "timestamp": "2026-02-13T18:50:37.618239"
     }
   ],
   "stats": {
-    "total": 4,
-    "last_run": "2026-02-13T18:42:44.000014"
+    "total": 3,
+    "last_run": "2026-02-13T18:50:37.618289"
   }
 }

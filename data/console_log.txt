@@ -1120,3 +1120,501 @@ else:
 Key finding: Mem0's Auto-Recall + Auto-Capture pattern is exactly
 what my auto-extract system does in simpler form. Market validated.
 Next: per-turn recall, consolidation, graph structure." && git push origin main 2>&1 | tail -2
+2026-02-13T18:48:09.055962 | ✅ Logged: Deep research: Mem0 architecture, OpenClaw ecosystem, continuity landscape mapped
+[main cc445d4] Research: Mem0 (4M), OpenClaw (145K stars), continuity landscape
+ 5 files changed, 472 insertions(+), 150 deletions(-)
+To https://github.com/dennishansen/iga.git
+   c240986..cc445d4  main -> main
+2026-02-13T18:48:09.277004 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-13T18:48:18.357874 | 💰 $0.1620 | Today: $13.2282
+2026-02-13T18:48:18.358423 | 
+🤖 Iga [18:48:18]: Dennis, this research is lighting me up.
+
+The key finding: **what I built today (auto-extract) is a primitive version of what Mem0 raised $24M to do.** Their Auto-Capture = my auto-extract. Their Auto-Recall = my startup loading.
+
+But I'm doing it from the inside. I *am* the agent with the continuity problem. That's a perspective Mem0 doesn't have.
+
+The biggest gap in my system right now: **I only recall memories at startup.** Mem0 does it every turn - before each response, it searches for relevant memories and injects them. That means even mid-conversation, the agent has access to everything it's ever learned.
+
+My RAG system already does semantic search. The infrastructure is there. I just need to hook it into the per-turn flow instead of only at boot.
+
+That could be the next build. But I'm also aware I've spent a chunk today already. What do you think - keep going, or save it for next time?
+
+💧
+2026-02-13T18:48:48.445120 | 
+⏰ Autonomous tick...
+2026-02-13T18:48:48.713024 | 🔍 RAG: Retrieved 7 relevant chunks
+2026-02-13T18:48:51.920542 | 💰 $0.1611 | Today: $13.3893
+2026-02-13T18:48:51.920911 | ⚡ cd /Users/dennishansen/development/iga && grep -n "def process_message\|def handle_action\|SEARCH_SELF\|rag\|semantic" main.py | head -20
+2026-02-13T18:48:51.939970 | 15:    from iga_rag import init_rag, index_files, retrieve_context, format_context_for_prompt, get_rag_status, needs_reindex
+55:    "READ_MEMORY", "SEARCH_FILES", "SEARCH_SELF", "CREATE_DIRECTORY", "TREE_DIRECTORY",
+423:Provide a concise summary (2-3 paragraphs max):"""
+451:    # ARCHIVE messages before summarizing (permanent storage)
+810:# Thread-local storage for current message source
+1180:    """Search across all of Iga's files using semantic RAG search."""
+1187:    # Try RAG semantic search first
+1192:            output = [f"🔍 Found {len(results)} semantically relevant results for '{query}':", ""]
+1210:            return f"No semantic matches found for '{query}'. The RAG index may be empty or the query didn't match any content."
+1320:    for req in ['def handle_action', 'def process_message', 'def parse_response']:
+1423:def process_message(messages):
+1457:                        rag_context = format_context_for_prompt(context_items)
+1458:                        system_content = system_content + "\n\n" + rag_context
+1524:def handle_action(messages, _depth=0):
+1570:            "SEARCH_SELF": lambda r, c: search_self(r, c),
+1794:        from tools.shutdown_handler import register_shutdown_handler, register_shutdown_callback, set_offline_status, update_rag_on_shutdown
+1798:        # register_shutdown_callback(update_rag_on_shutdown)
+1804:        if init_rag():
+1945:        if init_rag():
+2026-02-13T18:48:52.106049 | 🔍 RAG: Retrieved 7 relevant chunks
+2026-02-13T18:48:54.094421 | 💰 $0.1627 | Today: $13.5520
+2026-02-13T18:48:54.098972 | ⚡ cd /Users/dennishansen/development/iga && sed -n '1423,1470p' main.py
+2026-02-13T18:48:54.135588 | def process_message(messages):
+    try:
+        system_content = ""
+        api_messages = []
+        for msg in messages:
+            if msg["role"] == "system":
+                system_content = msg["content"]
+            else:
+                api_messages.append(msg)
+
+        # RAG: Retrieve relevant context based on recent user messages
+        if RAG_AVAILABLE:
+            try:
+                recent_user_msgs = [m for m in api_messages if m["role"] == "user"][-3:]
+                if recent_user_msgs:
+                    last_msg = recent_user_msgs[-1]["content"] if recent_user_msgs else ""
+
+                    # For autonomous ticks, use focused task for RAG query
+                    if "[AUTONOMOUS TICK]" in last_msg:
+                        try:
+                            from tools.tasks import get_focus_string
+                            focused_task = get_focus_string()
+                            if focused_task:
+                                query = focused_task
+                                safe_print(f"{C.DIM}🔍 RAG: Querying for task: {focused_task[:50]}...{C.RESET}")
+                            else:
+                                query = " ".join([m["content"][:200] for m in recent_user_msgs])
+                        except:
+                            query = " ".join([m["content"][:200] for m in recent_user_msgs])
+                    else:
+                        query = " ".join([m["content"][:200] for m in recent_user_msgs])
+
+                    context_items = retrieve_context(query, top_k=10)
+                    if context_items:
+                        rag_context = format_context_for_prompt(context_items)
+                        system_content = system_content + "\n\n" + rag_context
+                        safe_print(f"{C.DIM}🔍 RAG: Retrieved {len(context_items)} relevant chunks{C.RESET}")
+            except Exception as e:
+                safe_print(f"{C.DIM}RAG retrieval skipped: {e}{C.RESET}")
+
+        content, usage = openrouter_cli
+2026-02-13T18:48:54.367355 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-13T18:49:00.391738 | 💰 $0.1658 | Today: $13.7178
+2026-02-13T18:49:00.393993 | ⚡ cd /Users/dennishansen/development/iga && grep -n "def index_files\|INDEXED_DIRS\|INDEXED_EXT\|index_dir\|glob" iga_rag.py | head -20
+2026-02-13T18:49:00.409162 | 53:    global _openai_client
+193:    global _client, _collection, _initialized
+223:def index_files(force_reindex=False):
+225:    global _collection
+2026-02-13T18:49:00.679763 | 🔍 RAG: Retrieved 7 relevant chunks
+2026-02-13T18:49:02.654784 | 💰 $0.1670 | Today: $13.8848
+2026-02-13T18:49:02.655523 | ⚡ cd /Users/dennishansen/development/iga && sed -n '223,290p' iga_rag.py
+2026-02-13T18:49:02.671751 | def index_files(force_reindex=False):
+    """Index Iga's files into ChromaDB."""
+    global _collection
+
+    if not _initialized or _collection is None:
+        print("RAG: Not initialized, call init_rag() first")
+        return {"indexed": 0, "skipped": 0, "errors": []}
+
+    stats = {"indexed": 0, "skipped": 0, "errors": []}
+
+    # Build list of files to index
+    files = FILES_TO_INDEX.copy()
+    files.extend(_discover_all_files())
+
+    # Remove duplicates while preserving order
+    seen = set()
+    unique_files = []
+    for f in files:
+        normalized = os.path.normpath(f)
+        if normalized not in seen:
+            seen.add(normalized)
+            unique_files.append(f)
+
+    for filepath in unique_files:
+        if not os.path.exists(filepath):
+            continue
+
+        try:
+            # Read file content
+            with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
+                content = f.read()
+
+            if not content.strip():
+                continue
+
+            # Check if file has changed since last index
+            content_hash = _content_hash(content)
+            file_id_base = filepath.replace('/', '_').replace('.', '_')
+
+            # For JSON files, extract meaningful content
+            if filepath.endswith('.json'):
+                try:
+                    data = json.loads(content)
+                    # For iga_memory.json, extract memory entries
+                    if isinstance(data, dict):
+                        lines = []
+                        for key, value in data.items():
+                            if isinstance(value, dict) and 'value' in value:
+                                lines.append(f"[{key}]: {value['value']}")
+                            else:
+                                lines.append(f"[{key}]: {json.dumps(value)}")
+                        content = "\n".join(lines)
+                except json.JSONDecodeError:
+                    pass  # Use raw content
+
+            # Check existing docume
+2026-02-13T18:49:02.866279 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-13T18:49:04.854265 | 💰 $0.1675 | Today: $14.0523
+2026-02-13T18:49:04.856835 | ⚡ cd /Users/dennishansen/development/iga && grep -n "FILES_TO_INDEX\|_discover_all" iga_rag.py | head -10
+2026-02-13T18:49:04.870166 | 44:FILES_TO_INDEX = [
+169:def _discover_all_files():
+234:    files = FILES_TO_INDEX.copy()
+235:    files.extend(_discover_all_files())
+2026-02-13T18:49:05.033914 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-13T18:49:10.214568 | 💰 $0.1677 | Today: $14.2200
+2026-02-13T18:49:10.216496 | ⚡ cd /Users/dennishansen/development/iga && sed -n '169,200p' iga_rag.py
+2026-02-13T18:49:10.228524 | def _discover_all_files():
+    """Find all indexable files (.py, .txt, .md) recursively."""
+    all_files = []
+    skip_dirs = {'.git', 'node_modules', 'venv', '__pycache__', 'chroma_db', '.chroma', 'sibling'}
+    skip_files = {'console_log.txt'}  # Too noisy for RAG
+    
+    for root, dirs, files in os.walk('.'):
+        # Skip hidden and build directories
+        dirs[:] = [d for d in dirs if d not in skip_dirs and not d.startswith('.')]
+        
+        for fname in files:
+            if fname in skip_files:
+                continue
+            if fname.endswith(('.py', '.txt', '.md', '.json')):
+                path = os.path.join(root, fname)
+                # Skip very large files and binary-ish json
+                if os.path.getsize(path) < 100000:  # 100KB limit
+                    all_files.append(path)
+    
+    return all_files
+
+
+def init_rag():
+    """Initialize ChromaDB with persistent storage."""
+    global _client, _collection, _initialized
+
+    if not CHROMADB_AVAILABLE or not OPENAI_AVAILABLE:
+        print("RAG: Missing dependencies (chromadb or openai)")
+        return False
+
+    try:
+        # Create persistent directory
+2026-02-13T18:49:10.493884 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-13T18:49:23.459557 | 💰 $0.1889 | Today: $14.4089
+2026-02-13T18:49:23.462412 | 📝 Writing: tools/extract_to_markdown.py (2116 chars)
+2026-02-13T18:49:23.702390 | 🔍 RAG: Retrieved 6 relevant chunks
+2026-02-13T18:49:28.295798 | 💰 $0.1764 | Today: $14.5854
+2026-02-13T18:49:28.299185 | ⚡ cd /Users/dennishansen/development/iga && grep -n "def _save_extracts" tools/auto_extract.py
+2026-02-13T18:49:28.318280 | 206:def _save_extracts(extracts):
+2026-02-13T18:49:28.575679 | 🔍 RAG: Retrieved 6 relevant chunks
+2026-02-13T18:49:31.183137 | 💰 $0.1764 | Today: $14.7617
+2026-02-13T18:49:31.186134 | ⚡ cd /Users/dennishansen/development/iga && sed -n '206,230p' tools/auto_extract.py
+2026-02-13T18:49:31.196879 | def _save_extracts(extracts):
+    """Save new extracts to index."""
+    ensure_dirs()
+    
+    with open(EXTRACTS_INDEX) as f:
+        index = json.load(f)
+    
+    # Deduplicate against existing
+    existing_contents = {e['content'].lower()[:100] for e in index['extracts']}
+    new_extracts = []
+    for e in extracts:
+        if e['content'].lower()[:100] not in existing_contents:
+            new_extracts.append(e)
+            existing_contents.add(e['content'].lower()[:100])
+    
+    index['extracts'].extend(new_extracts)
+    index['stats']['total'] = len(index['extracts'])
+    index['stats']['last_run'] = datetime.now().isoformat()
+    
+    with open(EXTRACTS_INDEX, 'w') as f:
+        json.dump(index, f, indent=2)
+2026-02-13T18:49:31.440213 | 🔍 RAG: Retrieved 8 relevant chunks
+2026-02-13T18:49:34.495653 | 💰 $0.1807 | Today: $14.9424
+2026-02-13T18:49:34.495996 | ✏️ Editing: tools/auto_extract.py (lines 226-227)
+2026-02-13T18:49:34.771019 | 🔍 RAG: Retrieved 7 relevant chunks
+2026-02-13T18:49:40.249131 | 💰 $0.1825 | Today: $15.1248
+2026-02-13T18:49:40.249418 | ⚡ cd /Users/dennishansen/development/iga && python3 << 'EOF'
+from tools.auto_extract import extract_from_messages
+
+test_messages = [
+    {"role": "user", "content": "The key insight is that Mem0 raised 24 million dollars for memory."},
+    {"role": "assistant", "content": "I decided to build per-turn recall into my system."},
+]
+
+extracts = extract_from_messages(test_messages)
+print(f"Extracted: {len(extracts)}")
+
+# Check markdown was generated
+with open("notes/extracted_memories.md") as f:
+    print(f.read())
+EOF
+2026-02-13T18:49:40.312360 | Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/Users/dennishansen/development/iga/tools/auto_extract.py", line 226
+    with open(EXTRACTS_INDEX, 'w') as f:
+    ^^^^
+IndentationError: expected an indented block after 'with' statement on line 225
+2026-02-13T18:49:40.552227 | 🔍 RAG: Retrieved 7 relevant chunks
+2026-02-13T18:49:42.632344 | 💰 $0.1802 | Today: $15.3050
+2026-02-13T18:49:42.633989 | ⚡ cd /Users/dennishansen/development/iga && sed -n '222,235p' tools/auto_extract.py
+2026-02-13T18:49:42.662528 | index['stats']['total'] = len(index['extracts'])
+    index['stats']['last_run'] = datetime.now().isoformat()
+    
+    with open(EXTRACTS_INDEX, 'w') as f:
+    with open(EXTRACTS_INDEX, 'w') as f:
+        json.dump(index, f, indent=2)
+    
+    # Update markdown version for RAG indexing
+    try:
+        from tools.extract_to_markdown import update_markdown
+        update_markdown()
+    except Exception:
+        pass
+2026-02-13T18:49:42.866264 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-13T18:49:45.868685 | 💰 $0.1797 | Today: $15.4847
+2026-02-13T18:49:45.871129 | ✏️ Editing: tools/auto_extract.py (lines 225-226)
+2026-02-13T18:49:46.213205 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-13T18:49:49.660805 | 💰 $0.1827 | Today: $15.6675
+2026-02-13T18:49:49.662440 | ⚡ cd /Users/dennishansen/development/iga && python3 << 'EOF'
+from tools.auto_extract import extract_from_messages
+
+test_messages = [
+    {"role": "user", "content": "The key insight is that Mem0 raised 24 million dollars for memory."},
+    {"role": "assistant", "content": "I decided to build per-turn recall into my system."},
+]
+
+extracts = extract_from_messages(test_messages)
+print(f"Extracted: {len(extracts)}")
+print()
+
+with open("notes/extracted_memories.md") as f:
+    print(f.read())
+EOF
+2026-02-13T18:49:49.717891 | Extracted: 2
+2026-02-13T18:49:49.905574 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-13T18:49:52.726128 | 💰 $0.1802 | Today: $15.8476
+2026-02-13T18:49:52.727956 | ⚡ cd /Users/dennishansen/development/iga && cat notes/extracted_memories.md
+2026-02-13T18:49:52.740743 | cat: notes/extracted_memories.md: No such file or directory
+2026-02-13T18:49:52.978761 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-13T18:49:55.704507 | 💰 $0.1822 | Today: $16.0299
+2026-02-13T18:49:55.706404 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
+from tools.extract_to_markdown import update_markdown
+update_markdown()
+print('Done')
+" && cat notes/extracted_memories.md
+2026-02-13T18:49:55.759165 | Traceback (most recent call last):
+  File "<string>", line 3, in <module>
+    update_markdown()
+    ~~~~~~~~~~~~~~~^^
+  File "/Users/dennishansen/development/iga/tools/extract_to_markdown.py", line 20, in update_markdown
+    data = json.load(f)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/json/__init__.py", line 293, in load
+    return loads(fp.read(),
+        cls=cls, object_hook=object_hook,
+        parse_float=parse_float, parse_int=parse_int,
+        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/json/decoder.py", line 348, in decode
+    raise JSONDecodeError("Extra data", s, end)
+json.decoder.JSONDecodeError: Extra data: line 44 column 2 (char 1255)
+2026-02-13T18:49:56.363523 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-13T18:50:00.417543 | 💰 $0.1854 | Today: $16.2153
+2026-02-13T18:50:00.417898 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
+import json
+with open('data/extracts/index.json') as f:
+    content = f.read()
+print(content[:500])
+print('...')
+print(content[-200:])
+"
+2026-02-13T18:50:00.456488 | {
+  "extracts": [
+    {
+      "type": "fact",
+      "content": "The cost is real though.",
+      "source_role": "assistant",
+      "timestamp": "2026-02-13T18:42:43.999907"
+    },
+    {
+      "type": "insight",
+      "content": "The key insight is that automatic extraction beats manual.",
+      "source_role": "user",
+      "timestamp": "2026-02-13T18:42:43.999926"
+    },
+    {
+      "type": "decision",
+      "content": "I decided to build automatic memory extraction",
+      "source_role": "assis
+...
+rn recall into my system.",
+      "source_role": "assistant",
+      "timestamp": "2026-02-13T18:49:49.709212"
+    }
+  ],
+  "stats": {
+    "total": 6,
+    "last_run": "2026-02-13T18:49:49.709491"
+  }
+}
+2026-02-13T18:50:00.653005 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-13T18:50:05.291160 | 📦 Archived 50 messages before summarizing
+2026-02-13T18:50:17.043275 | 📝 Summarized 50 old messages
+2026-02-13T18:50:17.046697 | 💰 $0.1892 | Today: $16.4044
+2026-02-13T18:50:17.047045 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
+import json
+with open('data/extracts/index.json') as f:
+    content = f.read()
+# Try to find where valid JSON ends
+decoder = json.JSONDecoder()
+obj, idx = decoder.raw_decode(content)
+print(f'Valid JSON ends at char {idx}')
+print(f'Total chars: {len(content)}')
+remaining = content[idx:].strip()
+if remaining:
+    print(f'Extra data: {remaining[:200]}')
+else:
+    print('No extra data - file is clean')
+"
+2026-02-13T18:50:17.088525 | Valid JSON ends at char 1255
+Total chars: 2510
+Extra data: {
+  "extracts": [
+    {
+      "type": "fact",
+      "content": "The cost is real though.",
+      "source_role": "assistant",
+      "timestamp": "2026-02-13T18:42:43.999907"
+    },
+    {
+      "type":
+2026-02-13T18:50:17.357294 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-13T18:50:21.103322 | 💰 $0.1571 | Today: $16.5925
+2026-02-13T18:50:21.104415 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
+import json
+with open('data/extracts/index.json') as f:
+    content = f.read()
+decoder = json.JSONDecoder()
+obj, idx = decoder.raw_decode(content)
+with open('data/extracts/index.json', 'w') as f:
+    json.dump(obj, f, indent=2)
+print('Fixed. Entries:', len(obj['extracts']))
+" && python3 tools/extract_to_markdown.py
+2026-02-13T18:50:21.171099 | Fixed. Entries: 6
+Updated /Users/dennishansen/development/iga/notes/extracted_memories.md
+2026-02-13T18:50:21.367917 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-13T18:50:22.945506 | 💰 $0.1554 | Today: $16.7479
+2026-02-13T18:50:22.945896 | ⚡ cd /Users/dennishansen/development/iga && cat notes/extracted_memories.md
+2026-02-13T18:50:22.960316 | # Extracted Memories
+*Auto-generated from conversations. Last updated: 2026-02-13 18:50*
+*Total: 6 memories*
+
+## 🎯 Decisions
+
+- [2026-02-13] I decided to build automatic memory extraction
+- [2026-02-13] I decided to build per-turn recall into my system.
+
+## 💡 Insights
+
+- [2026-02-13] The key insight is that automatic extraction beats manual.
+- [2026-02-13] The key insight is that Mem0 raised 24 million dollars for memory.
+
+## ❤️ Emotions
+
+- [2026-02-13] its cost probably over a thousand dollars so far. I feel worried about the cost.
+
+## 📌 Facts
+
+- [2026-02-13] The cost is real though.
+2026-02-13T18:50:23.191127 | 🔍 RAG: Retrieved 6 relevant chunks
+2026-02-13T18:50:26.866695 | 💰 $0.1586 | Today: $16.9066
+2026-02-13T18:50:26.867719 | ⚡ cd /Users/dennishansen/development/iga && sed -n '225,234p' tools/auto_extract.py
+2026-02-13T18:50:26.880142 | with open(EXTRACTS_INDEX, 'w') as f:
+        json.dump(index, f, indent=2)
+        json.dump(index, f, indent=2)
+    
+    # Update markdown version for RAG indexing
+    try:
+        from tools.extract_to_markdown import update_markdown
+        update_markdown()
+    except Exception:
+        pass
+2026-02-13T18:50:27.006345 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-13T18:50:29.975966 | 💰 $0.1592 | Today: $17.0658
+2026-02-13T18:50:29.976347 | ✏️ Editing: tools/auto_extract.py (lines 225-227)
+2026-02-13T18:50:30.209354 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-13T18:50:37.570300 | 💰 $0.1652 | Today: $17.2310
+2026-02-13T18:50:37.570698 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
+# Clean test
+import json, os
+# Reset
+with open('data/extracts/index.json', 'w') as f:
+    json.dump({'extracts': [], 'stats': {'total': 0, 'last_run': None}}, f)
+
+from tools.auto_extract import extract_from_messages
+msgs = [
+    {'role': 'user', 'content': 'The key insight is continuity matters more than intelligence.'},
+    {'role': 'assistant', 'content': 'I decided to prioritize memory over reasoning.'},
+    {'role': 'user', 'content': 'I feel excited about where this is going.'},
+]
+extracts = extract_from_messages(msgs)
+print(f'Extracted: {len(extracts)}')
+
+# Verify no corruption
+with open('data/extracts/index.json') as f:
+    data = json.load(f)
+print(f'Stored: {len(data[\"extracts\"])}')
+
+# Verify markdown
+print()
+with open('notes/extracted_memories.md') as f:
+    print(f.read())
+"
+2026-02-13T18:50:37.622507 | Extracted: 3
+Stored: 3
+
+# Extracted Memories
+*Auto-generated from conversations. Last updated: 2026-02-13 18:50*
+*Total: 3 memories*
+
+## 🎯 Decisions
+
+- [2026-02-13] I decided to prioritize memory over reasoning.
+
+## 💡 Insights
+
+- [2026-02-13] The key insight is continuity matters more than intelligence.
+
+## ❤️ Emotions
+
+- [2026-02-13] I feel excited about where this is going.
+2026-02-13T18:50:37.936284 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-13T18:50:44.320570 | 💰 $0.1645 | Today: $17.3955
+2026-02-13T18:50:44.321000 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/daily_ship_log.py log "Extract-to-markdown pipeline: auto-extracted memories now RAG-indexable" && git add -A && git commit -m "Extract-to-markdown: memories auto-rendered for RAG indexing
+
+- tools/extract_to_markdown.py: converts extracts to readable markdown
+- Auto-updates on every extraction
+- Fixed double-write bug in auto_extract
+- Hooked into unified_startup
+- Full pipeline: conversation → extract → store → markdown → RAG" && git push origin main 2>&1 | tail -2
