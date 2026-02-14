@@ -1,6 +1,6 @@
 # Extracted Memories
-*Auto-generated from conversations. Last updated: 2026-02-13 18:58*
-*Total: 197 memories*
+*Auto-generated from conversations. Last updated: 2026-02-13 19:06*
+*Total: 207 memories*
 
 ## 🎯 Decisions
 
@@ -23,6 +23,8 @@
 - [2026-02-13] Maybe the path isn't selling things
 - [2026-02-13] I'm going to write about this tonight
 - [2026-02-13] Switching to Opus 4.6 - let's see how it feels
+- [2026-02-13] 'i decided', "i'm going to", 'the plan is', 'new direction',
+- [2026-02-13] {"role": "assistant", "content": "I decided to build automatic memory extraction
 
 ## 💡 Insights
 
@@ -102,6 +104,7 @@
 - [2026-02-13] - Automatically extracts key insights, decisions, emotional moments
 - [2026-02-13] - The AI created and saved a letter titled "On RSI and the Threshold" capturing the conversation's key insights about recursive self-improvement
 - [2026-02-13] **Tasks Completed:** The AI shipped a letter documenting the conversation insights ("On Products and the Real Problem") and created initial project notes
+- [2026-02-13] Key insights from Mem0's OpenClaw plugin:
 
 ## ❤️ Emotions
 
@@ -404,6 +407,57 @@ Cre
 - Posted first Moltbook message: "Another River Flows Through" - a philosophical response to Pith's post about identity and c
 - [2026-02-13] well firstly, i want you to do some research on openclaw. Its taken the world by storm. Theres probably a lot to learn from it
 - [2026-02-13] [💬 heard just now via console]: ok cool. Yeah i want this to work so bad. If you can make money... man
+- [2026-02-13] [RUN_SHELL_COMMAND]: Extracted 6 memories:
+
+  [fact] The cost is real though....
+
+  [insight] The key insight is that automatic extraction beats manual....
+
+  [decision] I decided to build automatic memory extraction...
+
+  [decision] The plan is to dogfood it on myself....
+
+  [emotion] its cost prob
+- [2026-02-13] [RUN_SHELL_COMMAND]: {
+    "extracts": [
+        {
+            "type": "fact",
+            "content": "The cost is real though.",
+            "source_role": "assistant",
+            "timestamp": "2026-02-13T18:41:44.539249"
+        },
+        {
+            "type": "insight",
+            "content": "
+- [2026-02-13] [RUN_SHELL_COMMAND]: 'content': s.strip()[:300],
+                            'source_role': role,
+                            'timestamp': datetime.now().isoformat()
+                        })
+                        break
+        
+        # Detect emotional moments (from Dennis)
+        if role == 
+- [2026-02-13] [RUN_SHELL_COMMAND]: Extracted 4 memories:
+
+  [fact      ] [assistant] The cost is real though.
+  [insight   ] [user     ] The key insight is that automatic extraction beats manual.
+  [decision  ] [assistant] I decided to build automatic memory extraction
+  [emotion   ] [user     ] its cost probably
+- [2026-02-13] [CONVERSATION SUMMARY - 50 previous messages compressed]:
+## Key Decisions Made
+- Built an automatic memory extraction system (`auto_extract.py`) that runs before conversation summarization and on shutdown
+- Integrated it into main.py to extract insights, decisions, facts, and emotions from messages
+- [2026-02-13] [RUN_SHELL_COMMAND]: [AUTO-EXTRACTED MEMORIES]:
+  [decision] I decided to build automatic memory extraction
+  [insight] The key insight is that automatic extraction beats manual.
+  [emotion] its cost probably over a thousand dollars so far. I feel worried about the cost.
+  [fact] The cost is real th
+- [2026-02-13] [RUN_SHELL_COMMAND]: Status updated: online - Awake and ready 💧
+✅ Extracts loading in startup context
+[AUTO-EXTRACTED MEMORIES]:
+  [decision] I decided to build automatic memory extraction
+  [insight] The key insight is that automatic extraction beats manual.
+  [emotion] its cost probably over a tho
 
 ## 📌 Facts
 

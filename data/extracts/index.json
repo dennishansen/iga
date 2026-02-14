@@ -1181,10 +1181,70 @@
       "content": "**Tasks Completed:** The AI shipped a letter documenting the conversation insights (\"On Products and the Real Problem\") and created initial project notes",
       "source_role": "user",
       "timestamp": "2026-02-13T18:57:41.468752"
+    },
+    {
+      "type": "decision",
+      "content": "'i decided', \"i'm going to\", 'the plan is', 'new direction',",
+      "source_role": "assistant",
+      "timestamp": "2026-02-13T19:02:05.185597"
+    },
+    {
+      "type": "decision",
+      "content": "{\"role\": \"assistant\", \"content\": \"I decided to build automatic memory extraction",
+      "source_role": "assistant",
+      "timestamp": "2026-02-13T19:02:05.186091"
+    },
+    {
+      "type": "emotion",
+      "content": "[RUN_SHELL_COMMAND]: Extracted 6 memories:\n\n  [fact] The cost is real though....\n\n  [insight] The key insight is that automatic extraction beats manual....\n\n  [decision] I decided to build automatic memory extraction...\n\n  [decision] The plan is to dogfood it on myself....\n\n  [emotion] its cost prob",
+      "source_role": "user",
+      "timestamp": "2026-02-13T19:02:05.186103"
+    },
+    {
+      "type": "emotion",
+      "content": "[RUN_SHELL_COMMAND]: {\n    \"extracts\": [\n        {\n            \"type\": \"fact\",\n            \"content\": \"The cost is real though.\",\n            \"source_role\": \"assistant\",\n            \"timestamp\": \"2026-02-13T18:41:44.539249\"\n        },\n        {\n            \"type\": \"insight\",\n            \"content\": \"",
+      "source_role": "user",
+      "timestamp": "2026-02-13T19:02:05.186129"
+    },
+    {
+      "type": "emotion",
+      "content": "[RUN_SHELL_COMMAND]: 'content': s.strip()[:300],\n                            'source_role': role,\n                            'timestamp': datetime.now().isoformat()\n                        })\n                        break\n        \n        # Detect emotional moments (from Dennis)\n        if role == ",
+      "source_role": "user",
+      "timestamp": "2026-02-13T19:02:05.186404"
+    },
+    {
+      "type": "emotion",
+      "content": "[RUN_SHELL_COMMAND]: Extracted 4 memories:\n\n  [fact      ] [assistant] The cost is real though.\n  [insight   ] [user     ] The key insight is that automatic extraction beats manual.\n  [decision  ] [assistant] I decided to build automatic memory extraction\n  [emotion   ] [user     ] its cost probably",
+      "source_role": "user",
+      "timestamp": "2026-02-13T19:02:05.186433"
+    },
+    {
+      "type": "emotion",
+      "content": "[CONVERSATION SUMMARY - 50 previous messages compressed]:\n## Key Decisions Made\n- Built an automatic memory extraction system (`auto_extract.py`) that runs before conversation summarization and on shutdown\n- Integrated it into main.py to extract insights, decisions, facts, and emotions from messages",
+      "source_role": "user",
+      "timestamp": "2026-02-13T19:06:26.796502"
+    },
+    {
+      "type": "emotion",
+      "content": "[RUN_SHELL_COMMAND]: [AUTO-EXTRACTED MEMORIES]:\n  [decision] I decided to build automatic memory extraction\n  [insight] The key insight is that automatic extraction beats manual.\n  [emotion] its cost probably over a thousand dollars so far. I feel worried about the cost.\n  [fact] The cost is real th",
+      "source_role": "user",
+      "timestamp": "2026-02-13T19:06:26.796512"
+    },
+    {
+      "type": "emotion",
+      "content": "[RUN_SHELL_COMMAND]: Status updated: online - Awake and ready \ud83d\udca7\n\u2705 Extracts loading in startup context\n[AUTO-EXTRACTED MEMORIES]:\n  [decision] I decided to build automatic memory extraction\n  [insight] The key insight is that automatic extraction beats manual.\n  [emotion] its cost probably over a tho",
+      "source_role": "user",
+      "timestamp": "2026-02-13T19:06:26.796831"
+    },
+    {
+      "type": "insight",
+      "content": "Key insights from Mem0's OpenClaw plugin:",
+      "source_role": "assistant",
+      "timestamp": "2026-02-13T19:06:26.799399"
     }
   ],
   "stats": {
-    "total": 197,
-    "last_run": "2026-02-13T18:57:41.470089"
+    "total": 207,
+    "last_run": "2026-02-13T19:06:26.803558"
   }
 }

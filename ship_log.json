@@ -949,6 +949,16 @@
       "timestamp": "2026-02-13T19:00:02.917546",
       "date": "2026-02-13",
       "description": "Letter: on_building_memory.md - reflection on building automatic memory extraction"
+    },
+    {
+      "timestamp": "2026-02-13T19:09:11.857352",
+      "date": "2026-02-13",
+      "description": "DREAM system (tools/dream.py) - adversarial self-reflection loop inspired by Falcon"
+    },
+    {
+      "timestamp": "2026-02-13T19:09:11.898049",
+      "date": "2026-02-13",
+      "description": "Forked and studied Eagle/Falcon architecture - identified 3 features to port"
     }
   ]
 }
