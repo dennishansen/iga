@@ -863,7 +863,7 @@
     {
       "id": "task_48ea5ca2",
       "title": "Port more Falcon architecture improvements",
-      "status": "pending",
+      "status": "completed",
       "priority": 2,
       "blocked_by": [],
       "due_at": null,
@@ -871,7 +871,7 @@
         "falcon-port"
       ],
       "created": "2026-02-13T19:19:52.477291",
-      "completed": null
+      "completed": "2026-02-14T12:17:50.191456"
     },
     {
       "id": "task_6e07486b",
