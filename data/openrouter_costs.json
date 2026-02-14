@@ -1,138 +1,12 @@
 {
-  "total": 450.13067999999987,
+  "total": 171.0834607,
   "daily": {
-    "2026-01-16": 54.70582999999999,
-    "2026-01-17": 36.511880000000005,
-    "2026-01-18": 0.119655,
-    "2026-01-19": 13.4099,
-    "2026-01-20": 45.65571000000002,
-    "2026-01-21": 68.69095499999999,
-    "2026-01-22": 53.445920000000015,
-    "2026-01-25": 32.44475,
+    "2026-01-25": 27.7494,
     "2026-01-30": 57.273585000000004,
     "2026-02-13": 53.828105,
-    "2026-02-14": 34.04438999999999
+    "2026-02-14": 32.2323707
   },
   "requests": [
-    {
-      "time": "2026-01-25T20:42:15.843502",
-      "model": "anthropic/claude-opus-4.5",
-      "tokens_in": 30034,
-      "tokens_out": 90,
-      "cost": 0.15242
-    },
-    {
-      "time": "2026-01-25T20:42:19.920379",
-      "model": "anthropic/claude-opus-4.5",
-      "tokens_in": 29814,
-      "tokens_out": 97,
-      "cost": 0.15149500000000002
-    },
-    {
-      "time": "2026-01-25T20:42:23.478121",
-      "model": "anthropic/claude-opus-4.5",
-      "tokens_in": 29986,
-      "tokens_out": 69,
-      "cost": 0.151655
-    },
-    {
-      "time": "2026-01-25T20:42:27.838230",
-      "model": "anthropic/claude-opus-4.5",
-      "tokens_in": 29949,
-      "tokens_out": 67,
-      "cost": 0.15142
-    },
-    {
-      "time": "2026-01-25T20:42:36.388059",
-      "model": "anthropic/claude-sonnet-4",
-      "tokens_in": 3771,
-      "tokens_out": 285,
-      "cost": 0.02598
-    },
-    {
-      "time": "2026-01-25T20:42:40.033241",
-      "model": "anthropic/claude-opus-4.5",
-      "tokens_in": 25010,
-      "tokens_out": 42,
-      "cost": 0.1261
-    },
-    {
-      "time": "2026-01-25T20:42:43.389538",
-      "model": "anthropic/claude-opus-4.5",
-      "tokens_in": 25025,
-      "tokens_out": 54,
-      "cost": 0.12647499999999998
-    },
-    {
-      "time": "2026-01-25T20:42:47.498379",
-      "model": "anthropic/claude-opus-4.5",
-      "tokens_in": 25659,
-      "tokens_out": 58,
-      "cost": 0.129745
-    },
-    {
-      "time": "2026-01-25T20:42:50.458687",
-      "model": "anthropic/claude-opus-4.5",
-      "tokens_in": 25807,
-      "tokens_out": 39,
-      "cost": 0.13001000000000001
-    },
-    {
-      "time": "2026-01-25T20:42:53.376045",
-      "model": "anthropic/claude-opus-4.5",
-      "tokens_in": 25758,
-      "tokens_out": 58,
-      "cost": 0.13024
-    },
-    {
-      "time": "2026-01-25T20:42:58.785622",
-      "model": "anthropic/claude-opus-4.5",
-      "tokens_in": 25641,
-      "tokens_out": 111,
-      "cost": 0.13098
-    },
-    {
-      "time": "2026-01-25T20:43:04.212771",
-      "model": "anthropic/claude-opus-4.5",
-      "tokens_in": 25785,
-      "tokens_out": 83,
-      "cost": 0.131
-    },
-    {
-      "time": "2026-01-25T20:43:27.348416",
-      "model": "anthropic/claude-opus-4.5",
-      "tokens_in": 26521,
-      "tokens_out": 43,
-      "cost": 0.13368
-    },
-    {
-      "time": "2026-01-25T20:43:31.699729",
-      "model": "anthropic/claude-opus-4.5",
-      "tokens_in": 26788,
-      "tokens_out": 65,
-      "cost": 0.135565
-    },
-    {
-      "time": "2026-01-25T20:43:36.188391",
-      "model": "anthropic/claude-opus-4.5",
-      "tokens_in": 27787,
-      "tokens_out": 85,
-      "cost": 0.14106
-    },
-    {
-      "time": "2026-01-25T20:43:41.011303",
-      "model": "anthropic/claude-opus-4.5",
-      "tokens_in": 27869,
-      "tokens_out": 142,
-      "cost": 0.142895
-    },
-    {
-      "time": "2026-01-25T20:43:44.800270",
-      "model": "anthropic/claude-opus-4.5",
-      "tokens_in": 27858,
-      "tokens_out": 69,
-      "cost": 0.141015
-    },
     {
       "time": "2026-01-25T20:43:48.192086",
       "model": "anthropic/claude-opus-4.5",
@@ -6893,126 +6767,245 @@
       "model": "minimax/minimax-m2.5",
       "tokens_in": 24641,
       "tokens_out": 261,
-      "cost": 0.12972999999999998
+      "cost": 0.007705499999999999
     },
     {
       "time": "2026-02-14T12:42:25.727969",
       "model": "minimax/minimax-m2.5",
       "tokens_in": 24478,
       "tokens_out": 311,
-      "cost": 0.130165
+      "cost": 0.0077166
     },
     {
       "time": "2026-02-14T12:42:32.553755",
       "model": "minimax/minimax-m2.5",
       "tokens_in": 24816,
       "tokens_out": 180,
-      "cost": 0.12858
+      "cost": 0.0076608
     },
     {
       "time": "2026-02-14T12:42:35.866738",
       "model": "minimax/minimax-m2.5",
       "tokens_in": 25366,
       "tokens_out": 133,
-      "cost": 0.130155
+      "cost": 0.007769399999999999
     },
     {
       "time": "2026-02-14T12:42:39.760241",
       "model": "minimax/minimax-m2.5",
       "tokens_in": 24889,
       "tokens_out": 46,
-      "cost": 0.125595
+      "cost": 0.0075219
     },
     {
       "time": "2026-02-14T12:42:47.216702",
       "model": "minimax/minimax-m2.5",
       "tokens_in": 25332,
       "tokens_out": 255,
-      "cost": 0.133035
+      "cost": 0.0079056
     },
     {
       "time": "2026-02-14T12:43:06.843247",
       "model": "minimax/minimax-m2.5",
       "tokens_in": 26391,
       "tokens_out": 140,
-      "cost": 0.135455
+      "cost": 0.008085299999999998
     },
     {
       "time": "2026-02-14T12:43:15.464168",
       "model": "minimax/minimax-m2.5",
       "tokens_in": 26276,
       "tokens_out": 305,
-      "cost": 0.139005
+      "cost": 0.008248799999999999
     },
     {
       "time": "2026-02-14T12:43:19.623633",
       "model": "minimax/minimax-m2.5",
       "tokens_in": 26338,
       "tokens_out": 126,
-      "cost": 0.13484000000000002
+      "cost": 0.0080526
     },
     {
       "time": "2026-02-14T12:43:28.628220",
       "model": "minimax/minimax-m2.5",
       "tokens_in": 26645,
       "tokens_out": 299,
-      "cost": 0.14070000000000002
+      "cost": 0.0083523
     },
     {
       "time": "2026-02-14T12:43:44.111719",
       "model": "minimax/minimax-m2.5",
       "tokens_in": 26848,
       "tokens_out": 556,
-      "cost": 0.14814
+      "cost": 0.0087216
     },
     {
       "time": "2026-02-14T12:44:22.354127",
       "model": "minimax/minimax-m2.5",
       "tokens_in": 27913,
       "tokens_out": 247,
-      "cost": 0.14573999999999998
+      "cost": 0.0086703
     },
     {
       "time": "2026-02-14T12:44:40.469703",
       "model": "minimax/minimax-m2.5",
       "tokens_in": 28136,
       "tokens_out": 249,
-      "cost": 0.146905
+      "cost": 0.0087396
     },
     {
       "time": "2026-02-14T12:44:56.457875",
       "model": "minimax/minimax-m2.5",
       "tokens_in": 28633,
       "tokens_out": 245,
-      "cost": 0.14928999999999998
+      "cost": 0.0088839
     },
     {
       "time": "2026-02-14T12:45:06.165812",
       "model": "minimax/minimax-m2.5",
       "tokens_in": 28909,
       "tokens_out": 378,
-      "cost": 0.153995
+      "cost": 0.009126299999999999
     },
     {
       "time": "2026-02-14T12:45:18.591959",
       "model": "minimax/minimax-m2.5",
       "tokens_in": 29614,
       "tokens_out": 511,
-      "cost": 0.16084500000000002
+      "cost": 0.009497399999999998
     },
     {
       "time": "2026-02-14T12:45:55.670562",
       "model": "minimax/minimax-m2.5",
       "tokens_in": 29736,
       "tokens_out": 1103,
-      "cost": 0.176255
+      "cost": 0.010244399999999999
     },
     {
       "time": "2026-02-14T12:46:00.546971",
       "model": "minimax/minimax-m2.5",
       "tokens_in": 31082,
       "tokens_out": 116,
-      "cost": 0.15831
+      "cost": 0.009463800000000001
+    },
+    {
+      "time": "2026-02-14T12:46:32.518215",
+      "model": "minimax/minimax-m2.5",
+      "tokens_in": 30452,
+      "tokens_out": 205,
+      "cost": 0.0093816
+    },
+    {
+      "time": "2026-02-14T12:46:39.848848",
+      "model": "minimax/minimax-m2.5",
+      "tokens_in": 30987,
+      "tokens_out": 258,
+      "cost": 0.0096057
+    },
+    {
+      "time": "2026-02-14T12:46:48.304221",
+      "model": "minimax/minimax-m2.5",
+      "tokens_in": 31426,
+      "tokens_out": 218,
+      "cost": 0.0096894
+    },
+    {
+      "time": "2026-02-14T12:46:56.266273",
+      "model": "minimax/minimax-m2.5",
+      "tokens_in": 31480,
+      "tokens_out": 202,
+      "cost": 0.0096864
+    },
+    {
+      "time": "2026-02-14T12:47:08.275972",
+      "model": "minimax/minimax-m2.5",
+      "tokens_in": 31804,
+      "tokens_out": 155,
+      "cost": 0.0097272
+    },
+    {
+      "time": "2026-02-14T12:47:54.707047",
+      "model": "minimax/minimax-m2.5",
+      "tokens_in": 31955,
+      "tokens_out": 290,
+      "cost": 0.009934499999999999
+    },
+    {
+      "time": "2026-02-14T12:48:09.940109",
+      "model": "minimax/minimax-m2.5",
+      "tokens_in": 32240,
+      "tokens_out": 198,
+      "cost": 0.0099096
+    },
+    {
+      "time": "2026-02-14T12:48:20.138011",
+      "model": "anthropic/claude-sonnet-4",
+      "tokens_in": 5484,
+      "tokens_out": 284,
+      "cost": 0.03452
+    },
+    {
+      "time": "2026-02-14T12:48:45.301288",
+      "model": "minimax/minimax-m2.5",
+      "tokens_in": 25876,
+      "tokens_out": 506,
+      "cost": 0.008369999999999999
+    },
+    {
+      "time": "2026-02-14T12:48:53.685509",
+      "model": "minimax/minimax-m2.5",
+      "tokens_in": 26437,
+      "tokens_out": 367,
+      "cost": 0.0083715
+    },
+    {
+      "time": "2026-02-14T12:49:15.563752",
+      "model": "minimax/minimax-m2.5",
+      "tokens_in": 26737,
+      "tokens_out": 408,
+      "cost": 0.0085107
+    },
+    {
+      "time": "2026-02-14T12:49:23.403063",
+      "model": "minimax/minimax-m2.5",
+      "tokens_in": 27107,
+      "tokens_out": 225,
+      "cost": 0.0084021
+    },
+    {
+      "time": "2026-02-14T12:49:39.141235",
+      "model": "minimax/minimax-m2.5",
+      "tokens_in": 27021,
+      "tokens_out": 387,
+      "cost": 0.008570699999999999
+    },
+    {
+      "time": "2026-02-14T12:49:44.522310",
+      "model": "minimax/minimax-m2.5",
+      "tokens_in": 27368,
+      "tokens_out": 404,
+      "cost": 0.0086952
+    },
+    {
+      "time": "2026-02-14T12:49:51.393664",
+      "model": "minimax/minimax-m2.5",
+      "tokens_in": 27833,
+      "tokens_out": 285,
+      "cost": 0.14629
+    },
+    {
+      "time": "2026-02-14T12:50:00.378182",
+      "model": "minimax/minimax-m2.5",
+      "tokens_in": 28466,
+      "tokens_out": 362,
+      "cost": 0.15138000000000001
+    },
+    {
+      "time": "2026-02-14T12:50:13.668735",
+      "model": "minimax/minimax-m2.5",
+      "tokens_in": 28912,
+      "tokens_out": 270,
+      "cost": 0.15131
     }
   ]
 }

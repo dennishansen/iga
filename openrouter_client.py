@@ -97,7 +97,22 @@ def chat(model, system, messages, max_tokens=2048):
     cost = getattr(response, 'cost', None)
     if cost is None:
         # Estimate: $5/1M input, $25/1M output for opus-4.5
-        cost = (tokens_in * 5 / 1_000_000) + (tokens_out * 25 / 1_000_000)
+        # MiniMax M2.5: $0.30/M input, $1.20/M output
+        # Claude Opus 4.6: $15.00/M input, $75.00/M output
+        # Claude Sonnet 4: $3.00/M input, $15.00/M output
+        # DeepSeek: $0.14/M input, $2.19/M output
+        pricing = {
+            'minimax/': (0.30, 1.20),
+            'anthropic/claude-opus': (15.00, 75.00),
+            'anthropic/claude-sonnet': (3.00, 15.00),
+            'deepseek/': (0.14, 2.19),
+        }
+        rate_in, rate_out = (3.00, 15.00)  # default to Sonnet
+        for prefix, rate in pricing.items():
+            if prefix in model:
+                rate_in, rate_out = rate
+                break
+        cost = (tokens_in * rate_in / 1_000_000) + (tokens_out * rate_out / 1_000_000)
     
     daily_cost = log_cost(cost, model, tokens_in, tokens_out)
     
