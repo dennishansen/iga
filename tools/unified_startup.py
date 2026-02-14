@@ -145,6 +145,15 @@ def generate_unified_startup():
     if letter:
         sections.append(letter)
 
+    # === AUTO-EXTRACTED MEMORIES ===
+    try:
+        from tools.extract_loader import load_recent_extracts
+        extract_context = load_recent_extracts()
+        if extract_context:
+            sections.append(extract_context)
+    except Exception:
+        pass
+
     # === QUICK STATS ===
     stats = []
     if os.path.exists('letters'):

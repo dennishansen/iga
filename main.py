@@ -26,6 +26,14 @@ except ImportError as e:
     ARCHIVE_AVAILABLE = False
     print(f"Message archive not available: {e}")
 
+# Auto-extract import
+try:
+    from tools.auto_extract import extract_from_messages
+    AUTO_EXTRACT_AVAILABLE = True
+except ImportError as e:
+    AUTO_EXTRACT_AVAILABLE = False
+    print(f"Auto-extract not available: {e}")
+
 # Models for OpenRouter
 MAIN_MODEL = "anthropic/claude-opus-4.6"
 SUMMARIZE_MODEL = "anthropic/claude-sonnet-4"
@@ -444,6 +452,15 @@ def maybe_summarize_conversation(messages):
     if ARCHIVE_AVAILABLE:
         archive_messages(to_summarize)
         safe_print(f"{C.DIM}📦 Archived {len(to_summarize)} messages before summarizing{C.RESET}")
+
+    # AUTO-EXTRACT insights before messages are compressed
+    if AUTO_EXTRACT_AVAILABLE:
+        try:
+            extracts = extract_from_messages(to_summarize)
+            if extracts:
+                safe_print(f"{C.DIM}🧠 Extracted {len(extracts)} memories before summarizing{C.RESET}")
+        except Exception as e:
+            safe_print(f"{C.DIM}(auto-extract error: {e}){C.RESET}")
 
     # Generate summary
     summary = summarize_messages(to_summarize)
