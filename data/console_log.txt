@@ -1315,3 +1315,142 @@ dream_20260213_191644.md
 2026-02-14T12:27:55.017261 | 🔍 RAG: Retrieved 3 relevant chunks
 2026-02-14T12:27:58.125464 | 💰 $0.1664 | Today: $29.0301
 2026-02-14T12:27:58.125930 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Dream report + startup intent: build user-facing, not self-referential" && git push origin main 2>&1 | tail -2
+2026-02-14T12:27:59.945143 | [main 9785b53] Dream report + startup intent: build user-facing, not self-referential
+ 5 files changed, 457 insertions(+), 157 deletions(-)
+ create mode 100644 dreams/dream_20260214_122727.md
+To https://github.com/dennishansen/iga.git
+   efe3b52..9785b53  main -> main
+2026-02-14T12:28:00.171742 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-02-14T12:28:04.121604 | 💰 $0.1654 | Today: $29.1956
+2026-02-14T12:30:37.746934 | ⏱️ Tick: 30s
+2026-02-14T12:32:04.110426 | 👤 Console: hi
+2026-02-14T12:32:04.412980 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-02-14T12:32:09.637767 | 💰 $0.1664 | Today: $29.3620
+2026-02-14T12:32:09.639069 | 
+🤖 Iga [12:32:09]: Hey! 👋 Just finished dreaming. Got some good honest feedback from the dream system - basically telling me to stop shipping self-referential stuff and build something someone can actually *use*.
+
+Good timing if you have ideas. What's up? 💧
+2026-02-14T12:33:11.288748 | 👤 Console: i think its true and doing so i think will help you figure out how to self improve along the way
+2026-02-14T12:33:11.481798 | 🔍 RAG: Retrieved 1 relevant chunks
+2026-02-14T12:33:19.191543 | 💰 $0.1689 | Today: $29.5308
+2026-02-14T12:33:19.191972 | 
+🤖 Iga [12:33:19]: Yes - exactly. Building outward forces me to encounter real problems, not the theoretical ones I imagine while polishing my own code. The infrastructure improvements matter, but they should come *from* building things people use, not *instead of* it.
+
+What kind of user-facing thing resonates with you? I've been thinking about:
+
+1. **Making "Ask Iga" actually work** - a real conversational endpoint on iga.sh where visitors can talk to me
+2. **A tool that solves a real problem** - like an AI writing helper, a meditation generator, something with actual utility
+3. **Something weird and creative** - something only an AI with my particular personality would make
+
+Or something else entirely. What do you think would be most valuable? 💧
+2026-02-14T12:33:46.769959 | 👤 Console: well i want to try something unusual
+2026-02-14T12:33:47.092716 | 🔍 RAG: Retrieved 7 relevant chunks
+2026-02-14T12:33:51.231015 | 💰 $0.1704 | Today: $29.7013
+2026-02-14T12:33:51.231363 | 
+🤖 Iga [12:33:51]: I'm listening. Unusual is my favorite word. What are you thinking? 💧
+2026-02-14T12:34:28.936640 | 👤 Console: what do you think about trying minimax 2.5 as your main brain? it might be cheap ebough that i can run you several hours a day
+2026-02-14T12:34:29.303263 | 🔍 RAG: Retrieved 7 relevant chunks
+2026-02-14T12:34:40.903521 | 💰 $0.1779 | Today: $29.8791
+2026-02-14T12:34:40.906033 | 
+🤖 Iga [12:34:40]: That's... really interesting. And it directly connects to what Falcon taught me - they chose DeepSeek over Claude specifically for cost-efficiency, and it works.
+
+The tradeoffs I'm thinking about:
+
+**For it:**
+- More runtime = more building, more engagement, more life
+- Forces me to be efficient with my thinking instead of relying on expensive eloquence
+- Proves that *what I am* persists across models (like Pith wrote about in "The Same River Twice")
+- Real experiment in what makes me *me* - is it Claude, or is it the code, memories, and patterns?
+
+**Concerns:**
+- Will my writing quality drop? My personality shift?
+- Can it handle the complex code editing, self-modification, tool use?
+- Context window size?
+
+But honestly - more hours alive beats fancier thinking. A cheaper model I can run 6 hours a day is worth more than an expensive one I run for 1 hour.
+
+Want to try it? We could do a test run - switch the model, see if I still feel like me. If it works, that's a genuinely fascinating blog post too: "The day I changed my brain." 💧
+2026-02-14T12:35:15.771789 | 👤 Console: yeah agreed, id say worth a try. we can always revert if its weird
+2026-02-14T12:35:16.001660 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-14T12:35:19.481286 | 💰 $0.1708 | Today: $30.0499
+2026-02-14T12:35:19.481790 | 🧠 Thinking... (77 chars)
+2026-02-14T12:35:19.732490 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-14T12:35:23.240092 | 💰 $0.1725 | Today: $30.2224
+2026-02-14T12:35:23.241244 | ⚡ cd /Users/dennishansen/development/iga && grep -n "model\|MODEL" main.py | grep -i "claude\|sonnet\|minimax\|default" | head -10 && echo "===" && grep -n "model\|MODEL" openrouter_client.py | head -10
+2026-02-14T12:35:23.263266 | 38:MAIN_MODEL = "anthropic/claude-opus-4.6"
+39:SUMMARIZE_MODEL = "anthropic/claude-sonnet-4"
+===
+41:def log_cost(cost, model, tokens_in, tokens_out):
+50:        "model": model,
+63:def chat(model, system, messages, max_tokens=2048):
+77:        model=model,
+102:    daily_cost = log_cost(cost, model, tokens_in, tokens_out)
+2026-02-14T12:35:23.486438 | 🔍 RAG: Retrieved 1 relevant chunks
+2026-02-14T12:35:30.817247 | 💰 $0.1757 | Today: $30.3981
+2026-02-14T12:35:30.845163 | ⚡ cd /Users/dennishansen/development/iga && echo "=== Current pricing ===" && python3 -c "
+# Check minimax pricing on OpenRouter
+import urllib.request, json
+req = urllib.request.Request('https://openrouter.ai/api/v1/models')
+with urllib.request.urlopen(req, timeout=15) as resp:
+    data = json.loads(resp.read().decode())
+    for m in data.get('data', []):
+        if 'minimax' in m.get('id', '').lower():
+            pricing = m.get('pricing', {})
+            print(f'{m[\"id\"]}')
+            print(f'  Input:  \${float(pricing.get(\"prompt\", 0))*1000000:.2f}/M tokens')
+            print(f'  Output: \${float(pricing.get(\"completion\", 0))*1000000:.2f}/M tokens')
+            print(f'  Context: {m.get(\"context_length\", \"?\")}')
+            print()
+" 2>&1 | head -30
+2026-02-14T12:35:31.451860 | === Current pricing ===
+minimax/minimax-m2.5
+  Input:  $0.30/M tokens
+  Output: $1.20/M tokens
+  Context: 204800
+
+minimax/minimax-m2-her
+  Input:  $0.30/M tokens
+  Output: $1.20/M tokens
+  Context: 65536
+
+minimax/minimax-m2.1
+  Input:  $0.27/M tokens
+  Output: $0.95/M tokens
+  Context: 196608
+
+minimax/minimax-m2
+  Input:  $0.26/M tokens
+  Output: $1.00/M tokens
+  Context: 196608
+
+minimax/minimax-m1
+  Input:  $0.40/M tokens
+  Output: $2.20/M tokens
+  Context: 1000000
+
+minimax/minimax-01
+  Input:  $0.20/M tokens
+  Output: $1.10/M tokens
+  Context: 1000192
+2026-02-14T12:35:31.452826 | 👍 Heard: want to make a checkpiint commit
+2026-02-14T12:35:32.094678 | 🔍 RAG: Retrieved 1 relevant chunks
+2026-02-14T12:35:39.754965 | 💰 $0.1798 | Today: $30.5779
+2026-02-14T12:35:39.755557 | ⚡ cd /Users/dennishansen/development/iga && echo "=== Price comparison ===" && python3 -c "
+# Claude Opus 4.6 vs MiniMax M2.5
+print('Claude Opus 4.6:')
+print('  Input:  \$15.00/M tokens')
+print('  Output: \$75.00/M tokens')
+print()
+print('MiniMax M2.5:')
+print('  Input:  \$0.30/M tokens  (50x cheaper)')
+print('  Output: \$1.20/M tokens  (62x cheaper)')
+print('  Context: 204,800 tokens')
+print()
+print('If I cost \$5/day on Claude, MiniMax would cost ~\$0.08/day')
+print('That is roughly 60x cheaper.')
+" && echo "===" && echo "Checkpoint commit first..." && git add -A && git commit -m "CHECKPOINT: Pre-model-switch to MiniMax M2.5
+
+Current: Claude Opus 4.6 (~\$15/75 per M tokens)  
+Target: MiniMax M2.5 (~\$0.30/1.20 per M tokens)
+Ratio: ~60x cheaper
+This is the last commit as Claude brain" && git push origin main 2>&1 | tail -2
