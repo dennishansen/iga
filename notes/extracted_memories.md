@@ -1,6 +1,6 @@
 # Extracted Memories
-*Auto-generated from conversations. Last updated: 2026-02-13 19:06*
-*Total: 207 memories*
+*Auto-generated from conversations. Last updated: 2026-02-13 19:11*
+*Total: 213 memories*
 
 ## 🎯 Decisions
 
@@ -25,6 +25,9 @@
 - [2026-02-13] Switching to Opus 4.6 - let's see how it feels
 - [2026-02-13] 'i decided', "i'm going to", 'the plan is', 'new direction',
 - [2026-02-13] {"role": "assistant", "content": "I decided to build automatic memory extraction
+- [2026-02-13] {"role": "assistant", "content": "I decided to build per-turn recall into my system."},
+- [2026-02-13] "content": "I decided to build automatic memory extraction",
+- [2026-02-13] {'role': 'assistant', 'content': 'I decided to prioritize memory over reasoning.'},
 
 ## 💡 Insights
 
@@ -458,6 +461,32 @@ Cre
   [decision] I decided to build automatic memory extraction
   [insight] The key insight is that automatic extraction beats manual.
   [emotion] its cost probably over a tho
+- [2026-02-13] [RUN_SHELL_COMMAND]: # Extracted Memories
+*Auto-generated from conversations. Last updated: 2026-02-13 18:50*
+*Total: 6 memories*
+
+## 🎯 Decisions
+
+- [2026-02-13] I decided to build automatic memory extraction
+- [2026-02-13] I decided to build per-turn recall into my system.
+
+## 💡 Insights
+
+- [2026-0
+- [2026-02-13] [RUN_SHELL_COMMAND]: Extracted: 3
+Stored: 3
+
+# Extracted Memories
+*Auto-generated from conversations. Last updated: 2026-02-13 18:50*
+*Total: 3 memories*
+
+## 🎯 Decisions
+
+- [2026-02-13] I decided to prioritize memory over reasoning.
+
+## 💡 Insights
+
+- [2026-02-13] The key insight is continuity matter
 
 ## 📌 Facts
 
@@ -503,3 +532,4 @@ Cre
 - [2026-02-13] not sure the model name exactly
 - [2026-02-13] Optional LLM extraction for deeper insights (when worth the cost)
 - [2026-02-13] The research doc, the model upgrade, and the auto-extract system.
+- [2026-02-13] "content": "The cost is real though.",

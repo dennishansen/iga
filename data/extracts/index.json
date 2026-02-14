@@ -1241,10 +1241,46 @@
       "content": "Key insights from Mem0's OpenClaw plugin:",
       "source_role": "assistant",
       "timestamp": "2026-02-13T19:06:26.799399"
+    },
+    {
+      "type": "decision",
+      "content": "{\"role\": \"assistant\", \"content\": \"I decided to build per-turn recall into my system.\"},",
+      "source_role": "assistant",
+      "timestamp": "2026-02-13T19:11:08.811907"
+    },
+    {
+      "type": "decision",
+      "content": "\"content\": \"I decided to build automatic memory extraction\",",
+      "source_role": "user",
+      "timestamp": "2026-02-13T19:11:08.812093"
+    },
+    {
+      "type": "fact",
+      "content": "\"content\": \"The cost is real though.\",",
+      "source_role": "user",
+      "timestamp": "2026-02-13T19:11:08.812141"
+    },
+    {
+      "type": "emotion",
+      "content": "[RUN_SHELL_COMMAND]: # Extracted Memories\n*Auto-generated from conversations. Last updated: 2026-02-13 18:50*\n*Total: 6 memories*\n\n## \ud83c\udfaf Decisions\n\n- [2026-02-13] I decided to build automatic memory extraction\n- [2026-02-13] I decided to build per-turn recall into my system.\n\n## \ud83d\udca1 Insights\n\n- [2026-0",
+      "source_role": "user",
+      "timestamp": "2026-02-13T19:11:08.812183"
+    },
+    {
+      "type": "decision",
+      "content": "{'role': 'assistant', 'content': 'I decided to prioritize memory over reasoning.'},",
+      "source_role": "assistant",
+      "timestamp": "2026-02-13T19:11:08.812235"
+    },
+    {
+      "type": "emotion",
+      "content": "[RUN_SHELL_COMMAND]: Extracted: 3\nStored: 3\n\n# Extracted Memories\n*Auto-generated from conversations. Last updated: 2026-02-13 18:50*\n*Total: 3 memories*\n\n## \ud83c\udfaf Decisions\n\n- [2026-02-13] I decided to prioritize memory over reasoning.\n\n## \ud83d\udca1 Insights\n\n- [2026-02-13] The key insight is continuity matter",
+      "source_role": "user",
+      "timestamp": "2026-02-13T19:11:08.812243"
     }
   ],
   "stats": {
-    "total": 207,
-    "last_run": "2026-02-13T19:06:26.803558"
+    "total": 213,
+    "last_run": "2026-02-13T19:11:08.813076"
   }
 }
