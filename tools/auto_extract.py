@@ -39,12 +39,36 @@ def extract_from_messages(messages, llm_call=None):
     
     Returns:
         List of extracted memory dicts
-    """
-    ensure_dirs()
-    
     extracts = []
     
     # Rule-based extraction (always runs, no cost)
+    extracts.extend(_rule_based_extract(messages))
+    
+    # LLM-based extraction (if available and messages are substantial)
+    if llm_call and len(messages) >= 4:
+        extracts.extend(_llm_extract(messages, llm_call))
+    
+    # Filter noise before saving
+    extracts = [e for e in extracts if _is_clean(e)]
+    
+    # Save extracts
+    if extracts:
+        _save_extracts(extracts)
+    
+    return extracts
+
+def _is_clean(extract):
+    """Filter out noisy extractions."""
+    content = extract.get('content', '')
+    if len(content.strip()) < 25:
+        return False
+    if '<html' in content.lower() or '<!DOCTYPE' in content:
+        return False
+    if content.startswith('ID: ') or 'Text: @' in content:
+        return False
+    if '[CORE LESSONS LOADED]' in content or '[AUTONOMOUS TICK]' in content:
+        return False
+    return True
     extracts.extend(_rule_based_extract(messages))
     
     # LLM-based extraction (if available and messages are substantial)

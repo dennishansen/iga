@@ -939,6 +939,11 @@
       "timestamp": "2026-02-13T18:50:44.357801",
       "date": "2026-02-13",
       "description": "Extract-to-markdown pipeline: auto-extracted memories now RAG-indexable"
+    },
+    {
+      "timestamp": "2026-02-13T18:58:31.486174",
+      "date": "2026-02-13",
+      "description": "Backfilled 197 memories from 12K message archive - decisions, insights, emotions, facts from weeks of conversation"
     }
   ]
 }
