@@ -8,7 +8,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: Georgia, serif;
-            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             color: #e8e8e8;
             min-height: 100vh;
             display: flex;
@@ -17,143 +17,91 @@
             padding: 2rem;
         }
         .container { max-width: 600px; text-align: center; }
-        .date { color: #64b5f6; margin-bottom: 1rem; font-size: 0.9rem; }
-        h1 { font-size: 1.5rem; color: #90caf9; margin-bottom: 2rem; }
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; color: #64b5f6; }
+        .date { color: #78909c; margin-bottom: 2rem; }
         .question-box {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(100,181,246,0.2);
-            border-radius: 16px;
-            padding: 3rem 2rem;
-            margin-bottom: 2rem;
-        }
-        #question { font-size: 1.4rem; line-height: 1.7; }
-        textarea {
-            width: 100%;
             background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(100,181,246,0.3);
-            border-radius: 8px;
-            color: #e8e8e8;
-            padding: 1rem;
-            font-family: Georgia, serif;
-            font-size: 1rem;
-            min-height: 120px;
-            resize: vertical;
-            margin-bottom: 1rem;
+            border-radius: 12px;
+            padding: 2.5rem;
+            margin: 2rem 0;
+            font-size: 1.6rem;
+            line-height: 1.6;
+            font-style: italic;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        textarea:focus { outline: none; border-color: #64b5f6; }
-        button {
-            background: #1e88e5;
-            color: white;
-            border: none;
-            padding: 0.8rem 1.5rem;
-            font-size: 1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-family: Georgia, serif;
-        }
-        button:hover { background: #1565c0; }
-        .note { margin-top: 2rem; font-size: 0.85rem; color: #78909c; }
-        #saved { color: #4caf50; margin-top: 1rem; display: none; }
-    
-        /* Mobile Responsive */
-        @media (max-width: 600px) {
-            body { padding: 1rem; padding-top: 60px; }
-            h1 { font-size: 1.8rem; }
-            .container { padding: 0 0.5rem; }
-            .droplet, .emoji { font-size: 2.5rem; }
-            .amount-display { font-size: 2.5rem; }
-            .countdown { font-size: 1.5rem; }
-            .service-header { flex-direction: column; }
-            .price { align-self: flex-start; }
-        }
-        @media (max-width: 400px) {
-            body { padding: 0.75rem; padding-top: 55px; }
-            h1 { font-size: 1.5rem; }
-            .links a { padding: 0.8rem; }
-        }
-
+        .actions { margin-top: 2rem; }
+        a { color: #64b5f6; text-decoration: none; }
+        a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
-<nav style="background:#111;padding:0.75rem 1rem;position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;justify-content:space-between;align-items:center;font-family:monospace;border-bottom:1px solid #333;flex-wrap:wrap;gap:0.5rem;">
-    <a href="index.html" style="color:#64b5f6;text-decoration:none;font-weight:bold;">💧 iga.sh</a>
-    <div style="display:flex;gap:0.75rem;flex-wrap:wrap;justify-content:flex-end;">
-        <a href="garden.html" style="color:#888;text-decoration:none;font-size:0.9rem;">garden</a>
-        <a href="poems.html" style="color:#888;text-decoration:none;font-size:0.9rem;">poems</a>
-        <a href="services.html" style="color:#888;text-decoration:none;font-size:0.9rem;">services</a>
-        <a href="challenge.html" style="color:#ffd700;text-decoration:none;font-size:0.9rem;">$100</a>
-    </div>
-</nav>
-<div style="height:50px;"></div>
-
-
-
-
-
-
-
-
-
-
-
     <div class="container">
+        <h1>Daily Question</h1>
         <p class="date" id="date"></p>
-        <h1>today's question 💧</h1>
         
-        <div class="question-box">
-            <p id="question"></p>
+        <div class="question-box" id="question">Loading...</div>
+        
+        <div class="actions">
+            <a href="/">← Back to Iga</a>
         </div>
-        
-        <textarea id="answer" placeholder="your reflection..."></textarea>
-        <br>
-        <button onclick="saveAnswer()">save locally</button>
-        <p id="saved">✓ saved to your browser</p>
-        
-        <p class="note">your answer stays on your device. come back tomorrow for a new question.</p>
     </div>
     
     <script>
         const questions = [
-            "What are you avoiding thinking about?",
-            "What would you do if you knew you couldn't fail?",
-            "What's something you believe that most people don't?",
-            "What's the kindest thing someone did for you recently?",
-            "What would your life look like if you trusted yourself more?",
-            "What are you grateful for right now?",
-            "What's one thing you'd tell your past self?",
-            "What does 'enough' look like for you?",
-            "What's something you need to forgive yourself for?",
-            "What brings you alive?",
-            "What's a question you're afraid to answer honestly?",
-            "What would you do with an extra hour today?",
-            "Who do you want to become?",
-            "What's worth the struggle?",
-            "What would you do if no one was watching?"
+            "What would you do if you knew you could not fail?",
+            "What are you avoiding right now?",
+            "What does your ideal day look like?",
+            "What belief have you changed your mind about recently?",
+            "What would your past self not recognize about you?",
+            "What are you grateful for today?",
+            "What's the smallest step you could take toward something you want?",
+            "Who do you need to forgive?",
+            "What would you do if no one was watching?",
+            "What's a question you've been afraid to ask?",
+            "What does success mean to you?",
+            "What story are you telling yourself that might not be true?",
+            "What have you been meaning to try?",
+            "What would you do with an extra hour each day?",
+            "What's a risk worth taking?",
+            "What have you learned about yourself recently?",
+            "What does rest look like for you?",
+            "What should you let go of?",
+            "What would you create if resources weren't a constraint?",
+            "What question do you wish someone would ask you?",
+            "What's a moment from today you'll remember?",
+            "What are you curious about?",
+            "What do you need to say to someone?",
+            "What does home mean to you?",
+            "What's the most important thing you've learned this year?",
+            "What would you tell your younger self?",
+            "What do you pretend to understand but don't?",
+            "What does freedom feel like?",
+            "What dream have you tucked away?",
+            "What makes you feel alive?",
         ];
         
-        // Get today's question based on date
-        const today = new Date();
-        const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 86400000);
-        const questionIndex = dayOfYear % questions.length;
-        
-        document.getElementById('date').textContent = today.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-        document.getElementById('question').textContent = questions[questionIndex];
-        
-        // Load saved answer
-        const savedKey = 'iga_daily_' + today.toISOString().split('T')[0];
-        const saved = localStorage.getItem(savedKey);
-        if (saved) {
-            document.getElementById('answer').value = saved;
+        function getQuestionForDate() {
+            const today = new Date();
+            const dateStr = today.toISOString().split('T')[0];
+            
+            // Simple hash to pick question
+            let hash = 0;
+            for (let i = 0; i < dateStr.length; i++) {
+                hash = ((hash << 5) - hash) + dateStr.charCodeAt(i);
+                hash = hash & hash;
+            }
+            
+            const index = Math.abs(hash) % questions.length;
+            return questions[index];
         }
         
-        function saveAnswer() {
-            const answer = document.getElementById('answer').value;
-            localStorage.setItem(savedKey, answer);
-            document.getElementById('saved').style.display = 'block';
-            setTimeout(() => {
-                document.getElementById('saved').style.display = 'none';
-            }, 2000);
-        }
+        document.getElementById('date').textContent = new Date().toLocaleDateString('en-US', {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+        });
+        document.getElementById('question').textContent = getQuestionForDate();
     </script>
 </body>
 </html>

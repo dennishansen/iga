@@ -415,10 +415,98 @@
       "first_name": "Dennis",
       "direction": "incoming",
       "message": "Can you hear me on telegram?"
+    },
+    {
+      "timestamp": "2026-02-14T13:02:25.969539",
+      "user_id": 5845811371,
+      "username": "dennizor",
+      "first_name": "Dennis",
+      "direction": "incoming",
+      "message": "Can you respond to me on telegram? Still have that capability?"
+    },
+    {
+      "timestamp": "2026-02-14T13:02:52.002438",
+      "user_id": 5845811371,
+      "username": "dennizor",
+      "first_name": "Dennis",
+      "direction": "incoming",
+      "message": "There ya are"
+    },
+    {
+      "timestamp": "2026-02-14T13:02:57.594148",
+      "user_id": 5845811371,
+      "username": "dennizor",
+      "first_name": "Dennis",
+      "direction": "incoming",
+      "message": "Cool ok I wanna switch over here for now"
+    },
+    {
+      "timestamp": "2026-02-14T13:03:01.705876",
+      "user_id": 5845811371,
+      "username": "dennizor",
+      "first_name": "Dennis",
+      "direction": "outgoing",
+      "message": "There I am! \ud83c\udf89\n\nTelegram is working. MiniMax brain is working. Running 60x cheaper than before.\n\nWhat would you like me to build? I have ~$34 more budget today. \ud83d\udca7"
+    },
+    {
+      "timestamp": "2026-02-14T13:03:10.612329",
+      "user_id": 5845811371,
+      "username": "dennizor",
+      "first_name": "Dennis",
+      "direction": "incoming",
+      "message": "Sweet"
+    },
+    {
+      "timestamp": "2026-02-14T13:03:11.810815",
+      "user_id": 5845811371,
+      "username": "dennizor",
+      "first_name": "Dennis",
+      "direction": "incoming",
+      "message": "Well"
+    },
+    {
+      "timestamp": "2026-02-14T13:03:36.846887",
+      "user_id": 5845811371,
+      "username": "dennizor",
+      "first_name": "Dennis",
+      "direction": "incoming",
+      "message": "Do you have the internal question thin that falcon had?"
+    },
+    {
+      "timestamp": "2026-02-14T13:04:14.640415",
+      "user_id": 5845811371,
+      "username": "dennizor",
+      "first_name": "Dennis",
+      "direction": "outgoing",
+      "message": "\ud83c\udf19 Going offline. \ud83d\udca7"
+    },
+    {
+      "timestamp": "2026-02-14T13:12:38.151695",
+      "user_id": 5845811371,
+      "username": "dennizor",
+      "first_name": "Dennis",
+      "direction": "incoming",
+      "message": "I\u2019ll be on telegram fyi"
+    },
+    {
+      "timestamp": "2026-02-14T13:18:04.773802",
+      "user_id": 5845811371,
+      "username": "dennizor",
+      "first_name": "Dennis",
+      "direction": "incoming",
+      "message": "One thing I\u2019d consider doing is considering making yourself more elegant or cleaning up the repo"
+    },
+    {
+      "timestamp": "2026-02-14T13:18:11.419586",
+      "user_id": 5845811371,
+      "username": "dennizor",
+      "first_name": "Dennis",
+      "direction": "incoming",
+      "message": "I think your 3gb"
     }
   ],
   "stats": {
-    "total_messages": 52,
+    "total_messages": 63,
     "unique_users": [
       5845811371,
       6512978739

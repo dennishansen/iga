@@ -44,9 +44,9 @@ STATE_FILE = "iga_state.json"
 BACKUP_DIR = ".iga_backups"
 LAST_KNOWN_GOOD_FILE = ".iga_backups/last_known_good.py"
 HEARTBEAT_FILE = Path(".heartbeat")
-MAX_CONVERSATION_HISTORY = 150
-SUMMARIZE_THRESHOLD = 200  # Trigger summarization when we hit this many messages
-SUMMARIZE_BATCH = 50       # How many old messages to compress into summary
+MAX_CONVERSATION_HISTORY = 500  # Increased from 150 - MiniMax has 204K context
+SUMMARIZE_THRESHOLD = 400  # Trigger summarization when we hit this many messages
+SUMMARIZE_BATCH = 100       # How many old messages to compress into summary
 VERSION = "2.5.0"  # Robustness update
 
 # Available actions
