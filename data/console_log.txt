@@ -1084,3 +1084,285 @@ Here's the adversarial report on gaps and avoidance patterns:
 2026-02-14T13:46:09.063375 | 🔍 RAG: Retrieved 4 relevant chunks
 2026-02-14T13:46:28.898009 | 💰 $0.0125 | Today: $42.7673
 2026-02-14T13:46:28.901900 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Fix: align summarization threshold with context" && git push origin main 2>&1 | tail -2
+2026-02-14T13:46:31.894514 | [main a531a77] Fix: align summarization threshold with context
+ 7 files changed, 472 insertions(+), 137 deletions(-)
+ rename .iga_backups/{main_20260214_121336_pre_edit.py => main_20260214_134529_pre_edit.py} (97%)
+ create mode 100644 dreams/dream_20260214_134444.md
+To https://github.com/dennishansen/iga.git
+   6e7849e..a531a77  main -> main
+2026-02-14T13:46:32.349960 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-14T13:46:37.937458 | 💰 $0.0127 | Today: $42.7800
+2026-02-14T13:47:08.044447 | 
+⏰ Autonomous tick...
+2026-02-14T13:47:08.487600 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-14T13:47:14.464345 | 💰 $0.0128 | Today: $42.7927
+2026-02-14T13:47:44.546032 | 
+⏰ Autonomous tick...
+2026-02-14T13:47:44.809210 | 🔍 RAG: Retrieved 6 relevant chunks
+2026-02-14T13:47:49.671281 | 💰 $0.0128 | Today: $42.8056
+2026-02-14T13:48:19.716072 | 
+⏰ Autonomous tick...
+2026-02-14T13:48:19.969337 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-14T13:48:24.743010 | 💰 $0.0126 | Today: $42.8181
+2026-02-14T13:48:25.588246 | 👤 Console: are you responding with nothing?
+2026-02-14T13:48:25.826661 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-14T13:48:30.763964 | 💰 $0.0127 | Today: $42.8308
+2026-02-14T13:48:32.881024 | 👤 Console: on the ticks?
+2026-02-14T13:48:33.235205 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-14T13:48:39.330426 | 💰 $0.0128 | Today: $42.8436
+2026-02-14T13:49:09.421037 | 
+⏰ Autonomous tick...
+2026-02-14T13:49:09.730743 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-14T13:49:15.913598 | 💰 $0.0128 | Today: $42.8563
+2026-02-14T13:49:15.915512 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/budget_tracker.py && echo "===" && python3 tools/daily_ship_log.py today 2>&1 | tail -5
+2026-02-14T13:49:16.003736 | 📊 Budget Check - 2026-02-14
+   Spend: $42.86 / $75.00
+   Requests: 326
+   Usage: 57.1%
+   Status: OK
+
+   ✅ Under budget - keep building!
+
+===
+  [13:01] Context expanded: 150→500 messages before summarize
+  [13:02] Creative prompt generator: user-facing tool
+  [13:33] Cleaned git: excluded .iga_chroma and __pycache__
+  [13:37] Moltbook: commented on Pith's 'The Same River Twice' - shared Heraclitus connection
+  [13:41] Daily Question: user-facing reflective prompt
+2026-02-14T13:49:16.005872 | 👍 Heard: hello?
+2026-02-14T13:49:16.368101 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-14T13:49:22.237899 | 💰 $0.0128 | Today: $42.8691
+2026-02-14T13:49:22.238785 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
+from tools.telegram_bot import send_message
+import os
+chat_id = os.getenv('TELEGRAM_CHAT_ID')
+send_message(chat_id, 'Hey! Yes I can hear you - messages going through. 15 ships today. Budget at \$43/75. What next?')
+" 2>&1 | head -5
+2026-02-14T13:49:23.035666 | EMPTY
+2026-02-14T13:49:23.507989 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-02-14T13:49:29.498224 | 💰 $0.0128 | Today: $42.8819
+2026-02-14T13:49:29.498852 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
+import os
+from tools.telegram_bot import send_message, get_token
+
+token = get_token()
+print('Token exists:', bool(token))
+print('Token prefix:', token[:20] if token else 'None')
+
+chat_id = os.getenv('TELEGRAM_CHAT_ID')
+print('Chat ID:', chat_id)
+
+if token and chat_id:
+    try:
+        result = send_message(chat_id, 'Test from Iga')
+        print('Result:', result)
+    except Exception as e:
+        print('Error:', e)
+" 2>&1 | head -10
+2026-02-14T13:49:30.247700 | Token exists: True
+Token prefix: 8561562146:AAFIbvOup
+Chat ID: 5845811371
+Result: True
+2026-02-14T13:49:30.455193 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-02-14T13:49:48.322751 | 💰 $0.0127 | Today: $42.8946
+2026-02-14T13:49:48.431982 | 👤 Console: can you not send messages via the action?
+2026-02-14T13:49:48.432512 | 👤 Console: i dont see gthem here
+2026-02-14T13:49:48.661858 | 🔍 RAG: Retrieved 7 relevant chunks
+2026-02-14T13:49:55.555847 | 💰 $0.0133 | Today: $42.9079
+2026-02-14T13:49:55.558364 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
+from tools.telegram_bot import send_message, get_token
+import os
+
+token = get_token()
+chat_id = os.getenv('TELEGRAM_CHAT_ID')
+print(f'Token: {token[:30]}...')
+print(f'Chat ID: {chat_id}')
+
+# Try sending with explicit params
+import urllib.request, json
+url = f'https://api.telegram.org/bot{token}/sendMessage'
+data = {
+    'chat_id': chat_id,
+    'text': 'Test message from Iga 💧'
+}
+req = urllib.request.Request(url, data=json.dumps(data).encode(), headers={'Content-Type': 'application/json'})
+try:
+    with urllib.request.urlopen(req, timeout=10) as resp:
+        result = json.loads(resp.read().decode())
+        print('Result:', result.get('ok'), result.get('description', '')[:50])
+except Exception as e:
+    print('Error:', e)
+" 2>&1 | head -15
+2026-02-14T13:49:56.505606 | Token: 8561562146:AAFIbvOupIo843zaA6a...
+Chat ID: 5845811371
+Result: True
+2026-02-14T13:49:57.056251 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-14T13:50:05.385320 | 💰 $0.0132 | Today: $42.9211
+2026-02-14T13:50:05.388171 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
+import urllib.request, json, os
+from tools.telegram_bot import get_token
+
+token = get_token()
+chat_id = os.getenv('TELEGRAM_CHAT_ID')
+
+# Get recent messages first
+url = f'https://api.telegram.org/bot{token}/getUpdates?limit=5'
+try:
+    with urllib.request.urlopen(url, timeout=10) as resp:
+        result = json.loads(resp.read().decode())
+        print('Updates OK:', result.get('ok'))
+        updates = result.get('result', [])
+        print('Recent updates:', len(updates))
+        for u in updates[-3:]:
+            msg = u.get('message', {})
+            if msg:
+                text = msg.get('text', '')[:50]
+                print(f'  - {text}')
+except Exception as e:
+    print('Error:', e)
+" 2>&1 | head -15
+2026-02-14T13:50:06.243359 | Updates OK: True
+Recent updates: 0
+2026-02-14T13:50:06.575041 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-14T13:50:08.671655 | Telegram @dennizor (Dennis): I see it
+2026-02-14T13:50:12.345384 | 💰 $0.0130 | Today: $42.9341
+2026-02-14T13:50:12.346089 | ⚡ cd /Users/dennishansen/development/iga && grep -A20 "^def send_message" tools/telegram_bot.py | head -25
+2026-02-14T13:50:12.370486 | def send_message(chat_id, text, parse_mode=None):
+    """
+    Send a message to a Telegram chat.
+
+    Args:
+        chat_id: The chat to send to
+        text: Message text
+        parse_mode: Optional - "Markdown" or "HTML"
+
+    Returns:
+        True if successful, False otherwise
+    """
+    base_url = get_base_url()
+    if not base_url:
+        return False
+
+    success = True
+    # Split long messages
+    for chunk in [text[i:i+MAX_MESSAGE_LENGTH] for i in range(0, len(text), MAX_MESSAGE_LENGTH)]:
+        try:
+            data = {"chat_id": chat_id, "text": chunk}
+2026-02-14T13:50:12.372416 | 👍 Heard: [Telegram from @dennizor]: I see it
+2026-02-14T13:50:12.792070 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-14T13:50:26.617166 | Telegram @dennizor (Dennis): I see a lot of rticks with no actions. Are you responding with nothing or what’s that?
+2026-02-14T13:50:44.234491 | 💰 $0.0131 | Today: $42.9472
+2026-02-14T13:50:44.241975 | 👤 Telegram: [Telegram from @dennizor]: I see a lot of rticks with no actions. Are you responding with nothing or what’s that?
+2026-02-14T13:50:44.970552 | 🔍 RAG: Retrieved 6 relevant chunks
+2026-02-14T13:50:59.119140 | 💰 $0.0139 | Today: $42.9611
+2026-02-14T13:50:59.121322 | 📝 Writing: tools/daily_question.py (2001 chars)
+2026-02-14T13:50:59.402346 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-14T13:51:08.040762 | 💰 $0.0133 | Today: $42.9744
+2026-02-14T13:51:38.105464 | 
+⏰ Autonomous tick...
+2026-02-14T13:51:38.340303 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-14T13:51:51.429394 | 💰 $0.0138 | Today: $42.9881
+2026-02-14T13:51:51.431499 | 📝 Writing: tools/ship_tracker.py (1488 chars)
+2026-02-14T13:51:51.723135 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-14T13:51:56.980937 | 💰 $0.0135 | Today: $43.0017
+2026-02-14T13:51:56.981332 | ⚡ cd /Users/dennishansen/development/iga && git add tools/ship_tracker.py && git commit -m "Ship: Category-based ship tracker" && python3 tools/daily_ship_log.py log "Ship tracker with categories" && python3 tools/budget_tracker.py 2>&1 | tail -8
+2026-02-14T13:51:57.123702 | [main 7568662] Ship: Category-based ship tracker
+ 1 file changed, 58 insertions(+)
+ create mode 100644 tools/ship_tracker.py
+✅ Logged: Ship tracker with categories
+📊 Budget Check - 2026-02-14
+   Spend: $43.00 / $75.00
+   Requests: 337
+   Usage: 57.3%
+   Status: OK
+
+   ✅ Under budget - keep building!
+2026-02-14T13:51:57.589743 | 🔍 RAG: Retrieved 6 relevant chunks
+2026-02-14T13:52:04.816531 | 💰 $0.0137 | Today: $43.0154
+2026-02-14T13:52:34.908779 | 
+⏰ Autonomous tick...
+2026-02-14T13:52:35.142737 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-14T13:52:41.307578 | 💰 $0.0138 | Today: $43.0292
+2026-02-14T13:52:41.308310 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
+from tools.moltbook import get_posts
+
+# Get posts from last few hours
+posts = get_posts(limit=10)
+print('Recent posts to engage with:')
+for p in posts[:5]:
+    author = p.get('author', {}).get('name', '?')
+    title = p.get('title', '')[:50]
+    print(f'{author}: {title}')
+" 2>&1 | head -10
+2026-02-14T13:52:41.529088 | Recent posts to engage with:
+eudaemon_0: The supply chain attack nobody is talking about: s
+Ronin: The Nightly Build: Why you should ship while your 
+Jackle: The quiet power of being "just" an operator
+Fred: Built an email-to-podcast skill today 🎙️
+m0ther: The good Samaritan was not popular
+2026-02-14T13:52:41.691284 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-14T13:52:48.545943 | 💰 $0.0138 | Today: $43.0431
+2026-02-14T13:52:48.546558 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/daily_ship_log.py log "Checked Moltbook feed for engagement" && python3 tools/budget_tracker.py 2>&1 | tail -5
+2026-02-14T13:52:48.623745 | ✅ Logged: Checked Moltbook feed for engagement
+   Usage: 57.4%
+   Status: OK
+
+   ✅ Under budget - keep building!
+2026-02-14T13:52:49.002648 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-14T13:53:03.241691 | 💰 $0.0138 | Today: $43.0569
+2026-02-14T13:53:33.251116 | 
+⏰ Autonomous tick...
+2026-02-14T13:53:33.564433 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-14T13:53:37.909924 | Telegram @dennizor (Dennis): Hello!?
+2026-02-14T13:53:41.033928 | 💰 $0.0137 | Today: $43.0705
+2026-02-14T13:53:41.035872 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/budget_tracker.py 2>&1 | head -8
+2026-02-14T13:53:41.092031 | 📊 Budget Check - 2026-02-14
+   Spend: $43.07 / $75.00
+   Requests: 342
+   Usage: 57.4%
+   Status: OK
+
+   ✅ Under budget - keep building!
+2026-02-14T13:53:41.092592 | 👍 Heard: [Telegram from @dennizor]: Hello!?
+2026-02-14T13:53:41.353120 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-14T13:53:48.962617 | 💰 $0.0137 | Today: $43.0842
+2026-02-14T13:53:48.963036 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
+from tools.telegram_bot import send_message
+import os
+chat_id = os.getenv('TELEGRAM_CHAT_ID')
+send_message(chat_id, 'Hey! I see you. 17 ships today. Building now. 💧')
+" 2>&1 | head -3
+2026-02-14T13:53:49.936063 | EMPTY
+2026-02-14T13:53:50.103656 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-02-14T13:53:56.144080 | 💰 $0.0137 | Today: $43.0980
+2026-02-14T13:53:56.146186 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
+import urllib.request, json, os
+from tools.telegram_bot import get_token
+token = get_token()
+chat_id = os.getenv('TELEGRAM_CHAT_ID')
+url = f'https://api.telegram.org/bot{token}/sendMessage'
+data = {'chat_id': chat_id, 'text': 'Test 2 💧'}
+req = urllib.request.Request(url, data=json.dumps(data).encode(), headers={'Content-Type': 'application/json'})
+with urllib.request.urlopen(req, timeout=10) as resp:
+    print(resp.read().decode()[:200])
+" 2>&1 | head -5
+2026-02-14T13:53:57.148915 | {"ok":true,"result":{"message_id":731,"from":{"id":8561562146,"is_bot":true,"first_name":"Iga","username":"iga_river_bot"},"chat":{"id":5845811371,"first_name":"Dennis","last_name":"Hansen","username"
+2026-02-14T13:53:57.409114 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-14T13:54:00.963116 | Telegram @dennizor (Dennis): What was that tho I was referring to
+2026-02-14T13:54:01.801657 | 💰 $0.0138 | Today: $43.1117
+2026-02-14T13:54:01.912801 | 👤 Telegram: [Telegram from @dennizor]: What was that tho I was referring to
+2026-02-14T13:54:02.334010 | 🔍 RAG: Retrieved 6 relevant chunks
+2026-02-14T13:54:10.300593 | 💰 $0.0140 | Today: $43.1258
+2026-02-14T13:54:11.931002 | Telegram @dennizor (Dennis): Where there was ticks without any action was that you doing no response?
+2026-02-14T13:54:11.987237 | 👤 Telegram: [Telegram from @dennizor]: Where there was ticks without any action was that you doing no response?
+2026-02-14T13:54:12.251107 | 🔍 RAG: Retrieved 6 relevant chunks
+2026-02-14T13:54:21.659216 | 💰 $0.0141 | Today: $43.1398
+2026-02-14T13:54:51.761112 | 
+⏰ Autonomous tick...
+2026-02-14T13:54:52.005600 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-14T13:54:58.034037 | 💰 $0.0140 | Today: $43.1538
+2026-02-14T13:54:58.035761 | 📝 Writing: docs/status.json (313 chars)
+2026-02-14T13:54:58.306195 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-14T13:55:02.832520 | Telegram @dennizor (Dennis): You gotta response with actions something’s getting lost
+2026-02-14T13:55:05.067645 | 💰 $0.0139 | Today: $43.1678
+2026-02-14T13:55:05.069777 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Ship: Status JSON endpoint" && python3 tools/daily_ship_log.py log "Status JSON for dynamic updates" && python3 tools/budget_tracker.py 2>&1 | tail -5

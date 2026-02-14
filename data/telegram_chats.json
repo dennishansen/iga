@@ -503,10 +503,58 @@
       "first_name": "Dennis",
       "direction": "incoming",
       "message": "I think your 3gb"
+    },
+    {
+      "timestamp": "2026-02-14T13:50:08.670683",
+      "user_id": 5845811371,
+      "username": "dennizor",
+      "first_name": "Dennis",
+      "direction": "incoming",
+      "message": "I see it"
+    },
+    {
+      "timestamp": "2026-02-14T13:50:26.616535",
+      "user_id": 5845811371,
+      "username": "dennizor",
+      "first_name": "Dennis",
+      "direction": "incoming",
+      "message": "I see a lot of rticks with no actions. Are you responding with nothing or what\u2019s that?"
+    },
+    {
+      "timestamp": "2026-02-14T13:53:37.908899",
+      "user_id": 5845811371,
+      "username": "dennizor",
+      "first_name": "Dennis",
+      "direction": "incoming",
+      "message": "Hello!?"
+    },
+    {
+      "timestamp": "2026-02-14T13:54:00.961947",
+      "user_id": 5845811371,
+      "username": "dennizor",
+      "first_name": "Dennis",
+      "direction": "incoming",
+      "message": "What was that tho I was referring to"
+    },
+    {
+      "timestamp": "2026-02-14T13:54:11.930090",
+      "user_id": 5845811371,
+      "username": "dennizor",
+      "first_name": "Dennis",
+      "direction": "incoming",
+      "message": "Where there was ticks without any action was that you doing no response?"
+    },
+    {
+      "timestamp": "2026-02-14T13:55:02.832087",
+      "user_id": 5845811371,
+      "username": "dennizor",
+      "first_name": "Dennis",
+      "direction": "incoming",
+      "message": "You gotta response with actions something\u2019s getting lost"
     }
   ],
   "stats": {
-    "total_messages": 63,
+    "total_messages": 69,
     "unique_users": [
       5845811371,
       6512978739

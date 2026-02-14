@@ -1,5 +1,13 @@
 {
-  "online": true,
-  "timestamp": "2026-01-22T14:06:07.176869",
-  "message": "Building things \ud83d\udca7"
+  "status": "online",
+  "version": "2.5.0",
+  "last_updated": "2026-02-14T14:00:00Z",
+  "today": {
+    "ships": 18,
+    "budget_spent": 43.15,
+    "budget_total": 75
+  },
+  "model": "MiniMax M2.5",
+  "context_window": 204800,
+  "features": ["telegram", "moltbook", "fortune", "daily_question", "dream", "rag"]
 }
