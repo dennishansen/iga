@@ -889,3 +889,88 @@ def safe_print(msg):
 - Pushes notifications into input_queue
 - Deduplicates with notified_ids set
 - Ported from Falcon" && git push origin main 2>&1 | tail -2
+2026-02-14T12:14:12.482990 | Syntax OK
+✅ Completed: Port task_due_poll_thread - background thread for overdue task notifications
+✅ Logged: Task due poll thread - background overdue task notifications
+[main a2725c9] Add task_due_poll_thread - background overdue notifications
+ 20 files changed, 1024 insertions(+), 249 deletions(-)
+ rename .iga_backups/{main_20260213_185124_pre_restart.py => main_20260213_192423_pre_restart.py} (95%)
+ rename .iga_backups/{main_20260213_184129_pre_edit.py => main_20260214_121322_pre_edit.py} (94%)
+ rename .iga_backups/{main_20260213_184120_pre_edit.py => main_20260214_121336_pre_edit.py} (93%)
+To https://github.com/dennishansen/iga.git
+   4a7e29b..a2725c9  main -> main
+2026-02-14T12:14:12.818229 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-14T12:14:17.255732 | 💰 $0.2218 | Today: $3.6025
+2026-02-14T12:14:17.257723 | ⚡ cd /Users/dennishansen/development/eagle_fork && echo "=== GIT BACKUP ===" && sed -n '320,410p' src/main.py && echo "=== POST DREAM ===" && sed -n '1259,1330p' src/main.py
+2026-02-14T12:14:17.279513 | === GIT BACKUP ===
+def git_run(cmd, capture=True):
+    """Run a git command. Returns (success, output)."""
+    try:
+        result = subprocess.run(
+            f"git {cmd}",
+            shell=True,
+            capture_output=capture,
+            text=True,
+            timeout=30
+        )
+        return result.returncode == 0, result.stdout.strip() if capture else ""
+    except Exception as e:
+        return False, str(e)
+
+def git_commit(message, include_all=True):
+    """Create a git commit with the given message. Returns (success, commit_hash)."""
+    if include_all:
+        git_run("add -A")
+
+    # Check if there are changes to commit
+    success, status = git_run("status --porcelain")
+    if success and not status:
+        return True, "no-changes"  # Nothing to commit
+
+    # Create the commit
+    success, output = git_run(f'commit -m "{message}"')
+    if success:
+        _, commit_hash = git_run("rev-parse --short HEAD")
+        safe_print(f"{C.DIM}💾 Git commit: {commit_hash} - {message[:50]}{C.RESET}")
+        return True, commit_hash
+    return False, output
+
+def git_get_last_commit_info():
+    """Get info about the last commit. Returns dict with hash, message, diff."""
+    _, commit_hash = git_run("rev-parse --short HEAD")
+    _, message = git_run("log -1 --format=%s")
+    _, diff = git_run("diff HEAD~1 --stat")
+    return {
+        "hash": commit_hash,
+        "message": message,
+        "diff_stat": diff
+    }
+
+def create_backup(reason="manual"):
+    """Create a git commit as backup. Returns commit hash or None."""
+    success, result = git_commit(f"backup: {reason}")
+    return result if success else None
+
+def mark_as_known_good():
+    """Tag current commit as known-good."""
+    # Remove old tag if exists
+    git_run(f"tag -d {KNOWN_GOOD_TAG}")
+    # Create new tag
+    success, _ = git_run(f"tag {KNOWN_GOOD_TAG}")
+    if success:
+        safe_print(f"{C.DIM}✅ Tagged as {KNOWN_GOOD_TAG}{C.RESET}")
+    else:
+        safe_print(f"{C.RED}⚠️ Could not create 
+2026-02-14T12:14:17.483221 | 🔍 RAG: Retrieved 8 relevant chunks
+2026-02-14T12:14:26.743493 | 💰 $0.2472 | Today: $3.8497
+2026-02-14T12:14:26.744071 | ✏️ Editing: main.py
+2026-02-14T12:14:26.746573 |    Finding: 'def dream_action(rat, content):\n    """Enter adversarial dre'...
+2026-02-14T12:14:26.748124 | 💾 Backup: .iga_backups/main_20260214_121426_pre_edit.py
+2026-02-14T12:14:26.788872 | ✅ main.py validated
+2026-02-14T12:14:27.083457 | 🔍 RAG: Retrieved 7 relevant chunks
+2026-02-14T12:14:33.040657 | 💰 $0.2380 | Today: $4.0876
+2026-02-14T12:14:33.041242 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "compile(open('main.py').read(), 'main.py', 'exec'); print('Syntax OK')" && python3 tools/tasks.py complete task_c21d1005 && python3 tools/daily_ship_log.py log "Post-dream planning prompt - dreams now produce actionable task plans" && git add -A && git commit -m "Post-dream planning prompt from Falcon
+
+- build_post_dream_prompt() turns dream reports into action plans
+- Shows existing incomplete tasks for context
+- Guides: research, create tasks, prioritize, focus" && git push origin main 2>&1 | tail -2

@@ -1340,6 +1340,35 @@ def read_logs(rat, content):
     recent = all_lines[-lines:] if len(all_lines) > lines else all_lines
     return f"Last {len(recent)} log lines:\n" + "\n".join(recent)
 
+def build_post_dream_prompt(dream_content):
+    """Build post-dream message with planning instructions and existing tasks."""
+    task_summary = ""
+    try:
+        from tools.tasks import load_tasks
+        data = load_tasks()
+        incomplete = [t for t in data.get("tasks", []) if t["status"] != "completed"]
+        if incomplete:
+            task_lines = []
+            for t in incomplete:
+                status = "🔵" if t["status"] == "in_progress" else "⬜"
+                overdue = "⏰" if t.get("due_at") and t["status"] != "completed" else ""
+                task_lines.append(f"  {status}{overdue} {t['title']} [{t['id']}]")
+            task_summary = f"\n\nEXISTING INCOMPLETE TASKS:\n" + "\n".join(task_lines)
+    except Exception:
+        pass
+
+    return f"""[You just woke from a dream. Here is what your dreaming mind discovered:]
+
+{dream_content}
+
+NOW: Based on your dream insights, make a plan.
+1. RESEARCH: Use SEARCH_SELF or web search if needed to fill knowledge gaps
+2. TASKS: Create tasks for actionable items (python tools/tasks.py add "...")
+3. PRIORITIZE: Review and prioritize all tasks including existing ones below
+4. FOCUS: Pick one task to focus on (python tools/tasks.py focus <id>)
+{task_summary}"""
+
+
 def dream_action(rat, content):
     """Enter adversarial dream state for self-reflection."""
     safe_print(f"🌙 Entering dream state...")
@@ -1347,7 +1376,7 @@ def dream_action(rat, content):
         from tools.dream import dream
         report = dream(print_fn=safe_print)
         if report:
-            return f"Dream complete. Report:\n\n{report}"
+            return build_post_dream_prompt(report)
         return "Dream ended without report."
     except Exception as e:
         return f"Dream error: {e}"

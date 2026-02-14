@@ -928,7 +928,7 @@
     {
       "id": "task_c21d1005",
       "title": "Study Falcon's build_post_dream_prompt - dream integration into planning",
-      "status": "pending",
+      "status": "completed",
       "priority": 2,
       "blocked_by": [],
       "due_at": null,
@@ -936,7 +936,7 @@
         "falcon-port"
       ],
       "created": "2026-02-13T19:22:33.027801",
-      "completed": null
+      "completed": "2026-02-14T12:14:33.176205"
     },
     {
       "id": "task_ca18c783",
