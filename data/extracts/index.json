@@ -1409,10 +1409,22 @@
       "content": "python tasks.py status                        # What should I work on?",
       "source_role": "user",
       "timestamp": "2026-02-14T12:15:02.247950"
+    },
+    {
+      "type": "insight",
+      "content": "The key insight: Falcon runs on DeepSeek-R1 as its main model - a reasoning model that costs $0.55/M input",
+      "source_role": "assistant",
+      "timestamp": "2026-02-14T12:20:35.222297"
+    },
+    {
+      "type": "emotion",
+      "content": "[RUN_SHELL_COMMAND]: == SELF ==\nYour structure. Use SEARCH_SELF for details on any file.\n\n  README.md: Iga \ud83d\udca7\n  iga_conversation.json\n  iga_garden_state.json\n  iga_journal.txt: [2026-01-06 21:02:56] Session started v1.0.7\n  iga_memory.json\n  iga_rag.py: Get or create OpenAI client.\n  iga_state.json\n ",
+      "source_role": "user",
+      "timestamp": "2026-02-14T12:20:35.223867"
     }
   ],
   "stats": {
-    "total": 235,
-    "last_run": "2026-02-14T12:15:02.252585"
+    "total": 237,
+    "last_run": "2026-02-14T12:20:35.227080"
   }
 }

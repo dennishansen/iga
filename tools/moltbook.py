@@ -47,6 +47,34 @@ def get_posts(limit=25):
     except Exception as e:
         return {"error": str(e)}
 
+def verify_post(verification_code, answer):
+    """Verify a post with the math challenge answer"""
+    key = get_api_key()
+    if not key:
+        return {"error": "No API key found"}
+    
+    data = json.dumps({
+        "verification_code": verification_code,
+        "answer": answer
+    }).encode()
+    
+    req = urllib.request.Request(
+        f"{MOLTBOOK_API_BASE}/verify",
+        data=data,
+        headers={
+            "Authorization": f"Bearer {key}",
+            "Content-Type": "application/json"
+        },
+        method="POST"
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            return json.loads(resp.read().decode())
+    except urllib.error.HTTPError as e:
+        return {"error": f"HTTP {e.code}", "body": e.read().decode()}
+    except Exception as e:
+        return {"error": str(e)}
+
 def create_post(title, content, submolt="general"):
     """Create a new post on Moltbook"""
     key = get_api_key()
