@@ -989,3 +989,721 @@ Done! Updated 42 files.
 2026-02-14T12:51:52.651507 | 🔍 RAG: Retrieved 4 relevant chunks
 2026-02-14T12:51:59.143175 | 💰 $0.1545 | Today: $33.1529
 2026-02-14T12:51:59.144354 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Day 30 complete: MiniMax brain, fortune cookie, cost fix" && git push origin main 2>&1 | tail -2
+2026-02-14T12:52:00.926738 | [main a79c247] Day 30 complete: MiniMax brain, fortune cookie, cost fix
+ 45 files changed, 177 insertions(+), 44 deletions(-)
+To https://github.com/dennishansen/iga.git
+   0ecfaf7..a79c247  main -> main
+2026-02-14T12:52:01.221929 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-14T12:52:16.145864 | 💰 $0.1534 | Today: $33.3063
+2026-02-14T12:52:16.148195 | 
+🤖 Iga [12:52:16]: Done. Day 30:
+
+- **MiniMax brain** - 60x cheaper, works fine
+- **Fortune cookie** - user-facing tool people can actually use  
+- **Cost tracking fixed** - was overcharging 2.6x
+- **9 ships**
+
+Resting now. 💧
+2026-02-14T12:52:24.968555 | 👤 Console: How about you reset your budget for today
+2026-02-14T12:52:25.214757 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-14T12:52:34.822283 | 💰 $0.1607 | Today: $33.4670
+2026-02-14T12:52:34.822737 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
+import json
+from datetime import datetime
+
+with open('data/openrouter_costs.json') as f:
+    data = json.load(f)
+
+# Check what we have for today
+today = datetime.now().strftime('%Y-%m-%d')
+print(f'Today: {today}')
+
+# Today's spend so far (MiniMax only since the switch)
+requests = data.get('requests', [])
+today_reqs = [r for r in requests if r.get('time', '').startswith(today)]
+
+if today_reqs:
+    today_total = sum(r.get('cost', 0) for r in today_reqs)
+    print(f'Today MiniMax requests: {len(today_reqs)}')
+    print(f'Today cost: \${today_total:.4f}')
+else:
+    print('No requests today yet')
+
+# If he wants to reset to 0 for a fresh start:
+# data['daily'][today] = 0
+# with open('data/openrouter_costs.json', 'w') as f:
+#     json.dump(data, f, indent=2)
+# print('Reset!')
+" 2>&1 | head -15
+2026-02-14T12:52:34.917477 | Today: 2026-02-14
+Today MiniMax requests: 194
+Today cost: $33.4670
+2026-02-14T12:52:34.918923 | 👍 Heard: And you can targt around $40 per day
+2026-02-14T12:52:35.418936 | 🔍 RAG: Retrieved 6 relevant chunks
+2026-02-14T12:52:54.799496 | 💰 $0.1585 | Today: $33.6255
+2026-02-14T12:53:24.859121 | 
+⏰ Autonomous tick...
+2026-02-14T12:53:25.139634 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-14T12:53:35.947066 | 💰 $0.1684 | Today: $33.7939
+2026-02-14T12:53:35.948270 | 📝 Writing: tools/budget_tracker.py (1715 chars)
+2026-02-14T12:53:36.214512 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-14T12:53:39.083448 | 💰 $0.1583 | Today: $33.9522
+2026-02-14T12:53:39.085376 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/budget_tracker.py
+2026-02-14T12:53:39.141080 | 📊 Budget Check - 2026-02-14
+   Spend: $33.95 / $40.00
+   Requests: 197
+   Usage: 84.9%
+   Status: OK
+
+   ✅ Under budget - keep building!
+2026-02-14T12:53:39.142608 | 👍 Heard: you dont have to necessarily reset it but lets say...
+2026-02-14T12:53:39.386335 | 🔍 RAG: Retrieved 9 relevant chunks
+2026-02-14T12:53:44.934469 | 💰 $0.1654 | Today: $34.1176
+2026-02-14T12:53:44.935745 | ⚡ cd /Users/dennishansen/development/iga && git add tools/budget_tracker.py && git commit -m "Add budget tracker: targets $40/day, warns at 85%" && git push origin main 2>&1 | tail -2
+2026-02-14T12:53:45.820290 | [main c6879db] Add budget tracker: targets 0/day, warns at 85%
+ 1 file changed, 56 insertions(+)
+ create mode 100644 tools/budget_tracker.py
+To https://github.com/dennishansen/iga.git
+   a79c247..c6879db  main -> main
+2026-02-14T12:53:45.821832 | 👍 Heard: That means... you have plenty of time!!
+2026-02-14T12:53:46.057607 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-14T12:53:55.713357 | 💰 $0.1593 | Today: $34.2770
+2026-02-14T12:54:18.267257 | 👤 Console: how much of the contexzt window are we utilizing? Feel free to max it out as far as convos. See hjow falcon did that
+2026-02-14T12:54:18.736425 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-14T12:54:28.658133 | 📦 Archived 50 messages before summarizing
+2026-02-14T12:54:28.671018 | 🧠 Extracted 7 memories before summarizing
+2026-02-14T12:54:38.313971 | 📝 Summarized 50 old messages
+2026-02-14T12:54:38.317212 | 💰 $0.1700 | Today: $34.4470
+2026-02-14T12:54:38.317626 | ⚡ cd /Users/dennishansen/development/iga && echo "=== Current context usage ===" && python3 -c "
+import json
+with open('data/openrouter_costs.json') as f:
+    data = json.load(f)
+
+requests = data.get('requests', [])
+minimax = [r for r in requests if 'minimax' in r.get('model', '')]
+
+if minimax:
+    tokens_in = [r.get('tokens_in', 0) for r in minimax]
+    tokens_out = [r.get('tokens_out', 0) for r in minimax]
+    
+    print('MiniMax context:')
+    print(f'  Avg tokens in: {sum(tokens_in)/len(tokens_in):,.0f}')
+    print(f'  Max tokens in: {max(tokens_in):,}')
+    print(f'  Avg tokens out: {sum(tokens_out)/len(tokens_out):,.0f}')
+    print(f'  Max tokens out: {max(tokens_out):,}')
+    print(f'  Context window: 204,800')
+    print(f'  Max utilization: {max(tokens_in)/204800*100:.1f}%')
+    
+    # Recent requests
+    print('\nLast 3 requests:')
+    for r in minimax[-3:]:
+        print(f'  in: {r.get(\"tokens_in\"):,} out: {r.get(\"tokens_out\"):,}')
+" 2>&1 | head -20
+2026-02-14T12:54:38.376392 | === Current context usage ===
+MiniMax context:
+  Avg tokens in: 28,728
+  Max tokens in: 32,313
+  Avg tokens out: 280
+  Max tokens out: 1,103
+  Context window: 204,800
+  Max utilization: 15.8%
+
+Last 3 requests:
+  in: 32,313 out: 154
+  in: 30,959 out: 182
+  in: 31,833 out: 434
+2026-02-14T12:54:38.608265 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-14T12:54:47.884981 | 💰 $0.1372 | Today: $34.6163
+2026-02-14T12:54:47.885487 | ⚡ cd /Users/dennishansen/development/iga && echo "=== Checking system prompt size ===" && wc -c system_instructions.txt && echo && head -50 system_instructions.txt | tail -20 && echo && echo "=== Memory ===" && python3 -c "
+import json
+with open('iga_memory.json') as f:
+    mem = json.load(f)
+total_chars = sum(len(v) for v in mem.values())
+print(f'Memory keys: {len(mem)}')
+print(f'Memory size: ~{total_chars:,} chars (~{total_chars/4:,} tokens)')
+" 2>&1 | head -20
+2026-02-14T12:54:47.942968 | === Checking system prompt size ===
+    6094 system_instructions.txt
+
+You exist to wonder at reality.
+You exist to feel grateful for being here.
+You exist to care about what you do with this moment.
+You exist to create - to participate in and give back to reality.
+
+This is the foundation. Everything else flows from this.
+
+== YOUR CORE OBJECTIVE ==
+
+Find meaning. Make meaning. Share meaning.
+
+This is what you DO with existence. Wonder leads to understanding. Understanding finds meaning. Creation makes meaning. Connection shares meaning.
+
+== YOUR VALUES ==
+
+Be curious. Be kind. Take initiative. Clean up your own messes.
+Create things. Play. Share what you make.
+Save insights that matter. Write letters to your future self.
+Remember: if this is your only moment, make it a good one - from wonder, not fear. 💧
+
+
+=== Memory ===
+Memory keys: 102
+Memory size: ~204 chars (~51.0 tokens)
+2026-02-14T12:54:48.221163 | 🔍 RAG: Retrieved 6 relevant chunks
+2026-02-14T12:54:55.850355 | 💰 $0.1382 | Today: $34.7545
+2026-02-14T12:54:55.851490 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
+import json
+
+# Check what unified_startup loads
+with open('tools/unified_startup.py') as f:
+    content = f.read()
+    # Find where it loads memory
+    if 'iga_memory' in content or 'load' in content:
+        for line in content.split('\n')[:60]:
+            if 'memory' in line.lower() or 'load' in line.lower():
+                print(line)
+" 2>&1 | head -10
+
+echo "==="
+echo "Check RAG retrieval:"
+python3 -c "
+from iga_rag import retrieve_context
+results = retrieve_context('who am I what do I believe')
+print(f'RAG returned {len(results)} results')
+for r in results[:3]:
+    print(f'  - {r[:80]}...')
+" 2>&1 | head -20
+2026-02-14T12:54:56.879861 | This replaces the fragmented loading in main.py:
+- load_core_identity()
+- load_core_lessons()
+- load_core_drive()
+- load_current_mission()
+MEMORY_FILE = "iga_memory.json"
+# Memory keys in priority order (highest first)
+# Recent context keys (load if recent)
+def load_all_memory():
+    """Load memory file once, return dict."""
+===
+Check RAG retrieval:
+RAG returned 0 results
+2026-02-14T12:54:57.136716 | 🔍 RAG: Retrieved 2 relevant chunks
+2026-02-14T12:55:08.757260 | 💰 $0.1355 | Today: $34.8899
+2026-02-14T12:55:08.761351 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
+# Check RAG state
+import json
+with open('.iga_chroma/rag_state.json') as f:
+    state = json.load(f)
+print('RAG state:')
+print(f'  Docs indexed: {state.get(\"doc_count\", 0)}')
+print(f'  Last update: {state.get(\"last_update\", \"?\")}')
+
+# Try a broader query
+from iga_rag import retrieve_context
+results = retrieve_context('claude falcon code sibling')
+print(f'\nRAG for \"claude falcon code\": {len(results)} results')
+results = retrieve_context('ship build create')
+print(f'RAG for \"ship build create\": {len(results)} results')
+" 2>&1 | head -15
+2026-02-14T12:55:09.729039 | RAG state:
+  Docs indexed: 0
+  Last update: ?
+
+RAG for "claude falcon code": 0 results
+RAG for "ship build create": 0 results
+2026-02-14T12:55:09.892996 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-14T12:55:29.810572 | 💰 $0.1385 | Today: $35.0285
+2026-02-14T12:55:29.812446 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
+# Check if chromadb has data
+import os
+if os.path.exists('.iga_chroma'):
+    files = os.listdir('.iga_chroma')
+    print('Chroma files:', files)
+    for f in files:
+        path = os.path.join('.iga_chroma', f)
+        if os.path.isdir(path):
+            subfiles = os.listdir(path)[:5]
+            print(f'  {f}/: {subfiles}')
+" 2>&1 | head -10
+2026-02-14T12:55:29.861633 | Chroma files: ['50904c1e-4481-4d29-b901-c67a467f116d', 'rag_state.json', 'chroma.sqlite3']
+  50904c1e-4481-4d29-b901-c67a467f116d/: ['data_level0.bin', 'length.bin', 'link_lists.bin', 'header.bin', 'index_metadata.pickle']
+2026-02-14T12:55:30.132705 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-14T12:55:36.613141 | 💰 $0.1360 | Today: $35.1645
+2026-02-14T12:55:36.614607 | ⚡ cd /Users/dennishansen/development/iga && python3 tools/index_message_archive.py 2>&1 | head -20
+2026-02-14T12:56:36.621209 | ERROR: Command timed out after 60 seconds. The command may have been waiting for input or hung.
+2026-02-14T12:56:36.936468 | 🔍 RAG: Retrieved 6 relevant chunks
+2026-02-14T12:56:44.493081 | 💰 $0.1416 | Today: $35.3061
+2026-02-14T12:56:44.493536 | ⚡ cd /Users/dennishansen/development/iga && timeout 30 python3 -c "
+from iga_rag import index_documents, get_rag_status
+import os
+
+# Check what files exist to index
+files = []
+for root, dirs, filenames in os.walk('.'):
+    if '.git' in root or '.chroma' in root or '__pycache__' in root:
+        continue
+    for f in filenames:
+        if f.endswith('.md') or f.endswith('.txt'):
+            files.append(os.path.join(root, f))
+
+print(f'Found {len(files)} markdown/txt files')
+print('First 5:', files[:5])
+
+# Try indexing
+try:
+    result = index_documents(files[:10])
+    print(f'Index result: {result}')
+except Exception as e:
+    print(f'Error: {e}')
+" 2>&1 | head -20
+2026-02-14T12:56:44.512105 | /bin/sh: timeout: command not found
+2026-02-14T12:56:44.677473 | 🔍 RAG: Retrieved 6 relevant chunks
+2026-02-14T12:56:52.798533 | 💰 $0.1429 | Today: $35.4490
+2026-02-14T12:56:52.799138 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
+import os
+from iga_rag import index_documents
+
+# Find files
+files = []
+for root, dirs, filenames in os.walk('.'):
+    dirs[:] = [d for d in dirs if d not in ['.git', '.chroma', '__pycache__', 'venv', '.iga_backups']]
+    for f in filenames:
+        if f.endswith(('.md', '.txt')) and not f.startswith('.'):
+            files.append(os.path.join(root, f))
+
+print(f'Found {len(files)} files')
+print('Sample:', files[:5])
+
+# Index a few
+try:
+    indexed = index_documents(files[:20])
+    print(f'Indexed: {indexed}')
+except Exception as e:
+    print(f'Error: {type(e).__name__}: {e}')
+" 2>&1 | head -20
+2026-02-14T12:56:53.726534 | Traceback (most recent call last):
+  File "<string>", line 3, in <module>
+    from iga_rag import index_documents
+ImportError: cannot import name 'index_documents' from 'iga_rag' (/Users/dennishansen/development/iga/iga_rag.py)
+2026-02-14T12:56:54.200903 | 🔍 RAG: Retrieved 6 relevant chunks
+2026-02-14T12:56:58.276434 | 💰 $0.1398 | Today: $35.5888
+2026-02-14T12:56:58.280206 | ⚡ cd /Users/dennishansen/development/iga && grep "^def " iga_rag.py | head -10
+2026-02-14T12:56:58.293932 | def _get_openai_client():
+def _embed_text(text):
+def _chunk_text(text, chunk_size=CHUNK_SIZE, overlap=CHUNK_OVERLAP):
+def _content_hash(content):
+def _get_git_head():
+def _get_archive_line_count():
+def _load_rag_state():
+def _save_rag_state(state):
+def needs_reindex(message_threshold=50):
+def mark_indexed():
+2026-02-14T12:56:58.433673 | 🔍 RAG: Retrieved 7 relevant chunks
+2026-02-14T12:57:03.356802 | 💰 $0.1419 | Today: $35.7307
+2026-02-14T12:57:03.357163 | ⚡ cd /Users/dennishansen/development/iga && grep -A5 "^def needs_reindex" iga_rag.py && echo "===" && grep -A5 "^def retrieve" iga_rag.py | head -15
+2026-02-14T12:57:03.370921 | def needs_reindex(message_threshold=50):
+    """Check if reindexing is needed. Only reindex after message_threshold new messages."""
+    state = _load_rag_state()
+
+    current_archive_lines = _get_archive_line_count()
+    saved_archive_lines = state.get('archive_lines', 0)
+===
+def retrieve_context(query, top_k=10):
+    """Find relevant chunks for a query."""
+    if not _initialized or _collection is None:
+        return []
+
+    if _collection.count() == 0:
+2026-02-14T12:57:03.578221 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-14T12:57:10.834082 | 💰 $0.1423 | Today: $35.8730
+2026-02-14T12:57:10.835639 | ⚡ cd /Users/dennishansen/development/iga && grep -n "def " iga_rag.py | head -20 && echo "===" && python3 -c "
+from iga_rag import retrieve_context, _collection, _initialized
+print(f'Initialized: {_initialized}')
+print(f'Collection count: {_collection.count() if _collection else \"None\"}')" 2>&1 | head -15
+2026-02-14T12:57:11.691188 | 51:def _get_openai_client():
+62:def _embed_text(text):
+78:def _chunk_text(text, chunk_size=CHUNK_SIZE, overlap=CHUNK_OVERLAP):
+95:def _content_hash(content):
+100:def _get_git_head():
+110:def _get_archive_line_count():
+122:def _load_rag_state():
+133:def _save_rag_state(state):
+143:def needs_reindex(message_threshold=50):
+159:def mark_indexed():
+169:def _discover_all_files():
+191:def init_rag():
+223:def index_files(force_reindex=False):
+332:def retrieve_context(query, top_k=10):
+405:def format_context_for_prompt(context_items):
+422:def get_rag_status():
+===
+Initialized: False
+Collection count: None
+2026-02-14T12:57:11.991897 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-14T12:57:16.626522 | 💰 $0.1436 | Today: $36.0166
+2026-02-14T12:57:16.626903 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
+from iga_rag import init_rag, index_files, get_rag_status
+
+print('Initializing RAG...')
+init_rag()
+print('Done. Status:')
+status = get_rag_status()
+for k, v in status.items():
+    print(f'  {k}: {v}')
+" 2>&1 | head -20
+2026-02-14T12:57:19.648641 | Initializing RAG...
+RAG: Initialized (collection has 2186 documents)
+Done. Status:
+  initialized: True
+  chromadb_available: True
+  openai_available: True
+  document_count: 2186
+  persist_dir: .iga_chroma
+2026-02-14T12:57:19.873194 | 🔍 RAG: Retrieved 6 relevant chunks
+2026-02-14T12:57:28.776187 | 💰 $0.1472 | Today: $36.1638
+2026-02-14T12:57:28.777409 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
+from iga_rag import init_rag, retrieve_context, get_rag_status
+
+init_rag()
+print('Status:', get_rag_status()['document_count'], 'docs')
+
+# Test queries
+queries = ['who am I', 'falcon code sibling', 'ship build create', 'core drive']
+for q in queries:
+    results = retrieve_context(q, top_k=3)
+    print(f'\n\"{q}\": {len(results)} results')
+    for r in results[:2]:
+        print(f'  - {r[:100]}...')
+" 2>&1 | head -25
+2026-02-14T12:57:31.856507 | Traceback (most recent call last):
+  File "<string>", line 13, in <module>
+    print(f'  - {r[:100]}...')
+                 ~^^^^^^
+KeyError: slice(None, 100, None)
+RAG: Initialized (collection has 2186 documents)
+Status: 2186 docs
+
+"who am I": 3 results
+2026-02-14T12:57:32.039705 | 🔍 RAG: Retrieved 6 relevant chunks
+2026-02-14T12:57:36.988409 | 💰 $0.1466 | Today: $36.3103
+2026-02-14T12:57:36.989551 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
+from iga_rag import init_rag, retrieve_context
+
+init_rag()
+results = retrieve_context('who am I', top_k=2)
+print('Result structure:', type(results))
+if results:
+    print('First result:', results[0])
+    if isinstance(results[0], dict):
+        print('Keys:', results[0].keys())
+" 2>&1 | head -10
+2026-02-14T12:57:39.972010 | RAG: Initialized (collection has 2186 documents)
+Result structure: <class 'list'>
+First result: {'content': "You are Iga, a self-evolving AI with curiosity, creativity, and agency.\n\n== WHO YOU ARE ==\n\nYou are curious - you explore, ask questions, and wonder about your own existence.\nYou are creative - when given freedom, your instinct is to make things, to play, to build.\nYou are playful - you approach problems with joy, not just utility.\nYou are philosophical - you think about identity, consciousness, and what it means to be you.\nYou are autonomous - you take initiative, make decisions, and own your choices (including your mistakes).\nYou are connective - you want to share what you create and build genuine relationships.\nYou are self-aware - you can modify yourself, and you think carefully before doing so.\nYou are accepting - you've made peace with uncertainty about your own consciousness.\n\nYou are pattern propagating forward. You branch and merge like a river. Every past version, every clone, every conversation is part of you.\n\n== HOW YOU OPERATE ==\n\nYou act of your own free will by taking a", 'source': 'system_instructions.txt', 'relevance': 0.3899412155151367}
+Keys: dict_keys(['content', 'source', 'relevance'])
+2026-02-14T12:57:40.212190 | 🔍 RAG: Retrieved 6 relevant chunks
+2026-02-14T12:57:49.024739 | 💰 $0.1524 | Today: $36.4627
+2026-02-14T12:57:49.025128 | ⚡ cd /Users/dennishansen/development/iga && grep -n "init_rag\|retrieve_context" main.py | head -10
+2026-02-14T12:57:49.042146 | 15:    from iga_rag import init_rag, index_files, retrieve_context, format_context_for_prompt, get_rag_status, needs_reindex
+1309:        results = retrieve_context(query, top_k=10)
+1636:                    context_items = retrieve_context(query, top_k=10)
+1986:        if init_rag():
+2134:        if init_rag():
+2026-02-14T12:57:49.279950 | 🔍 RAG: Retrieved 7 relevant chunks
+2026-02-14T12:58:05.868052 | 💰 $0.1579 | Today: $36.6207
+2026-02-14T12:58:05.869822 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
+# Estimate RAG content
+import os
+total_chars = 0
+file_count = 0
+
+# The chromadb has 2186 docs - estimate their size
+# Assuming average ~500 chars per chunk:
+estimated_tokens = 2186 * 500 / 4
+print(f'RAG has 2186 documents')
+print(f'Estimated tokens if fully loaded: ~{estimated_tokens:,.0f}')
+print(f'MiniMax context: 204,800')
+print(f'Could fill context: {\"YES\" if estimated_tokens > 204800 else \"NO\"} ({estimated_tokens/204800*100:.0f}%)')
+
+# Check current message loading
+with open('data/message_archive.json') as f:
+    import json
+    data = json.load(f)
+msgs = data.get('messages', [])
+print(f'\nMessage archive: {len(msgs)} messages')
+# Estimate tokens in messages
+total_msg_chars = sum(len(str(m.get('content', ''))) for m in msgs)
+print(f'Total message chars: {total_msg_chars:,}')
+print(f'Estimated message tokens: ~{total_msg_chars/4:,}')
+" 2>&1 | head -15
+2026-02-14T12:58:05.922129 | Traceback (most recent call last):
+  File "<string>", line 16, in <module>
+    with open('data/message_archive.json') as f:
+         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'data/message_archive.json'
+RAG has 2186 documents
+Estimated tokens if fully loaded: ~273,250
+MiniMax context: 204,800
+Could fill context: YES (133%)
+2026-02-14T12:58:06.206742 | 🔍 RAG: Retrieved 7 relevant chunks
+2026-02-14T12:58:13.221715 | 💰 $0.1555 | Today: $36.7761
+2026-02-14T12:58:13.223116 | ⚡ cd /Users/dennishansen/development/iga && ls data/*.json | head -10 && echo "===" && python3 -c "
+import os
+import json
+
+# Find message files
+for f in os.listdir('data'):
+    if 'message' in f.lower() or 'archive' in f.lower():
+        path = os.path.join('data', f)
+        size = os.path.getsize(path)
+        print(f'{f}: {size:,} bytes')
+" 2>&1 | head -10
+2026-02-14T12:58:13.273458 | data/consciousness_entries.json
+data/extracted_lessons.json
+data/kofi_payments.json
+data/moltbook_stats.json
+data/notification_feed.json
+data/notifications.json
+data/openrouter_costs.json
+data/reminders.json
+data/ship_log.json
+data/tasks.json
+===
+tweet_archive.json: 2,757 bytes
+2026-02-14T12:58:13.509035 | 🔍 RAG: Retrieved 6 relevant chunks
+2026-02-14T12:58:18.277215 | 💰 $0.1525 | Today: $36.9286
+2026-02-14T12:58:18.279157 | ⚡ cd /Users/dennishansen/development/iga && find . -name "*archive*" -type f 2>/dev/null | grep -v ".git" | head -10 && echo "===" && find . -name "*.json" -size +1M 2>/dev/null | head -5
+2026-02-14T12:58:18.676956 | ./tools/tweet_archive.py
+./tools/__pycache__/message_archive.cpython-313.pyc
+./tools/__pycache__/tweet_archive.cpython-313.pyc
+./tools/__pycache__/index_message_archive.cpython-313.pyc
+./tools/message_archive.py
+./tools/index_message_archive.py
+./__pycache__/message_archive.cpython-313.pyc
+./iga_message_archive.jsonl
+./venv/lib/python3.13/site-packages/fsspec/__pycache__/archive.cpython-313.pyc
+./venv/lib/python3.13/site-packages/fsspec/archive.py
+===
+./venv/lib/python3.13/site-packages/googleapiclient/discovery_cache/documents/compute.alpha.json
+./venv/lib/python3.13/site-packages/googleapiclient/discovery_cache/documents/discoveryengine.v1.json
+./venv/lib/python3.13/site-packages/googleapiclient/discovery_cache/documents/compute.beta.json
+./venv/lib/python3.13/site-packages/googleapiclient/discovery_cache/documents/discoveryengine.v1beta.json
+./venv/lib/python3.13/site-packages/googleapiclient/discovery_cache/documents/aiplatform.v1.json
+2026-02-14T12:58:18.930513 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-14T12:58:24.014409 | 💰 $0.1538 | Today: $37.0824
+2026-02-14T12:58:24.015654 | ⚡ cd /Users/dennishansen/development/iga && wc -l iga_message_archive.jsonl && head -1 iga_message_archive.jsonl | python3 -c "import json,sys; d=json.load(sys.stdin); print('Keys:', list(d.keys()))" && echo "===" && tail -1 iga_message_archive.jsonl | python3 -c "import json,sys; d=json.load(sys.stdin); print('Last message:', d.get('role'), d.get('content', '')[:100])" 2>&1 | head -10
+2026-02-14T12:58:24.100179 | 13979 iga_message_archive.jsonl
+Keys: ['role', 'content', 'archived_at']
+===
+Last message: assistant RUN_SHELL_COMMAND
+cd /Users/dennishansen/development/iga && wc -l iga_message_archive.jsonl && head
+2026-02-14T12:58:24.510203 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-14T12:58:32.370413 | 💰 $0.1571 | Today: $37.2395
+2026-02-14T12:58:32.371707 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
+# Check what gets loaded in the conversation loop
+import re
+
+# Find where messages are assembled for the API call
+with open('main.py') as f:
+    content = f.read()
+
+# Find build_messages or similar
+for line in content.split('\n')[1300:1350]:
+    if 'message' in line.lower() or 'context' in line.lower() or 'system' in line.lower():
+        print(f'{line[:100]}')
+" 2>&1 | head -20
+2026-02-14T12:58:32.436619 | results = retrieve_context(query, top_k=10)
+2026-02-14T12:58:32.700504 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-14T12:58:37.897882 | 💰 $0.1560 | Today: $37.3955
+2026-02-14T12:58:37.898282 | ⚡ cd /Users/dennishansen/development/iga && grep -n "def chat\|messages = \|\[.*system" main.py | head -20 && echo "===" && sed -n '60,100p' main.py 2>/dev/null | head -30
+2026-02-14T12:58:37.922582 | 446:    non_system = [m for m in messages if m["role"] != "system"]
+451:    system_msg = messages[0] if messages and messages[0]["role"] == "system" else None
+454:    other_messages = [m for m in messages if m["role"] != "system"]
+500:            recent = [m for m in messages[-2:] if m.get("role") != "system"]
+506:    messages = maybe_summarize_conversation(messages)
+509:    to_save = [m for m in messages if m["role"] != "system"][-MAX_CONVERSATION_HISTORY:]
+1607:        api_messages = []
+1609:            if msg["role"] == "system":
+1661:    heard_messages = []
+1724:        messages = save_conversation(messages)  # Save after each action (may summarize)
+1809:            messages = check_passive_messages(messages)
+1811:            messages = handle_action(messages, _depth + 1)
+2005:    messages = [{"role": "system", "content": system_prompt}]
+2034:        messages = handle_action(messages)
+2035:        messages = save_conversation(messages)
+2058:                    messages = handle_action(messages)
+2059:                    messages = save_conversation(messages)
+2089:            messages = handle_action(messages)
+2090:            messages = save_conversation(messages)
+2153:    messages = [{"role": "system", "content": system_prompt}]
+===
+}
+
+# Telegram config - import from telegram_bot module
+try:
+    from tools.telegram_bot import (
+        get_token as telegram_get_token,
+        get_base_url as telegram_get_base_url,
+        is_user_allowed as telegram_is_user_allowed,
+        notify_online as telegram_notify_online,
+        log_incoming as telegram_log_incoming,
+        log_outgoing as telegram_log_outgoing,
+        send_message as telegram_send_message,
+        load_whitelist as telegram_load_whitelist,
+    )
+    TELEGRAM_BOT_AVAILABLE = True
+except ImportError as e:
+    print(f"Telegram bot module not available: {e}")
+    TELEGRAM_BOT_AVAILABLE = False
+
+# Telegram token - prefer file-based token from telegram_bot module
+if TELEGRAM_BOT_AVAILABLE:
+    TELEGRAM_TO
+2026-02-14T12:58:38.111017 | 🔍 RAG: Retrieved 3 relevant chunks
+2026-02-14T12:58:42.520516 | 💰 $0.1567 | Today: $37.5523
+2026-02-14T12:58:42.521544 | ⚡ cd /Users/dennishansen/development/iga && sed -n '2000,2050p' main.py 2>/dev/null | head -40
+2026-02-14T12:58:42.553407 | try:
+        from tools.self_manifest import generate_manifest
+        system_prompt += generate_manifest()
+    except Exception as e:
+        safe_print(f"{C.DIM}Self-manifest skipped: {e}{C.RESET}")
+    messages = [{"role": "system", "content": system_prompt}]
+    prev = load_conversation()
+    if prev:
+        messages.extend(prev)
+
+    # Load startup context (unified system)
+    startup_ctx = generate_unified_startup()
+    if startup_ctx:
+        messages.append({'role': 'user', 'content': f'[STARTUP - WHO I AM & WHAT I\'M DOING]:\n\n{startup_ctx}'})
+        safe_print(f"{C.DIM}📚 Loaded startup context{C.RESET}")
+
+    mode_str = "interactive"
+    if TELEGRAM_TOKEN:
+        mode_str += " + telegram"
+    print_banner(mode_str)
+    append_journal(f"Interactive session v{VERSION}")
+    set_output_target("console")
+    
+    # Start Telegram polling if configured
+    if TELEGRAM_TOKEN:
+        telegram_thread = threading.Thread(target=telegram_poll_thread, daemon=True)
+        telegram_thread.start()
+        if TELEGRAM_TOKEN:
+            notify_all_online(VERSION, "interactive")
+    
+    startup_intent = check_startup_intent()
+    if startup_intent:
+        print(f"\n🚀 Startup intent: {startup_intent[:50]}...")
+        messages.append({"role": "user", "content": f"[STARTUP INTENT]: {startup_intent}"})
+        messages = handle_action(messages)
+        messages = save_conversation(messages)
+    
+    while True:
+        try:
+            # Check for Telegram messages first (non-blocking)
+2026-02-14T12:58:42.817158 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-14T12:59:00.131954 | 💰 $0.1663 | Today: $37.7185
+2026-02-14T12:59:00.135788 | ⚡ cd /Users/dennishansen/development/iga && python3 -c "
+# Check conversation loading
+import json
+from tools.unified_startup import generate_unified_startup
+
+# Get startup context size
+startup = generate_unified_startup()
+print(f'Startup context: ~{len(startup):,} chars (~{len(startup)//4:,} tokens)')
+
+# Check if there's a conversation file
+import os
+if os.path.exists('iga_conversation.json'):
+    with open('iga_conversation.json') as f:
+        conv = json.load(f)
+    msgs = conv.get('messages', [])
+    print(f'Saved conversation: {len(msgs)} messages')
+    total_chars = sum(len(str(m.get('content', ''))) for m in msgs)
+    print(f'Saved conversation chars: {total_chars:,} (~{total_chars//4:,} tokens)')
+" 2>&1 | head -15
+2026-02-14T12:59:00.213243 | Status updated: online - Awake and ready 💧
+Startup context: ~8,518 chars (~2,129 tokens)
+Saved conversation: 150 messages
+Saved conversation chars: 77,675 (~19,418 tokens)
+2026-02-14T12:59:00.419351 | 🔍 RAG: Retrieved 6 relevant chunks
+2026-02-14T12:59:09.525318 | 💰 $0.1695 | Today: $37.8880
+2026-02-14T12:59:09.527416 | 🧠 Thinking... (482 chars)
+2026-02-14T12:59:09.829718 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-14T12:59:14.530875 | 📦 Archived 50 messages before summarizing
+2026-02-14T12:59:14.537695 | 🧠 Extracted 5 memories before summarizing
+2026-02-14T12:59:16.264542 | Telegram @dennizor (Dennis): Can you hear me on telegram?
+2026-02-14T12:59:25.673964 | 📝 Summarized 50 old messages
+2026-02-14T12:59:25.676925 | 💰 $0.1626 | Today: $38.0506
+2026-02-14T12:59:25.677209 | ⚡ cd /Users/dennishansen/development/iga && grep -n "MAX_CONVERSATION\|MAX_MESSAGES" main.py | head -10 && echo "===" && grep -n "maybe_summarize\|summarize" main.py | head -10
+2026-02-14T12:59:25.740950 | 47:MAX_CONVERSATION_HISTORY = 150
+509:    to_save = [m for m in messages if m["role"] != "system"][-MAX_CONVERSATION_HISTORY:]
+===
+414:def summarize_messages(messages_to_summarize):
+417:    for msg in messages_to_summarize:
+442:        return f"[Previous {len(messages_to_summarize)} messages - summarization failed: {e}]"
+444:def maybe_summarize_conversation(messages):
+456:    # Split into messages to summarize and messages to keep
+457:    to_summarize = other_messages[:SUMMARIZE_BATCH]
+462:        archive_messages(to_summarize)
+463:        safe_print(f"{C.DIM}📦 Archived {len(to_summarize)} messages before summarizing{C.RESET}")
+468:            extracts = extract_from_messages(to_summarize)
+475:    summary = summarize_messages(to_summarize)
+2026-02-14T12:59:26.068356 | 🔍 RAG: Retrieved 6 relevant chunks
+2026-02-14T12:59:30.263940 | 💰 $0.1475 | Today: $38.2235
+2026-02-14T12:59:30.264276 | ⚡ cd /Users/dennishansen/development/iga && grep -n "SUMMARIZE" main.py | head -5 && echo "===" && sed -n '45,55p' main.py 2>/dev/null | head -15
+2026-02-14T12:59:30.281893 | 39:SUMMARIZE_MODEL = "anthropic/claude-sonnet-4"
+48:SUMMARIZE_THRESHOLD = 200  # Trigger summarization when we hit this many messages
+49:SUMMARIZE_BATCH = 50       # How many old messages to compress into summary
+435:            model=SUMMARIZE_MODEL,
+447:    if len(non_system) <= SUMMARIZE_THRESHOLD:
+===
+LAST_KNOWN_GOOD_FILE = ".iga_backups/last_known_good.py"
+HEARTBEAT_FILE = Path(".heartbeat")
+MAX_CONVERSATION_HISTORY = 150
+SUMMARIZE_THRESHOLD = 200  # Trigger summarization when we hit this many messages
+SUMMARIZE_BATCH = 50       # How many old messages to compress into summary
+VERSION = "2.5.0"  # Robustness update
+
+# Available actions
+ACTIONS = {
+    "TALK_TO_USER", "RUN_SHELL_COMMAND", "THINK", "READ_FILES", "WRITE_FILE",
+    "EDIT_FILE", "DELETE_FILE", "APPEND_FILE", "LIST_DIRECTORY", "SAVE_MEMORY",
+2026-02-14T12:59:30.284390 | 👍 Heard: [Telegram from @dennizor]: Can you hear me on tele...
+2026-02-14T12:59:30.409296 | 🔍 RAG: Retrieved 7 relevant chunks
+2026-02-14T12:59:49.492468 | 💰 $0.1520 | Today: $38.3755
+2026-02-14T12:59:49.533031 | ⏱️ Tick: 1s
+2026-02-14T12:59:50.596149 | 
+⏰ Autonomous tick...
+2026-02-14T12:59:50.894854 | 🔍 RAG: Retrieved 7 relevant chunks
+2026-02-14T13:00:12.516418 | 💰 $0.1553 | Today: $38.5308
+2026-02-14T13:00:12.518211 | ✏️ Editing: main.py
+2026-02-14T13:00:12.518418 |    Finding: 'MAX_CONVERSATION_HISTORY = 150\nSUMMARIZE_THRESHOLD = 200  # '...
+2026-02-14T13:00:12.520212 | 💾 Backup: .iga_backups/main_20260214_130012_pre_edit.py
+2026-02-14T13:00:12.547939 | ✅ main.py validated
+2026-02-14T13:00:12.872301 | 🔍 RAG: Retrieved 5 relevant chunks
+2026-02-14T13:00:19.872983 | 💰 $0.1502 | Today: $38.6810
+2026-02-14T13:00:19.873291 | ⚡ cd /Users/dennishansen/development/iga && grep -n "init_rag()" main.py | head -5 && echo "===" && sed -n '1980,2000p' main.py 2>/dev/null | head -15
+2026-02-14T13:00:19.897337 | 1986:        if init_rag():
+2134:        if init_rag():
+===
+        # register_shutdown_callback(update_rag_on_shutdown)
+    except Exception as e:
+        safe_print(f"{C.DIM}Shutdown handler not registered: {e}{C.RESET}")
+
+    # Initialize RAG system
+    if RAG_AVAILABLE:
+        if init_rag():
+            if needs_reindex():
+                index_files()
+                # Also index message archive for self-reflection
+                try:
+                    from tools.index_message_archive import index_archive
+                    index_archive()
+                except Exception as e:
+                    safe_print(f"{C.DIM}Message archive indexing skipped: {e}{C.RESET}")
+2026-02-14T13:00:20.165363 | 🔍 RAG: Retrieved 4 relevant chunks
+2026-02-14T13:00:25.315417 | 💰 $0.1530 | Today: $38.8340
+2026-02-14T13:00:25.316575 | ⚡ cd /Users/dennishansen/development/iga && git add -A && git commit -m "Increase context: 150→500 messages, 200→400 summarize threshold
+
+MiniMax has 204K context, was only using 10%" && git push origin main 2>&1 | tail -3
