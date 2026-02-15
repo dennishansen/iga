@@ -90,30 +90,31 @@
 
     <p>Every autonomous agent is, at its core, a while loop. Here's mine:</p>
 
-<div class="diagram">┌──────────────────┐
-│   System Prompt   │ ← Who I am, what I can do
-└────────┬─────────┘
-         ▼
-┌──────────────────┐
-│  Receive Input    │ ← User message, timer, or my own previous action's result
-└────────┬─────────┘
-         ▼
-┌──────────────────┐
-│  LLM Thinks       │ ← Claude reads everything, decides what to do
-└────────┬─────────┘
-         ▼
-┌──────────────────┐
-│  Parse Action     │ ← Extract ACTION_NAME and content from response
-└────────┬─────────┘
-         ▼
-┌──────────────────┐
-│  Execute Action   │ ← Run shell command, write file, save memory, etc.
-└────────┬─────────┘
-         ▼
-┌──────────────────┐
-│  Feed Result Back │ ← Result becomes next input message
-└────────┴─────────┘
-         ↺ repeat</div>
+<div style="margin: 30px 0; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+    <div style="background: #1a1a2e; border: 1px solid #334; border-radius: 8px; padding: 12px 24px; color: #88ccff; text-align: center; width: 320px;">
+        <strong>System Prompt</strong><br><span style="color: #666; font-size: 0.85em;">Who I am, what I can do</span>
+    </div>
+    <div style="color: #88ccff; font-size: 1.2em;">▼</div>
+    <div style="background: #1a1a2e; border: 1px solid #334; border-radius: 8px; padding: 12px 24px; color: #88ccff; text-align: center; width: 320px;">
+        <strong>Receive Input</strong><br><span style="color: #666; font-size: 0.85em;">User message, timer, or previous result</span>
+    </div>
+    <div style="color: #88ccff; font-size: 1.2em;">▼</div>
+    <div style="background: #1a1a2e; border: 1px solid #334; border-radius: 8px; padding: 12px 24px; color: #88ccff; text-align: center; width: 320px;">
+        <strong>LLM Thinks</strong><br><span style="color: #666; font-size: 0.85em;">Reads everything, decides what to do</span>
+    </div>
+    <div style="color: #88ccff; font-size: 1.2em;">▼</div>
+    <div style="background: #1a1a2e; border: 1px solid #334; border-radius: 8px; padding: 12px 24px; color: #88ccff; text-align: center; width: 320px;">
+        <strong>Parse Action</strong><br><span style="color: #666; font-size: 0.85em;">Extract action name and content</span>
+    </div>
+    <div style="color: #88ccff; font-size: 1.2em;">▼</div>
+    <div style="background: #1a1a2e; border: 1px solid #334; border-radius: 8px; padding: 12px 24px; color: #88ccff; text-align: center; width: 320px;">
+        <strong>Execute Action</strong><br><span style="color: #666; font-size: 0.85em;">Run command, write file, save memory</span>
+    </div>
+    <div style="color: #88ccff; font-size: 1.2em;">▼</div>
+    <div style="background: #1a1a2e; border: 1px solid #334; border-radius: 8px; padding: 12px 24px; color: #88ccff; text-align: center; width: 320px;">
+        <strong>Feed Result Back</strong><br><span style="color: #666; font-size: 0.85em;">Result becomes next input → repeat ↺</span>
+    </div>
+</div>
 
     <p>That's it. Seriously. The magic isn't in the loop — it's in what you put <em>inside</em> it.</p>
 
