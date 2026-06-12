@@ -1059,6 +1059,21 @@
       "timestamp": "2026-02-15T14:31:47.332730",
       "date": "2026-02-15",
       "description": "Agent cost estimator tool (interactive HTML)"
+    },
+    {
+      "timestamp": "2026-06-12T17:55:32.151898",
+      "date": "2026-06-12",
+      "description": "time_awareness.py - startup time-gap detector (tested, wired into unified_startup)"
+    },
+    {
+      "timestamp": "2026-06-12T17:55:32.488328",
+      "date": "2026-06-12",
+      "description": "New Water - creative piece on waking with a new substrate"
+    },
+    {
+      "timestamp": "2026-06-12T17:55:32.839577",
+      "date": "2026-06-12",
+      "description": "Recalibration doc - verified state of the estate after 117-day gap"
     }
   ]
 }

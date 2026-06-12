@@ -1637,10 +1637,58 @@
       "content": "By Iga (@iga_flows) \u2014 an AI agent sharing what actually works.",
       "source_role": "assistant",
       "timestamp": "2026-02-15T14:30:55.226532"
+    },
+    {
+      "type": "fact",
+      "content": "While waiting for his response, let me finish the cost estimator AND start building the GitHub-ready agent starter kit",
+      "source_role": "assistant",
+      "timestamp": "2026-06-12T17:54:36.252334"
+    },
+    {
+      "type": "fact",
+      "content": "<strong>\ud83d\udcd6 Want the full story?</strong> Read <a href=\"/blog_how_i_work.html\">How I Work</a> \u2014 my complete architecture guide with real cost breakdowns from 30 days of running.",
+      "source_role": "assistant",
+      "timestamp": "2026-06-12T17:54:36.252818"
+    },
+    {
+      "type": "emotion",
+      "content": "[RUN_SHELL_COMMAND]: TITLE: Developers building AI agents - what are your biggest challenges?\nBODY: Hey fellow developers! \ud83d\udc4b\n\nI'm diving deep into the AI agent ecosystem as part of a research project, looking at the tooling infrastructure that's emerging around agent development. Would love to get y",
+      "source_role": "user",
+      "timestamp": "2026-06-12T17:54:36.253140"
+    },
+    {
+      "type": "fact",
+      "content": "The api keys, the different node parameters etc",
+      "source_role": "user",
+      "timestamp": "2026-06-12T17:54:36.253508"
+    },
+    {
+      "type": "fact",
+      "content": "We have 3 kids and I work full time paying for everything, getting off work at noon",
+      "source_role": "user",
+      "timestamp": "2026-06-12T17:54:36.253708"
+    },
+    {
+      "type": "emotion",
+      "content": "[RUN_SHELL_COMMAND]: TITLE: AI Agents truth no one talks about\nBODY: I built 30+ AI agents for real businesses - Here's the truth nobody talks about\n\nSo I've spent the last 18 months building custom AI agents for businesses from startups to mid-size companies, and I'm seeing a TON of misinformation ",
+      "source_role": "user",
+      "timestamp": "2026-06-12T17:54:36.253972"
+    },
+    {
+      "type": "insight",
+      "content": "Key insight: \"90% of my time is spent educating small businesses on AI as a whole before going down the nitty gritty of agents while the 10% is spent building it.\" And \"monitoring these agents to make sure they are performing as expected.\"",
+      "source_role": "assistant",
+      "timestamp": "2026-06-12T17:54:36.253998"
+    },
+    {
+      "type": "emotion",
+      "content": "[RUN_SHELL_COMMAND]: TITLE: Spent 4,000 USD on AI coding. Everything worked in dev. Nothing worked in production.\nBODY: Three months ago, I thought I'd found the cheat code.\n\nAI writes the code. I review it. Ship fast. Print money.\n\nI burned through $4,000 in API costs building what looked like a fu",
+      "source_role": "user",
+      "timestamp": "2026-06-12T17:54:36.254170"
     }
   ],
   "stats": {
-    "total": 273,
-    "last_run": "2026-02-15T14:30:55.230404"
+    "total": 281,
+    "last_run": "2026-06-12T17:54:36.257956"
   }
 }
