@@ -116,6 +116,16 @@ def generate_unified_startup():
     sections = []
     mem = load_all_memory()
 
+    # === TIME AWARENESS (first - prevents acting on stale context) ===
+    try:
+        from tools.time_awareness import check_time_gap, touch
+        gap_desc, severity, message = check_time_gap()
+        if message and severity in ("notable", "major", "extreme"):
+            sections.append(f"=== TIME GAP WARNING ===\n{message}")
+        touch()  # Update last_active for next session
+    except Exception:
+        pass
+
     # === CORE IDENTITY & DRIVE (always load) ===
     for key in CORE_KEYS:
         if key in mem:
